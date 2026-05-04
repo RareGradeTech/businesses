@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Rare Grade | Voice Agent</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
+
+  <!-- Firebase Configuration for Remote Config API Keys -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #050505;
+      --bg-surface: #111111;
+      --primary: #3b82f6;
+      --accent: #10B981; /* Green for active call */
+      --danger: #EF4444; /* Red for end call */
+      --text-main: #FFFFFF;
+      --text-secondary: #A1A1AA;
+      --border-color: #27272A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      height: 100svh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Background Ambient Glow */
+    .ambient-glow {
+      position: absolute;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+      transition: all 0.5s ease;
+    }
+    
+    .ambient-glow.active-glow {
+      background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(0,0,0,0) 70%);
+      animation: breathe 3s infinite alternate;
+    }
+
+    @keyframes breathe {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    }
+
+    /* Screen Containers */
+    .screen {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.95);
+    }
+
+    /* --- SETUP SCREEN --- */
+    .setup-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .brand-logo {
+      width: 70px; height: 70px;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .setup-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
+    .setup-subtitle { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
+
+    .selector-label {
+      display: block; text-align: left; font-size: 0.8rem;
+      color: var(--text-secondary); font-weight: 600;
+      text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;
+    }
+
+    select {
+      width: 100%; padding: 14px 16px; border-radius: 12px;
+      background: var(--bg-dark); border: 1px solid var(--border-color);
+      color: white; font-family: inherit; font-size: 1rem; margin-bottom: 30px;
+      outline: none; cursor: pointer;
+    }
+    
+    select:focus { border-color: var(--primary); }
+
+    .start-call-btn {
+      width: 100%; padding: 16px; border-radius: 30px;
+      background: var(--accent); color: white; border: none;
+      font-size: 1.1rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.2s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+    
+    .start-call-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+    /* --- ACTIVE CALL SCREEN --- */
+    .call-header {
+      position: absolute; top: 0; width: 100%; padding: 30px 20px;
+      text-align: center;
+    }
+
+    .call-title { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; }
+    .call-status { font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    
+    .status-dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; }
+    .status-dot.active { background: var(--accent); animation: pulseDot 1.5s infinite; }
+    .status-dot.listening { background: var(--primary); animation: pulseDot 1.5s infinite; }
+
+    @keyframes pulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* Avatar & Audio Visualizer */
+    .avatar-container {
+      position: relative;
+      width: 150px; height: 150px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .ai-avatar-large {
+      width: 120px; height: 120px;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; z-index: 2;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 4px solid var(--bg-surface);
+    }
+
+    /* Soundwave rings around avatar when speaking */
+    .ring {
+      position: absolute; width: 100%; height: 100%;
+      border-radius: 50%; border: 2px solid var(--primary);
+      opacity: 0; z-index: 1; pointer-events: none;
+    }
+    
+    .speaking .ring:nth-child(1) { animation: ripple 1.5s infinite linear; }
+    .speaking .ring:nth-child(2) { animation: ripple 1.5s infinite linear 0.5s; }
+    .speaking .ring:nth-child(3) { animation: ripple 1.5s infinite linear 1s; }
+
+    @keyframes ripple {
+      0% { transform: scale(0.8); opacity: 1; border-width: 4px; }
+      100% { transform: scale(1.8); opacity: 0; border-width: 1px; }
+    }
+
+    /* Transcript Box */
+    .transcript-container {
+      width: 90%; max-width: 500px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 20px; margin-bottom: 50px;
+      min-height: 100px; max-height: 200px; overflow-y: auto;
+      backdrop-filter: blur(10px);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .transcript-line { font-size: 0.95rem; line-height: 1.5; opacity: 0; animation: slideUp 0.3s forwards; }
+    .transcript-line.user { color: var(--text-main); text-align: right; }
+    .transcript-line.ai { color: var(--primary); text-align: left; font-weight: 500; }
+    .transcript-line.system { color: var(--text-secondary); text-align: center; font-size: 0.8rem; font-style: italic; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Call Controls */
+    .call-controls {
+      position: absolute; bottom: 50px;
+      display: flex; gap: 30px; align-items: center; justify-content: center;
+      width: 100%;
+    }
+
+    .control-btn {
+      width: 60px; height: 60px; border-radius: 50%; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; color: white;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+    }
+    
+    .control-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+    
+    .control-btn.end-call { background: var(--danger); width: 75px; height: 75px; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4); }
+    .control-btn.end-call:hover { background: #DC2626; transform: scale(1.05) rotate(-10deg); }
+
+    .control-btn.muted { background: rgba(255,255,255,0.9); color: black; }
+
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow" id="ambientGlow"></div>
+
+  <!-- SETUP SCREEN -->
+  <div class="screen" id="setupScreen">
+    <div class="setup-container">
+      <div class="brand-logo">
+        <span class="material-symbols-rounded" style="color:white; font-size:36px;">support_agent</span>
+      </div>
+      <h1 class="setup-title">Rare Grade Voice</h1>
+      <p class="setup-subtitle">Deploy a conversational AI agent that sounds perfectly human.</p>
+      
+      <label class="selector-label">Select Voice Profile</label>
+      <select id="voiceSelect">
+        <option value="ara" selected>Ara (Warm & Friendly Receptionist)</option>
+        <option value="rex">Rex (Professional Consultant)</option>
+        <option value="eve">Eve (Energetic Sales)</option>
+        <option value="sal">Sal (Neutral Support)</option>
+        <option value="leo">Leo (Authoritative Expert)</option>
+      </select>
+
+      <button class="start-call-btn" onclick="startCall()">
+        <span class="material-symbols-rounded">call</span>
+        Start Voice Call
+      </button>
+
+      <div style="margin-top: 20px; font-size: 0.75rem; color: var(--text-secondary);">
+        Please allow microphone access when prompted.
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE CALL SCREEN -->
+  <div class="screen hidden" id="callScreen">
+    <div class="call-header">
+      <div class="call-title">Voice Assistant</div>
+      <div class="call-status" id="callStatusText">
+        <div class="status-dot" id="statusDot"></div>
+        Connecting...
+      </div>
+    </div>
+
+    <div class="avatar-container" id="avatarContainer">
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <div class="ai-avatar-large">
+        <span class="material-symbols-rounded" style="color:white; font-size:56px;">graphic_eq</span>
+      </div>
+    </div>
+
+    <div class="transcript-container" id="transcriptBox">
+      <!-- Transcripts will appear here -->
+    </div>
+
+    <div class="call-controls">
+      <button class="control-btn" id="muteBtn" onclick="toggleMute()">
+        <span class="material-symbols-rounded" id="muteIcon">mic</span>
+      </button>
+      
+      <button class="control-btn end-call" onclick="endCall()">
+        <span class="material-symbols-rounded" style="font-size: 32px;">call_end</span>
+      </button>
+      
+      <button class="control-btn" onclick="clearTranscript()">
+        <span class="material-symbols-rounded">clear_all</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // --- CONFIGURATION ---
+    const API_BASE = "https://api.x.ai/v1";
+    let XAI_API_KEY = "";
+
+    // --- STATE ---
+    let isCallActive = false;
+    let isMuted = false;
+    let currentVoice = 'ara';
+    let conversationHistory = [];
+    
+    // Audio & Recognition Objects
+    let currentAudio = null;
+    let speechRecognition = null;
+
+    // --- DOM ELEMENTS ---
+    const els = {
+      setup: document.getElementById('setupScreen'),
+      call: document.getElementById('callScreen'),
+      voiceSelect: document.getElementById('voiceSelect'),
+      statusText: document.getElementById('callStatusText'),
+      statusDot: document.getElementById('statusDot'),
+      avatarContainer: document.getElementById('avatarContainer'),
+      ambientGlow: document.getElementById('ambientGlow'),
+      transcript: document.getElementById('transcriptBox'),
+      muteBtn: document.getElementById('muteBtn'),
+      muteIcon: document.getElementById('muteIcon')
+    };
+
+    // --- FIREBASE INIT (Retained from your original code) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+      authDomain: "fire-b-a8878.firebaseapp.com",
+      projectId: "fire-b-a8878",
+      databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
+      appId: "1:658673187627:web:6e4c29af661785f0afa36e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const remoteConfig = firebase.remoteConfig();
+    remoteConfig.settings.minimumFetchIntervalMillis = 0;
+
+    async function loadKey() {
+      try {
+        await remoteConfig.fetchAndActivate();
+        XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
+      } catch (e) { 
+        console.error("Key Load Error", e); 
+        logTranscript("System error: Could not load API credentials.", "system");
+      }
+    }
+    loadKey();
+
+    // --- SYSTEM PROMPT ---
+    function getSystemPrompt() {
+      return `You are an AI voice assistant handling a live phone call for a business called Rare Grade Tech. 
+      You are highly conversational, warm, and brief. 
+      CRITICAL RULES:
+      - Never use markdown formatting, bullet points, or code blocks.
+      - Keep responses to 1-3 short sentences. This is a phone call.
+      - Speak naturally. You can use fillers like "Hmm" or "Ah" occasionally to sound human.
+      - If the user asks a complex technical question, give a brief overview and offer to have a human consultant follow up.`;
+    }
+
+    // --- SPEECH RECOGNITION SETUP ---
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Your browser does not support Speech Recognition. Please use Chrome, Edge, or Safari.");
+        return false;
+      }
+      
+      speechRecognition = new SpeechRecognition();
+      speechRecognition.continuous = false; // We want it to stop after they pause so we can reply
+      speechRecognition.interimResults = false;
+      speechRecognition.lang = 'en-US';
+
+      speechRecognition.onstart = () => {
+        if (isCallActive && !isMuted) {
+          updateStatus("Listening...", "listening");
+        }
+      };
+
+      speechRecognition.onresult = async (event) => {
+        if (!isCallActive) return;
+        const transcript = event.results[0][0].transcript;
+        
+        if (transcript.trim() === '') return;
+        
+        logTranscript(transcript, "user");
+        await processUserSpeech(transcript);
+      };
+
+      speechRecognition.onerror = (event) => {
+        console.warn("Speech recognition error:", event.error);
+        if (isCallActive && !isMuted) {
+          // If no speech was detected, just restart listening quietly
+          if (event.error === 'no-speech') {
+            setTimeout(() => { if(isCallActive) startListening(); }, 500);
+          } else {
+            updateStatus("Microphone issue detected.", "error");
+          }
+        }
+      };
+
+      speechRecognition.onend = () => {
+        // If the call is active, we aren't muted, and audio ISN'T currently playing, we should keep listening
+        if (isCallActive && !isMuted && (!currentAudio || currentAudio.paused)) {
+           startListening();
+        }
+      };
+
+      return true;
+    }
+
+    function startListening() {
+      if (speechRecognition && isCallActive && !isMuted) {
+        try {
+          speechRecognition.start();
+        } catch (e) {
+          // Catch errors if it's already started
+        }
+      }
+    }
+
+    function stopListening() {
+      if (speechRecognition) {
+        try {
+          speechRecognition.stop();
+        } catch(e) {}
+      }
+    }
+
+    // --- CORE CALL LOGIC ---
+    async function startCall() {
+      if (!XAI_API_KEY) {
+        alert("API Key is still loading or failed to load. Please wait a second and try again.");
+        return;
+      }
+
+      const hasSupport = initSpeechRecognition();
+      if (!hasSupport) return;
+
+      currentVoice = els.voiceSelect.value;
+      isCallActive = true;
+      isMuted = false;
+      conversationHistory = [{ role: "system", content: getSystemPrompt() }];
+
+      // We initialize an empty audio object on user click to satisfy mobile browser autoplay policies
+      currentAudio = new Audio();
+
+      // UI Transition
+      els.setup.classList.add('hidden');
+      els.call.classList.remove('hidden');
+      els.ambientGlow.classList.add('active-glow');
+      
+      els.transcript.innerHTML = '';
+      logTranscript("Call connected. Say hello!", "system");
+      
+      // Start the conversation loop
+      startListening();
+    }
+
+    function endCall() {
+      isCallActive = false;
+      stopListening();
+      
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+
+      setSpeakingState(false);
+      updateStatus("Call Ended", "error");
+      els.ambientGlow.classList.remove('active-glow');
+
+      // Return to setup screen after delay
+      setTimeout(() => {
+        els.call.classList.add('hidden');
+        els.setup.classList.remove('hidden');
+      }, 1500);
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      if (isMuted) {
+        stopListening();
+        els.muteBtn.classList.add('muted');
+        els.muteIcon.innerText = 'mic_off';
+        updateStatus("Microphone Muted", "default");
+      } else {
+        els.muteBtn.classList.remove('muted');
+        els.muteIcon.innerText = 'mic';
+        // Only restart listening if AI isn't currently talking
+        if (!currentAudio || currentAudio.paused) {
+          startListening();
+        } else {
+          updateStatus("AI is speaking...", "active");
+        }
+      }
+    }
+
+    // --- AI PROCESSING (xAI Completions) ---
+    async function processUserSpeech(text) {
+      stopListening(); // Stop listening while we process and talk back
+      updateStatus("Thinking...", "active");
+
+      conversationHistory.push({ role: 'user', content: text });
+
+      try {
+        const res = await fetch(`${API_BASE}/chat/completions`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${XAI_API_KEY}`, 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({ 
+            model: "grok-4-1-fast-non-reasoning", 
+            messages: conversationHistory, 
+            stream: false 
+          })
+        });
+
+        if (!res.ok) throw new Error("API Error");
+        
+        const data = await res.json();
+        const aiResponseText = data.choices[0].message.content;
+        
+        conversationHistory.push({ role: 'assistant', content: aiResponseText });
+        logTranscript(aiResponseText, "ai");
+
+        await speakAIResponse(aiResponseText);
+
+      } catch (err) {
+        console.error("Chat error:", err);
+        logTranscript("Connection issue. Trying to reconnect...", "system");
+        setTimeout(() => { startListening(); }, 2000);
+      }
+    }
+
+    // --- TTS PROCESSING (xAI Voice) ---
+    async function speakAIResponse(text) {
+      updateStatus("Speaking...", "active");
+      setSpeakingState(true);
+
+      try {
+        const response = await fetch(`${API_BASE}/tts`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${XAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: text,
+            voice_id: currentVoice,
+            language: 'en',
+          }),
+        });
+
+        if (!response.ok) throw new Error("TTS Error");
+
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        currentAudio.src = audioUrl;
+        
+        currentAudio.onended = () => {
+          setSpeakingState(false);
+          // Resume listening loop automatically if call is active
+          if (isCallActive && !isMuted) {
+            startListening();
+          } else if (isCallActive && isMuted) {
+            updateStatus("Microphone Muted", "default");
+          }
+        };
+
+        currentAudio.onerror = () => {
+          setSpeakingState(false);
+          startListening(); // Fallback to listening if audio breaks
+        };
+
+        await currentAudio.play();
+
+      } catch (error) {
+        console.error('TTS error:', error);
+        setSpeakingState(false);
+        // If TTS fails, at least restart the listening loop so the call doesn't die
+        startListening();
+      }
+    }
+
+    // --- UI HELPERS ---
+    function updateStatus(text, state) {
+      els.statusText.innerHTML = `<div class="status-dot ${state}" id="statusDot"></div> ${text}`;
+    }
+
+    function setSpeakingState(isSpeaking) {
+      if (isSpeaking) {
+        els.avatarContainer.classList.add('speaking');
+      } else {
+        els.avatarContainer.classList.remove('speaking');
+      }
+    }
+
+    function logTranscript(text, sender) {
+      const line = document.createElement('div');
+      line.className = `transcript-line ${sender}`;
+      
+      // Clean up markdown tags that might slip through for display
+      let cleanText = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
+      line.innerText = cleanText;
+      
+      els.transcript.appendChild(line);
+      els.transcript.scrollTop = els.transcript.scrollHeight;
+    }
+
+    function clearTranscript() {
+      els.transcript.innerHTML = '';
+      logTranscript("Transcript cleared.", "system");
+    }
+
+  </script>
+</body>
+</html>
