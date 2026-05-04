@@ -19,6 +19,7 @@
       --primary: #3b82f6; 
       --accent: #10B981; 
       --danger: #EF4444; 
+      --transfer: #F59E0B; /* Orange for transferring */
       --text-main: #0f172a; 
       --text-secondary: #64748b; 
       --border-color: #e2e8f0; 
@@ -39,22 +40,20 @@
 
     /* Background Ambient Glow */
     .ambient-glow {
-      position: absolute;
-      width: 60vw;
-      height: 60vw;
+      position: absolute; width: 60vw; height: 60vw;
       background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(255,255,255,0) 70%);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      z-index: 0;
-      pointer-events: none;
-      transition: all 0.5s ease;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      border-radius: 50%; z-index: 0; pointer-events: none; transition: all 0.5s ease;
     }
     
     .ambient-glow.active-glow {
       background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(255,255,255,0) 70%);
       animation: breathe 3s infinite alternate;
+    }
+
+    .ambient-glow.transfer-glow {
+      background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, rgba(255,255,255,0) 70%);
+      animation: breathe 1.5s infinite alternate;
     }
 
     @keyframes breathe {
@@ -63,62 +62,47 @@
     }
 
     .screen {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      z-index: 10;
-      transition: opacity 0.4s ease, transform 0.4s ease;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 10; transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
     .hidden { opacity: 0; pointer-events: none; transform: scale(0.95); }
 
     /* --- SETUP SCREEN --- */
     .setup-container {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      padding: 40px;
-      border-radius: 24px;
-      text-align: center;
-      max-width: 400px; width: 90%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      padding: 40px; border-radius: 24px; text-align: center;
+      max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
     }
 
     .brand-logo {
-      width: 70px; height: 70px;
-      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-      border-radius: 20px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-      box-shadow: 0 10px 20px rgba(59,130,246,0.2);
+      width: 70px; height: 70px; background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      border-radius: 20px; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; box-shadow: 0 10px 20px rgba(59,130,246,0.2);
     }
 
     .setup-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
     .setup-subtitle { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
 
     .selector-label {
-      display: block; text-align: left; font-size: 0.8rem;
-      color: var(--text-secondary); font-weight: 600;
-      text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;
+      display: block; text-align: left; font-size: 0.8rem; color: var(--text-secondary); 
+      font-weight: 600; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;
     }
 
     select {
-      width: 100%; padding: 14px 16px; border-radius: 12px;
-      background: #f1f5f9; border: 1px solid var(--border-color);
-      color: var(--text-main); font-family: inherit; font-size: 1rem; margin-bottom: 30px;
-      outline: none; cursor: pointer; transition: all 0.2s;
+      width: 100%; padding: 14px 16px; border-radius: 12px; background: #f1f5f9; 
+      border: 1px solid var(--border-color); color: var(--text-main); font-family: inherit; 
+      font-size: 1rem; margin-bottom: 30px; outline: none; cursor: pointer; transition: all 0.2s;
     }
-    
     select:focus { border-color: var(--primary); background: var(--bg-surface); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
 
     .start-call-btn {
-      width: 100%; padding: 16px; border-radius: 30px;
-      background: var(--accent); color: white; border: none;
-      font-size: 1.1rem; font-weight: 600; font-family: inherit;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 16px; border-radius: 30px; background: var(--accent); color: white; 
+      border: none; font-size: 1.1rem; font-weight: 600; font-family: inherit; cursor: pointer; 
+      display: flex; align-items: center; justify-content: center; gap: 8px;
       transition: all 0.2s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
     }
-    
     .start-call-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
 
     /* --- ACTIVE CALL SCREEN --- */
@@ -129,7 +113,7 @@
     .status-dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; }
     .status-dot.active { background: var(--accent); animation: pulseDot 1.5s infinite; }
     .status-dot.listening { background: var(--primary); animation: pulseDot 1.5s infinite; }
-    .status-dot.ringing { background: #F59E0B; animation: pulseDot 1s infinite; } /* Yellow for ringing */
+    .status-dot.ringing, .status-dot.transferring { background: var(--transfer); animation: pulseDot 1s infinite; }
 
     @keyframes pulseDot {
       0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
@@ -137,26 +121,20 @@
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* Avatar & Audio Visualizer */
+    /* Avatar */
     .avatar-container {
       position: relative; width: 150px; height: 150px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 40px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 40px;
     }
 
     .ai-avatar-large {
-      width: 120px; height: 120px;
-      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 48px; z-index: 2;
-      box-shadow: 0 10px 30px rgba(59,130,246,0.3);
-      border: 4px solid var(--bg-main);
-      transition: all 0.3s ease;
+      width: 120px; height: 120px; background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 48px; z-index: 2; box-shadow: 0 10px 30px rgba(59,130,246,0.3);
+      border: 4px solid var(--bg-main); transition: all 0.3s ease;
     }
 
-    /* Shake animation specifically for the ringing phase */
-    .ringing-shake .ai-avatar-large {
+    .ringing-shake .ai-avatar-large, .transferring-shake .ai-avatar-large {
       animation: shake 1.5s infinite;
       background: linear-gradient(135deg, #d97706, #f59e0b);
       box-shadow: 0 10px 30px rgba(245,158,11,0.3);
@@ -168,7 +146,6 @@
       20%, 40%, 60%, 80% { transform: rotate(5deg); }
     }
 
-    /* Soundwave rings around avatar when speaking */
     .ring {
       position: absolute; width: 100%; height: 100%;
       border-radius: 50%; border: 2px solid var(--primary);
@@ -190,8 +167,7 @@
       background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05);
       border-radius: 20px; padding: 20px; margin-bottom: 50px;
       min-height: 100px; max-height: 200px; overflow-y: auto;
-      backdrop-filter: blur(10px);
-      display: flex; flex-direction: column; gap: 10px;
+      backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 10px;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
@@ -209,18 +185,24 @@
     }
 
     .control-btn {
-      width: 60px; height: 60px; border-radius: 50%; border: none;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s; 
-      background: var(--bg-surface); color: var(--text-main);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      border: 1px solid var(--border-color);
+      width: 60px; height: 60px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; background: var(--bg-surface); color: var(--text-main);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 1px solid var(--border-color);
     }
     
     .control-btn:hover { background: #f1f5f9; transform: scale(1.05); }
     .control-btn.end-call { background: var(--danger); color: white; width: 75px; height: 75px; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3); border: none; }
     .control-btn.end-call:hover { background: #DC2626; transform: scale(1.05) rotate(-10deg); }
     .control-btn.muted { background: #334155; color: white; border-color: #334155; }
+
+    /* Transfer Dashboard Placeholder */
+    .transfer-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-main); z-index: 20; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .transfer-overlay.active { opacity: 1; pointer-events: auto; }
 
   </style>
 </head>
@@ -250,10 +232,6 @@
         <span class="material-symbols-rounded">call</span>
         Start Voice Call
       </button>
-
-      <div style="margin-top: 20px; font-size: 0.75rem; color: var(--text-secondary);">
-        Please allow microphone access when prompted.
-      </div>
     </div>
   </div>
 
@@ -291,6 +269,23 @@
     </div>
   </div>
 
+  <!-- TRANSFER OVERLAY -->
+  <div class="transfer-overlay" id="transferOverlay">
+    <div class="brand-logo" style="background: linear-gradient(135deg, #d97706, #f59e0b);">
+      <span class="material-symbols-rounded" style="color:white; font-size:36px;">headset_mic</span>
+    </div>
+    <h2 class="setup-title">Transferring Call</h2>
+    <p class="setup-subtitle">Please wait while we connect you to a live human agent.</p>
+    <div style="display: flex; gap: 8px; margin-top: 20px;">
+      <div class="status-dot active"></div>
+      <div class="status-dot active" style="animation-delay: 0.2s"></div>
+      <div class="status-dot active" style="animation-delay: 0.4s"></div>
+    </div>
+    <button class="start-call-btn" style="background: var(--danger); width: auto; padding: 12px 30px; margin-top: 40px;" onclick="cancelTransfer()">
+      Cancel Transfer
+    </button>
+  </div>
+
   <script>
     // --- CONFIGURATION ---
     const API_BASE = "https://api.x.ai/v1";
@@ -299,6 +294,7 @@
     // --- STATE ---
     let isCallActive = false;
     let isRinging = false;
+    let isTransferring = false;
     let isMuted = false;
     let currentVoice = 'ara';
     let conversationHistory = [];
@@ -316,6 +312,7 @@
     const els = {
       setup: document.getElementById('setupScreen'),
       call: document.getElementById('callScreen'),
+      transfer: document.getElementById('transferOverlay'),
       voiceSelect: document.getElementById('voiceSelect'),
       statusText: document.getElementById('callStatusText'),
       statusDot: document.getElementById('statusDot'),
@@ -346,7 +343,6 @@
         XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
       } catch (e) { 
         console.error("Key Load Error", e); 
-        logTranscript("System error: Could not load API credentials.", "system");
       }
     }
     loadKey();
@@ -354,83 +350,69 @@
     // --- HAPTIC FEEDBACK (VIBRATION) ---
     function triggerHaptic(type) {
       if (!navigator.vibrate) return; 
-      if (type === 'start') {
-        navigator.vibrate(40); 
-      } else if (type === 'stop') {
-        navigator.vibrate([30, 50, 30]); 
-      } else if (type === 'ring') {
-        navigator.vibrate([100, 100, 100, 100]); // Short repeating buzz for ringing
-      }
+      if (type === 'start') navigator.vibrate(40); 
+      else if (type === 'stop') navigator.vibrate([30, 50, 30]); 
+      else if (type === 'ring') navigator.vibrate([100, 100, 100, 100]); 
     }
 
     // --- SYNTHESIZED RINGTONE (Web Audio API) ---
     function startRingtone() {
-      // Initialize Audio Context
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       ringAudioCtx = new AudioContext();
 
       function playSingleRing() {
         if (!ringAudioCtx || ringAudioCtx.state === 'closed') return;
-        
         triggerHaptic('ring');
 
-        // Create standard dual-frequency telephone ring tone (440Hz + 480Hz)
         const osc1 = ringAudioCtx.createOscillator();
         const osc2 = ringAudioCtx.createOscillator();
         const gainNode = ringAudioCtx.createGain();
         
-        osc1.type = 'sine';
-        osc2.type = 'sine';
-        osc1.frequency.value = 440; 
-        osc2.frequency.value = 480;
+        osc1.type = 'sine'; osc2.type = 'sine';
+        osc1.frequency.value = 440; osc2.frequency.value = 480;
         
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
+        osc1.connect(gainNode); osc2.connect(gainNode);
         gainNode.connect(ringAudioCtx.destination);
         
         const now = ringAudioCtx.currentTime;
-        
-        // Envelope: Fade in, hold, fade out (Total 1.5 seconds)
         gainNode.gain.setValueAtTime(0, now);
-        gainNode.gain.linearRampToValueAtTime(0.3, now + 0.05); // Keep volume reasonable
+        gainNode.gain.linearRampToValueAtTime(0.3, now + 0.05);
         gainNode.gain.setValueAtTime(0.3, now + 1.4);
         gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
         
-        osc1.start(now);
-        osc2.start(now);
-        osc1.stop(now + 1.6);
-        osc2.stop(now + 1.6);
+        osc1.start(now); osc2.start(now);
+        osc1.stop(now + 1.6); osc2.stop(now + 1.6);
       }
 
-      // Play immediately, then repeat every 3 seconds
       playSingleRing();
       ringInterval = setInterval(playSingleRing, 3000);
     }
 
     function stopRingtone() {
       if (ringInterval) clearInterval(ringInterval);
-      if (ringAudioCtx && ringAudioCtx.state !== 'closed') {
-        ringAudioCtx.close();
-      }
+      if (ringAudioCtx && ringAudioCtx.state !== 'closed') ringAudioCtx.close();
       ringAudioCtx = null;
     }
 
-    // --- SYSTEM PROMPT ---
+    // --- SYSTEM PROMPT (Updated for Call Center Handoff) ---
     function getSystemPrompt() {
-      return `You are an AI voice assistant handling a live phone call for an IT and software business called Rare Grade Tech. 
+      return `You are an AI voice assistant handling a live phone call for Rare Grade Tech. 
       You are highly conversational, warm, and brief. 
+      
       CRITICAL RULES:
-      - Never use markdown formatting, bullet points, or code blocks.
       - Keep responses to 1-3 short sentences. This is a phone call.
-      - Speak naturally. You can use fillers like "Hmm" or "Ah" occasionally to sound human.
-      - If the user asks a complex technical question, give a brief overview and offer to have a human consultant follow up.`;
+      - Speak naturally. No markdown formatting.
+      
+      CALL TRANSFER INSTRUCTION:
+      If the user explicitly asks to speak to a human, an agent, a person, or customer service, you MUST include the exact tag [TRANSFER] anywhere in your response. 
+      Example: "I can certainly connect you to a human agent. [TRANSFER] Please hold while I route your call."`;
     }
 
     // --- SPEECH RECOGNITION SETUP ---
     function initSpeechRecognition() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        alert("Your browser does not support Speech Recognition. Please use Chrome, Edge, or Safari.");
+        alert("Your browser does not support Speech Recognition.");
         return false;
       }
       
@@ -440,14 +422,13 @@
       speechRecognition.lang = 'en-US';
 
       speechRecognition.onstart = () => {
-        // Only show listening status if the call is active, unmuted, and it is NOT ringing
-        if (isCallActive && !isMuted && !isRinging) {
+        if (isCallActive && !isMuted && !isRinging && !isTransferring) {
           updateStatus("Listening...", "listening");
         }
       };
 
       speechRecognition.onresult = async (event) => {
-        if (!isCallActive || isRinging) return;
+        if (!isCallActive || isRinging || isTransferring) return;
         const transcript = event.results[0][0].transcript;
         
         if (transcript.trim() === '') return;
@@ -457,17 +438,15 @@
       };
 
       speechRecognition.onerror = (event) => {
-        if (isCallActive && !isMuted && !isRinging) {
+        if (isCallActive && !isMuted && !isRinging && !isTransferring) {
           if (event.error === 'no-speech') {
             setTimeout(() => { if(isCallActive && !isRinging) startListening(); }, 500);
-          } else {
-            updateStatus("Microphone issue detected.", "error");
           }
         }
       };
 
       speechRecognition.onend = () => {
-        if (isCallActive && !isMuted && !isRinging && (!currentAudio || currentAudio.paused)) {
+        if (isCallActive && !isMuted && !isRinging && !isTransferring && (!currentAudio || currentAudio.paused)) {
            startListening();
         }
       };
@@ -476,7 +455,7 @@
     }
 
     function startListening() {
-      if (speechRecognition && isCallActive && !isMuted && !isRinging) {
+      if (speechRecognition && isCallActive && !isMuted && !isRinging && !isTransferring) {
         try { speechRecognition.start(); } catch (e) {}
       }
     }
@@ -489,24 +468,14 @@
 
     // --- CORE CALL LOGIC ---
     async function startCall() {
-      if (!XAI_API_KEY) {
-        alert("API Key is still loading or failed to load. Please wait a second and try again.");
-        return;
-      }
-
-      const hasSupport = initSpeechRecognition();
-      if (!hasSupport) return;
+      if (!XAI_API_KEY) { alert("API Key is loading. Please wait."); return; }
+      if (!initSpeechRecognition()) return;
 
       currentVoice = els.voiceSelect.value;
-      isCallActive = true;
-      isRinging = true;
-      isMuted = false;
+      isCallActive = true; isRinging = true; isTransferring = false; isMuted = false;
       conversationHistory = [{ role: "system", content: getSystemPrompt() }];
-
-      // Initialize empty audio to bypass mobile autoplay blocks
       currentAudio = new Audio();
 
-      // UI Transition to Ringing State
       els.setup.classList.add('hidden');
       els.call.classList.remove('hidden');
       
@@ -515,88 +484,61 @@
       updateStatus("Ringing...", "ringing");
       els.transcript.innerHTML = '';
       
-      // Start the ringing audio
       startRingtone();
-
-      // Simulate network connection delay (3.5 seconds)
-      callTimeout = setTimeout(() => {
-        answerCall();
-      }, 3500);
+      callTimeout = setTimeout(() => { answerCall(); }, 3500);
     }
 
     function answerCall() {
-      if (!isCallActive) return; // In case user hung up while ringing
-
+      if (!isCallActive) return;
       isRinging = false;
       stopRingtone();
       
-      // Update UI to Connected State
       els.avatarContainer.classList.remove('ringing-shake');
       els.avatarIcon.innerText = 'graphic_eq';
       els.ambientGlow.classList.add('active-glow');
       updateStatus("Connected", "active");
-      
       triggerHaptic('start');
 
-      // The AI acts like a receptionist and speaks the first greeting
       const initialGreeting = "Hello, you've reached Rare Grade Tech. How can I help you today?";
       conversationHistory.push({ role: "assistant", content: initialGreeting });
-      
       logTranscript(initialGreeting, "ai");
       speakAIResponse(initialGreeting);
     }
 
     function endCall() {
-      isCallActive = false;
-      isRinging = false;
+      isCallActive = false; isRinging = false; isTransferring = false;
+      clearTimeout(callTimeout); stopRingtone(); stopListening();
       
-      clearTimeout(callTimeout);
-      stopRingtone();
-      stopListening();
-      
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-      }
-
+      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
       setSpeakingState(false);
-      updateStatus("Call Ended", "error");
       
       els.avatarContainer.classList.remove('ringing-shake');
       els.ambientGlow.classList.remove('active-glow');
-
-      setTimeout(() => {
-        els.call.classList.add('hidden');
-        els.setup.classList.remove('hidden');
-      }, 1500);
+      els.transfer.classList.remove('active');
+      els.call.classList.add('hidden');
+      els.setup.classList.remove('hidden');
     }
 
     function toggleMute() {
-      if (isRinging) return; // Prevent muting during the ringing phase
-      
+      if (isRinging || isTransferring) return; 
       isMuted = !isMuted;
       if (isMuted) {
         stopListening();
-        els.muteBtn.classList.add('muted');
-        els.muteIcon.innerText = 'mic_off';
-        updateStatus("Microphone Muted", "default");
-        triggerHaptic('stop');
+        els.muteBtn.classList.add('muted'); els.muteIcon.innerText = 'mic_off';
+        updateStatus("Microphone Muted", "default"); triggerHaptic('stop');
       } else {
-        els.muteBtn.classList.remove('muted');
-        els.muteIcon.innerText = 'mic';
+        els.muteBtn.classList.remove('muted'); els.muteIcon.innerText = 'mic';
         if (!currentAudio || currentAudio.paused) {
-          startListening();
-          triggerHaptic('start');
+          startListening(); triggerHaptic('start');
         } else {
           updateStatus("AI is speaking...", "active");
         }
       }
     }
 
-    // --- AI PROCESSING (xAI Completions) ---
+    // --- AI PROCESSING & TRANSFER INTERCEPT ---
     async function processUserSpeech(text) {
-      stopListening(); 
-      triggerHaptic('stop'); 
+      stopListening(); triggerHaptic('stop'); 
       updateStatus("Thinking...", "active");
 
       conversationHistory.push({ role: 'user', content: text });
@@ -604,25 +546,28 @@
       try {
         const res = await fetch(`${API_BASE}/chat/completions`, {
           method: 'POST',
-          headers: { 
-            'Authorization': `Bearer ${XAI_API_KEY}`, 
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({ 
-            model: "grok-4-1-fast-non-reasoning", 
-            messages: conversationHistory, 
-            stream: false 
-          })
+          headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: "grok-4-1-fast-non-reasoning", messages: conversationHistory, stream: false })
         });
 
         if (!res.ok) throw new Error("API Error");
         
         const data = await res.json();
-        const aiResponseText = data.choices[0].message.content;
+        let aiResponseText = data.choices[0].message.content;
         
+        // INTERCEPT TRANSFER LOGIC
+        if (aiResponseText.includes("[TRANSFER]")) {
+          isTransferring = true;
+          aiResponseText = aiResponseText.replace("[TRANSFER]", "").trim();
+          conversationHistory.push({ role: 'assistant', content: aiResponseText });
+          logTranscript(aiResponseText, "ai");
+          
+          await speakAIResponse(aiResponseText, true); // True flag = trigger transfer after speaking
+          return;
+        }
+
         conversationHistory.push({ role: 'assistant', content: aiResponseText });
         logTranscript(aiResponseText, "ai");
-
         await speakAIResponse(aiResponseText);
 
       } catch (err) {
@@ -632,87 +577,79 @@
       }
     }
 
-    // --- TTS PROCESSING (xAI Voice) ---
-    async function speakAIResponse(text) {
-      if (!isCallActive) return;
+    // --- CALL CENTER TRANSFER UI ---
+    function initiateTransfer() {
+      updateStatus("Transferring...", "transferring");
+      els.ambientGlow.classList.remove('active-glow');
+      els.ambientGlow.classList.add('transfer-glow');
+      els.avatarContainer.classList.add('transferring-shake');
+      
+      // Bring up the full screen transfer overlay
+      els.transfer.classList.add('active');
+      
+      // Play the ringing sound again while they wait for the human
+      startRingtone();
+      
+      // Note: This is where you will eventually hook up your WebSockets/Twilio API to ring the agent dashboard.
+    }
 
-      updateStatus("Speaking...", "active");
-      setSpeakingState(true);
+    function cancelTransfer() {
+      stopRingtone();
+      endCall();
+    }
+
+    // --- TTS PROCESSING ---
+    async function speakAIResponse(text, isTransfer = false) {
+      if (!isCallActive) return;
+      updateStatus("Speaking...", "active"); setSpeakingState(true);
 
       try {
         const response = await fetch(`${API_BASE}/tts`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${XAI_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: text,
-            voice_id: currentVoice,
-            language: 'en',
-          }),
+          headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: text, voice_id: currentVoice, language: 'en' }),
         });
 
         if (!response.ok) throw new Error("TTS Error");
 
         const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
-        
-        currentAudio.src = audioUrl;
+        currentAudio.src = URL.createObjectURL(audioBlob);
         
         currentAudio.onended = () => {
           setSpeakingState(false);
-          // Resume listening loop automatically if call is active
-          if (isCallActive && !isMuted) {
-            startListening();
-            triggerHaptic('start'); 
-          } else if (isCallActive && isMuted) {
-            updateStatus("Microphone Muted", "default");
+          
+          // If we are transferring, do not restart microphone. Go to transfer UI.
+          if (isTransfer) {
+            initiateTransfer();
+            return;
           }
+
+          if (isCallActive && !isMuted) { startListening(); triggerHaptic('start'); } 
+          else if (isCallActive && isMuted) { updateStatus("Microphone Muted", "default"); }
         };
 
-        currentAudio.onerror = () => {
-          setSpeakingState(false);
-          startListening(); 
-        };
-
+        currentAudio.onerror = () => { setSpeakingState(false); startListening(); };
         await currentAudio.play();
 
       } catch (error) {
-        console.error('TTS error:', error);
-        setSpeakingState(false);
-        startListening();
+        console.error('TTS error:', error); setSpeakingState(false); startListening();
       }
     }
 
     // --- UI HELPERS ---
-    function updateStatus(text, state) {
-      els.statusText.innerHTML = `<div class="status-dot ${state}" id="statusDot"></div> ${text}`;
-    }
-
+    function updateStatus(text, state) { els.statusText.innerHTML = `<div class="status-dot ${state}" id="statusDot"></div> ${text}`; }
     function setSpeakingState(isSpeaking) {
-      if (isSpeaking) {
-        els.avatarContainer.classList.add('speaking');
-      } else {
-        els.avatarContainer.classList.remove('speaking');
-      }
+      if (isSpeaking) els.avatarContainer.classList.add('speaking');
+      else els.avatarContainer.classList.remove('speaking');
     }
-
     function logTranscript(text, sender) {
       const line = document.createElement('div');
       line.className = `transcript-line ${sender}`;
-      
-      let cleanText = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
-      line.innerText = cleanText;
-      
+      line.innerText = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
       els.transcript.appendChild(line);
       els.transcript.scrollTop = els.transcript.scrollHeight;
     }
-
-    function clearTranscript() {
-      els.transcript.innerHTML = '';
-      logTranscript("Transcript cleared.", "system");
-    }
+    function clearTranscript() { els.transcript.innerHTML = ''; }
 
   </script>
 </body>
