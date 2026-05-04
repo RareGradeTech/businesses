@@ -10,9 +10,13 @@
             theme: {
                 extend: {
                     colors: {
-                        background: '#050505',
-                        surface: '#111111',
-                        surfaceBorder: '#222222',
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                        }
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -25,201 +29,241 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
         body {
-            background-color: #050505;
-            color: #ffffff;
+            background-color: #f8fafc; /* slate-50 */
+            color: #0f172a; /* slate-900 */
         }
 
-        /* Glassmorphism utilities */
-        .glass {
-            background: rgba(255, 255, 255, 0.02);
+        /* Light Theme Glassmorphism */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8); /* slate-200 */
         }
 
-        .glass-input {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: white;
+        .glass-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .input-field {
+            background: #f1f5f9; /* slate-100 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #0f172a;
         }
         
-        .glass-input:focus {
+        .input-field:focus {
             border-color: #3b82f6;
-            background: rgba(255, 255, 255, 0.05);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         /* Gradients */
         .text-gradient {
-            background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .text-gradient-accent {
-            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Background glow effects */
+        /* Subtle Light Blob */
         .glow-blob {
             position: absolute;
             width: 40vw;
             height: 40vw;
             border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.15;
+            filter: blur(120px);
+            opacity: 0.4;
             z-index: -1;
             pointer-events: none;
         }
     </style>
 </head>
-<body class="antialiased relative overflow-x-hidden selection:bg-blue-500/30">
+<body class="antialiased relative overflow-x-hidden selection:bg-brand-100 selection:text-brand-900">
 
     <!-- Ambient Background Glows -->
-    <div class="glow-blob bg-blue-600 top-[-10%] left-[-10%]"></div>
-    <div class="glow-blob bg-purple-600 top-[20%] right-[-10%] opacity-10"></div>
+    <div class="glow-blob bg-blue-100 top-[-10%] left-[-10%]"></div>
+    <div class="glow-blob bg-purple-50 top-[20%] right-[-10%]"></div>
 
     <!-- Navigation -->
-    <nav class="fixed w-full top-0 z-50 glass border-b-0 border-white/5">
+    <nav class="fixed w-full top-0 z-50 glass-nav">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-xl font-bold tracking-tight">
-                Rare Grade<span class="text-blue-500">.</span>
+            <div class="text-xl font-bold tracking-tight text-slate-900">
+                Rare Grade<span class="text-brand-600">.</span>
             </div>
-            <a href="#apply" class="text-sm font-medium bg-white text-black px-5 py-2.5 rounded-full hover:bg-gray-200 transition">
+            <a href="#apply" class="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-full hover:bg-slate-800 transition shadow-md">
                 Request Beta Access
             </a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <main class="container mx-auto px-6 pt-40 pb-20 text-center flex flex-col items-center">
-        <!-- New Feature Pill -->
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass mb-8 text-xs font-medium text-gray-300">
-            <span class="flex h-2 w-2 rounded-full bg-blue-500"></span>
-            WhatsApp Cloud API Integration Live
-        </div>
+    <!-- Hero Section (Split Layout) -->
+    <main class="container mx-auto px-6 pt-32 pb-20 lg:pt-40 lg:pb-28">
+        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+            
+            <!-- Left: Text Content -->
+            <div class="w-full lg:w-1/2 text-center lg:text-left z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-brand-100 shadow-sm mb-8 text-xs font-semibold text-brand-600">
+                    <span class="flex h-2 w-2 rounded-full bg-brand-500 animate-pulse"></span>
+                    WhatsApp Cloud API Integration Live
+                </div>
 
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-tight max-w-4xl">
-            Automate Customer Support. <br />
-            <span class="text-gradient-accent">Never Miss a Sale.</span>
-        </h1>
-        
-        <p class="text-lg text-gray-400 mb-10 max-w-2xl font-light">
-            Deploy custom AI assistants on your official WhatsApp Business account. Handle bookings, answer FAQs, and qualify leads 24/7.
-        </p>
+                <h1 class="text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tighter mb-6 leading-[1.1] text-slate-900">
+                    Automate Support. <br />
+                    <span class="text-gradient-accent">Never Miss a Sale.</span>
+                </h1>
+                
+                <p class="text-lg text-slate-600 mb-10 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                    Deploy custom AI assistants on your official WhatsApp Business account. Handle bookings, answer FAQs, and qualify leads 24/7.
+                </p>
 
-        <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <a href="#apply" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-full font-medium transition flex items-center justify-center gap-2">
-                Deploy Your Bot
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-            </a>
-            <a href="#features" class="glass text-white px-8 py-3.5 rounded-full font-medium hover:bg-white/5 transition flex items-center justify-center">
-                Explore Features
-            </a>
-        </div>
-
-        <!-- Dribbble-style Dashboard/Chat Mockup Container -->
-        <div class="mt-20 w-full max-w-5xl relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10"></div>
-            <div class="glass rounded-2xl md:rounded-[2rem] p-2 md:p-4 border border-white/10 shadow-2xl overflow-hidden">
-                <div class="bg-surface rounded-xl md:rounded-[1.5rem] h-[300px] md:h-[500px] w-full flex items-center justify-center border border-white/5 relative overflow-hidden">
-                    <p class="text-gray-600 text-sm font-mono">[ Insert UI / WhatsApp Dashboard Mockup Here ]</p>
+                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center lg:justify-start">
+                    <a href="#apply" class="bg-brand-600 hover:bg-brand-500 text-white px-8 py-4 rounded-full font-semibold transition flex items-center justify-center gap-2 shadow-lg shadow-brand-500/30">
+                        Deploy Your Bot
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                    <a href="#features" class="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-full font-semibold hover:bg-slate-50 transition flex items-center justify-center shadow-sm">
+                        Explore Features
+                    </a>
                 </div>
             </div>
+
+            <!-- Right: Image Content -->
+            <div class="w-full lg:w-1/2 relative">
+                <!-- Decorative background block behind image -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-brand-100 to-purple-50 rounded-[2rem] transform translate-x-4 translate-y-4 -z-10"></div>
+                
+                <div class="rounded-2xl md:rounded-[2rem] overflow-hidden border border-slate-200 shadow-2xl bg-white p-2">
+                    <!-- Placeholder Image (Unsplash) -->
+                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=2000&auto=format&fit=crop" 
+                         alt="Person holding smartphone using business app" 
+                         class="w-full h-[400px] lg:h-[500px] object-cover rounded-xl md:rounded-[1.5rem]" />
+                </div>
+                
+                <!-- Floating UI Element for extra flair -->
+                <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-4 animate-bounce" style="animation-duration: 3s;">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-900">New Booking</p>
+                        <p class="text-xs text-slate-500">Just now via WhatsApp</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
     <!-- Bento Grid Features Section -->
-    <section id="features" class="py-24 container mx-auto px-6 max-w-5xl">
-        <div class="mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">Powerful Infrastructure. <br/><span class="text-gray-500">Invisible to your customers.</span></h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Large Card -->
-            <div class="md:col-span-2 glass rounded-3xl p-8 flex flex-col justify-between min-h-[300px]">
-                <div>
-                    <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Instant Contextual Replies</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">Trained specifically on your company data. Whether it is parts procurement, organic farming catalogs, or service quotes, the AI responds exactly like your best employee.</p>
-                </div>
+    <section id="features" class="py-24 bg-white border-t border-slate-200">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="mb-16 text-center lg:text-left">
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-slate-900">Powerful Infrastructure. <br class="hidden lg:block"/><span class="text-slate-500">Invisible to your customers.</span></h2>
             </div>
 
-            <!-- Small Card 1 -->
-            <div class="glass rounded-3xl p-8 flex flex-col justify-between min-h-[300px]">
-                <div>
-                    <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Large Card -->
+                <div class="md:col-span-2 glass-card rounded-3xl p-8 lg:p-10 flex flex-col justify-between min-h-[300px]">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-600 mb-6 border border-brand-100">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-slate-900">Instant Contextual Replies</h3>
+                        <p class="text-slate-600 text-base leading-relaxed max-w-lg">Trained specifically on your company data. Whether it is parts procurement, organic farming catalogs, or service quotes, the AI responds exactly like your best employee.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">24/7 Uptime</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">Capture leads and answer inquiries long after you've closed up shop for the day.</p>
                 </div>
-            </div>
 
-            <!-- Small Card 2 -->
-            <div class="glass rounded-3xl p-8 flex flex-col justify-between min-h-[300px]">
-                <div>
-                    <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <!-- Small Card 1 -->
+                <div class="glass-card rounded-3xl p-8 flex flex-col justify-between min-h-[300px]">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 border border-purple-100">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-slate-900">24/7 Uptime</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Capture leads and answer inquiries long after you've closed up shop for the day.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Meta Compliant</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">Built securely on the official Cloud API, ensuring your business account is safe from bans.</p>
                 </div>
-            </div>
 
-            <!-- Large Card -->
-            <div class="md:col-span-2 glass rounded-3xl p-8 flex flex-col justify-between min-h-[300px] relative overflow-hidden">
-                <div class="z-10">
-                    <div class="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <!-- Small Card 2 -->
+                <div class="glass-card rounded-3xl p-8 flex flex-col justify-between min-h-[300px]">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-6 border border-emerald-100">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-slate-900">Meta Compliant</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Built securely on the official Cloud API, ensuring your business account is safe from bans.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Seamless Human Handoff</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed max-w-md">The bot handles the routine questions. When a customer is ready to pay or has a complex issue, the AI pings you, allowing you to take over the chat manually.</p>
+                </div>
+
+                <!-- Large Card -->
+                <div class="md:col-span-2 glass-card rounded-3xl p-8 lg:p-10 flex flex-col justify-between min-h-[300px] bg-slate-900 text-white border-none">
+                    <div class="z-10">
+                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-orange-400 mb-6 border border-white/10">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Seamless Human Handoff</h3>
+                        <p class="text-slate-300 text-base leading-relaxed max-w-md">The bot handles the routine questions. When a customer is ready to pay or has a complex issue, the AI pings you, allowing you to take over the chat manually.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Application / Lead Form Section -->
-    <section id="apply" class="py-24 relative">
-        <div class="container mx-auto px-6 max-w-xl relative z-10">
-            <div class="glass rounded-[2rem] p-8 md:p-12">
+    <section id="apply" class="py-24 relative bg-slate-50">
+        <div class="container mx-auto px-6 max-w-2xl relative z-10">
+            <div class="bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-slate-200">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold mb-3 tracking-tight">Request Beta Access</h2>
-                    <p class="text-gray-400 text-sm">Submit your details to see if your business qualifies for our custom integration.</p>
+                    <h2 class="text-3xl font-bold mb-3 tracking-tight text-slate-900">Request Beta Access</h2>
+                    <p class="text-slate-500 text-base">Submit your details to see if your business qualifies for our custom integration.</p>
                 </div>
                 
-                <form class="space-y-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 uppercase tracking-wider">Full Name</label>
-                            <input type="text" class="w-full px-4 py-3 rounded-xl glass-input outline-none transition" placeholder="John Doe">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
+                            <input type="text" class="w-full px-4 py-3 rounded-xl input-field outline-none transition" placeholder="John Doe" required>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 uppercase tracking-wider">Business Name</label>
-                            <input type="text" class="w-full px-4 py-3 rounded-xl glass-input outline-none transition" placeholder="Company Ltd">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Business Name</label>
+                            <input type="text" class="w-full px-4 py-3 rounded-xl input-field outline-none transition" placeholder="Company Ltd" required>
                         </div>
                     </div>
                     
                     <div class="space-y-2">
-                        <label class="text-xs font-medium text-gray-400 uppercase tracking-wider">WhatsApp Number</label>
-                        <input type="tel" class="w-full px-4 py-3 rounded-xl glass-input outline-none transition" placeholder="+27 XX XXX XXXX">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">WhatsApp Number</label>
+                        <input type="tel" class="w-full px-4 py-3 rounded-xl input-field outline-none transition" placeholder="+27 XX XXX XXXX" required>
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-xs font-medium text-gray-400 uppercase tracking-wider">Daily Message Volume</label>
-                        <select class="w-full px-4 py-3 rounded-xl glass-input outline-none transition appearance-none">
-                            <option value="" disabled selected class="text-black">Select volume...</option>
-                            <option value="1-20" class="text-black">1 - 20 messages</option>
-                            <option value="21-50" class="text-black">21 - 50 messages</option>
-                            <option value="50+" class="text-black">50+ messages</option>
-                        </select>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Daily Message Volume</label>
+                        <div class="relative">
+                            <select class="w-full px-4 py-3 rounded-xl input-field outline-none transition appearance-none font-medium" required>
+                                <option value="" disabled selected>Select volume...</option>
+                                <option value="1-20">1 - 20 messages</option>
+                                <option value="21-50">21 - 50 messages</option>
+                                <option value="50+">50+ messages</option>
+                            </select>
+                            <!-- Custom dropdown arrow -->
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-white text-black font-semibold py-4 rounded-xl hover:bg-gray-200 transition mt-6">
+                    <button type="submit" class="w-full bg-slate-900 text-white font-bold text-lg py-4 rounded-xl hover:bg-brand-600 transition shadow-lg mt-6">
                         Submit Request
                     </button>
                 </form>
@@ -228,8 +272,8 @@
     </section>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 py-8 mt-12 text-center">
-        <p class="text-gray-600 text-sm">&copy; 2026 Rare Grade Tech. All rights reserved.</p>
+    <footer class="bg-white border-t border-slate-200 py-10 text-center">
+        <p class="text-slate-500 font-medium">&copy; 2026 Rare Grade Tech. All rights reserved.</p>
     </footer>
 
 </body>
