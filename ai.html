@@ -185,6 +185,9 @@
     let isCallActive = false, isRinging = false, isTransferring = false, isMuted = false;
     let currentVoice = 'ara', conversationHistory = [], callTimeout = null;
     let currentAudio = null, speechRecognition = null, ringAudioCtx = null, ringInterval = null;
+    
+    // Globally track the active Call ID so we package WebRTC correctly
+    let currentCallId = null;
 
     // --- DOM ELEMENTS ---
     const els = {
@@ -326,6 +329,9 @@
       els.ambientGlow.classList.remove('active-glow'); els.ambientGlow.classList.add('transfer-glow');
       els.transfer.classList.add('active'); startRingtone();
 
+      // Generate a unique ID for this specific call attempt
+      currentCallId = Math.random().toString(36).substring(2, 10);
+
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         peerConnection = new RTCPeerConnection(rtcConfig);
@@ -337,12 +343,25 @@
           remoteAudio.play(); // Agent audio coming through
         };
 
-        peerConnection.onicecandidate = event => { if (event.candidate) socket.emit('ice-candidate', event.candidate); };
+        // Attach Call ID to ICE candidates so server can route them correctly
+        peerConnection.onicecandidate = event => { 
+            if (event.candidate) {
+                socket.emit('ice-candidate', { candidate: event.candidate, callId: currentCallId }); 
+            }
+        };
+
         peerConnection.onconnectionstatechange = () => { if (peerConnection.connectionState === 'connected') handleHumanPickup(); };
 
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(offer);
-        socket.emit('offer', offer);
+        
+        // Structure the offer payload with the Call ID and Socket ID
+        socket.emit('offer', { 
+            callId: currentCallId, 
+            offer: offer, 
+            socketId: socket.id 
+        });
+
       } catch (error) {
         console.error("WebRTC Error:", error);
         els.transferSubtitle.innerText = "Error connecting microphone. Please check permissions.";
@@ -351,15 +370,18 @@
     }
 
     // --- SOCKET LISTENERS FOR SIGNALING ---
-    socket.on('answer', async (answer) => {
-      if (peerConnection) {
-        const remoteDesc = new RTCSessionDescription(answer);
+    socket.on('answer', async (data) => {
+      // Only process the answer if it matches the call we initiated
+      if (data.callId === currentCallId && peerConnection) {
+        const remoteDesc = new RTCSessionDescription(data.answer);
         await peerConnection.setRemoteDescription(remoteDesc);
       }
     });
 
-    socket.on('ice-candidate', async (candidate) => {
-      if (peerConnection) { try { await peerConnection.addIceCandidate(candidate); } catch (e) { console.error(e); } }
+    socket.on('ice-candidate', async (data) => {
+      if (data.callId === currentCallId && peerConnection) { 
+          try { await peerConnection.addIceCandidate(data.candidate); } catch (e) { console.error(e); } 
+      }
     });
 
     // --- UI CONTROLS ---
@@ -384,8 +406,10 @@
       isCallActive = false; isRinging = false; isTransferring = false;
       clearTimeout(callTimeout); stopRingtone(); stopListening();
       if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+      
       if (peerConnection) { peerConnection.close(); peerConnection = null; }
       if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
+      currentCallId = null; // Reset Call ID
       
       els.transfer.classList.remove('active'); els.call.classList.add('hidden');
       setTimeout(() => {
@@ -409,8 +433,6 @@
     }
 
     // --- EXPOSE FUNCTIONS TO GLOBAL SCOPE ---
-    // Because this is a type="module" script, inline HTML onclick events cannot see these functions.
-    // We attach them to the window object here so the HTML buttons work perfectly.
     window.startCall = startCall;
     window.endCall = endCall;
     window.toggleMute = toggleMute;
