@@ -8,21 +8,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
 
-  <!-- Firebase Configuration for Remote Config API Keys -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
 
   <style>
     /* --- LIGHT THEME PALETTE --- */
     :root {
-      --bg-main: #f8fafc; /* Soft slate background */
-      --bg-surface: #ffffff; /* Pure white cards */
-      --primary: #3b82f6; /* Blue for AI and accents */
-      --accent: #10B981; /* Green for active call */
-      --danger: #EF4444; /* Red for end call */
-      --text-main: #0f172a; /* Very dark slate for primary text */
-      --text-secondary: #64748b; /* Medium slate for subtitles */
-      --border-color: #e2e8f0; /* Light borders */
+      --bg-main: #f8fafc; 
+      --bg-surface: #ffffff; 
+      --primary: #3b82f6; 
+      --accent: #10B981; 
+      --danger: #EF4444; 
+      --text-main: #0f172a; 
+      --text-secondary: #64748b; 
+      --border-color: #e2e8f0; 
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -38,7 +37,7 @@
       position: relative;
     }
 
-    /* Background Ambient Glow (Adapted for Light Theme) */
+    /* Background Ambient Glow */
     .ambient-glow {
       position: absolute;
       width: 60vw;
@@ -63,23 +62,16 @@
       100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
     }
 
-    /* Screen Containers */
     .screen {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       z-index: 10;
       transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
-    .hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: scale(0.95);
-    }
+    .hidden { opacity: 0; pointer-events: none; transform: scale(0.95); }
 
     /* --- SETUP SCREEN --- */
     .setup-container {
@@ -88,9 +80,8 @@
       padding: 40px;
       border-radius: 24px;
       text-align: center;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.05); /* Softer shadow for light theme */
+      max-width: 400px; width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
     }
 
     .brand-logo {
@@ -131,17 +122,14 @@
     .start-call-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
 
     /* --- ACTIVE CALL SCREEN --- */
-    .call-header {
-      position: absolute; top: 0; width: 100%; padding: 30px 20px;
-      text-align: center;
-    }
-
+    .call-header { position: absolute; top: 0; width: 100%; padding: 30px 20px; text-align: center; }
     .call-title { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; color: var(--text-main); }
     .call-status { font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
     
     .status-dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; }
     .status-dot.active { background: var(--accent); animation: pulseDot 1.5s infinite; }
     .status-dot.listening { background: var(--primary); animation: pulseDot 1.5s infinite; }
+    .status-dot.ringing { background: #F59E0B; animation: pulseDot 1s infinite; } /* Yellow for ringing */
 
     @keyframes pulseDot {
       0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
@@ -151,8 +139,7 @@
 
     /* Avatar & Audio Visualizer */
     .avatar-container {
-      position: relative;
-      width: 150px; height: 150px;
+      position: relative; width: 150px; height: 150px;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 40px;
     }
@@ -165,6 +152,20 @@
       font-size: 48px; z-index: 2;
       box-shadow: 0 10px 30px rgba(59,130,246,0.3);
       border: 4px solid var(--bg-main);
+      transition: all 0.3s ease;
+    }
+
+    /* Shake animation specifically for the ringing phase */
+    .ringing-shake .ai-avatar-large {
+      animation: shake 1.5s infinite;
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      box-shadow: 0 10px 30px rgba(245,158,11,0.3);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); }
+      20%, 40%, 60%, 80% { transform: rotate(5deg); }
     }
 
     /* Soundwave rings around avatar when speaking */
@@ -199,16 +200,12 @@
     .transcript-line.ai { color: var(--primary); text-align: left; font-weight: 500; }
     .transcript-line.system { color: var(--text-secondary); text-align: center; font-size: 0.8rem; font-style: italic; }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Call Controls */
     .call-controls {
-      position: absolute; bottom: 50px;
-      display: flex; gap: 30px; align-items: center; justify-content: center;
-      width: 100%;
+      position: absolute; bottom: 50px; display: flex; gap: 30px;
+      align-items: center; justify-content: center; width: 100%;
     }
 
     .control-btn {
@@ -221,11 +218,8 @@
     }
     
     .control-btn:hover { background: #f1f5f9; transform: scale(1.05); }
-    
     .control-btn.end-call { background: var(--danger); color: white; width: 75px; height: 75px; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3); border: none; }
     .control-btn.end-call:hover { background: #DC2626; transform: scale(1.05) rotate(-10deg); }
-
-    /* Muted State Styling */
     .control-btn.muted { background: #334155; color: white; border-color: #334155; }
 
   </style>
@@ -278,23 +272,19 @@
       <div class="ring"></div>
       <div class="ring"></div>
       <div class="ai-avatar-large">
-        <span class="material-symbols-rounded" style="color:white; font-size:56px;">graphic_eq</span>
+        <span class="material-symbols-rounded" id="avatarIcon" style="color:white; font-size:56px;">ring_volume</span>
       </div>
     </div>
 
-    <div class="transcript-container" id="transcriptBox">
-      <!-- Transcripts will appear here -->
-    </div>
+    <div class="transcript-container" id="transcriptBox"></div>
 
     <div class="call-controls">
       <button class="control-btn" id="muteBtn" onclick="toggleMute()">
         <span class="material-symbols-rounded" id="muteIcon">mic</span>
       </button>
-      
       <button class="control-btn end-call" onclick="endCall()">
         <span class="material-symbols-rounded" style="font-size: 32px;">call_end</span>
       </button>
-      
       <button class="control-btn" onclick="clearTranscript()">
         <span class="material-symbols-rounded">clear_all</span>
       </button>
@@ -308,13 +298,19 @@
 
     // --- STATE ---
     let isCallActive = false;
+    let isRinging = false;
     let isMuted = false;
     let currentVoice = 'ara';
     let conversationHistory = [];
+    let callTimeout = null;
     
-    // Audio & Recognition Objects
+    // Audio Objects
     let currentAudio = null;
     let speechRecognition = null;
+    
+    // Web Audio Synthesizer variables for Ringtone
+    let ringAudioCtx = null;
+    let ringInterval = null;
 
     // --- DOM ELEMENTS ---
     const els = {
@@ -324,6 +320,7 @@
       statusText: document.getElementById('callStatusText'),
       statusDot: document.getElementById('statusDot'),
       avatarContainer: document.getElementById('avatarContainer'),
+      avatarIcon: document.getElementById('avatarIcon'),
       ambientGlow: document.getElementById('ambientGlow'),
       transcript: document.getElementById('transcriptBox'),
       muteBtn: document.getElementById('muteBtn'),
@@ -356,16 +353,66 @@
 
     // --- HAPTIC FEEDBACK (VIBRATION) ---
     function triggerHaptic(type) {
-      // Check if the device/browser supports vibration
       if (!navigator.vibrate) return; 
-
       if (type === 'start') {
-        // Short, single pop when starting to listen
         navigator.vibrate(40); 
       } else if (type === 'stop') {
-        // Quick double pop when it stops listening or gets muted
         navigator.vibrate([30, 50, 30]); 
+      } else if (type === 'ring') {
+        navigator.vibrate([100, 100, 100, 100]); // Short repeating buzz for ringing
       }
+    }
+
+    // --- SYNTHESIZED RINGTONE (Web Audio API) ---
+    function startRingtone() {
+      // Initialize Audio Context
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      ringAudioCtx = new AudioContext();
+
+      function playSingleRing() {
+        if (!ringAudioCtx || ringAudioCtx.state === 'closed') return;
+        
+        triggerHaptic('ring');
+
+        // Create standard dual-frequency telephone ring tone (440Hz + 480Hz)
+        const osc1 = ringAudioCtx.createOscillator();
+        const osc2 = ringAudioCtx.createOscillator();
+        const gainNode = ringAudioCtx.createGain();
+        
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+        osc1.frequency.value = 440; 
+        osc2.frequency.value = 480;
+        
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(ringAudioCtx.destination);
+        
+        const now = ringAudioCtx.currentTime;
+        
+        // Envelope: Fade in, hold, fade out (Total 1.5 seconds)
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.3, now + 0.05); // Keep volume reasonable
+        gainNode.gain.setValueAtTime(0.3, now + 1.4);
+        gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
+        
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 1.6);
+        osc2.stop(now + 1.6);
+      }
+
+      // Play immediately, then repeat every 3 seconds
+      playSingleRing();
+      ringInterval = setInterval(playSingleRing, 3000);
+    }
+
+    function stopRingtone() {
+      if (ringInterval) clearInterval(ringInterval);
+      if (ringAudioCtx && ringAudioCtx.state !== 'closed') {
+        ringAudioCtx.close();
+      }
+      ringAudioCtx = null;
     }
 
     // --- SYSTEM PROMPT ---
@@ -388,18 +435,19 @@
       }
       
       speechRecognition = new SpeechRecognition();
-      speechRecognition.continuous = false; // Stop after they pause so we can reply
+      speechRecognition.continuous = false; 
       speechRecognition.interimResults = false;
       speechRecognition.lang = 'en-US';
 
       speechRecognition.onstart = () => {
-        if (isCallActive && !isMuted) {
+        // Only show listening status if the call is active, unmuted, and it is NOT ringing
+        if (isCallActive && !isMuted && !isRinging) {
           updateStatus("Listening...", "listening");
         }
       };
 
       speechRecognition.onresult = async (event) => {
-        if (!isCallActive) return;
+        if (!isCallActive || isRinging) return;
         const transcript = event.results[0][0].transcript;
         
         if (transcript.trim() === '') return;
@@ -409,10 +457,9 @@
       };
 
       speechRecognition.onerror = (event) => {
-        console.warn("Speech recognition error:", event.error);
-        if (isCallActive && !isMuted) {
+        if (isCallActive && !isMuted && !isRinging) {
           if (event.error === 'no-speech') {
-            setTimeout(() => { if(isCallActive) startListening(); }, 500);
+            setTimeout(() => { if(isCallActive && !isRinging) startListening(); }, 500);
           } else {
             updateStatus("Microphone issue detected.", "error");
           }
@@ -420,8 +467,7 @@
       };
 
       speechRecognition.onend = () => {
-        // Resume listening if call is active, unmuted, and audio isn't currently playing
-        if (isCallActive && !isMuted && (!currentAudio || currentAudio.paused)) {
+        if (isCallActive && !isMuted && !isRinging && (!currentAudio || currentAudio.paused)) {
            startListening();
         }
       };
@@ -430,18 +476,14 @@
     }
 
     function startListening() {
-      if (speechRecognition && isCallActive && !isMuted) {
-        try {
-          speechRecognition.start();
-        } catch (e) {}
+      if (speechRecognition && isCallActive && !isMuted && !isRinging) {
+        try { speechRecognition.start(); } catch (e) {}
       }
     }
 
     function stopListening() {
       if (speechRecognition) {
-        try {
-          speechRecognition.stop();
-        } catch(e) {}
+        try { speechRecognition.stop(); } catch(e) {}
       }
     }
 
@@ -457,27 +499,59 @@
 
       currentVoice = els.voiceSelect.value;
       isCallActive = true;
+      isRinging = true;
       isMuted = false;
       conversationHistory = [{ role: "system", content: getSystemPrompt() }];
 
       // Initialize empty audio to bypass mobile autoplay blocks
       currentAudio = new Audio();
 
-      // UI Transition
+      // UI Transition to Ringing State
       els.setup.classList.add('hidden');
       els.call.classList.remove('hidden');
-      els.ambientGlow.classList.add('active-glow');
       
+      els.avatarContainer.classList.add('ringing-shake');
+      els.avatarIcon.innerText = 'ring_volume';
+      updateStatus("Ringing...", "ringing");
       els.transcript.innerHTML = '';
-      logTranscript("Call connected. Say hello!", "system");
       
-      // Vibrate and start the loop
+      // Start the ringing audio
+      startRingtone();
+
+      // Simulate network connection delay (3.5 seconds)
+      callTimeout = setTimeout(() => {
+        answerCall();
+      }, 3500);
+    }
+
+    function answerCall() {
+      if (!isCallActive) return; // In case user hung up while ringing
+
+      isRinging = false;
+      stopRingtone();
+      
+      // Update UI to Connected State
+      els.avatarContainer.classList.remove('ringing-shake');
+      els.avatarIcon.innerText = 'graphic_eq';
+      els.ambientGlow.classList.add('active-glow');
+      updateStatus("Connected", "active");
+      
       triggerHaptic('start');
-      startListening();
+
+      // The AI acts like a receptionist and speaks the first greeting
+      const initialGreeting = "Hello, you've reached Rare Grade Tech. How can I help you today?";
+      conversationHistory.push({ role: "assistant", content: initialGreeting });
+      
+      logTranscript(initialGreeting, "ai");
+      speakAIResponse(initialGreeting);
     }
 
     function endCall() {
       isCallActive = false;
+      isRinging = false;
+      
+      clearTimeout(callTimeout);
+      stopRingtone();
       stopListening();
       
       if (currentAudio) {
@@ -487,6 +561,8 @@
 
       setSpeakingState(false);
       updateStatus("Call Ended", "error");
+      
+      els.avatarContainer.classList.remove('ringing-shake');
       els.ambientGlow.classList.remove('active-glow');
 
       setTimeout(() => {
@@ -496,6 +572,8 @@
     }
 
     function toggleMute() {
+      if (isRinging) return; // Prevent muting during the ringing phase
+      
       isMuted = !isMuted;
       if (isMuted) {
         stopListening();
@@ -506,7 +584,6 @@
       } else {
         els.muteBtn.classList.remove('muted');
         els.muteIcon.innerText = 'mic';
-        // Only restart listening if AI isn't currently talking
         if (!currentAudio || currentAudio.paused) {
           startListening();
           triggerHaptic('start');
@@ -519,7 +596,7 @@
     // --- AI PROCESSING (xAI Completions) ---
     async function processUserSpeech(text) {
       stopListening(); 
-      triggerHaptic('stop'); // Vibrate so user knows it heard them
+      triggerHaptic('stop'); 
       updateStatus("Thinking...", "active");
 
       conversationHistory.push({ role: 'user', content: text });
@@ -557,6 +634,8 @@
 
     // --- TTS PROCESSING (xAI Voice) ---
     async function speakAIResponse(text) {
+      if (!isCallActive) return;
+
       updateStatus("Speaking...", "active");
       setSpeakingState(true);
 
@@ -586,7 +665,7 @@
           // Resume listening loop automatically if call is active
           if (isCallActive && !isMuted) {
             startListening();
-            triggerHaptic('start'); // Vibrate to let user know it's their turn to speak
+            triggerHaptic('start'); 
           } else if (isCallActive && isMuted) {
             updateStatus("Microphone Muted", "default");
           }
@@ -623,7 +702,6 @@
       const line = document.createElement('div');
       line.className = `transcript-line ${sender}`;
       
-      // Clean up markdown tags that might slip through
       let cleanText = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
       line.innerText = cleanText;
       
