@@ -13,22 +13,23 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
 
   <style>
+    /* --- LIGHT THEME PALETTE --- */
     :root {
-      --bg-dark: #050505;
-      --bg-surface: #111111;
-      --primary: #3b82f6;
+      --bg-main: #f8fafc; /* Soft slate background */
+      --bg-surface: #ffffff; /* Pure white cards */
+      --primary: #3b82f6; /* Blue for AI and accents */
       --accent: #10B981; /* Green for active call */
       --danger: #EF4444; /* Red for end call */
-      --text-main: #FFFFFF;
-      --text-secondary: #A1A1AA;
-      --border-color: #27272A;
+      --text-main: #0f172a; /* Very dark slate for primary text */
+      --text-secondary: #64748b; /* Medium slate for subtitles */
+      --border-color: #e2e8f0; /* Light borders */
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       font-family: 'Outfit', sans-serif;
-      background: var(--bg-dark);
+      background: var(--bg-main);
       color: var(--text-main);
       height: 100svh;
       display: flex;
@@ -37,12 +38,12 @@
       position: relative;
     }
 
-    /* Background Ambient Glow */
+    /* Background Ambient Glow (Adapted for Light Theme) */
     .ambient-glow {
       position: absolute;
       width: 60vw;
       height: 60vw;
-      background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%);
+      background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(255,255,255,0) 70%);
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -53,7 +54,7 @@
     }
     
     .ambient-glow.active-glow {
-      background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(0,0,0,0) 70%);
+      background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(255,255,255,0) 70%);
       animation: breathe 3s infinite alternate;
     }
 
@@ -89,7 +90,7 @@
       text-align: center;
       max-width: 400px;
       width: 90%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05); /* Softer shadow for light theme */
     }
 
     .brand-logo {
@@ -98,9 +99,10 @@
       border-radius: 20px;
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 20px;
+      box-shadow: 0 10px 20px rgba(59,130,246,0.2);
     }
 
-    .setup-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
+    .setup-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
     .setup-subtitle { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
 
     .selector-label {
@@ -111,12 +113,12 @@
 
     select {
       width: 100%; padding: 14px 16px; border-radius: 12px;
-      background: var(--bg-dark); border: 1px solid var(--border-color);
-      color: white; font-family: inherit; font-size: 1rem; margin-bottom: 30px;
-      outline: none; cursor: pointer;
+      background: #f1f5f9; border: 1px solid var(--border-color);
+      color: var(--text-main); font-family: inherit; font-size: 1rem; margin-bottom: 30px;
+      outline: none; cursor: pointer; transition: all 0.2s;
     }
     
-    select:focus { border-color: var(--primary); }
+    select:focus { border-color: var(--primary); background: var(--bg-surface); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
 
     .start-call-btn {
       width: 100%; padding: 16px; border-radius: 30px;
@@ -126,7 +128,7 @@
       transition: all 0.2s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
     }
     
-    .start-call-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .start-call-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
 
     /* --- ACTIVE CALL SCREEN --- */
     .call-header {
@@ -134,7 +136,7 @@
       text-align: center;
     }
 
-    .call-title { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; }
+    .call-title { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; color: var(--text-main); }
     .call-status { font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
     
     .status-dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; }
@@ -161,8 +163,8 @@
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 48px; z-index: 2;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      border: 4px solid var(--bg-surface);
+      box-shadow: 0 10px 30px rgba(59,130,246,0.3);
+      border: 4px solid var(--bg-main);
     }
 
     /* Soundwave rings around avatar when speaking */
@@ -184,11 +186,12 @@
     /* Transcript Box */
     .transcript-container {
       width: 90%; max-width: 500px;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05);
       border-radius: 20px; padding: 20px; margin-bottom: 50px;
       min-height: 100px; max-height: 200px; overflow-y: auto;
       backdrop-filter: blur(10px);
       display: flex; flex-direction: column; gap: 10px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .transcript-line { font-size: 0.95rem; line-height: 1.5; opacity: 0; animation: slideUp 0.3s forwards; }
@@ -211,16 +214,19 @@
     .control-btn {
       width: 60px; height: 60px; border-radius: 50%; border: none;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s; color: white;
-      background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+      cursor: pointer; transition: all 0.2s; 
+      background: var(--bg-surface); color: var(--text-main);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      border: 1px solid var(--border-color);
     }
     
-    .control-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+    .control-btn:hover { background: #f1f5f9; transform: scale(1.05); }
     
-    .control-btn.end-call { background: var(--danger); width: 75px; height: 75px; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4); }
+    .control-btn.end-call { background: var(--danger); color: white; width: 75px; height: 75px; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3); border: none; }
     .control-btn.end-call:hover { background: #DC2626; transform: scale(1.05) rotate(-10deg); }
 
-    .control-btn.muted { background: rgba(255,255,255,0.9); color: black; }
+    /* Muted State Styling */
+    .control-btn.muted { background: #334155; color: white; border-color: #334155; }
 
   </style>
 </head>
@@ -324,7 +330,7 @@
       muteIcon: document.getElementById('muteIcon')
     };
 
-    // --- FIREBASE INIT (Retained from your original code) ---
+    // --- FIREBASE INIT ---
     const firebaseConfig = {
       apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
       authDomain: "fire-b-a8878.firebaseapp.com",
@@ -348,9 +354,23 @@
     }
     loadKey();
 
+    // --- HAPTIC FEEDBACK (VIBRATION) ---
+    function triggerHaptic(type) {
+      // Check if the device/browser supports vibration
+      if (!navigator.vibrate) return; 
+
+      if (type === 'start') {
+        // Short, single pop when starting to listen
+        navigator.vibrate(40); 
+      } else if (type === 'stop') {
+        // Quick double pop when it stops listening or gets muted
+        navigator.vibrate([30, 50, 30]); 
+      }
+    }
+
     // --- SYSTEM PROMPT ---
     function getSystemPrompt() {
-      return `You are an AI voice assistant handling a live phone call for a business called Rare Grade Tech. 
+      return `You are an AI voice assistant handling a live phone call for an IT and software business called Rare Grade Tech. 
       You are highly conversational, warm, and brief. 
       CRITICAL RULES:
       - Never use markdown formatting, bullet points, or code blocks.
@@ -368,7 +388,7 @@
       }
       
       speechRecognition = new SpeechRecognition();
-      speechRecognition.continuous = false; // We want it to stop after they pause so we can reply
+      speechRecognition.continuous = false; // Stop after they pause so we can reply
       speechRecognition.interimResults = false;
       speechRecognition.lang = 'en-US';
 
@@ -391,7 +411,6 @@
       speechRecognition.onerror = (event) => {
         console.warn("Speech recognition error:", event.error);
         if (isCallActive && !isMuted) {
-          // If no speech was detected, just restart listening quietly
           if (event.error === 'no-speech') {
             setTimeout(() => { if(isCallActive) startListening(); }, 500);
           } else {
@@ -401,7 +420,7 @@
       };
 
       speechRecognition.onend = () => {
-        // If the call is active, we aren't muted, and audio ISN'T currently playing, we should keep listening
+        // Resume listening if call is active, unmuted, and audio isn't currently playing
         if (isCallActive && !isMuted && (!currentAudio || currentAudio.paused)) {
            startListening();
         }
@@ -414,9 +433,7 @@
       if (speechRecognition && isCallActive && !isMuted) {
         try {
           speechRecognition.start();
-        } catch (e) {
-          // Catch errors if it's already started
-        }
+        } catch (e) {}
       }
     }
 
@@ -443,7 +460,7 @@
       isMuted = false;
       conversationHistory = [{ role: "system", content: getSystemPrompt() }];
 
-      // We initialize an empty audio object on user click to satisfy mobile browser autoplay policies
+      // Initialize empty audio to bypass mobile autoplay blocks
       currentAudio = new Audio();
 
       // UI Transition
@@ -454,7 +471,8 @@
       els.transcript.innerHTML = '';
       logTranscript("Call connected. Say hello!", "system");
       
-      // Start the conversation loop
+      // Vibrate and start the loop
+      triggerHaptic('start');
       startListening();
     }
 
@@ -471,7 +489,6 @@
       updateStatus("Call Ended", "error");
       els.ambientGlow.classList.remove('active-glow');
 
-      // Return to setup screen after delay
       setTimeout(() => {
         els.call.classList.add('hidden');
         els.setup.classList.remove('hidden');
@@ -485,12 +502,14 @@
         els.muteBtn.classList.add('muted');
         els.muteIcon.innerText = 'mic_off';
         updateStatus("Microphone Muted", "default");
+        triggerHaptic('stop');
       } else {
         els.muteBtn.classList.remove('muted');
         els.muteIcon.innerText = 'mic';
         // Only restart listening if AI isn't currently talking
         if (!currentAudio || currentAudio.paused) {
           startListening();
+          triggerHaptic('start');
         } else {
           updateStatus("AI is speaking...", "active");
         }
@@ -499,7 +518,8 @@
 
     // --- AI PROCESSING (xAI Completions) ---
     async function processUserSpeech(text) {
-      stopListening(); // Stop listening while we process and talk back
+      stopListening(); 
+      triggerHaptic('stop'); // Vibrate so user knows it heard them
       updateStatus("Thinking...", "active");
 
       conversationHistory.push({ role: 'user', content: text });
@@ -566,6 +586,7 @@
           // Resume listening loop automatically if call is active
           if (isCallActive && !isMuted) {
             startListening();
+            triggerHaptic('start'); // Vibrate to let user know it's their turn to speak
           } else if (isCallActive && isMuted) {
             updateStatus("Microphone Muted", "default");
           }
@@ -573,7 +594,7 @@
 
         currentAudio.onerror = () => {
           setSpeakingState(false);
-          startListening(); // Fallback to listening if audio breaks
+          startListening(); 
         };
 
         await currentAudio.play();
@@ -581,7 +602,6 @@
       } catch (error) {
         console.error('TTS error:', error);
         setSpeakingState(false);
-        // If TTS fails, at least restart the listening loop so the call doesn't die
         startListening();
       }
     }
@@ -603,7 +623,7 @@
       const line = document.createElement('div');
       line.className = `transcript-line ${sender}`;
       
-      // Clean up markdown tags that might slip through for display
+      // Clean up markdown tags that might slip through
       let cleanText = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
       line.innerText = cleanText;
       
