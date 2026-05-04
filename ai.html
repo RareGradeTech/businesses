@@ -8,9 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
-
   <style>
     /* --- LIGHT THEME PALETTE --- */
     :root {
@@ -19,7 +16,7 @@
       --primary: #3b82f6; 
       --accent: #10B981; 
       --danger: #EF4444; 
-      --transfer: #F59E0B; /* Orange for transferring */
+      --transfer: #F59E0B; 
       --text-main: #0f172a; 
       --text-secondary: #64748b; 
       --border-color: #e2e8f0; 
@@ -28,182 +25,74 @@
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--bg-main);
-      color: var(--text-main);
-      height: 100svh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
+      font-family: 'Outfit', sans-serif; background: var(--bg-main); color: var(--text-main);
+      height: 100svh; display: flex; flex-direction: column; overflow: hidden; position: relative;
     }
 
-    /* Background Ambient Glow */
+    /* Ambient Glows */
     .ambient-glow {
       position: absolute; width: 60vw; height: 60vw;
       background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(255,255,255,0) 70%);
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      border-radius: 50%; z-index: 0; pointer-events: none; transition: all 0.5s ease;
+      top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; 
+      z-index: 0; pointer-events: none; transition: all 0.5s ease;
     }
-    
-    .ambient-glow.active-glow {
-      background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(255,255,255,0) 70%);
-      animation: breathe 3s infinite alternate;
-    }
+    .ambient-glow.active-glow { background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(255,255,255,0) 70%); animation: breathe 3s infinite alternate; }
+    .ambient-glow.transfer-glow { background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, rgba(255,255,255,0) 70%); animation: breathe 1.5s infinite alternate; }
+    @keyframes breathe { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } }
 
-    .ambient-glow.transfer-glow {
-      background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, rgba(255,255,255,0) 70%);
-      animation: breathe 1.5s infinite alternate;
-    }
-
-    @keyframes breathe {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-      100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-    }
-
-    .screen {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10; transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
+    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; transition: opacity 0.4s ease, transform 0.4s ease; }
     .hidden { opacity: 0; pointer-events: none; transform: scale(0.95); }
 
-    /* --- SETUP SCREEN --- */
-    .setup-container {
-      background: var(--bg-surface); border: 1px solid var(--border-color);
-      padding: 40px; border-radius: 24px; text-align: center;
-      max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
-    }
-
-    .brand-logo {
-      width: 70px; height: 70px; background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-      border-radius: 20px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px; box-shadow: 0 10px 20px rgba(59,130,246,0.2);
-    }
-
+    /* Setup UI */
+    .setup-container { background: var(--bg-surface); border: 1px solid var(--border-color); padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+    .brand-logo { width: 70px; height: 70px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 20px rgba(59,130,246,0.2); }
     .setup-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
     .setup-subtitle { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
-
-    .selector-label {
-      display: block; text-align: left; font-size: 0.8rem; color: var(--text-secondary); 
-      font-weight: 600; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;
-    }
-
-    select {
-      width: 100%; padding: 14px 16px; border-radius: 12px; background: #f1f5f9; 
-      border: 1px solid var(--border-color); color: var(--text-main); font-family: inherit; 
-      font-size: 1rem; margin-bottom: 30px; outline: none; cursor: pointer; transition: all 0.2s;
-    }
+    .selector-label { display: block; text-align: left; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+    select { width: 100%; padding: 14px 16px; border-radius: 12px; background: #f1f5f9; border: 1px solid var(--border-color); color: var(--text-main); font-family: inherit; font-size: 1rem; margin-bottom: 30px; outline: none; cursor: pointer; transition: all 0.2s; }
     select:focus { border-color: var(--primary); background: var(--bg-surface); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-
-    .start-call-btn {
-      width: 100%; padding: 16px; border-radius: 30px; background: var(--accent); color: white; 
-      border: none; font-size: 1.1rem; font-weight: 600; font-family: inherit; cursor: pointer; 
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: all 0.2s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-    }
+    .start-call-btn { width: 100%; padding: 16px; border-radius: 30px; background: var(--accent); color: white; border: none; font-size: 1.1rem; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
     .start-call-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
 
-    /* --- ACTIVE CALL SCREEN --- */
+    /* Call UI */
     .call-header { position: absolute; top: 0; width: 100%; padding: 30px 20px; text-align: center; }
     .call-title { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; color: var(--text-main); }
     .call-status { font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    
     .status-dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; }
     .status-dot.active { background: var(--accent); animation: pulseDot 1.5s infinite; }
     .status-dot.listening { background: var(--primary); animation: pulseDot 1.5s infinite; }
     .status-dot.ringing, .status-dot.transferring { background: var(--transfer); animation: pulseDot 1s infinite; }
-
-    @keyframes pulseDot {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
+    @keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 
     /* Avatar */
-    .avatar-container {
-      position: relative; width: 150px; height: 150px;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 40px;
-    }
-
-    .ai-avatar-large {
-      width: 120px; height: 120px; background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 48px; z-index: 2; box-shadow: 0 10px 30px rgba(59,130,246,0.3);
-      border: 4px solid var(--bg-main); transition: all 0.3s ease;
-    }
-
-    .ringing-shake .ai-avatar-large, .transferring-shake .ai-avatar-large {
-      animation: shake 1.5s infinite;
-      background: linear-gradient(135deg, #d97706, #f59e0b);
-      box-shadow: 0 10px 30px rgba(245,158,11,0.3);
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: rotate(0deg); }
-      10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); }
-      20%, 40%, 60%, 80% { transform: rotate(5deg); }
-    }
-
-    .ring {
-      position: absolute; width: 100%; height: 100%;
-      border-radius: 50%; border: 2px solid var(--primary);
-      opacity: 0; z-index: 1; pointer-events: none;
-    }
-    
-    .speaking .ring:nth-child(1) { animation: ripple 1.5s infinite linear; }
-    .speaking .ring:nth-child(2) { animation: ripple 1.5s infinite linear 0.5s; }
-    .speaking .ring:nth-child(3) { animation: ripple 1.5s infinite linear 1s; }
-
-    @keyframes ripple {
-      0% { transform: scale(0.8); opacity: 1; border-width: 4px; }
-      100% { transform: scale(1.8); opacity: 0; border-width: 1px; }
-    }
+    .avatar-container { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 40px; }
+    .ai-avatar-large { width: 120px; height: 120px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; z-index: 2; box-shadow: 0 10px 30px rgba(59,130,246,0.3); border: 4px solid var(--bg-main); transition: all 0.3s ease; }
+    .ringing-shake .ai-avatar-large, .transferring-shake .ai-avatar-large { animation: shake 1.5s infinite; background: linear-gradient(135deg, #d97706, #f59e0b); box-shadow: 0 10px 30px rgba(245,158,11,0.3); }
+    .human-connected .ai-avatar-large { background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 10px 30px rgba(16,185,129,0.3); }
+    @keyframes shake { 0%, 100% { transform: rotate(0deg); } 10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); } 20%, 40%, 60%, 80% { transform: rotate(5deg); } }
+    .ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--primary); opacity: 0; z-index: 1; pointer-events: none; }
+    .speaking .ring:nth-child(1) { animation: ripple 1.5s infinite linear; } .speaking .ring:nth-child(2) { animation: ripple 1.5s infinite linear 0.5s; } .speaking .ring:nth-child(3) { animation: ripple 1.5s infinite linear 1s; }
+    @keyframes ripple { 0% { transform: scale(0.8); opacity: 1; border-width: 4px; } 100% { transform: scale(1.8); opacity: 0; border-width: 1px; } }
 
     /* Transcript Box */
-    .transcript-container {
-      width: 90%; max-width: 500px;
-      background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05);
-      border-radius: 20px; padding: 20px; margin-bottom: 50px;
-      min-height: 100px; max-height: 200px; overflow-y: auto;
-      backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 10px;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    }
-
+    .transcript-container { width: 90%; max-width: 500px; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); border-radius: 20px; padding: 20px; margin-bottom: 50px; min-height: 100px; max-height: 200px; overflow-y: auto; backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
     .transcript-line { font-size: 0.95rem; line-height: 1.5; opacity: 0; animation: slideUp 0.3s forwards; }
     .transcript-line.user { color: var(--text-main); text-align: right; }
     .transcript-line.ai { color: var(--primary); text-align: left; font-weight: 500; }
     .transcript-line.system { color: var(--text-secondary); text-align: center; font-size: 0.8rem; font-style: italic; }
-
     @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Call Controls */
-    .call-controls {
-      position: absolute; bottom: 50px; display: flex; gap: 30px;
-      align-items: center; justify-content: center; width: 100%;
-    }
-
-    .control-btn {
-      width: 60px; height: 60px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s; background: var(--bg-surface); color: var(--text-main);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 1px solid var(--border-color);
-    }
-    
+    .call-controls { position: absolute; bottom: 50px; display: flex; gap: 30px; align-items: center; justify-content: center; width: 100%; }
+    .control-btn { width: 60px; height: 60px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; background: var(--bg-surface); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.08); border: 1px solid var(--border-color); }
     .control-btn:hover { background: #f1f5f9; transform: scale(1.05); }
     .control-btn.end-call { background: var(--danger); color: white; width: 75px; height: 75px; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3); border: none; }
     .control-btn.end-call:hover { background: #DC2626; transform: scale(1.05) rotate(-10deg); }
     .control-btn.muted { background: #334155; color: white; border-color: #334155; }
 
-    /* Transfer Dashboard Placeholder */
-    .transfer-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--bg-main); z-index: 20; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; text-align: center;
-      opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
-    }
+    /* Transfer Dashboard */
+    .transfer-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
     .transfer-overlay.active { opacity: 1; pointer-events: auto; }
-
   </style>
 </head>
 <body>
@@ -224,8 +113,6 @@
         <option value="ara" selected>Ara (Warm & Friendly Receptionist)</option>
         <option value="rex">Rex (Professional Consultant)</option>
         <option value="eve">Eve (Energetic Sales)</option>
-        <option value="sal">Sal (Neutral Support)</option>
-        <option value="leo">Leo (Authoritative Expert)</option>
       </select>
 
       <button class="start-call-btn" onclick="startCall()">
@@ -240,114 +127,99 @@
     <div class="call-header">
       <div class="call-title">Voice Assistant</div>
       <div class="call-status" id="callStatusText">
-        <div class="status-dot" id="statusDot"></div>
-        Connecting...
+        <div class="status-dot" id="statusDot"></div> Connecting...
       </div>
     </div>
 
     <div class="avatar-container" id="avatarContainer">
-      <div class="ring"></div>
-      <div class="ring"></div>
-      <div class="ring"></div>
-      <div class="ai-avatar-large">
+      <div class="ai-avatar-large" id="avatarLogoWrapper">
         <span class="material-symbols-rounded" id="avatarIcon" style="color:white; font-size:56px;">ring_volume</span>
       </div>
     </div>
-
     <div class="transcript-container" id="transcriptBox"></div>
-
     <div class="call-controls">
-      <button class="control-btn" id="muteBtn" onclick="toggleMute()">
-        <span class="material-symbols-rounded" id="muteIcon">mic</span>
-      </button>
-      <button class="control-btn end-call" onclick="endCall()">
-        <span class="material-symbols-rounded" style="font-size: 32px;">call_end</span>
-      </button>
-      <button class="control-btn" onclick="clearTranscript()">
-        <span class="material-symbols-rounded">clear_all</span>
-      </button>
+      <button class="control-btn" id="muteBtn" onclick="toggleMute()"><span class="material-symbols-rounded" id="muteIcon">mic</span></button>
+      <button class="control-btn end-call" onclick="endCall()"><span class="material-symbols-rounded" style="font-size: 32px;">call_end</span></button>
     </div>
   </div>
 
   <!-- TRANSFER OVERLAY -->
   <div class="transfer-overlay" id="transferOverlay">
-    <div class="brand-logo" style="background: linear-gradient(135deg, #d97706, #f59e0b);">
+    <div class="brand-logo" id="transferLogo" style="background: linear-gradient(135deg, #d97706, #f59e0b);">
       <span class="material-symbols-rounded" style="color:white; font-size:36px;">headset_mic</span>
     </div>
-    <h2 class="setup-title">Transferring Call</h2>
-    <p class="setup-subtitle">Please wait while we connect you to a live human agent.</p>
-    <div style="display: flex; gap: 8px; margin-top: 20px;">
+    <h2 class="setup-title" id="transferTitle">Transferring Call</h2>
+    <p class="setup-subtitle" id="transferSubtitle">Connecting to WebRTC. Waiting for agent to pick up...</p>
+    
+    <div style="display: flex; gap: 8px; margin-top: 20px;" id="transferLoadingDots">
       <div class="status-dot active"></div>
       <div class="status-dot active" style="animation-delay: 0.2s"></div>
       <div class="status-dot active" style="animation-delay: 0.4s"></div>
     </div>
-    <button class="start-call-btn" style="background: var(--danger); width: auto; padding: 12px 30px; margin-top: 40px;" onclick="cancelTransfer()">
-      Cancel Transfer
-    </button>
+
+    <div class="call-controls" style="position: relative; margin-top: 50px;">
+      <button class="control-btn" id="humanMuteBtn" onclick="toggleHumanMute()"><span class="material-symbols-rounded" id="humanMuteIcon">mic</span></button>
+      <button class="control-btn end-call" onclick="endCall()"><span class="material-symbols-rounded" style="font-size: 32px;">call_end</span></button>
+    </div>
   </div>
 
-  <script>
-    // --- CONFIGURATION ---
+  <!-- MAIN SCRIPT (Module Based) -->
+  <script type="module">
+    // 1. Firebase Modular SDK Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getRemoteConfig, fetchAndActivate, getString } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-remote-config.js";
+
+    // 2. Socket.io ESM Import
+    import { io } from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
+
+    // --- CONFIGURATIONS & WEBRTC SETUP ---
     const API_BASE = "https://api.x.ai/v1";
     let XAI_API_KEY = "";
-
-    // --- STATE ---
-    let isCallActive = false;
-    let isRinging = false;
-    let isTransferring = false;
-    let isMuted = false;
-    let currentVoice = 'ara';
-    let conversationHistory = [];
-    let callTimeout = null;
     
-    // Audio Objects
-    let currentAudio = null;
-    let speechRecognition = null;
+    // Connect to your local signaling server
+    const socket = io('http://localhost:3000');
+    const rtcConfig = { 'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}] };
     
-    // Web Audio Synthesizer variables for Ringtone
-    let ringAudioCtx = null;
-    let ringInterval = null;
+    let peerConnection;
+    let localStream;
+    let isCallActive = false, isRinging = false, isTransferring = false, isMuted = false;
+    let currentVoice = 'ara', conversationHistory = [], callTimeout = null;
+    let currentAudio = null, speechRecognition = null, ringAudioCtx = null, ringInterval = null;
 
     // --- DOM ELEMENTS ---
     const els = {
-      setup: document.getElementById('setupScreen'),
-      call: document.getElementById('callScreen'),
-      transfer: document.getElementById('transferOverlay'),
-      voiceSelect: document.getElementById('voiceSelect'),
-      statusText: document.getElementById('callStatusText'),
-      statusDot: document.getElementById('statusDot'),
-      avatarContainer: document.getElementById('avatarContainer'),
-      avatarIcon: document.getElementById('avatarIcon'),
-      ambientGlow: document.getElementById('ambientGlow'),
-      transcript: document.getElementById('transcriptBox'),
-      muteBtn: document.getElementById('muteBtn'),
-      muteIcon: document.getElementById('muteIcon')
+      setup: document.getElementById('setupScreen'), call: document.getElementById('callScreen'), transfer: document.getElementById('transferOverlay'),
+      voiceSelect: document.getElementById('voiceSelect'), statusText: document.getElementById('callStatusText'), statusDot: document.getElementById('statusDot'),
+      avatarContainer: document.getElementById('avatarContainer'), avatarIcon: document.getElementById('avatarIcon'), ambientGlow: document.getElementById('ambientGlow'),
+      transcript: document.getElementById('transcriptBox'), muteBtn: document.getElementById('muteBtn'), muteIcon: document.getElementById('muteIcon'),
+      transferTitle: document.getElementById('transferTitle'), transferSubtitle: document.getElementById('transferSubtitle'), transferLogo: document.getElementById('transferLogo'),
+      transferDots: document.getElementById('transferLoadingDots'), humanMuteBtn: document.getElementById('humanMuteBtn'), humanMuteIcon: document.getElementById('humanMuteIcon'),
     };
 
-    // --- FIREBASE INIT ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
-      authDomain: "fire-b-a8878.firebaseapp.com",
-      projectId: "fire-b-a8878",
-      databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
-      appId: "1:658673187627:web:6e4c29af661785f0afa36e"
+    // --- FIREBASE V10 INIT ---
+    const firebaseConfig = { 
+        apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc", 
+        authDomain: "fire-b-a8878.firebaseapp.com", 
+        projectId: "fire-b-a8878", 
+        databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com", 
+        appId: "1:658673187627:web:6e4c29af661785f0afa36e" 
     };
-
-    firebase.initializeApp(firebaseConfig);
-    const remoteConfig = firebase.remoteConfig();
+    
+    const app = initializeApp(firebaseConfig);
+    const remoteConfig = getRemoteConfig(app);
     remoteConfig.settings.minimumFetchIntervalMillis = 0;
 
-    async function loadKey() {
-      try {
-        await remoteConfig.fetchAndActivate();
-        XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
-      } catch (e) { 
-        console.error("Key Load Error", e); 
-      }
+    async function loadKey() { 
+        try { 
+            await fetchAndActivate(remoteConfig); 
+            XAI_API_KEY = getString(remoteConfig, 'xai_api_key'); 
+        } catch (e) { 
+            console.error("Key Load Error", e); 
+        } 
     }
     loadKey();
 
-    // --- HAPTIC FEEDBACK (VIBRATION) ---
+    // --- HAPTIC FEEDBACK ---
     function triggerHaptic(type) {
       if (!navigator.vibrate) return; 
       if (type === 'start') navigator.vibrate(40); 
@@ -355,301 +227,195 @@
       else if (type === 'ring') navigator.vibrate([100, 100, 100, 100]); 
     }
 
-    // --- SYNTHESIZED RINGTONE (Web Audio API) ---
+    // --- SYNTHESIZED RINGTONE ---
     function startRingtone() {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       ringAudioCtx = new AudioContext();
-
       function playSingleRing() {
-        if (!ringAudioCtx || ringAudioCtx.state === 'closed') return;
-        triggerHaptic('ring');
-
-        const osc1 = ringAudioCtx.createOscillator();
-        const osc2 = ringAudioCtx.createOscillator();
-        const gainNode = ringAudioCtx.createGain();
-        
-        osc1.type = 'sine'; osc2.type = 'sine';
-        osc1.frequency.value = 440; osc2.frequency.value = 480;
-        
-        osc1.connect(gainNode); osc2.connect(gainNode);
-        gainNode.connect(ringAudioCtx.destination);
-        
+        if (!ringAudioCtx || ringAudioCtx.state === 'closed') return; triggerHaptic('ring');
+        const osc1 = ringAudioCtx.createOscillator(); const osc2 = ringAudioCtx.createOscillator(); const gainNode = ringAudioCtx.createGain();
+        osc1.type = 'sine'; osc2.type = 'sine'; osc1.frequency.value = 440; osc2.frequency.value = 480;
+        osc1.connect(gainNode); osc2.connect(gainNode); gainNode.connect(ringAudioCtx.destination);
         const now = ringAudioCtx.currentTime;
-        gainNode.gain.setValueAtTime(0, now);
-        gainNode.gain.linearRampToValueAtTime(0.3, now + 0.05);
-        gainNode.gain.setValueAtTime(0.3, now + 1.4);
-        gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
-        
-        osc1.start(now); osc2.start(now);
-        osc1.stop(now + 1.6); osc2.stop(now + 1.6);
+        gainNode.gain.setValueAtTime(0, now); gainNode.gain.linearRampToValueAtTime(0.3, now + 0.05); gainNode.gain.setValueAtTime(0.3, now + 1.4); gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
+        osc1.start(now); osc2.start(now); osc1.stop(now + 1.6); osc2.stop(now + 1.6);
       }
-
-      playSingleRing();
-      ringInterval = setInterval(playSingleRing, 3000);
+      playSingleRing(); ringInterval = setInterval(playSingleRing, 3000);
     }
+    function stopRingtone() { if (ringInterval) clearInterval(ringInterval); if (ringAudioCtx && ringAudioCtx.state !== 'closed') ringAudioCtx.close(); ringAudioCtx = null; }
 
-    function stopRingtone() {
-      if (ringInterval) clearInterval(ringInterval);
-      if (ringAudioCtx && ringAudioCtx.state !== 'closed') ringAudioCtx.close();
-      ringAudioCtx = null;
-    }
-
-    // --- SYSTEM PROMPT (Updated for Call Center Handoff) ---
     function getSystemPrompt() {
-      return `You are an AI voice assistant handling a live phone call for Rare Grade Tech. 
-      You are highly conversational, warm, and brief. 
-      
-      CRITICAL RULES:
-      - Keep responses to 1-3 short sentences. This is a phone call.
-      - Speak naturally. No markdown formatting.
-      
-      CALL TRANSFER INSTRUCTION:
-      If the user explicitly asks to speak to a human, an agent, a person, or customer service, you MUST include the exact tag [TRANSFER] anywhere in your response. 
-      Example: "I can certainly connect you to a human agent. [TRANSFER] Please hold while I route your call."`;
+      return `You are an AI handling a live call for Rare Grade Tech. 
+      CRITICAL: Keep responses to 1-3 short sentences. Speak naturally. 
+      CALL TRANSFER: If the user asks for a human, include [TRANSFER] in your response. Example: "I will connect you. [TRANSFER] Please hold."`;
     }
 
-    // --- SPEECH RECOGNITION SETUP ---
+    // --- SPEECH RECOGNITION (Customer side) ---
     function initSpeechRecognition() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("Your browser does not support Speech Recognition.");
-        return false;
-      }
+      if (!SpeechRecognition) return false;
+      speechRecognition = new SpeechRecognition(); speechRecognition.continuous = false; speechRecognition.interimResults = false;
       
-      speechRecognition = new SpeechRecognition();
-      speechRecognition.continuous = false; 
-      speechRecognition.interimResults = false;
-      speechRecognition.lang = 'en-US';
-
-      speechRecognition.onstart = () => {
-        if (isCallActive && !isMuted && !isRinging && !isTransferring) {
-          updateStatus("Listening...", "listening");
-        }
-      };
-
+      speechRecognition.onstart = () => { if (isCallActive && !isMuted && !isRinging && !isTransferring) updateStatus("Listening...", "listening"); };
       speechRecognition.onresult = async (event) => {
         if (!isCallActive || isRinging || isTransferring) return;
         const transcript = event.results[0][0].transcript;
-        
         if (transcript.trim() === '') return;
-        
-        logTranscript(transcript, "user");
-        await processUserSpeech(transcript);
+        logTranscript(transcript, "user"); await processUserSpeech(transcript);
       };
-
-      speechRecognition.onerror = (event) => {
-        if (isCallActive && !isMuted && !isRinging && !isTransferring) {
-          if (event.error === 'no-speech') {
-            setTimeout(() => { if(isCallActive && !isRinging) startListening(); }, 500);
-          }
-        }
-      };
-
-      speechRecognition.onend = () => {
-        if (isCallActive && !isMuted && !isRinging && !isTransferring && (!currentAudio || currentAudio.paused)) {
-           startListening();
-        }
-      };
-
+      speechRecognition.onerror = (event) => { if (isCallActive && !isMuted && !isRinging && !isTransferring && event.error === 'no-speech') setTimeout(() => { if(isCallActive && !isRinging) startListening(); }, 500); };
+      speechRecognition.onend = () => { if (isCallActive && !isMuted && !isRinging && !isTransferring && (!currentAudio || currentAudio.paused)) startListening(); };
       return true;
     }
 
-    function startListening() {
-      if (speechRecognition && isCallActive && !isMuted && !isRinging && !isTransferring) {
-        try { speechRecognition.start(); } catch (e) {}
-      }
-    }
+    function startListening() { if (speechRecognition && isCallActive && !isMuted && !isRinging && !isTransferring) try { speechRecognition.start(); } catch (e) {} }
+    function stopListening() { if (speechRecognition) try { speechRecognition.stop(); } catch(e) {} }
 
-    function stopListening() {
-      if (speechRecognition) {
-        try { speechRecognition.stop(); } catch(e) {}
-      }
-    }
-
-    // --- CORE CALL LOGIC ---
+    // --- AI CALL LOGIC ---
     async function startCall() {
-      if (!XAI_API_KEY) { alert("API Key is loading. Please wait."); return; }
-      if (!initSpeechRecognition()) return;
-
-      currentVoice = els.voiceSelect.value;
-      isCallActive = true; isRinging = true; isTransferring = false; isMuted = false;
-      conversationHistory = [{ role: "system", content: getSystemPrompt() }];
-      currentAudio = new Audio();
-
-      els.setup.classList.add('hidden');
-      els.call.classList.remove('hidden');
-      
-      els.avatarContainer.classList.add('ringing-shake');
-      els.avatarIcon.innerText = 'ring_volume';
-      updateStatus("Ringing...", "ringing");
-      els.transcript.innerHTML = '';
-      
-      startRingtone();
-      callTimeout = setTimeout(() => { answerCall(); }, 3500);
+      if (!XAI_API_KEY) return; if (!initSpeechRecognition()) return;
+      currentVoice = els.voiceSelect.value; isCallActive = true; isRinging = true; isTransferring = false; isMuted = false;
+      conversationHistory = [{ role: "system", content: getSystemPrompt() }]; currentAudio = new Audio();
+      els.setup.classList.add('hidden'); els.call.classList.remove('hidden'); els.avatarContainer.classList.add('ringing-shake'); els.avatarIcon.innerText = 'ring_volume';
+      updateStatus("Ringing...", "ringing"); els.transcript.innerHTML = '';
+      startRingtone(); callTimeout = setTimeout(() => { answerCall(); }, 3500);
     }
 
     function answerCall() {
-      if (!isCallActive) return;
-      isRinging = false;
-      stopRingtone();
-      
-      els.avatarContainer.classList.remove('ringing-shake');
-      els.avatarIcon.innerText = 'graphic_eq';
-      els.ambientGlow.classList.add('active-glow');
-      updateStatus("Connected", "active");
-      triggerHaptic('start');
-
+      if (!isCallActive) return; isRinging = false; stopRingtone();
+      els.avatarContainer.classList.remove('ringing-shake'); els.avatarIcon.innerText = 'graphic_eq';
+      els.ambientGlow.classList.add('active-glow'); updateStatus("Connected", "active"); triggerHaptic('start');
       const initialGreeting = "Hello, you've reached Rare Grade Tech. How can I help you today?";
       conversationHistory.push({ role: "assistant", content: initialGreeting });
-      logTranscript(initialGreeting, "ai");
-      speakAIResponse(initialGreeting);
+      logTranscript(initialGreeting, "ai"); speakAIResponse(initialGreeting);
+    }
+
+    async function processUserSpeech(text) {
+      stopListening(); triggerHaptic('stop'); updateStatus("Thinking...", "active");
+      conversationHistory.push({ role: 'user', content: text });
+      try {
+        const res = await fetch(`${API_BASE}/chat/completions`, { method: 'POST', headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: "grok-4-1-fast-non-reasoning", messages: conversationHistory, stream: false }) });
+        const data = await res.json(); let aiResponseText = data.choices[0].message.content;
+        
+        if (aiResponseText.includes("[TRANSFER]")) {
+          isTransferring = true; aiResponseText = aiResponseText.replace("[TRANSFER]", "").trim();
+          logTranscript(aiResponseText, "ai"); await speakAIResponse(aiResponseText, true); return;
+        }
+
+        conversationHistory.push({ role: 'assistant', content: aiResponseText });
+        logTranscript(aiResponseText, "ai"); await speakAIResponse(aiResponseText);
+      } catch (err) { setTimeout(() => { startListening(); }, 2000); }
+    }
+
+    async function speakAIResponse(text, isTransfer = false) {
+      if (!isCallActive) return; updateStatus("Speaking...", "active"); 
+      try {
+        const response = await fetch(`${API_BASE}/tts`, { method: 'POST', headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ text: text, voice_id: currentVoice, language: 'en' }) });
+        const audioBlob = await response.blob(); currentAudio.src = URL.createObjectURL(audioBlob);
+        currentAudio.onended = () => {
+          if (isTransfer) { connectToHumanAgent(); return; }
+          if (isCallActive && !isMuted) { startListening(); triggerHaptic('start'); } 
+        };
+        await currentAudio.play();
+      } catch (error) { startListening(); }
+    }
+
+    // --- WEBRTC LIVE HUMAN AGENT CONNECTION ---
+    async function connectToHumanAgent() {
+      updateStatus("Transferring...", "transferring");
+      els.ambientGlow.classList.remove('active-glow'); els.ambientGlow.classList.add('transfer-glow');
+      els.transfer.classList.add('active'); startRingtone();
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+        peerConnection.ontrack = event => {
+          const remoteAudio = new Audio();
+          remoteAudio.srcObject = event.streams[0];
+          remoteAudio.play(); // Agent audio coming through
+        };
+
+        peerConnection.onicecandidate = event => { if (event.candidate) socket.emit('ice-candidate', event.candidate); };
+        peerConnection.onconnectionstatechange = () => { if (peerConnection.connectionState === 'connected') handleHumanPickup(); };
+
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        socket.emit('offer', offer);
+      } catch (error) {
+        console.error("WebRTC Error:", error);
+        els.transferSubtitle.innerText = "Error connecting microphone. Please check permissions.";
+        els.transferDots.style.display = 'none'; stopRingtone();
+      }
+    }
+
+    // --- SOCKET LISTENERS FOR SIGNALING ---
+    socket.on('answer', async (answer) => {
+      if (peerConnection) {
+        const remoteDesc = new RTCSessionDescription(answer);
+        await peerConnection.setRemoteDescription(remoteDesc);
+      }
+    });
+
+    socket.on('ice-candidate', async (candidate) => {
+      if (peerConnection) { try { await peerConnection.addIceCandidate(candidate); } catch (e) { console.error(e); } }
+    });
+
+    // --- UI CONTROLS ---
+    function handleHumanPickup() {
+        stopRingtone(); els.transferTitle.innerText = "Live Agent Connected"; els.transferSubtitle.innerText = "You are now speaking with a human agent.";
+        els.transferDots.style.display = 'none'; els.ambientGlow.classList.remove('transfer-glow'); els.ambientGlow.classList.add('active-glow');
+        els.transferLogo.style.background = "linear-gradient(135deg, #059669, #10b981)"; triggerHaptic('start');
+    }
+
+    function toggleHumanMute() {
+        isMuted = !isMuted;
+        if (isMuted) {
+            els.humanMuteBtn.classList.add('muted'); els.humanMuteIcon.innerText = 'mic_off';
+            if(localStream) localStream.getAudioTracks()[0].enabled = false; 
+        } else {
+            els.humanMuteBtn.classList.remove('muted'); els.humanMuteIcon.innerText = 'mic';
+            if(localStream) localStream.getAudioTracks()[0].enabled = true; 
+        }
     }
 
     function endCall() {
       isCallActive = false; isRinging = false; isTransferring = false;
       clearTimeout(callTimeout); stopRingtone(); stopListening();
-      
       if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-      setSpeakingState(false);
+      if (peerConnection) { peerConnection.close(); peerConnection = null; }
+      if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
       
-      els.avatarContainer.classList.remove('ringing-shake');
-      els.ambientGlow.classList.remove('active-glow');
-      els.transfer.classList.remove('active');
-      els.call.classList.add('hidden');
-      els.setup.classList.remove('hidden');
+      els.transfer.classList.remove('active'); els.call.classList.add('hidden');
+      setTimeout(() => {
+        els.setup.classList.remove('hidden');
+        els.transferTitle.innerText = "Transferring Call"; els.transferSubtitle.innerText = "Please wait while we connect you to a live human agent.";
+        els.transferDots.style.display = 'flex'; els.transferLogo.style.background = "linear-gradient(135deg, #d97706, #f59e0b)";
+      }, 500);
     }
 
     function toggleMute() {
       if (isRinging || isTransferring) return; 
       isMuted = !isMuted;
-      if (isMuted) {
-        stopListening();
-        els.muteBtn.classList.add('muted'); els.muteIcon.innerText = 'mic_off';
-        updateStatus("Microphone Muted", "default"); triggerHaptic('stop');
-      } else {
-        els.muteBtn.classList.remove('muted'); els.muteIcon.innerText = 'mic';
-        if (!currentAudio || currentAudio.paused) {
-          startListening(); triggerHaptic('start');
-        } else {
-          updateStatus("AI is speaking...", "active");
-        }
-      }
+      if (isMuted) { stopListening(); els.muteBtn.classList.add('muted'); els.muteIcon.innerText = 'mic_off'; updateStatus("Microphone Muted", "default"); triggerHaptic('stop'); } 
+      else { els.muteBtn.classList.remove('muted'); els.muteIcon.innerText = 'mic'; if (!currentAudio || currentAudio.paused) { startListening(); triggerHaptic('start'); } }
     }
 
-    // --- AI PROCESSING & TRANSFER INTERCEPT ---
-    async function processUserSpeech(text) {
-      stopListening(); triggerHaptic('stop'); 
-      updateStatus("Thinking...", "active");
-
-      conversationHistory.push({ role: 'user', content: text });
-
-      try {
-        const res = await fetch(`${API_BASE}/chat/completions`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: "grok-4-1-fast-non-reasoning", messages: conversationHistory, stream: false })
-        });
-
-        if (!res.ok) throw new Error("API Error");
-        
-        const data = await res.json();
-        let aiResponseText = data.choices[0].message.content;
-        
-        // INTERCEPT TRANSFER LOGIC
-        if (aiResponseText.includes("[TRANSFER]")) {
-          isTransferring = true;
-          aiResponseText = aiResponseText.replace("[TRANSFER]", "").trim();
-          conversationHistory.push({ role: 'assistant', content: aiResponseText });
-          logTranscript(aiResponseText, "ai");
-          
-          await speakAIResponse(aiResponseText, true); // True flag = trigger transfer after speaking
-          return;
-        }
-
-        conversationHistory.push({ role: 'assistant', content: aiResponseText });
-        logTranscript(aiResponseText, "ai");
-        await speakAIResponse(aiResponseText);
-
-      } catch (err) {
-        console.error("Chat error:", err);
-        logTranscript("Connection issue. Trying to reconnect...", "system");
-        setTimeout(() => { startListening(); }, 2000);
-      }
-    }
-
-    // --- CALL CENTER TRANSFER UI ---
-    function initiateTransfer() {
-      updateStatus("Transferring...", "transferring");
-      els.ambientGlow.classList.remove('active-glow');
-      els.ambientGlow.classList.add('transfer-glow');
-      els.avatarContainer.classList.add('transferring-shake');
-      
-      // Bring up the full screen transfer overlay
-      els.transfer.classList.add('active');
-      
-      // Play the ringing sound again while they wait for the human
-      startRingtone();
-      
-      // Note: This is where you will eventually hook up your WebSockets/Twilio API to ring the agent dashboard.
-    }
-
-    function cancelTransfer() {
-      stopRingtone();
-      endCall();
-    }
-
-    // --- TTS PROCESSING ---
-    async function speakAIResponse(text, isTransfer = false) {
-      if (!isCallActive) return;
-      updateStatus("Speaking...", "active"); setSpeakingState(true);
-
-      try {
-        const response = await fetch(`${API_BASE}/tts`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: text, voice_id: currentVoice, language: 'en' }),
-        });
-
-        if (!response.ok) throw new Error("TTS Error");
-
-        const audioBlob = await response.blob();
-        currentAudio.src = URL.createObjectURL(audioBlob);
-        
-        currentAudio.onended = () => {
-          setSpeakingState(false);
-          
-          // If we are transferring, do not restart microphone. Go to transfer UI.
-          if (isTransfer) {
-            initiateTransfer();
-            return;
-          }
-
-          if (isCallActive && !isMuted) { startListening(); triggerHaptic('start'); } 
-          else if (isCallActive && isMuted) { updateStatus("Microphone Muted", "default"); }
-        };
-
-        currentAudio.onerror = () => { setSpeakingState(false); startListening(); };
-        await currentAudio.play();
-
-      } catch (error) {
-        console.error('TTS error:', error); setSpeakingState(false); startListening();
-      }
-    }
-
-    // --- UI HELPERS ---
     function updateStatus(text, state) { els.statusText.innerHTML = `<div class="status-dot ${state}" id="statusDot"></div> ${text}`; }
-    function setSpeakingState(isSpeaking) {
-      if (isSpeaking) els.avatarContainer.classList.add('speaking');
-      else els.avatarContainer.classList.remove('speaking');
-    }
     function logTranscript(text, sender) {
-      const line = document.createElement('div');
-      line.className = `transcript-line ${sender}`;
-      line.innerText = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
-      els.transcript.appendChild(line);
-      els.transcript.scrollTop = els.transcript.scrollHeight;
+      const line = document.createElement('div'); line.className = `transcript-line ${sender}`; line.innerText = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
+      els.transcript.appendChild(line); els.transcript.scrollTop = els.transcript.scrollHeight;
     }
-    function clearTranscript() { els.transcript.innerHTML = ''; }
+
+    // --- EXPOSE FUNCTIONS TO GLOBAL SCOPE ---
+    // Because this is a type="module" script, inline HTML onclick events cannot see these functions.
+    // We attach them to the window object here so the HTML buttons work perfectly.
+    window.startCall = startCall;
+    window.endCall = endCall;
+    window.toggleMute = toggleMute;
+    window.toggleHumanMute = toggleHumanMute;
+    window.clearTranscript = () => { els.transcript.innerHTML = ''; };
 
   </script>
 </body>
