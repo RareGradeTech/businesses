@@ -3,20 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Rare Grade | Voice Agent</title>
-  <!-- Using Google's Outfit and Inter to mimic the proprietary Google Sans aesthetic -->
+  <title>Rare Grade | Support Flow</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
   <style>
     :root {
-      /* Gemini-inspired Palette */
       --bg-main: #f0f4f9;
       --bg-surface: #ffffff;
       --text-main: #1f1f1f;
       --text-dim: #444746;
       --border: #e3e3e3;
       
-      /* The Signature Gradient */
       --gemini-blue: #4285f4;
       --gemini-purple: #9b72cb;
       --gemini-red: #d96570;
@@ -25,7 +22,6 @@
       --accent: #0b57d0;
       --accent-light: #d3e3fd;
       --danger: #b3261e;
-      --danger-light: #f9dedc;
       --success: #146c2e;
     }
 
@@ -47,9 +43,7 @@
       position: relative;
     }
 
-    h1, h2, h3, .brand-font {
-      font-family: 'Outfit', sans-serif;
-    }
+    h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
 
     /* ── SCREENS ── */
     .screen {
@@ -106,7 +100,6 @@
       margin-bottom: 32px;
     }
 
-    /* Agent Type Selector */
     .type-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -146,7 +139,6 @@
       font-size: 0.95rem;
     }
 
-    /* Voice selector chips */
     .voice-section {
       transition: opacity 0.3s ease, height 0.3s ease;
       overflow: hidden;
@@ -182,27 +174,19 @@
       cursor:pointer; 
       transition:all 0.2s ease;
     }
-    .voice-chip:hover { 
-      background: var(--bg-main);
-    }
+    .voice-chip:hover { background: var(--bg-main); }
     .voice-chip.selected {
       border-color: var(--gemini-purple); 
       background: #fcfaff;
     }
-    .voice-chip-info { 
-      text-align:left; 
-      flex:1;
-    }
+    .voice-chip-info { text-align:left; flex:1; }
     .voice-chip-name { 
       font-family:'Outfit',sans-serif; 
       font-size:1rem; 
       font-weight:500; 
       color:var(--text-main); 
     }
-    .voice-chip-desc { 
-      font-size:0.85rem; 
-      color:var(--text-dim); 
-    }
+    .voice-chip-desc { font-size:0.85rem; color:var(--text-dim); }
     .voice-chip-check {
       width: 20px;
       height: 20px;
@@ -235,19 +219,12 @@
       font-size:1.05rem; 
       font-weight:500;
       cursor:pointer;
-      display:flex; 
-      align-items:center; 
-      justify-content:center; 
-      gap:8px;
       transition:all 0.2s ease;
     }
-    .start-btn:hover { 
-      background: black;
-      transform: translateY(-1px);
-    }
+    .start-btn:hover { background: black; transform: translateY(-1px); }
 
     /* ════════════════════════════════
-       CALL SCREEN
+       VOICE CALL SCREEN (AI ONLY)
     ════════════════════════════════ */
     .call-header {
       position:absolute; 
@@ -272,16 +249,12 @@
       font-weight: 500;
     }
     .status-dot {
-      width:8px; 
-      height:8px; 
-      border-radius:50%; 
-      background:var(--text-dim); 
+      width:8px; height:8px; border-radius:50%; background:var(--text-dim); 
     }
     .status-dot.s-active { background: var(--success); }
     .status-dot.s-listening { background: var(--accent); }
-    .status-dot.s-ringing, .status-dot.s-transferring { background: var(--gemini-purple); }
+    .status-dot.s-ringing { background: var(--gemini-purple); }
 
-    /* ── THE ORB (Gemini Style) ── */
     .orb-wrap {
       position:relative; 
       width:240px; 
@@ -292,242 +265,167 @@
       margin: 40px 0;
     }
     .orb-core {
-      width: 140px; 
-      height: 140px; 
+      width: 140px; height: 140px; 
       border-radius: 50%;
       background: var(--bg-surface);
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
+      display:flex; align-items:center; justify-content:center;
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-      position: relative; 
-      z-index: 2;
+      position: relative; z-index: 2;
       transition: all 0.5s ease;
     }
-    
-    /* Soft glowing backgrounds replicating the "Spark" */
     .orb-glow {
-      position: absolute;
-      inset: -20px;
-      border-radius: 50%;
-      background: var(--grad-gemini);
-      filter: blur(28px);
-      opacity: 0.15;
-      z-index: 0;
+      position: absolute; inset: -20px;
+      border-radius: 50%; background: var(--grad-gemini);
+      filter: blur(28px); opacity: 0.15; z-index: 0;
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
-
     .orb-core .orb-icon {
       font-size: 48px; 
       background: var(--grad-gemini);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      transition: all 0.3s ease;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
     .speaking .orb-glow { 
-      opacity: 0.6; 
-      transform: scale(1.15);
-      animation: pulseGlow 2s infinite alternate;
+      opacity: 0.6; transform: scale(1.15); animation: pulseGlow 2s infinite alternate;
     }
-    .speaking .orb-core {
-      transform: scale(1.05);
-    }
-    
+    .speaking .orb-core { transform: scale(1.05); }
     .ringing-shake .orb-glow {
-      opacity: 0.4;
-      background: linear-gradient(135deg, #4285f4, #0b57d0);
+      opacity: 0.4; background: linear-gradient(135deg, #4285f4, #0b57d0);
       animation: pulseGlow 1s infinite alternate;
     }
-
     @keyframes pulseGlow {
       0% { filter: blur(28px); }
       100% { filter: blur(40px); }
     }
 
-    .agent-label {
-      font-family:'Outfit',sans-serif; 
-      font-size:1.5rem; 
-      font-weight:500; 
-      color:var(--text-main);
-      margin-bottom:4px;
-    }
-    .agent-sublabel { 
-      font-size:0.95rem; 
-      color:var(--text-dim); 
-    }
+    .agent-label { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:500; margin-bottom:4px; }
+    .agent-sublabel { font-size:0.95rem; color:var(--text-dim); }
 
-    /* ── TRANSCRIPT ── */
     .transcript-wrap {
-      width:100%; 
-      max-width:440px;
-      margin-top: 24px;
-      padding:0 12px;
-      height: 140px; 
-      overflow-y:auto;
-      display:flex; 
-      flex-direction:column; 
-      gap:12px;
+      width:100%; max-width:440px; margin-top: 24px; padding:0 12px;
+      height: 140px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
       scroll-behavior: smooth;
     }
     .transcript-wrap::-webkit-scrollbar{ width:0px; }
-    
     .t-line { 
-      font-size:0.95rem; 
-      line-height:1.5; 
-      opacity:0; 
-      animation:slideUp 0.3s forwards; 
+      font-size:0.95rem; line-height:1.5; opacity:0; 
+      animation:slideUp 0.3s forwards; padding: 12px 16px; border-radius: 20px; max-width: 85%;
+    }
+    .t-line.user { background: var(--accent-light); color: var(--text-main); align-self: flex-end; border-bottom-right-radius: 4px; }
+    .t-line.ai { background: #ffffff; border: 1px solid var(--border); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+    
+    @keyframes slideUp { from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+
+    .call-controls {
+      position:absolute; bottom:40px; width:100%; display:flex; gap:20px;
+      align-items:center; justify-content:center;
+    }
+    .ctrl-btn {
+      width:56px; height:56px; border-radius:50%; border:1px solid var(--border);
+      background:var(--bg-surface); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:all 0.2s ease;
+    }
+    .ctrl-btn:hover { background:var(--bg-main); }
+    .ctrl-btn.muted { background: var(--text-main); color: #fff; border-color: var(--text-main); }
+    .ctrl-end {
+      width:72px; height:72px; border-radius:50%; border:none; background:var(--danger);
+      color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;
+      transition:all 0.2s ease;
+    }
+    .ctrl-end:hover { background: #8c1d18; }
+
+    /* ════════════════════════════════
+       TEXT CHAT SCREEN (HUMAN ONLY)
+    ════════════════════════════════ */
+    .chat-container {
+      background: var(--bg-surface);
+      border-radius: 32px;
+      width: 100%;
+      max-width: 440px;
+      height: 85svh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-surface);
+    }
+    .chat-header .brand-header { margin-bottom: 0; }
+    .chat-header .brand-logo { width: 32px; height: 32px; border-radius: 8px; }
+    .chat-header .brand-logo .material-symbols-rounded { font-size: 18px; }
+    .chat-header .brand-title { font-size: 1.15rem; }
+    .close-btn {
+      background: none; border: none; cursor: pointer; color: var(--text-dim);
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+    }
+    .close-btn:hover { background: var(--bg-main); }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-main);
+    }
+    .msg-bubble {
       padding: 12px 16px;
       border-radius: 20px;
       max-width: 85%;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      animation: slideUp 0.3s forwards;
     }
-    .t-line.user { 
-      background: var(--accent-light);
-      color: var(--text-main); 
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
+    .msg-bubble.system {
+      align-self: center; background: none; color: var(--text-dim); font-size: 0.8rem; text-align: center;
     }
-    .t-line.ai { 
-      background: #ffffff;
-      border: 1px solid var(--border);
-      color: var(--text-main); 
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
+    .msg-bubble.user {
+      align-self: flex-end; background: var(--text-main); color: #fff; border-bottom-right-radius: 4px;
     }
-    @keyframes slideUp { 
-      from{ opacity:0; transform:translateY(10px); } 
-      to{ opacity:1; transform:translateY(0); } 
+    .msg-bubble.agent {
+      align-self: flex-start; background: #fff; border: 1px solid var(--border); border-bottom-left-radius: 4px;
     }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #d1d1d1; border-radius: 4px; }
 
-    /* ── CALL CONTROLS ── */
-    .call-controls {
-      position:absolute; 
-      bottom:40px;
-      width:100%; 
-      display:flex; 
-      gap:20px;
-      align-items:center; 
-      justify-content:center;
-    }
-    .ctrl-btn {
-      width:56px; 
-      height:56px; 
-      border-radius:50%; 
-      border:1px solid var(--border);
-      background:var(--bg-surface); 
-      color:var(--text-main); 
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
-      cursor:pointer; 
-      transition:all 0.2s ease;
-    }
-    .ctrl-btn:hover { 
-      background:var(--bg-main); 
-    }
-    .ctrl-btn.muted { 
-      background: var(--text-main); 
-      color: #fff; 
-      border-color: var(--text-main);
-    }
-    .ctrl-end {
-      width:72px; 
-      height:72px; 
-      border-radius:50%; 
-      border:none;
-      background:var(--danger);
-      color:#fff; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
-      cursor:pointer; 
-      transition:all 0.2s ease;
-    }
-    .ctrl-end:hover { 
-      background: #8c1d18;
-    }
-
-    /* ════════════════════════════════
-       TRANSFER OVERLAY
-    ════════════════════════════════ */
-    .transfer-overlay {
-      position:absolute; 
-      inset:0; 
-      z-index:20;
-      display:flex; 
-      flex-direction:column; 
-      align-items:center; 
-      justify-content:center;
-      padding:32px; 
-      text-align:center;
-      background: var(--bg-main);
-      opacity:0; 
-      pointer-events:none; 
-      transition:opacity 0.4s ease;
-    }
-    .transfer-overlay.active { opacity:1; pointer-events:auto; }
-
-    .transfer-orb {
-      width:100px; 
-      height:100px; 
-      border-radius:50%;
+    .chat-input-area {
+      padding: 16px 20px;
       background: var(--bg-surface);
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
-      margin-bottom:24px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-      position: relative;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
     }
-    .transfer-orb::before {
-      content: '';
-      position: absolute;
-      inset: -16px;
-      border-radius: 50%;
-      background: var(--accent);
-      opacity: 0.15;
-      filter: blur(20px);
-      animation: pulseGlow 1.5s infinite alternate;
+    .chat-input {
+      flex: 1;
+      background: var(--bg-main);
+      border: 1px solid transparent;
+      border-radius: 99px;
+      padding: 12px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
     }
-    
-    .transfer-title {
-      font-family:'Outfit',sans-serif; 
-      font-size:1.5rem; 
-      font-weight:500; 
-      color:var(--text-main); 
-      margin-bottom:8px;
+    .chat-input:focus { border-color: var(--accent); background: #fff; }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent); color: white; border: none;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      transition: all 0.2s ease;
     }
-    .transfer-sub { 
-      color:var(--text-dim); 
-      font-size:0.95rem; 
-      line-height:1.5; 
-      max-width:280px; 
-    }
-
-    .loading-dots { 
-      display:flex; 
-      gap:8px; 
-      margin-top:24px; 
-    }
-    .ld { 
-      width:8px; 
-      height:8px; 
-      border-radius:50%; 
-      background:var(--accent); 
-      animation:ldBounce 1.4s infinite ease-in-out both; 
-    }
-    .ld:nth-child(1){ animation-delay:-0.32s; }
-    .ld:nth-child(2){ animation-delay:-0.16s; }
-    @keyframes ldBounce { 
-      0%, 80%, 100% { transform: scale(0); } 
-      40% { transform: scale(1); } 
-    }
+    .send-btn:hover { background: #0842a0; transform: scale(1.05); }
+    .send-btn .material-symbols-rounded { font-size: 20px; margin-left: 2px; }
 
     .material-symbols-rounded { 
-      font-family:'Material Symbols Rounded'; 
-      font-style:normal; 
-      font-weight:400; 
-      user-select:none; 
+      font-family:'Material Symbols Rounded'; font-style:normal; font-weight:400; user-select:none; 
     }
   </style>
 </head>
@@ -549,15 +447,15 @@
       <div class="type-selector">
         <div class="type-card selected" data-type="ai" onclick="selectAgentType('ai')">
           <span class="material-symbols-rounded">auto_awesome</span>
-          <div class="type-card-title">AI Assistant</div>
+          <div class="type-card-title">AI Call Assistant</div>
         </div>
         <div class="type-card" data-type="human" onclick="selectAgentType('human')">
-          <span class="material-symbols-rounded">support_agent</span>
-          <div class="type-card-title">Human Agent</div>
+          <span class="material-symbols-rounded">chat</span>
+          <div class="type-card-title">Live Chat Agent</div>
         </div>
       </div>
       
-      <!-- Voice Chips (Hides when Human is selected) -->
+      <!-- Voice Chips (Hides when Chat is selected) -->
       <div class="voice-section" id="voiceSection">
         <div class="voice-section-title">Select a Voice Profile</div>
         <div class="voice-chips" id="voiceChips">
@@ -575,13 +473,6 @@
             </div>
             <div class="voice-chip-check"></div>
           </div>
-          <div class="voice-chip" data-voice="eve" onclick="selectVoice(this)">
-            <div class="voice-chip-info">
-              <div class="voice-chip-name">Eve</div>
-              <div class="voice-chip-desc">Energetic Expert</div>
-            </div>
-            <div class="voice-chip-check"></div>
-          </div>
         </div>
       </div>
 
@@ -591,7 +482,7 @@
     </div>
   </div>
 
-  <!-- CALL SCREEN (AI) -->
+  <!-- VOICE CALL SCREEN (AI) -->
   <div class="screen hidden" id="callScreen">
     <div class="call-header">
       <div class="call-status" id="callStatus">
@@ -616,7 +507,7 @@
       <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
         <span class="material-symbols-rounded" id="muteIcon">mic</span>
       </button>
-      <button class="ctrl-end" onclick="endCall()">
+      <button class="ctrl-end" onclick="endAICall()">
         <span class="material-symbols-rounded" style="font-size:32px;">call_end</span>
       </button>
       <button class="ctrl-btn" onclick="clearTranscript()">
@@ -625,47 +516,50 @@
     </div>
   </div>
 
-  <!-- TRANSFER OVERLAY (Human Connect) -->
-  <div class="transfer-overlay" id="transferOverlay">
-    <div class="transfer-orb" id="tOrb">
-      <span class="material-symbols-rounded" style="font-size:40px; color:var(--accent);">support_agent</span>
-    </div>
-    <div class="transfer-title" id="tTitle">Connecting to Agent</div>
-    <div class="transfer-sub" id="tSub">Routing you to the next available live human agent. Please hold...</div>
-    <div class="loading-dots" id="tDots">
-      <div class="ld"></div><div class="ld"></div><div class="ld"></div>
-    </div>
-    <div class="call-controls" style="position:relative;bottom:auto;margin-top:40px;">
-      <button class="ctrl-btn" id="humanMuteBtn" onclick="toggleHumanMute()">
-        <span class="material-symbols-rounded" id="humanMuteIcon">mic</span>
-      </button>
-      <button class="ctrl-end" onclick="endCall()">
-        <span class="material-symbols-rounded" style="font-size:32px;">call_end</span>
-      </button>
+  <!-- TEXT CHAT SCREEN (HUMAN) -->
+  <div class="screen hidden" id="chatScreen">
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="brand-header">
+          <div class="brand-logo" style="background: var(--accent);">
+            <span class="material-symbols-rounded">support_agent</span>
+          </div>
+          <h1 class="brand-title">Live Support</h1>
+        </div>
+        <button class="close-btn" onclick="endChat()">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages">
+        <!-- Text bubbles inject here -->
+      </div>
+      
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Message agent..." onkeypress="handleChatKey(event)"/>
+        <button class="send-btn" onclick="sendChatMessage()">
+          <span class="material-symbols-rounded">send</span>
+        </button>
+      </div>
     </div>
   </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getRemoteConfig, fetchAndActivate, getString } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-remote-config.js";
-  import { io } from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
 
   const API_BASE = "https://api.x.ai/v1";
   let XAI_API_KEY = "";
-  const socket = io('http://localhost:3000');
-  const rtcConfig = { iceServers:[{ urls:'stun:stun.l.google.com:19302' }] };
   
-  let peerConnection, localStream;
   let isCallActive=false, isRinging=false, isTransferring=false, isMuted=false;
   let currentVoice='ara', selectedAgentType='ai', conversationHistory=[], callTimeout=null;
   let currentAudio=null, speechRecognition=null, ringAudioCtx=null, ringInterval=null;
-  let currentCallId=null;
 
   const $ = id => document.getElementById(id);
   const els = {
     setup:$('setupScreen'), 
     call:$('callScreen'), 
-    transfer:$('transferOverlay'),
+    chat:$('chatScreen'),
     voiceSection:$('voiceSection'),
     orbWrap:$('orbWrap'), 
     orbIcon:$('orbIcon'),
@@ -675,12 +569,8 @@
     transcript:$('transcriptBox'), 
     muteBtn:$('muteBtn'), 
     muteIcon:$('muteIcon'),
-    tTitle:$('tTitle'), 
-    tSub:$('tSub'), 
-    tDots:$('tDots'),
-    humanMuteBtn:$('humanMuteBtn'), 
-    humanMuteIcon:$('humanMuteIcon'), 
-    tOrb:$('tOrb'),
+    chatMessages:$('chatMessages'),
+    chatInput:$('chatInput')
   };
 
   // Firebase Init
@@ -714,7 +604,16 @@
     currentVoice = el.dataset.voice;
   };
 
-  // Haptic Feedback
+  // Flow Controller
+  window.startFlow = () => {
+    if (selectedAgentType === 'human') {
+      startTextChat(false);
+    } else {
+      startAICall();
+    }
+  };
+
+  // --- AUDIO & AI CALL LOGIC ---
   const haptic = t => { 
     if(!navigator.vibrate) return; 
     if(t==='start') navigator.vibrate(40); 
@@ -722,7 +621,6 @@
     else navigator.vibrate([100,100,100]); 
   };
 
-  // Ringtone generator
   function startRingtone() {
     const AC = window.AudioContext||window.webkitAudioContext;
     ringAudioCtx = new AC();
@@ -747,21 +645,6 @@
     ringAudioCtx=null;
   }
 
-  // Routing the setup button
-  window.startFlow = () => {
-    if (selectedAgentType === 'human') {
-      els.setup.classList.add('hidden');
-      connectHuman();
-    } else {
-      startAICall();
-    }
-  };
-
-  function getSystemPrompt() {
-    return `You are an AI handling a live call for Rare Grade Tech. CRITICAL: Keep responses to 1-3 short sentences. Speak naturally. CALL TRANSFER: If the user asks for a human, include [TRANSFER] in your response.`;
-  }
-
-  // Speech Recognition setup
   function initSR() {
     const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
     if(!SR) return false;
@@ -797,13 +680,14 @@
     if(speechRecognition) try{ speechRecognition.stop(); }catch(e){} 
   }
 
+  function getSystemPrompt() {
+    return `You are an AI handling a live call for Rare Grade Tech. CRITICAL: Keep responses to 1-3 short sentences. Speak naturally. CALL TRANSFER: If the user asks for a human, include [TRANSFER] in your response.`;
+  }
+
   function startAICall() {
     if(!XAI_API_KEY||!initSR()) return;
     currentVoice = document.querySelector('.voice-chip.selected')?.dataset.voice||'ara';
-    isCallActive=true; 
-    isRinging=true; 
-    isTransferring=false; 
-    isMuted=false;
+    isCallActive=true; isRinging=true; isTransferring=false; isMuted=false;
     conversationHistory=[{ role:"system", content:getSystemPrompt() }];
     currentAudio = new Audio();
     
@@ -823,26 +707,19 @@
 
   function answerCall() {
     if(!isCallActive) return; 
-    isRinging=false; 
-    stopRingtone();
-    els.orbWrap.classList.remove('ringing-shake'); 
-    els.orbIcon.innerText='graphic_eq';
-    updateStatus("Connected","s-active"); 
-    els.agentSub.innerText='Listening for you…'; 
-    haptic('start');
+    isRinging=false; stopRingtone();
+    els.orbWrap.classList.remove('ringing-shake'); els.orbIcon.innerText='graphic_eq';
+    updateStatus("Connected","s-active"); els.agentSub.innerText='Listening for you…'; haptic('start');
     
     const greet = "Hello, you've reached Rare Grade Tech. How can I help you today?";
     conversationHistory.push({ role:"assistant", content:greet });
-    logT(greet,"ai"); 
-    speakAI(greet);
+    logT(greet,"ai"); speakAI(greet);
   }
 
   async function processUtterance(text) {
-    stopListen(); 
-    haptic('stop'); 
+    stopListen(); haptic('stop'); 
     updateStatus("Thinking…","s-active");
-    els.orbWrap.classList.remove('speaking'); 
-    els.agentSub.innerText='Processing…';
+    els.orbWrap.classList.remove('speaking'); els.agentSub.innerText='Processing…';
     
     conversationHistory.push({ role:'user', content:text });
     
@@ -850,15 +727,12 @@
       const res = await fetch(`${API_BASE}/chat/completions`,{
         method:'POST', 
         headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
-        body: JSON.stringify({ 
-          model:"grok-4-1-fast-non-reasoning", 
-          messages:conversationHistory, 
-          stream:false 
-        })
+        body: JSON.stringify({ model:"grok-4-1-fast-non-reasoning", messages:conversationHistory, stream:false })
       });
       const data = await res.json(); 
       let reply = data.choices[0].message.content;
       
+      // TRIGGER TRANSFER TO TEXT CHAT
       if(reply.includes("[TRANSFER]")) {
         isTransferring=true; 
         reply=reply.replace("[TRANSFER]","").trim();
@@ -868,18 +742,13 @@
       }
       
       conversationHistory.push({ role:'assistant', content:reply });
-      logT(reply,"ai"); 
-      await speakAI(reply);
-    } catch(err) { 
-      setTimeout(()=>startListen(),2000); 
-    }
+      logT(reply,"ai"); await speakAI(reply);
+    } catch(err) { setTimeout(()=>startListen(),2000); }
   }
 
   async function speakAI(text, isTransfer=false) {
     if(!isCallActive) return;
-    updateStatus("Speaking…","s-active"); 
-    els.agentSub.innerText='Speaking…'; 
-    els.orbWrap.classList.add('speaking');
+    updateStatus("Speaking…","s-active"); els.agentSub.innerText='Speaking…'; els.orbWrap.classList.add('speaking');
     
     try {
       const r = await fetch(`${API_BASE}/tts`,{
@@ -887,132 +756,111 @@
         headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
         body:JSON.stringify({ text, voice_id:currentVoice, language:'en' })
       });
-      const blob = await r.blob(); 
-      currentAudio.src=URL.createObjectURL(blob);
+      const blob = await r.blob(); currentAudio.src=URL.createObjectURL(blob);
       
       currentAudio.onended = () => {
-        els.orbWrap.classList.remove('speaking'); 
-        els.agentSub.innerText='Listening for you…';
+        els.orbWrap.classList.remove('speaking'); els.agentSub.innerText='Listening for you…';
         if(isTransfer){ 
-          els.call.classList.add('hidden');
-          connectHuman(); 
+          startTextChat(true); 
           return; 
         }
         if(isCallActive&&!isMuted){ startListen(); haptic('start'); }
       };
       await currentAudio.play();
-    } catch { 
-      startListen(); 
-    }
+    } catch { startListen(); }
   }
 
-  // WebRTC Human Transfer
-  async function connectHuman() {
-    isCallActive = true;
-    updateStatus("Transferring…","s-transferring");
-    els.transfer.classList.add('active'); 
-    startRingtone();
-    
-    currentCallId = Math.random().toString(36).substring(2,10);
-    
-    try {
-      localStream = await navigator.mediaDevices.getUserMedia({ audio:true });
-      peerConnection = new RTCPeerConnection(rtcConfig);
-      localStream.getTracks().forEach(t=>peerConnection.addTrack(t,localStream));
-      peerConnection.ontrack = e => { const a=new Audio(); a.srcObject=e.streams[0]; a.play(); };
-      peerConnection.onicecandidate = e => { 
-        if(e.candidate) socket.emit('ice-candidate',{ candidate:e.candidate, callId:currentCallId }); 
-      };
-      peerConnection.onconnectionstatechange = () => { 
-        if(peerConnection.connectionState==='connected') handlePickup(); 
-      };
-      
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-      socket.emit('offer',{ callId:currentCallId, offer, socketId:socket.id });
-    } catch(err) {
-      console.error(err); 
-      els.tSub.innerText='Microphone error. Check permissions.'; 
-      els.tDots.style.display='none'; 
-      stopRingtone();
-    }
-  }
-
-  socket.on('answer', async d => { 
-    if(d.callId===currentCallId&&peerConnection) 
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer)); 
-  });
-  socket.on('ice-candidate', async d => { 
-    if(d.callId===currentCallId&&peerConnection) 
-      try{ await peerConnection.addIceCandidate(d.candidate); }catch(e){} 
-  });
-
-  function handlePickup() {
-    stopRingtone(); 
-    els.tTitle.innerText='Agent Connected';
-    els.tSub.innerText='You are now speaking with a human agent.';
-    els.tDots.style.display='none'; 
-    haptic('start');
-  }
-
-  window.toggleHumanMute = () => {
-    isMuted=!isMuted;
-    els.humanMuteBtn.classList.toggle('muted',isMuted); 
-    els.humanMuteIcon.innerText=isMuted?'mic_off':'mic';
-    if(localStream) localStream.getAudioTracks()[0].enabled=!isMuted;
-  };
-
-  window.endCall = () => {
-    isCallActive=isRinging=isTransferring=false; 
-    clearTimeout(callTimeout); 
-    stopRingtone(); 
-    stopListen();
+  window.endAICall = () => {
+    isCallActive=isRinging=isTransferring=false; clearTimeout(callTimeout); 
+    stopRingtone(); stopListen();
     if(currentAudio){ currentAudio.pause(); currentAudio=null; }
-    if(peerConnection){ peerConnection.close(); peerConnection=null; }
-    if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localStream=null; }
-    currentCallId=null;
-    
-    els.transfer.classList.remove('active'); 
-    els.call.classList.add('hidden');
-    
-    setTimeout(()=>{
-      els.setup.classList.remove('hidden');
-      els.tTitle.innerText='Connecting to Agent'; 
-      els.tSub.innerText='Routing you to the next available live human agent. Please hold...';
-      els.tDots.style.display='flex'; 
-    },500);
+    els.call.classList.add('hidden'); els.setup.classList.remove('hidden');
   };
 
   window.toggleMute = () => {
     if(isRinging||isTransferring) return; 
     isMuted=!isMuted;
-    els.muteBtn.classList.toggle('muted',isMuted); 
-    els.muteIcon.innerText=isMuted?'mic_off':'mic';
-    if(isMuted){ 
-      stopListen(); 
-      updateStatus("Muted",""); 
-    }
-    else{ 
-      if(!currentAudio||currentAudio.paused){ 
-        startListen(); 
-      } 
-    }
+    els.muteBtn.classList.toggle('muted',isMuted); els.muteIcon.innerText=isMuted?'mic_off':'mic';
+    if(isMuted){ stopListen(); updateStatus("Muted",""); }
+    else{ if(!currentAudio||currentAudio.paused){ startListen(); } }
   };
 
   function updateStatus(text, cls) {
-    els.sDot.className='status-dot '+(cls||''); 
-    els.sText.innerText=text;
+    els.sDot.className='status-dot '+(cls||''); els.sText.innerText=text;
   }
 
   function logT(text, sender) {
-    const d=document.createElement('div'); 
-    d.className='t-line '+sender;
+    const d=document.createElement('div'); d.className='t-line '+sender;
     d.innerText=text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-    els.transcript.appendChild(d); 
-    els.transcript.scrollTop=els.transcript.scrollHeight;
+    els.transcript.appendChild(d); els.transcript.scrollTop=els.transcript.scrollHeight;
+  }
+  window.clearTranscript = () => { els.transcript.innerHTML=''; };
+
+  // --- TEXT CHAT LOGIC (HUMAN) ---
+  function startTextChat(fromTransfer) {
+    // Shutdown voice logic if running
+    isCallActive = false; 
+    stopListen(); 
+    stopRingtone();
+    if(currentAudio) { currentAudio.pause(); currentAudio=null; }
+    
+    // UI Swaps
+    els.setup.classList.add('hidden');
+    els.call.classList.add('hidden');
+    els.chat.classList.remove('hidden');
+    
+    // Clear chat area
+    els.chatMessages.innerHTML = '';
+    
+    if (fromTransfer) {
+      appendChatMsg("Voice call dropped. Transferring to text chat...", "system");
+    }
+    
+    appendChatMsg("Connecting you to the next available agent...", "system");
+    
+    // Mock Human Agent joining
+    setTimeout(() => {
+      appendChatMsg("Agent Sarah has joined the session.", "system");
+      haptic('start');
+      setTimeout(() => {
+        const greetText = fromTransfer ? 
+          "Hi! I see you were transferred from our AI assistant. How can I help you today?" : 
+          "Hello! I'm Sarah from Support. How can I assist you today?";
+        appendChatMsg(greetText, "agent");
+      }, 1000);
+    }, 1500);
   }
 
-  window.clearTranscript = () => { els.transcript.innerHTML=''; };
+  window.handleChatKey = (e) => {
+    if(e.key === 'Enter') sendChatMessage();
+  };
+
+  window.sendChatMessage = () => {
+    const text = els.chatInput.value.trim();
+    if(!text) return;
+    
+    appendChatMsg(text, "user");
+    els.chatInput.value = '';
+    
+    // Mock agent reply for prototype
+    setTimeout(() => {
+      appendChatMsg("Let me check on that for you...", "agent");
+    }, 1200);
+  };
+
+  function appendChatMsg(text, type) {
+    const bubble = document.createElement('div');
+    bubble.className = `msg-bubble ${type}`;
+    bubble.innerText = text;
+    els.chatMessages.appendChild(bubble);
+    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  }
+
+  window.endChat = () => {
+    els.chat.classList.add('hidden');
+    els.setup.classList.remove('hidden');
+  };
+
 </script>
 </body>
 </html>
