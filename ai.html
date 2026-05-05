@@ -4,474 +4,729 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Rare Grade | Voice Agent</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
-
   <style>
     :root {
-      --bg-deep:    #09000f;
-      --bg-mid:     #110020;
-      --bg-card:    rgba(255,255,255,0.04);
-      --border:     rgba(255,255,255,0.08);
-      --purple-lo:  #6d28d9;
-      --purple-hi:  #a855f7;
-      --pink:       #ec4899;
-      --grad:       linear-gradient(135deg, var(--purple-lo), var(--pink));
-      --grad-soft:  linear-gradient(135deg, #4c1d95aa, #be185daa);
-      --text-main:  #f0e8ff;
-      --text-dim:   #9981b9;
-      --danger:     #f43f5e;
-      --transfer:   #f59e0b;
-      --glow-purple: rgba(168,85,247,0.35);
-      --glow-pink:   rgba(236,72,153,0.25);
+      --bg-light: #f8f6fc;
+      --bg-card: #ffffff;
+      --bg-mid: #f0e9ff;
+      --border: rgba(120, 70, 200, 0.12);
+      --purple-lo: #6d28d9;
+      --purple-hi: #9333ea;
+      --pink: #db2777;
+      --grad: linear-gradient(135deg, var(--purple-lo), var(--pink));
+      --grad-soft: linear-gradient(135deg, #a78bfa, #f472b6);
+      --text-main: #1f1238;
+      --text-dim: #6b5a8c;
+      --text-light: #ffffff;
+      --danger: #e11d48;
+      --transfer: #d97706;
+      --glow-purple: rgba(147, 51, 234, 0.25);
+      --glow-pink: rgba(219, 39, 119, 0.2);
     }
 
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    *, *::before, *::after { 
+      margin:0; 
+      padding:0; 
+      box-sizing:border-box; 
+      -webkit-tap-highlight-color:transparent; 
+    }
 
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--bg-deep);
+      background: var(--bg-light);
       color: var(--text-main);
       height: 100svh;
-      display: flex; flex-direction: column;
-      overflow: hidden; position: relative;
+      display: flex; 
+      flex-direction: column;
+      overflow: hidden; 
+      position: relative;
     }
 
-    /* ── NOISE GRAIN OVERLAY ── */
+    /* ── SOFT GRAIN OVERLAY ── */
     body::before {
-      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      background-repeat: repeat; background-size: 200px;
-      opacity: 0.6;
+      content:''; 
+      position:fixed; 
+      inset:0; 
+      z-index:0; 
+      pointer-events:none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-repeat: repeat; 
+      background-size: 180px;
+      opacity: 0.7;
     }
 
-    /* ── BACKGROUND GRADIENT MESH ── */
+    /* ── LIGHT BACKGROUND MESH ── */
     .bg-mesh {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      position: fixed; 
+      inset: 0; 
+      z-index: 0; 
+      pointer-events: none;
       background:
-        radial-gradient(ellipse 70% 60% at 20% 10%, rgba(109,40,217,0.28) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(236,72,153,0.18) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 60% 30%, rgba(168,85,247,0.12) 0%, transparent 55%),
-        var(--bg-deep);
+        radial-gradient(ellipse 70% 65% at 25% 15%, rgba(109,40,217,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 55% at 75% 75%, rgba(236,72,153,0.1) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 45% at 55% 35%, rgba(168,85,247,0.08) 0%, transparent 60%),
+        var(--bg-light);
       transition: opacity 0.6s ease;
     }
-    .bg-mesh.transfer-bg { background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(245,158,11,0.2) 0%, transparent 65%), var(--bg-deep); }
+    .bg-mesh.transfer-bg { 
+      background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(245,158,11,0.12) 0%, transparent 65%), 
+                  var(--bg-light); 
+    }
 
     /* ── SCREENS ── */
     .screen {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10; transition: opacity 0.45s ease, transform 0.45s ease;
+      position: absolute; 
+      inset: 0;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center;
+      z-index: 10; 
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), 
+                  transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
       padding: 24px;
     }
-    .hidden { opacity:0; pointer-events:none; transform: scale(0.96); }
+    .hidden { opacity:0; pointer-events:none; transform: scale(0.95); }
 
     /* ════════════════════════════════
-       SETUP SCREEN
+       SETUP SCREEN - IMPROVED
     ════════════════════════════════ */
     .setup-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 28px;
-      padding: 40px 36px;
-      width: 100%; max-width: 400px;
+      border-radius: 32px;
+      padding: 48px 40px;
+      width: 100%; 
+      max-width: 420px;
       text-align: center;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1),
+                  0 0 0 1px rgba(255,255,255,0.6) inset;
     }
 
     .brand-orb {
-      width: 76px; height: 76px; margin: 0 auto 24px;
+      width: 88px; 
+      height: 88px; 
+      margin: 0 auto 28px;
       border-radius: 50%;
       background: var(--grad);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 40px var(--glow-purple), 0 0 80px rgba(168,85,247,0.15);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      box-shadow: 0 0 45px var(--glow-purple),
+                  0 25px 50px -12px rgba(147,51,234,0.3);
       position: relative;
     }
     .brand-orb::after {
-      content:''; position:absolute; inset:-6px; border-radius:50%;
+      content:''; 
+      position:absolute; 
+      inset:-8px; 
+      border-radius:50%;
       background: conic-gradient(from 0deg, var(--purple-hi), var(--pink), var(--purple-lo), var(--purple-hi));
-      z-index:-1; opacity:0.5; animation: spin 4s linear infinite;
+      z-index:-1; 
+      opacity:0.45; 
+      animation: spin 4.5s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .setup-label {
-      font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700;
-      letter-spacing:3px; text-transform:uppercase; color:var(--purple-hi);
+      font-family:'Syne',sans-serif; 
+      font-size:0.75rem; 
+      font-weight:700;
+      letter-spacing:3.5px; 
+      text-transform:uppercase; 
+      color:var(--purple-hi);
       margin-bottom:8px;
     }
     .setup-title {
-      font-family:'Syne',sans-serif; font-size:2rem; font-weight:800;
-      color:#fff; line-height:1.1; margin-bottom:10px;
+      font-family:'Syne',sans-serif; 
+      font-size:2.25rem; 
+      font-weight:800;
+      color:var(--text-main); 
+      line-height:1.05; 
+      margin-bottom:12px;
     }
     .setup-sub {
-      color:var(--text-dim); font-size:0.9rem; line-height:1.6; margin-bottom:32px;
-    }
-
-    /* Voice selector chips */
-    .voice-chips { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
-    .voice-chip {
-      display:flex; align-items:center; gap:14px;
-      padding:14px 18px; border-radius:16px;
-      border:1px solid var(--border); background:rgba(255,255,255,0.03);
-      cursor:pointer; transition:all 0.2s;
-      position:relative; overflow:hidden;
-    }
-    .voice-chip:hover { border-color:rgba(168,85,247,0.4); background:rgba(168,85,247,0.06); }
-    .voice-chip.selected {
-      border-color:var(--purple-hi); background:rgba(168,85,247,0.1);
-      box-shadow:0 0 20px rgba(168,85,247,0.15);
-    }
-    .voice-chip-dot {
-      width:36px; height:36px; border-radius:50%; flex-shrink:0;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .voice-chip-info { text-align:left; }
-    .voice-chip-name { font-family:'Syne',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; }
-    .voice-chip-desc { font-size:0.75rem; color:var(--text-dim); margin-top:1px; }
-    .voice-chip-check {
-      width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,0.15);
-      margin-left:auto; flex-shrink:0; transition:all 0.2s;
-    }
-    .voice-chip.selected .voice-chip-check { background:var(--purple-hi); border-color:var(--purple-hi); }
-
-    .start-btn {
-      width:100%; padding:17px; border-radius:50px;
-      background: var(--grad);
-      border:none; color:#fff;
-      font-family:'Syne',sans-serif; font-size:1rem; font-weight:700;
-      letter-spacing:0.5px; cursor:pointer;
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      transition:all 0.25s;
-      box-shadow:0 10px 30px rgba(168,85,247,0.4), 0 0 60px rgba(168,85,247,0.15);
-    }
-    .start-btn:hover { transform:translateY(-2px); box-shadow:0 16px 40px rgba(168,85,247,0.5), 0 0 80px rgba(168,85,247,0.2); }
-    .start-btn:active { transform:translateY(0); }
-
-    /* ════════════════════════════════
-       CALL SCREEN
-    ════════════════════════════════ */
-    .call-header {
-      position:absolute; top:0; width:100%;
-      padding:36px 24px 0;
-      display:flex; flex-direction:column; align-items:center;
-    }
-    .call-app-name {
-      font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700; color:#fff; letter-spacing:0.5px;
-    }
-    .call-status {
-      display:flex; align-items:center; gap:7px;
-      font-size:0.8rem; color:var(--text-dim); margin-top:6px;
-    }
-    .status-dot {
-      width:7px; height:7px; border-radius:50%; background:var(--text-dim); flex-shrink:0;
-    }
-    .status-dot.s-active   { background:var(--purple-hi); animation:pulseDot 1.5s infinite; }
-    .status-dot.s-listening{ background:#60a5fa; animation:pulseDot 1.5s infinite; }
-    .status-dot.s-ringing, .status-dot.s-transferring { background:var(--transfer); animation:pulseDot 1s infinite; }
-    @keyframes pulseDot {
-      0%  { box-shadow: 0 0 0 0 rgba(168,85,247,0.5); }
-      70% { box-shadow: 0 0 0 8px rgba(168,85,247,0); }
-      100%{ box-shadow: 0 0 0 0 rgba(168,85,247,0); }
-    }
-
-    /* ── THE ORB ── */
-    .orb-wrap {
-      position:relative; width:200px; height:200px;
-      display:flex; align-items:center; justify-content:center;
+      color:var(--text-dim); 
+      font-size:0.95rem; 
+      line-height:1.55; 
       margin-bottom:36px;
     }
 
-    /* Outer animated rings */
+    /* Voice selector chips - Improved */
+    .voice-chips { 
+      display:flex; 
+      flex-direction:column; 
+      gap:12px; 
+      margin-bottom:32px; 
+    }
+    .voice-chip {
+      display:flex; 
+      align-items:center; 
+      gap:16px;
+      padding:18px 20px; 
+      border-radius:20px;
+      border:1px solid var(--border); 
+      background:var(--bg-card);
+      cursor:pointer; 
+      transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .voice-chip:hover { 
+      border-color:var(--purple-hi); 
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(147,51,234,0.12);
+    }
+    .voice-chip.selected {
+      border-color:var(--purple-hi); 
+      background: linear-gradient(135deg, #f8f0ff, #fdf4ff);
+      box-shadow: 0 0 0 3px rgba(147,51,234,0.15),
+                  0 10px 30px rgba(147,51,234,0.15);
+    }
+    .voice-chip-dot {
+      width:42px; 
+      height:42px; 
+      border-radius:50%; 
+      flex-shrink:0;
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .voice-chip-info { 
+      text-align:left; 
+      flex:1;
+    }
+    .voice-chip-name { 
+      font-family:'Syne',sans-serif; 
+      font-size:1.05rem; 
+      font-weight:700; 
+      color:var(--text-main); 
+    }
+    .voice-chip-desc { 
+      font-size:0.8rem; 
+      color:var(--text-dim); 
+      margin-top:2px; 
+    }
+    .voice-chip-check {
+      width:22px; 
+      height:22px; 
+      border-radius:50%; 
+      border:2.5px solid var(--border);
+      margin-left:auto; 
+      flex-shrink:0; 
+      transition:all 0.25s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .voice-chip.selected .voice-chip-check { 
+      background:var(--purple-hi); 
+      border-color:var(--purple-hi); 
+    }
+    .voice-chip.selected .voice-chip-check::after {
+      content: '✓';
+      font-size: 13px;
+      color: white;
+    }
+
+    .start-btn {
+      width:100%; 
+      padding:18px; 
+      border-radius:9999px;
+      background: var(--grad);
+      border:none; 
+      color:var(--text-light);
+      font-family:'Syne',sans-serif; 
+      font-size:1.05rem; 
+      font-weight:700;
+      letter-spacing:0.6px; 
+      cursor:pointer;
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      gap:12px;
+      transition:all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+      box-shadow: 0 15px 35px -5px rgba(147,51,234,0.35);
+    }
+    .start-btn:hover { 
+      transform: translateY(-4px); 
+      box-shadow: 0 20px 45px -5px rgba(147,51,234,0.45);
+    }
+
+    /* ════════════════════════════════
+       CALL SCREEN - Enhanced
+    ════════════════════════════════ */
+    .call-header {
+      position:absolute; 
+      top:0; 
+      width:100%;
+      padding:40px 24px 0;
+      display:flex; 
+      flex-direction:column; 
+      align-items:center;
+    }
+    .call-app-name {
+      font-family:'Syne',sans-serif; 
+      font-size:1.25rem; 
+      font-weight:700; 
+      color:var(--text-main); 
+      letter-spacing:0.5px;
+    }
+    .call-status {
+      display:flex; 
+      align-items:center; 
+      gap:8px;
+      font-size:0.85rem; 
+      color:var(--text-dim); 
+      margin-top:8px;
+      font-weight:500;
+    }
+    .status-dot {
+      width:8px; 
+      height:8px; 
+      border-radius:50%; 
+      background:var(--text-dim); 
+      flex-shrink:0;
+    }
+    .status-dot.s-active { 
+      background:#22c55e; 
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.3);
+    }
+    .status-dot.s-listening{ 
+      background:#3b82f6; 
+      animation:pulseDot 1.8s infinite; 
+    }
+    .status-dot.s-ringing, .status-dot.s-transferring { 
+      background:var(--transfer); 
+      animation:pulseDot 1.2s infinite; 
+    }
+    @keyframes pulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(147,51,234,0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(147,51,234,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(147,51,234,0); }
+    }
+
+    /* ── THE ORB - Enhanced ── */
+    .orb-wrap {
+      position:relative; 
+      width:220px; 
+      height:220px;
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      margin: 20px 0 32px;
+    }
     .orb-ring {
-      position:absolute; border-radius:50%;
-      border:1.5px solid rgba(168,85,247,0.25);
-      animation:none;
+      position:absolute; 
+      border-radius:50%;
+      border:2px solid rgba(147,51,234,0.2);
     }
-    .orb-ring:nth-child(1){ width:200px; height:200px; }
-    .orb-ring:nth-child(2){ width:160px; height:160px; border-color:rgba(168,85,247,0.35); }
+    .orb-ring:nth-child(1){ width:220px; height:220px; }
+    .orb-ring:nth-child(2){ width:175px; height:175px; border-color:rgba(147,51,234,0.3); }
+    
+    .speaking .orb-ring:nth-child(1){ animation:orbPulse 1.4s ease-in-out infinite; }
+    .speaking .orb-ring:nth-child(2){ animation:orbPulse 1.4s ease-in-out infinite 0.3s; }
+    .ringing-shake .orb-ring:nth-child(1){ animation:orbPulse 0.7s ease-in-out infinite; }
+    .ringing-shake .orb-ring:nth-child(2){ animation:orbPulse 0.7s ease-in-out infinite 0.2s; }
 
-    .speaking .orb-ring:nth-child(1){ animation:orbPulse 1.6s ease-in-out infinite; }
-    .speaking .orb-ring:nth-child(2){ animation:orbPulse 1.6s ease-in-out infinite 0.4s; }
-    .ringing-shake .orb-ring:nth-child(1){ animation:orbPulse 0.8s ease-in-out infinite; border-color:rgba(245,158,11,0.3); }
-    .ringing-shake .orb-ring:nth-child(2){ animation:orbPulse 0.8s ease-in-out infinite 0.2s; border-color:rgba(245,158,11,0.4); }
     @keyframes orbPulse {
-      0%,100%{ transform:scale(1); opacity:0.6; }
-      50%     { transform:scale(1.06); opacity:1; }
+      0%,100%{ transform:scale(1); opacity:0.75; }
+      50% { transform:scale(1.08); opacity:1; }
     }
 
-    /* Core glowing orb */
     .orb-core {
-      width:120px; height:120px; border-radius:50%;
-      position:relative; z-index:2; cursor:pointer;
+      width:138px; 
+      height:138px; 
+      border-radius:50%;
+      position:relative; 
+      z-index:2; 
+      cursor:pointer;
       transition:transform 0.3s ease, filter 0.4s ease;
     }
     .orb-core-inner {
-      width:100%; height:100%; border-radius:50%;
-      background: radial-gradient(circle at 35% 30%, #c084fc, #7c3aed 60%, #4c1d95);
-      display:flex; align-items:center; justify-content:center;
-      box-shadow: 0 0 40px var(--glow-purple), 0 0 80px rgba(168,85,247,0.2), inset 0 2px 4px rgba(255,255,255,0.2);
-      position:relative; overflow:hidden;
+      width:100%; 
+      height:100%; 
+      border-radius:50%;
+      background: radial-gradient(circle at 38% 32%, #c4b5fd, #7c3aed 65%, #4c1d95);
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      box-shadow: 0 0 50px var(--glow-purple), 
+                  0 0 90px rgba(147,51,234,0.25),
+                  inset 0 3px 8px rgba(255,255,255,0.35);
+      position:relative; 
+      overflow:hidden;
     }
     .orb-core-inner::after {
-      content:''; position:absolute;
-      width:50%; height:30%; border-radius:50%;
-      background:rgba(255,255,255,0.18);
-      top:15%; left:20%;
-      filter:blur(4px);
+      content:''; 
+      position:absolute;
+      width:55%; 
+      height:35%; 
+      border-radius:50%;
+      background:rgba(255,255,255,0.35);
+      top:18%; 
+      left:22%;
+      filter:blur(6px);
+    }
+    .orb-core .orb-icon {
+      font-size:52px; 
+      color:#fff; 
+      z-index:1; 
+      text-shadow:0 0 25px rgba(255,255,255,0.6);
     }
 
-    .orb-core .orb-core-inner .orb-icon {
-      font-size:48px; color:#fff; z-index:1; position:relative;
-      text-shadow:0 0 20px rgba(255,255,255,0.5);
+    .speaking .orb-core { 
+      filter: drop-shadow(0 0 30px var(--purple-hi)); 
     }
-
-    /* Speaking: animated waveform on orb */
-    .speaking .orb-core { filter: drop-shadow(0 0 20px var(--purple-hi)); }
     .ringing-shake .orb-core-inner {
-      background: radial-gradient(circle at 35% 30%, #fbbf24, #d97706 60%, #92400e);
-      box-shadow:0 0 40px rgba(245,158,11,0.4), 0 0 80px rgba(245,158,11,0.2);
-      animation:shake 0.4s ease-in-out infinite;
+      background: radial-gradient(circle at 38% 32%, #fcd34d, #f59e0b 65%, #b45309);
+      box-shadow:0 0 50px rgba(245,158,11,0.45), 0 0 90px rgba(245,158,11,0.25);
+      animation:shake 0.45s ease-in-out infinite;
     }
     @keyframes shake {
-      0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-4deg); } 75%{ transform:rotate(4deg); }
+      0%,100%{ transform:rotate(0); } 
+      25%{ transform:rotate(-3deg); } 
+      75%{ transform:rotate(3deg); }
     }
 
-    /* Waveform bars in orb */
     .wave-bars {
-      display:flex; align-items:center; gap:4px;
-      position:absolute; z-index:2;
-      opacity:0; transition:opacity 0.3s;
+      display:flex; 
+      align-items:center; 
+      gap:5px;
+      position:absolute; 
+      z-index:2;
+      opacity:0; 
+      transition:opacity 0.3s;
     }
     .speaking .wave-bars { opacity:1; }
     .wave-bar {
-      width:4px; background:#fff; border-radius:4px;
-      height:16px; animation:waveBounce 0.8s ease-in-out infinite;
+      width:5px; 
+      background:#fff; 
+      border-radius:9999px;
+      height:22px; 
+      animation:waveBounce 0.75s ease-in-out infinite;
     }
-    .wave-bar:nth-child(1){ animation-delay:0s;   animation-duration:0.9s; }
-    .wave-bar:nth-child(2){ animation-delay:0.15s; animation-duration:0.7s; }
-    .wave-bar:nth-child(3){ animation-delay:0.05s; animation-duration:1.0s; }
-    .wave-bar:nth-child(4){ animation-delay:0.2s;  animation-duration:0.8s; }
-    .wave-bar:nth-child(5){ animation-delay:0.1s;  animation-duration:0.9s; }
+    .wave-bar:nth-child(1){ animation-delay:0s; }
+    .wave-bar:nth-child(2){ animation-delay:0.12s; animation-duration:0.65s; }
+    .wave-bar:nth-child(3){ animation-delay:0.05s; }
+    .wave-bar:nth-child(4){ animation-delay:0.22s; }
+    .wave-bar:nth-child(5){ animation-delay:0.1s; }
+
     @keyframes waveBounce {
-      0%,100%{ transform:scaleY(0.4); } 50%{ transform:scaleY(1.8); }
+      0%,100%{ transform:scaleY(0.35); } 
+      50%{ transform:scaleY(1.9); }
     }
 
-    /* Agent name under orb */
     .agent-label {
-      font-family:'Syne',sans-serif; font-size:1.25rem; font-weight:700; color:#fff;
-      text-align:center; margin-bottom:4px;
+      font-family:'Syne',sans-serif; 
+      font-size:1.45rem; 
+      font-weight:700; 
+      color:var(--text-main);
+      margin-bottom:6px;
     }
-    .agent-sublabel { font-size:0.8rem; color:var(--text-dim); text-align:center; }
-    .listening-text .agent-sublabel span { color:var(--purple-hi); }
+    .agent-sublabel { 
+      font-size:0.9rem; 
+      color:var(--text-dim); 
+      font-weight:500;
+    }
 
     /* ── TRANSCRIPT ── */
     .transcript-wrap {
-      width:100%; max-width:480px;
-      background:var(--bg-card); border:1px solid var(--border);
-      border-radius:20px; padding:16px 20px;
-      max-height:130px; overflow-y:auto;
-      display:flex; flex-direction:column; gap:8px;
-      backdrop-filter:blur(16px);
-      -webkit-backdrop-filter:blur(16px);
-      box-shadow:0 4px 24px rgba(0,0,0,0.3);
+      width:100%; 
+      max-width:500px;
+      background:var(--bg-card); 
+      border:1px solid var(--border);
+      border-radius:24px; 
+      padding:20px 24px;
+      max-height:160px; 
+      overflow-y:auto;
+      display:flex; 
+      flex-direction:column; 
+      gap:10px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.08);
     }
-    .transcript-wrap::-webkit-scrollbar{ width:3px; }
-    .transcript-wrap::-webkit-scrollbar-thumb{ background:rgba(168,85,247,0.3); border-radius:4px; }
-
-    .t-line { font-size:0.88rem; line-height:1.5; opacity:0; animation:slideUp 0.3s forwards; }
-    .t-line.user { color:var(--text-main); text-align:right; }
-    .t-line.ai   { color:var(--purple-hi); font-weight:500; text-align:left; }
-    .t-line.sys  { color:var(--text-dim); text-align:center; font-size:0.75rem; font-style:italic; }
-    @keyframes slideUp { from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+    .transcript-wrap::-webkit-scrollbar{ width:4px; }
+    .transcript-wrap::-webkit-scrollbar-thumb{ 
+      background:rgba(147,51,234,0.3); 
+      border-radius:4px; 
+    }
+    .t-line { 
+      font-size:0.93rem; 
+      line-height:1.55; 
+      opacity:0; 
+      animation:slideUp 0.35s forwards; 
+    }
+    .t-line.user { 
+      color:var(--text-main); 
+      text-align:right; 
+    }
+    .t-line.ai { 
+      color:var(--purple-hi); 
+      font-weight:500; 
+    }
+    .t-line.sys { 
+      color:var(--text-dim); 
+      text-align:center; 
+      font-size:0.8rem; 
+      font-style:italic; 
+    }
+    @keyframes slideUp { 
+      from{ opacity:0; transform:translateY(12px); } 
+      to{ opacity:1; transform:translateY(0); } 
+    }
 
     /* ── CALL CONTROLS ── */
     .call-controls {
-      position:absolute; bottom:44px;
-      width:100%; display:flex; gap:24px;
-      align-items:center; justify-content:center;
+      position:absolute; 
+      bottom:48px;
+      width:100%; 
+      display:flex; 
+      gap:28px;
+      align-items:center; 
+      justify-content:center;
     }
-
     .ctrl-btn {
-      width:58px; height:58px; border-radius:50%; border:1px solid var(--border);
-      background:rgba(255,255,255,0.05); backdrop-filter:blur(12px);
-      color:var(--text-main); display:flex; align-items:center; justify-content:center;
-      cursor:pointer; transition:all 0.2s;
+      width:64px; 
+      height:64px; 
+      border-radius:50%; 
+      border:1px solid var(--border);
+      background:var(--bg-card); 
+      color:var(--text-main); 
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      cursor:pointer; 
+      transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     }
-    .ctrl-btn:hover { background:rgba(255,255,255,0.1); transform:scale(1.08); }
-    .ctrl-btn.muted { background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.2); }
-
+    .ctrl-btn:hover { 
+      background:var(--bg-mid); 
+      transform:scale(1.1); 
+    }
+    .ctrl-btn.muted { 
+      background:#fee2e2; 
+      color:var(--danger); 
+      border-color:#fda4af;
+    }
     .ctrl-end {
-      width:72px; height:72px; border-radius:50%; border:none;
+      width:78px; 
+      height:78px; 
+      border-radius:50%; 
+      border:none;
       background:var(--danger);
-      color:#fff; display:flex; align-items:center; justify-content:center;
-      cursor:pointer; transition:all 0.2s;
-      box-shadow:0 8px 24px rgba(244,63,94,0.4);
+      color:#fff; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      cursor:pointer; 
+      transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow:0 12px 30px rgba(225,29,72,0.35);
     }
-    .ctrl-end:hover { transform:scale(1.07) rotate(-8deg); box-shadow:0 12px 32px rgba(244,63,94,0.5); }
+    .ctrl-end:hover { 
+      transform:scale(1.08) rotate(-6deg); 
+      box-shadow:0 16px 40px rgba(225,29,72,0.45);
+    }
 
     /* ════════════════════════════════
        TRANSFER OVERLAY
     ════════════════════════════════ */
     .transfer-overlay {
-      position:absolute; inset:0; z-index:20;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      padding:24px; text-align:center;
-      background:linear-gradient(to bottom, rgba(9,0,15,0.95), rgba(9,0,15,0.98));
-      backdrop-filter:blur(20px);
-      opacity:0; pointer-events:none; transition:opacity 0.5s ease;
+      position:absolute; 
+      inset:0; 
+      z-index:20;
+      display:flex; 
+      flex-direction:column; 
+      align-items:center; 
+      justify-content:center;
+      padding:32px; 
+      text-align:center;
+      background: rgba(248, 246, 252, 0.96);
+      backdrop-filter:blur(24px);
+      opacity:0; 
+      pointer-events:none; 
+      transition:opacity 0.5s ease;
     }
     .transfer-overlay.active { opacity:1; pointer-events:auto; }
 
     .transfer-orb {
-      width:100px; height:100px; border-radius:50%;
+      width:112px; 
+      height:112px; 
+      border-radius:50%;
       background:linear-gradient(135deg, #d97706, #f59e0b);
-      display:flex; align-items:center; justify-content:center;
-      margin-bottom:28px;
-      box-shadow:0 0 40px rgba(245,158,11,0.4);
-      animation:breathe 2s ease-in-out infinite;
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      margin-bottom:32px;
+      box-shadow:0 0 50px rgba(245,158,11,0.45);
+      animation:breathe 2.2s ease-in-out infinite;
     }
     @keyframes breathe {
-      0%,100%{ transform:scale(1); box-shadow:0 0 40px rgba(245,158,11,0.4); }
-      50%     { transform:scale(1.06); box-shadow:0 0 60px rgba(245,158,11,0.6); }
+      0%,100%{ transform:scale(1); }
+      50% { transform:scale(1.08); }
     }
 
     .transfer-title {
-      font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:#fff; margin-bottom:10px;
+      font-family:'Syne',sans-serif; 
+      font-size:1.85rem; 
+      font-weight:800; 
+      color:var(--text-main); 
+      margin-bottom:12px;
     }
-    .transfer-sub { color:var(--text-dim); font-size:0.9rem; line-height:1.6; max-width:280px; }
+    .transfer-sub { 
+      color:var(--text-dim); 
+      font-size:0.97rem; 
+      line-height:1.6; 
+      max-width:300px; 
+    }
 
-    .loading-dots { display:flex; gap:8px; margin-top:24px; align-items:center; }
-    .ld { width:8px; height:8px; border-radius:50%; background:var(--transfer); animation:ldBounce 1.2s ease-in-out infinite; }
+    .loading-dots { 
+      display:flex; 
+      gap:10px; 
+      margin-top:32px; 
+    }
+    .ld { 
+      width:10px; 
+      height:10px; 
+      border-radius:50%; 
+      background:var(--transfer); 
+      animation:ldBounce 1.3s ease-in-out infinite; 
+    }
     .ld:nth-child(2){ animation-delay:0.2s; }
     .ld:nth-child(3){ animation-delay:0.4s; }
-    @keyframes ldBounce { 0%,80%,100%{ transform:scale(0.6); opacity:0.4; } 40%{ transform:scale(1); opacity:1; } }
+    @keyframes ldBounce { 
+      0%,80%,100%{ transform:scale(0.5); opacity:0.5; } 
+      40%{ transform:scale(1.1); opacity:1; } 
+    }
 
-    /* ── MISC ── */
-    .material-symbols-rounded { font-family:'Material Symbols Rounded'; font-style:normal; font-weight:400; user-select:none; }
-    ::-webkit-scrollbar{ display:none; }
+    /* Misc */
+    .material-symbols-rounded { 
+      font-family:'Material Symbols Rounded'; 
+      font-style:normal; 
+      font-weight:400; 
+      user-select:none; 
+    }
   </style>
 </head>
 <body>
+  <div class="bg-mesh" id="bgMesh"></div>
 
-<div class="bg-mesh" id="bgMesh"></div>
-
-<!-- SETUP SCREEN -->
-<div class="screen" id="setupScreen">
-  <div class="setup-card">
-    <div class="brand-orb">
-      <span class="material-symbols-rounded" style="color:#fff;font-size:34px;position:relative;z-index:1;">support_agent</span>
-    </div>
-    <p class="setup-label">Rare Grade</p>
-    <h1 class="setup-title">Voice AI</h1>
-    <p class="setup-sub">A conversational AI agent that sounds perfectly human. Choose a voice profile below.</p>
-
-    <div class="voice-chips" id="voiceChips">
-      <div class="voice-chip selected" data-voice="ara" onclick="selectVoice(this)">
-        <div class="voice-chip-dot" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">
-          <span class="material-symbols-rounded" style="color:#fff;font-size:18px;">record_voice_over</span>
-        </div>
-        <div class="voice-chip-info">
-          <div class="voice-chip-name">Ara</div>
-          <div class="voice-chip-desc">Warm & Friendly Receptionist</div>
-        </div>
-        <div class="voice-chip-check"></div>
+  <!-- SETUP SCREEN -->
+  <div class="screen" id="setupScreen">
+    <div class="setup-card">
+      <div class="brand-orb">
+        <span class="material-symbols-rounded" style="color:#fff;font-size:38px;">support_agent</span>
       </div>
-      <div class="voice-chip" data-voice="rex" onclick="selectVoice(this)">
-        <div class="voice-chip-dot" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);">
-          <span class="material-symbols-rounded" style="color:#fff;font-size:18px;">person</span>
+      <p class="setup-label">RARE GRADE</p>
+      <h1 class="setup-title">Voice AI</h1>
+      <p class="setup-sub">A beautifully natural conversational AI agent. Choose your voice profile.</p>
+      
+      <div class="voice-chips" id="voiceChips">
+        <div class="voice-chip selected" data-voice="ara" onclick="selectVoice(this)">
+          <div class="voice-chip-dot" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">
+            <span class="material-symbols-rounded" style="color:#fff;font-size:20px;">record_voice_over</span>
+          </div>
+          <div class="voice-chip-info">
+            <div class="voice-chip-name">Ara</div>
+            <div class="voice-chip-desc">Warm &amp; Friendly Receptionist</div>
+          </div>
+          <div class="voice-chip-check"></div>
         </div>
-        <div class="voice-chip-info">
-          <div class="voice-chip-name">Rex</div>
-          <div class="voice-chip-desc">Professional Consultant</div>
+        <div class="voice-chip" data-voice="rex" onclick="selectVoice(this)">
+          <div class="voice-chip-dot" style="background:linear-gradient(135deg,#1e40af,#3b82f6);">
+            <span class="material-symbols-rounded" style="color:#fff;font-size:20px;">person</span>
+          </div>
+          <div class="voice-chip-info">
+            <div class="voice-chip-name">Rex</div>
+            <div class="voice-chip-desc">Professional Consultant</div>
+          </div>
+          <div class="voice-chip-check"></div>
         </div>
-        <div class="voice-chip-check"></div>
+        <div class="voice-chip" data-voice="eve" onclick="selectVoice(this)">
+          <div class="voice-chip-dot" style="background:linear-gradient(135deg,#be185d,#ec4899);">
+            <span class="material-symbols-rounded" style="color:#fff;font-size:20px;">bolt</span>
+          </div>
+          <div class="voice-chip-info">
+            <div class="voice-chip-name">Eve</div>
+            <div class="voice-chip-desc">Energetic Sales Expert</div>
+          </div>
+          <div class="voice-chip-check"></div>
+        </div>
       </div>
-      <div class="voice-chip" data-voice="eve" onclick="selectVoice(this)">
-        <div class="voice-chip-dot" style="background:linear-gradient(135deg,#be185d,#ec4899);">
-          <span class="material-symbols-rounded" style="color:#fff;font-size:18px;">bolt</span>
-        </div>
-        <div class="voice-chip-info">
-          <div class="voice-chip-name">Eve</div>
-          <div class="voice-chip-desc">Energetic Sales</div>
-        </div>
-        <div class="voice-chip-check"></div>
-      </div>
-    </div>
 
-    <button class="start-btn" onclick="startCall()">
-      <span class="material-symbols-rounded">call</span>
-      Start Voice Call
-    </button>
-  </div>
-</div>
-
-<!-- CALL SCREEN -->
-<div class="screen hidden" id="callScreen">
-  <div class="call-header">
-    <div class="call-app-name">Rare Grade Voice</div>
-    <div class="call-status" id="callStatus">
-      <div class="status-dot" id="sDot"></div>
-      <span id="sText">Connecting...</span>
+      <button class="start-btn" onclick="startCall()">
+        <span class="material-symbols-rounded">call</span>
+        Start Voice Call
+      </button>
     </div>
   </div>
 
-  <div class="orb-wrap" id="orbWrap">
-    <div class="orb-ring"></div>
-    <div class="orb-ring"></div>
-    <div class="orb-core">
-      <div class="orb-core-inner">
-        <span class="material-symbols-rounded orb-icon" id="orbIcon">ring_volume</span>
-        <div class="wave-bars">
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
+  <!-- CALL SCREEN -->
+  <div class="screen hidden" id="callScreen">
+    <div class="call-header">
+      <div class="call-app-name">Rare Grade Voice</div>
+      <div class="call-status" id="callStatus">
+        <div class="status-dot" id="sDot"></div>
+        <span id="sText">Connecting...</span>
+      </div>
+    </div>
+
+    <div class="orb-wrap" id="orbWrap">
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-core">
+        <div class="orb-core-inner">
+          <span class="material-symbols-rounded orb-icon" id="orbIcon">ring_volume</span>
+          <div class="wave-bars">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="agent-label" id="agentName">AI Assistant</div>
+    <div class="agent-sublabel" id="agentSub">Ringing…</div>
+
+    <div class="transcript-wrap" id="transcriptBox"></div>
+
+    <div class="call-controls">
+      <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
+        <span class="material-symbols-rounded" id="muteIcon">mic</span>
+      </button>
+      <button class="ctrl-end" onclick="endCall()">
+        <span class="material-symbols-rounded" style="font-size:32px;">call_end</span>
+      </button>
+      <button class="ctrl-btn" onclick="clearTranscript()">
+        <span class="material-symbols-rounded">delete_sweep</span>
+      </button>
+    </div>
   </div>
 
-  <div class="agent-label" id="agentName">AI Assistant</div>
-  <div class="agent-sublabel" id="agentSub" style="margin-bottom:24px;">Ringing…</div>
-
-  <div class="transcript-wrap" id="transcriptBox"></div>
-
-  <div class="call-controls">
-    <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
-      <span class="material-symbols-rounded" id="muteIcon">mic</span>
-    </button>
-    <button class="ctrl-end" onclick="endCall()">
-      <span class="material-symbols-rounded" style="font-size:30px;">call_end</span>
-    </button>
-    <button class="ctrl-btn" onclick="clearTranscript()">
-      <span class="material-symbols-rounded">delete_sweep</span>
-    </button>
+  <!-- TRANSFER OVERLAY -->
+  <div class="transfer-overlay" id="transferOverlay">
+    <div class="transfer-orb" id="tOrb">
+      <span class="material-symbols-rounded" style="color:#fff;font-size:46px;">headset_mic</span>
+    </div>
+    <div class="transfer-title" id="tTitle">Transferring Call</div>
+    <div class="transfer-sub" id="tSub">Connecting you to a live human agent. Please hold…</div>
+    <div class="loading-dots" id="tDots">
+      <div class="ld"></div><div class="ld"></div><div class="ld"></div>
+    </div>
+    <div class="call-controls" style="position:relative;bottom:auto;margin-top:52px;">
+      <button class="ctrl-btn" id="humanMuteBtn" onclick="toggleHumanMute()">
+        <span class="material-symbols-rounded" id="humanMuteIcon">mic</span>
+      </button>
+      <button class="ctrl-end" onclick="endCall()">
+        <span class="material-symbols-rounded" style="font-size:32px;">call_end</span>
+      </button>
+    </div>
   </div>
-</div>
-
-<!-- TRANSFER OVERLAY -->
-<div class="transfer-overlay" id="transferOverlay">
-  <div class="transfer-orb" id="tOrb">
-    <span class="material-symbols-rounded" style="color:#fff;font-size:40px;">headset_mic</span>
-  </div>
-  <div class="transfer-title" id="tTitle">Transferring Call</div>
-  <div class="transfer-sub" id="tSub">Connecting you to a live human agent via WebRTC. Please hold…</div>
-  <div class="loading-dots" id="tDots">
-    <div class="ld"></div><div class="ld"></div><div class="ld"></div>
-  </div>
-  <div class="call-controls" style="position:relative;bottom:auto;margin-top:48px;">
-    <button class="ctrl-btn" id="humanMuteBtn" onclick="toggleHumanMute()">
-      <span class="material-symbols-rounded" id="humanMuteIcon">mic</span>
-    </button>
-    <button class="ctrl-end" onclick="endCall()">
-      <span class="material-symbols-rounded" style="font-size:30px;">call_end</span>
-    </button>
-  </div>
-</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -480,10 +735,9 @@
 
   const API_BASE = "https://api.x.ai/v1";
   let XAI_API_KEY = "";
-
   const socket = io('http://localhost:3000');
   const rtcConfig = { iceServers:[{ urls:'stun:stun.l.google.com:19302' }] };
-
+  
   let peerConnection, localStream;
   let isCallActive=false, isRinging=false, isTransferring=false, isMuted=false;
   let currentVoice='ara', conversationHistory=[], callTimeout=null;
@@ -492,15 +746,27 @@
 
   const $ = id => document.getElementById(id);
   const els = {
-    setup:$('setupScreen'), call:$('callScreen'), transfer:$('transferOverlay'),
-    bgMesh:$('bgMesh'), orbWrap:$('orbWrap'), orbIcon:$('orbIcon'),
-    sDot:$('sDot'), sText:$('sText'), agentSub:$('agentSub'),
-    transcript:$('transcriptBox'), muteBtn:$('muteBtn'), muteIcon:$('muteIcon'),
-    tTitle:$('tTitle'), tSub:$('tSub'), tDots:$('tDots'),
-    humanMuteBtn:$('humanMuteBtn'), humanMuteIcon:$('humanMuteIcon'), tOrb:$('tOrb'),
+    setup:$('setupScreen'), 
+    call:$('callScreen'), 
+    transfer:$('transferOverlay'),
+    bgMesh:$('bgMesh'), 
+    orbWrap:$('orbWrap'), 
+    orbIcon:$('orbIcon'),
+    sDot:$('sDot'), 
+    sText:$('sText'), 
+    agentSub:$('agentSub'),
+    transcript:$('transcriptBox'), 
+    muteBtn:$('muteBtn'), 
+    muteIcon:$('muteIcon'),
+    tTitle:$('tTitle'), 
+    tSub:$('tSub'), 
+    tDots:$('tDots'),
+    humanMuteBtn:$('humanMuteBtn'), 
+    humanMuteIcon:$('humanMuteIcon'), 
+    tOrb:$('tOrb'),
   };
 
-  // Firebase
+  // Firebase (unchanged)
   const app = initializeApp({
     apiKey:"AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
     authDomain:"fire-b-a8878.firebaseapp.com",
@@ -512,32 +778,40 @@
   rc.settings.minimumFetchIntervalMillis = 0;
   fetchAndActivate(rc).then(() => { XAI_API_KEY = getString(rc,'xai_api_key'); }).catch(console.error);
 
-  // ── VOICE CHIP SELECTOR ──
+  // Voice selector
   window.selectVoice = (el) => {
     document.querySelectorAll('.voice-chip').forEach(c=>c.classList.remove('selected'));
     el.classList.add('selected');
     currentVoice = el.dataset.voice;
   };
 
-  // ── HAPTIC ──
-  const haptic = t => { if(!navigator.vibrate) return; if(t==='start') navigator.vibrate(40); else if(t==='stop') navigator.vibrate([30,50,30]); else navigator.vibrate([100,100,100]); };
+  // Haptic
+  const haptic = t => { 
+    if(!navigator.vibrate) return; 
+    if(t==='start') navigator.vibrate(40); 
+    else if(t==='stop') navigator.vibrate([30,50,30]); 
+    else navigator.vibrate([100,100,100]); 
+  };
 
-  // ── RINGTONE ──
+  // Ringtone
   function startRingtone() {
     const AC = window.AudioContext||window.webkitAudioContext;
     ringAudioCtx = new AC();
     const play = () => {
-      if(!ringAudioCtx||ringAudioCtx.state==='closed') return; haptic('ring');
+      if(!ringAudioCtx||ringAudioCtx.state==='closed') return; 
+      haptic('ring');
       const o1=ringAudioCtx.createOscillator(), o2=ringAudioCtx.createOscillator(), g=ringAudioCtx.createGain();
       o1.type=o2.type='sine'; o1.frequency.value=440; o2.frequency.value=480;
       o1.connect(g); o2.connect(g); g.connect(ringAudioCtx.destination);
       const t=ringAudioCtx.currentTime;
-      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.3,t+0.05);
-      g.gain.setValueAtTime(0.3,t+1.4); g.gain.linearRampToValueAtTime(0,t+1.5);
-      o1.start(t); o2.start(t); o1.stop(t+1.6); o2.stop(t+1.6);
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.25,t+0.05);
+      g.gain.setValueAtTime(0.25,t+1.3); g.gain.linearRampToValueAtTime(0,t+1.45);
+      o1.start(t); o2.start(t); o1.stop(t+1.55); o2.stop(t+1.55);
     };
-    play(); ringInterval = setInterval(play, 3000);
+    play(); 
+    ringInterval = setInterval(play, 3200);
   }
+
   function stopRingtone() {
     if(ringInterval) clearInterval(ringInterval);
     if(ringAudioCtx&&ringAudioCtx.state!=='closed') ringAudioCtx.close();
@@ -548,150 +822,260 @@
     return `You are an AI handling a live call for Rare Grade Tech. CRITICAL: Keep responses to 1-3 short sentences. Speak naturally. CALL TRANSFER: If the user asks for a human, include [TRANSFER] in your response.`;
   }
 
-  // ── SPEECH RECOGNITION ──
+  // Speech Recognition
   function initSR() {
     const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
     if(!SR) return false;
-    speechRecognition = new SR(); speechRecognition.continuous=false; speechRecognition.interimResults=false;
-    speechRecognition.onstart = () => { if(isCallActive&&!isMuted&&!isRinging&&!isTransferring) updateStatus("Listening…","s-listening"); };
+    speechRecognition = new SR(); 
+    speechRecognition.continuous=false; 
+    speechRecognition.interimResults=false;
+    speechRecognition.onstart = () => { 
+      if(isCallActive&&!isMuted&&!isRinging&&!isTransferring) updateStatus("Listening…","s-listening"); 
+    };
     speechRecognition.onresult = async e => {
       if(!isCallActive||isRinging||isTransferring) return;
       const text = e.results[0][0].transcript.trim();
-      if(!text) return; logT(text,"user"); await processUtterance(text);
+      if(!text) return; 
+      logT(text,"user"); 
+      await processUtterance(text);
     };
-    speechRecognition.onerror = e => { if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&e.error==='no-speech') setTimeout(()=>{ if(isCallActive&&!isRinging) startListen(); },500); };
-    speechRecognition.onend = () => { if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&(!currentAudio||currentAudio.paused)) startListen(); };
+    speechRecognition.onerror = e => { 
+      if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&e.error==='no-speech') 
+        setTimeout(()=>{ if(isCallActive&&!isRinging) startListen(); },600); 
+    };
+    speechRecognition.onend = () => { 
+      if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&(!currentAudio||currentAudio.paused)) 
+        startListen(); 
+    };
     return true;
   }
-  function startListen() { if(speechRecognition&&isCallActive&&!isMuted&&!isRinging&&!isTransferring) try{ speechRecognition.start(); }catch(e){} }
-  function stopListen() { if(speechRecognition) try{ speechRecognition.stop(); }catch(e){} }
 
-  // ── CALL LIFECYCLE ──
+  function startListen() { 
+    if(speechRecognition&&isCallActive&&!isMuted&&!isRinging&&!isTransferring) 
+      try{ speechRecognition.start(); }catch(e){} 
+  }
+  function stopListen() { 
+    if(speechRecognition) try{ speechRecognition.stop(); }catch(e){} 
+  }
+
+  // Call Lifecycle
   window.startCall = () => {
     if(!XAI_API_KEY||!initSR()) return;
     currentVoice = document.querySelector('.voice-chip.selected')?.dataset.voice||'ara';
-    isCallActive=true; isRinging=true; isTransferring=false; isMuted=false;
+    isCallActive=true; 
+    isRinging=true; 
+    isTransferring=false; 
+    isMuted=false;
     conversationHistory=[{ role:"system", content:getSystemPrompt() }];
     currentAudio = new Audio();
-    els.setup.classList.add('hidden'); els.call.classList.remove('hidden');
-    els.orbWrap.classList.remove('speaking'); els.orbWrap.classList.add('ringing-shake');
-    els.orbIcon.innerText='ring_volume'; els.agentSub.innerText='Ringing…'; els.transcript.innerHTML='';
-    updateStatus("Ringing…","s-ringing"); startRingtone();
-    callTimeout = setTimeout(answerCall, 3500);
+    
+    els.setup.classList.add('hidden'); 
+    els.call.classList.remove('hidden');
+    
+    els.orbWrap.classList.remove('speaking'); 
+    els.orbWrap.classList.add('ringing-shake');
+    els.orbIcon.innerText='ring_volume'; 
+    els.agentSub.innerText='Ringing…'; 
+    els.transcript.innerHTML='';
+    
+    updateStatus("Ringing…","s-ringing"); 
+    startRingtone();
+    callTimeout = setTimeout(answerCall, 3200);
   };
 
   function answerCall() {
-    if(!isCallActive) return; isRinging=false; stopRingtone();
-    els.orbWrap.classList.remove('ringing-shake'); els.orbIcon.innerText='graphic_eq';
-    updateStatus("Connected","s-active"); els.agentSub.innerText='Listening for you…'; haptic('start');
+    if(!isCallActive) return; 
+    isRinging=false; 
+    stopRingtone();
+    els.orbWrap.classList.remove('ringing-shake'); 
+    els.orbIcon.innerText='graphic_eq';
+    updateStatus("Connected","s-active"); 
+    els.agentSub.innerText='Listening for you…'; 
+    haptic('start');
+    
     const greet = "Hello, you've reached Rare Grade Tech. How can I help you today?";
     conversationHistory.push({ role:"assistant", content:greet });
-    logT(greet,"ai"); speakAI(greet);
+    logT(greet,"ai"); 
+    speakAI(greet);
   }
 
   async function processUtterance(text) {
-    stopListen(); haptic('stop'); updateStatus("Thinking…","s-active");
-    els.orbWrap.classList.remove('speaking'); els.agentSub.innerText='Processing…';
+    stopListen(); 
+    haptic('stop'); 
+    updateStatus("Thinking…","s-active");
+    els.orbWrap.classList.remove('speaking'); 
+    els.agentSub.innerText='Processing…';
+    
     conversationHistory.push({ role:'user', content:text });
+    
     try {
       const res = await fetch(`${API_BASE}/chat/completions`,{
-        method:'POST', headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
-        body: JSON.stringify({ model:"grok-4-1-fast-non-reasoning", messages:conversationHistory, stream:false })
+        method:'POST', 
+        headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
+        body: JSON.stringify({ 
+          model:"grok-4-1-fast-non-reasoning", 
+          messages:conversationHistory, 
+          stream:false 
+        })
       });
-      const data = await res.json(); let reply = data.choices[0].message.content;
+      const data = await res.json(); 
+      let reply = data.choices[0].message.content;
+      
       if(reply.includes("[TRANSFER]")) {
-        isTransferring=true; reply=reply.replace("[TRANSFER]","").trim();
-        logT(reply,"ai"); await speakAI(reply,true); return;
+        isTransferring=true; 
+        reply=reply.replace("[TRANSFER]","").trim();
+        logT(reply,"ai"); 
+        await speakAI(reply,true); 
+        return;
       }
+      
       conversationHistory.push({ role:'assistant', content:reply });
-      logT(reply,"ai"); await speakAI(reply);
-    } catch(err) { setTimeout(()=>startListen(),2000); }
+      logT(reply,"ai"); 
+      await speakAI(reply);
+    } catch(err) { 
+      setTimeout(()=>startListen(),2000); 
+    }
   }
 
   async function speakAI(text, isTransfer=false) {
     if(!isCallActive) return;
-    updateStatus("Speaking…","s-active"); els.agentSub.innerText='Speaking…'; els.orbWrap.classList.add('speaking');
+    updateStatus("Speaking…","s-active"); 
+    els.agentSub.innerText='Speaking…'; 
+    els.orbWrap.classList.add('speaking');
+    
     try {
       const r = await fetch(`${API_BASE}/tts`,{
-        method:'POST', headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
+        method:'POST', 
+        headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
         body:JSON.stringify({ text, voice_id:currentVoice, language:'en' })
       });
-      const blob = await r.blob(); currentAudio.src=URL.createObjectURL(blob);
+      const blob = await r.blob(); 
+      currentAudio.src=URL.createObjectURL(blob);
+      
       currentAudio.onended = () => {
-        els.orbWrap.classList.remove('speaking'); els.agentSub.innerText='Listening for you…';
+        els.orbWrap.classList.remove('speaking'); 
+        els.agentSub.innerText='Listening for you…';
         if(isTransfer){ connectHuman(); return; }
         if(isCallActive&&!isMuted){ startListen(); haptic('start'); }
       };
       await currentAudio.play();
-    } catch { startListen(); }
+    } catch { 
+      startListen(); 
+    }
   }
 
-  // ── WEBRTC TRANSFER ──
+  // WebRTC Transfer (unchanged)
   async function connectHuman() {
     updateStatus("Transferring…","s-transferring");
-    els.bgMesh.classList.add('transfer-bg'); els.transfer.classList.add('active'); startRingtone();
+    els.bgMesh.classList.add('transfer-bg'); 
+    els.transfer.classList.add('active'); 
+    startRingtone();
+    
     currentCallId = Math.random().toString(36).substring(2,10);
+    
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ audio:true });
       peerConnection = new RTCPeerConnection(rtcConfig);
       localStream.getTracks().forEach(t=>peerConnection.addTrack(t,localStream));
       peerConnection.ontrack = e => { const a=new Audio(); a.srcObject=e.streams[0]; a.play(); };
-      peerConnection.onicecandidate = e => { if(e.candidate) socket.emit('ice-candidate',{ candidate:e.candidate, callId:currentCallId }); };
-      peerConnection.onconnectionstatechange = () => { if(peerConnection.connectionState==='connected') handlePickup(); };
+      peerConnection.onicecandidate = e => { 
+        if(e.candidate) socket.emit('ice-candidate',{ candidate:e.candidate, callId:currentCallId }); 
+      };
+      peerConnection.onconnectionstatechange = () => { 
+        if(peerConnection.connectionState==='connected') handlePickup(); 
+      };
+      
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
       socket.emit('offer',{ callId:currentCallId, offer, socketId:socket.id });
     } catch(err) {
-      console.error(err); els.tSub.innerText='Microphone error. Check permissions.'; els.tDots.style.display='none'; stopRingtone();
+      console.error(err); 
+      els.tSub.innerText='Microphone error. Check permissions.'; 
+      els.tDots.style.display='none'; 
+      stopRingtone();
     }
   }
 
-  socket.on('answer', async d => { if(d.callId===currentCallId&&peerConnection) await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer)); });
-  socket.on('ice-candidate', async d => { if(d.callId===currentCallId&&peerConnection) try{ await peerConnection.addIceCandidate(d.candidate); }catch(e){ console.error(e); } });
+  socket.on('answer', async d => { 
+    if(d.callId===currentCallId&&peerConnection) 
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer)); 
+  });
+  socket.on('ice-candidate', async d => { 
+    if(d.callId===currentCallId&&peerConnection) 
+      try{ await peerConnection.addIceCandidate(d.candidate); }catch(e){} 
+  });
 
   function handlePickup() {
-    stopRingtone(); els.tTitle.innerText='Live Agent Connected';
+    stopRingtone(); 
+    els.tTitle.innerText='Live Agent Connected';
     els.tSub.innerText='You are now speaking with a human agent.';
-    els.tDots.style.display='none'; els.bgMesh.classList.remove('transfer-bg');
-    els.tOrb.style.background='linear-gradient(135deg,#059669,#10b981)'; els.tOrb.style.boxShadow='0 0 40px rgba(16,185,129,0.4)'; haptic('start');
+    els.tDots.style.display='none'; 
+    els.bgMesh.classList.remove('transfer-bg');
+    els.tOrb.style.background='linear-gradient(135deg,#10b981,#34d399)'; 
+    els.tOrb.style.boxShadow='0 0 50px rgba(16,185,129,0.45)'; 
+    haptic('start');
   }
 
   window.toggleHumanMute = () => {
     isMuted=!isMuted;
-    els.humanMuteBtn.classList.toggle('muted',isMuted); els.humanMuteIcon.innerText=isMuted?'mic_off':'mic';
+    els.humanMuteBtn.classList.toggle('muted',isMuted); 
+    els.humanMuteIcon.innerText=isMuted?'mic_off':'mic';
     if(localStream) localStream.getAudioTracks()[0].enabled=!isMuted;
   };
 
   window.endCall = () => {
-    isCallActive=isRinging=isTransferring=false; clearTimeout(callTimeout); stopRingtone(); stopListen();
+    isCallActive=isRinging=isTransferring=false; 
+    clearTimeout(callTimeout); 
+    stopRingtone(); 
+    stopListen();
     if(currentAudio){ currentAudio.pause(); currentAudio=null; }
     if(peerConnection){ peerConnection.close(); peerConnection=null; }
     if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localStream=null; }
     currentCallId=null;
-    els.transfer.classList.remove('active'); els.call.classList.add('hidden');
+    
+    els.transfer.classList.remove('active'); 
+    els.call.classList.add('hidden');
     els.bgMesh.classList.remove('transfer-bg');
+    
     setTimeout(()=>{
       els.setup.classList.remove('hidden');
-      els.tTitle.innerText='Transferring Call'; els.tSub.innerText='Connecting you to a live human agent via WebRTC. Please hold…';
-      els.tDots.style.display='flex'; els.tOrb.style.background='linear-gradient(135deg,#d97706,#f59e0b)'; els.tOrb.style.boxShadow='0 0 40px rgba(245,158,11,0.4)';
+      els.tTitle.innerText='Transferring Call'; 
+      els.tSub.innerText='Connecting you to a live human agent via WebRTC. Please hold…';
+      els.tDots.style.display='flex'; 
+      els.tOrb.style.background='linear-gradient(135deg,#d97706,#f59e0b)'; 
+      els.tOrb.style.boxShadow='0 0 50px rgba(245,158,11,0.45)';
     },500);
   };
 
   window.toggleMute = () => {
-    if(isRinging||isTransferring) return; isMuted=!isMuted;
-    els.muteBtn.classList.toggle('muted',isMuted); els.muteIcon.innerText=isMuted?'mic_off':'mic';
-    if(isMuted){ stopListen(); updateStatus("Muted","s-default"); haptic('stop'); }
-    else{ if(!currentAudio||currentAudio.paused){ startListen(); haptic('start'); } }
+    if(isRinging||isTransferring) return; 
+    isMuted=!isMuted;
+    els.muteBtn.classList.toggle('muted',isMuted); 
+    els.muteIcon.innerText=isMuted?'mic_off':'mic';
+    if(isMuted){ 
+      stopListen(); 
+      updateStatus("Muted",""); 
+    }
+    else{ 
+      if(!currentAudio||currentAudio.paused){ 
+        startListen(); 
+      } 
+    }
   };
 
   function updateStatus(text, cls) {
-    els.sDot.className='status-dot '+(cls||''); els.sText.innerText=text;
+    els.sDot.className='status-dot '+(cls||''); 
+    els.sText.innerText=text;
   }
+
   function logT(text, sender) {
-    const d=document.createElement('div'); d.className='t-line '+sender;
+    const d=document.createElement('div'); 
+    d.className='t-line '+sender;
     d.innerText=text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-    els.transcript.appendChild(d); els.transcript.scrollTop=els.transcript.scrollHeight;
+    els.transcript.appendChild(d); 
+    els.transcript.scrollTop=els.transcript.scrollHeight;
   }
+
   window.clearTranscript = () => { els.transcript.innerHTML=''; };
 </script>
 </body>
