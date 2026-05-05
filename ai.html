@@ -2,73 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RareGrade | Live Support</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RareGrade Support</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .chat-scroll::-webkit-scrollbar { width: 4px; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        .msg-client { border-radius: 18px 18px 4px 18px; background: #2563eb; color: white; }
-        .msg-agent { border-radius: 18px 18px 18px 4px; background: #f1f5f9; color: #1e293b; }
+        
+        /* Full height layout fix for mobile browsers */
+        .viewport-height { height: 100vh; height: 100dvh; }
+
+        .chat-scroll::-webkit-scrollbar { width: 5px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .msg-bubble { max-width: 85%; padding: 12px 16px; font-size: 0.95rem; line-height: 1.5; }
+        .msg-client { border-radius: 20px 20px 4px 20px; background: #2563eb; color: white; margin-left: auto; }
+        .msg-agent { border-radius: 20px 20px 20px 4px; background: #f1f5f9; color: #1e293b; }
+        
+        /* Floating animation for status */
+        .status-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
-<body class="bg-slate-50 h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-white viewport-height flex flex-col overflow-hidden">
 
-    <!-- CHAT CONTAINER -->
-    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[600px] border border-gray-100">
-        
-        <!-- HEADER -->
-        <header class="bg-blue-600 p-4 text-white flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                    <i class="fa-solid fa-headset text-lg"></i>
-                </div>
-                <div>
-                    <h2 class="font-bold leading-tight">RareGrade Support</h2>
-                    <p class="text-[11px] opacity-80" id="support-status">Typically replies in minutes</p>
-                </div>
+    <!-- TOP NAVIGATION / STATUS -->
+    <header class="bg-white border-b border-gray-100 p-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                <i class="fa-solid fa-headset"></i>
             </div>
-            <button onclick="location.reload()" class="opacity-70 hover:opacity-100"><i class="fa-solid fa-rotate"></i></button>
-        </header>
-
-        <!-- MESSAGES AREA -->
-        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 chat-scroll bg-gray-50/50">
-            <!-- Welcome Message -->
-            <div class="flex flex-col items-start">
-                <div class="msg-agent p-3 text-sm shadow-sm">
-                    Hello! How can we help you today? Please enter your name and message below to start a live chat.
+            <div>
+                <h1 class="font-bold text-gray-900 leading-none">RareGrade Support</h1>
+                <div id="status-container" class="mt-1 flex items-center gap-1.5">
+                    <span id="status-dot" class="w-2 h-2 bg-orange-400 rounded-full status-pulse"></span>
+                    <span id="status-text" class="text-[11px] font-medium text-gray-500 uppercase tracking-wider">Connecting...</span>
                 </div>
             </div>
         </div>
+        <button onclick="startNewChat()" class="text-gray-400 hover:text-red-500 transition text-sm">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+        </button>
+    </header>
 
-        <!-- RESOLVED OVERLAY -->
-        <div id="resolved-notice" class="hidden bg-yellow-50 p-3 text-center border-t border-yellow-100">
-            <p class="text-xs text-yellow-700 font-medium">This conversation has been marked as resolved.</p>
-            <button onclick="startNewChat()" class="text-xs text-blue-600 underline mt-1">Start new conversation</button>
+    <!-- MESSAGE AREA (Fills space) -->
+    <main id="chat-box" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 chat-scroll bg-slate-50/30">
+        <!-- Initial Welcome -->
+        <div class="flex flex-col items-start">
+            <div class="msg-bubble msg-agent shadow-sm">
+                👋 Welcome to RareGrade Support! Please send a message to start a session.
+            </div>
         </div>
+    </main>
 
-        <!-- INPUT AREA -->
-        <div id="input-area" class="p-4 bg-white border-t border-gray-100">
-            <!-- Name Field (Only shown if no active chat) -->
-            <div id="name-field-container" class="mb-2">
-                <input type="text" id="client-name" placeholder="Your Name" class="w-full p-2 text-sm bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-blue-500 mb-2">
+    <!-- RESOLVED OVERLAY -->
+    <div id="resolved-banner" class="hidden bg-gray-900 text-white p-4 text-center animate-bounce">
+        <p class="text-sm font-medium">This session has ended.</p>
+        <button onclick="startNewChat()" class="text-xs text-blue-400 font-bold uppercase mt-1">Start New Chat</button>
+    </div>
+
+    <!-- FLOATING INPUT AREA -->
+    <footer id="input-container" class="p-4 bg-white border-t border-gray-100 pb-safe">
+        <div class="max-w-4xl mx-auto flex flex-col gap-3">
+            
+            <!-- Name prompt if new session -->
+            <div id="name-box" class="flex gap-2">
+                <input type="text" id="client-name" placeholder="Enter your name..." 
+                    class="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
             </div>
 
             <div class="flex items-end gap-2">
-                <textarea id="client-msg" rows="1" placeholder="Type your message..." 
-                    class="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-xl resize-none outline-none focus:border-blue-500 text-sm"
+                <textarea id="client-msg" rows="1" placeholder="Describe your issue..." 
+                    class="flex-1 p-4 bg-gray-100 border-none rounded-2xl resize-none outline-none focus:bg-gray-200 transition text-sm"
+                    oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"
                     onkeypress="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); handleSend(); }"></textarea>
-                <button onclick="handleSend()" id="send-btn" class="w-11 h-11 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition active:scale-90 shadow-md">
+                
+                <button onclick="handleSend()" class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center hover:bg-blue-700 transition active:scale-90 shadow-xl shadow-blue-200 shrink-0">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
         </div>
-    </div>
-
-    <p class="mt-4 text-gray-400 text-[10px] uppercase tracking-widest">Powered by RareGrade Systems</p>
+    </footer>
 
     <!-- FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -89,9 +104,10 @@
         let chatId = localStorage.getItem('rg_chat_id');
         let clientName = localStorage.getItem('rg_client_name');
 
+        // Check if resuming session
         if (chatId) {
+            document.getElementById('name-box').classList.add('hidden');
             initChatSession();
-            document.getElementById('name-field-container').classList.add('hidden');
         }
 
         async function handleSend() {
@@ -101,11 +117,9 @@
             
             if (!text) return;
 
-            // If it's a first-time message
             if (!chatId) {
-                const name = nameInput.value.trim() || "Anonymous Client";
-                clientName = name;
-                localStorage.setItem('rg_client_name', name);
+                clientName = nameInput.value.trim() || "User_" + Math.floor(Math.random()*1000);
+                localStorage.setItem('rg_client_name', clientName);
                 
                 const newChatRef = db.ref('live_support_chats').push();
                 chatId = newChatRef.key;
@@ -119,49 +133,54 @@
                     agentId: null
                 });
 
-                document.getElementById('name-field-container').classList.add('hidden');
+                document.getElementById('name-box').classList.add('hidden');
                 initChatSession();
             }
 
-            // Push the message
             await db.ref(`live_support_chats/${chatId}/messages`).push({
                 sender: 'client',
                 text: text,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
 
-            // Update Metadata
             await db.ref(`live_support_chats/${chatId}`).update({
                 lastMessage: text,
                 lastActivity: firebase.database.ServerValue.TIMESTAMP
             });
 
             msgInput.value = '';
+            msgInput.style.height = 'auto';
         }
 
         function initChatSession() {
-            const chatBox = document.getElementById('chat-box');
-            const statusText = document.getElementById('support-status');
-            
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+
             // Listen for Messages
             db.ref(`live_support_chats/${chatId}/messages`).on('child_added', (snap) => {
                 const m = snap.val();
                 appendMessage(m.sender, m.text, m.timestamp);
             });
 
-            // Listen for Agent Assignment & Resolution
+            // Monitor Agent Status
             db.ref(`live_support_chats/${chatId}`).on('value', (snap) => {
                 const data = snap.val();
                 if (!data) return;
 
-                if (data.agentName) {
-                    statusText.innerText = `Chatting with ${data.agentName}`;
-                    statusText.classList.add('text-green-200');
+                if (data.agentId && data.status !== 'resolved') {
+                    statusText.innerText = `${data.agentName || 'Agent'} joined the chat`;
+                    statusText.classList.remove('text-gray-500');
+                    statusText.classList.add('text-green-600');
+                    statusDot.classList.remove('bg-orange-400', 'status-pulse');
+                    statusDot.classList.add('bg-green-500');
                 }
 
                 if (data.status === 'resolved') {
-                    document.getElementById('input-area').classList.add('hidden');
-                    document.getElementById('resolved-notice').classList.remove('hidden');
+                    document.getElementById('input-container').classList.add('hidden');
+                    document.getElementById('resolved-banner').classList.remove('hidden');
+                    statusText.innerText = "Session Closed";
+                    statusDot.classList.remove('bg-green-500');
+                    statusDot.classList.add('bg-gray-400');
                 }
             });
         }
@@ -172,11 +191,11 @@
             const time = new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             const html = `
-                <div class="flex flex-col ${isClient ? 'items-end' : 'items-start'}">
-                    <div class="max-w-[85%] p-3 text-sm shadow-sm ${isClient ? 'msg-client' : 'msg-agent'}">
+                <div class="flex flex-col ${isClient ? 'items-end' : 'items-start'} animate-fade-in">
+                    <div class="msg-bubble shadow-sm ${isClient ? 'msg-client' : 'msg-agent'}">
                         ${text}
                     </div>
-                    <span class="text-[9px] text-gray-400 mt-1">${time}</span>
+                    <span class="text-[10px] text-gray-400 mt-1.5 px-2">${isClient ? 'You' : 'Agent'} • ${time}</span>
                 </div>
             `;
             chatBox.insertAdjacentHTML('beforeend', html);
