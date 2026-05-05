@@ -69,6 +69,7 @@
       width: 100%; 
       max-width: 440px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
     }
 
     .brand-header {
@@ -115,111 +116,50 @@
       transition: all 0.2s ease;
       background: var(--bg-surface);
     }
-    .type-card:hover {
-      background: #f8fafd;
-      border-color: #c2e7ff;
-    }
+    .type-card:hover { background: #f8fafd; border-color: #c2e7ff; }
     .type-card.selected {
       background: var(--accent-light);
       border-color: var(--accent);
       color: var(--accent);
     }
-    .type-card .material-symbols-rounded {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
+    .type-card .material-symbols-rounded { font-size: 28px; margin-bottom: 8px; }
     .type-card.selected .material-symbols-rounded {
       background: var(--grad-gemini);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .type-card-title {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
+    .type-card-title { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.95rem; }
 
     .voice-section {
       transition: opacity 0.3s ease, height 0.3s ease;
       overflow: hidden;
     }
-    .voice-section.collapsed {
-      opacity: 0;
-      height: 0;
-      pointer-events: none;
-      margin-bottom: 0;
-    }
+    .voice-section.collapsed { opacity: 0; height: 0; pointer-events: none; margin-bottom: 0; }
     .voice-section-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-dim);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 0.85rem; font-weight: 600; color: var(--text-dim); margin-bottom: 12px;
+      text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .voice-chips { 
-      display:flex; 
-      flex-direction:column; 
-      gap:8px; 
-      margin-bottom:32px; 
-    }
+    .voice-chips { display:flex; flex-direction:column; gap:8px; margin-bottom:32px; }
     .voice-chip {
-      display:flex; 
-      align-items:center; 
-      gap:16px;
-      padding:16px; 
-      border-radius:16px;
-      border:1px solid var(--border); 
-      background:var(--bg-surface);
-      cursor:pointer; 
-      transition:all 0.2s ease;
+      display:flex; align-items:center; gap:16px; padding:16px; border-radius:16px;
+      border:1px solid var(--border); background:var(--bg-surface); cursor:pointer; transition:all 0.2s ease;
     }
     .voice-chip:hover { background: var(--bg-main); }
-    .voice-chip.selected {
-      border-color: var(--gemini-purple); 
-      background: #fcfaff;
-    }
+    .voice-chip.selected { border-color: var(--gemini-purple); background: #fcfaff; }
     .voice-chip-info { text-align:left; flex:1; }
-    .voice-chip-name { 
-      font-family:'Outfit',sans-serif; 
-      font-size:1rem; 
-      font-weight:500; 
-      color:var(--text-main); 
-    }
+    .voice-chip-name { font-family:'Outfit',sans-serif; font-size:1rem; font-weight:500; color:var(--text-main); }
     .voice-chip-desc { font-size:0.85rem; color:var(--text-dim); }
     .voice-chip-check {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
+      width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
     }
-    .voice-chip.selected .voice-chip-check {
-      background: var(--gemini-purple);
-      border-color: var(--gemini-purple);
-    }
-    .voice-chip.selected .voice-chip-check::after {
-      content: '✓';
-      font-size: 12px;
-      color: white;
-      font-weight: bold;
-    }
+    .voice-chip.selected .voice-chip-check { background: var(--gemini-purple); border-color: var(--gemini-purple); }
+    .voice-chip.selected .voice-chip-check::after { content: '✓'; font-size: 12px; color: white; font-weight: bold; }
 
     .start-btn {
-      width:100%; 
-      padding:16px; 
-      border-radius: 99px;
-      background: var(--text-main);
-      border:none; 
-      color:#fff;
-      font-family:'Outfit',sans-serif; 
-      font-size:1.05rem; 
-      font-weight:500;
-      cursor:pointer;
-      transition:all 0.2s ease;
+      width:100%; padding:16px; border-radius: 99px; background: var(--text-main);
+      border:none; color:#fff; font-family:'Outfit',sans-serif; font-size:1.05rem; 
+      font-weight:500; cursor:pointer; transition:all 0.2s ease;
     }
     .start-btn:hover { background: black; transform: translateY(-1px); }
 
@@ -227,88 +167,54 @@
        VOICE CALL SCREEN (AI ONLY)
     ════════════════════════════════ */
     .call-header {
-      position:absolute; 
-      top:0; 
-      width:100%;
-      padding:40px 24px 0;
-      display:flex; 
-      flex-direction:column; 
-      align-items:center;
+      position:absolute; top:0; width:100%; padding:40px 24px 0;
+      display:flex; flex-direction:column; align-items:center;
     }
     .call-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      background: var(--bg-surface);
-      padding: 6px 16px;
-      border-radius: 99px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      margin-top: 12px;
-      font-weight: 500;
+      display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem;
+      color: var(--text-dim); background: var(--bg-surface); padding: 6px 16px;
+      border-radius: 99px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 12px; font-weight: 500;
     }
-    .status-dot {
-      width:8px; height:8px; border-radius:50%; background:var(--text-dim); 
-    }
+    .status-dot { width:8px; height:8px; border-radius:50%; background:var(--text-dim); }
     .status-dot.s-active { background: var(--success); }
     .status-dot.s-listening { background: var(--accent); }
     .status-dot.s-ringing { background: var(--gemini-purple); }
 
     .orb-wrap {
-      position:relative; 
-      width:240px; 
-      height:240px;
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
-      margin: 40px 0;
+      position:relative; width:240px; height:240px; display:flex; 
+      align-items:center; justify-content:center; margin: 40px 0;
     }
     .orb-core {
-      width: 140px; height: 140px; 
-      border-radius: 50%;
-      background: var(--bg-surface);
+      width: 140px; height: 140px; border-radius: 50%; background: var(--bg-surface);
       display:flex; align-items:center; justify-content:center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-      position: relative; z-index: 2;
-      transition: all 0.5s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: relative; z-index: 2; transition: all 0.5s ease;
     }
     .orb-glow {
-      position: absolute; inset: -20px;
-      border-radius: 50%; background: var(--grad-gemini);
-      filter: blur(28px); opacity: 0.15; z-index: 0;
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      position: absolute; inset: -20px; border-radius: 50%; background: var(--grad-gemini);
+      filter: blur(28px); opacity: 0.15; z-index: 0; transition: opacity 0.5s ease, transform 0.5s ease;
     }
     .orb-core .orb-icon {
-      font-size: 48px; 
-      background: var(--grad-gemini);
+      font-size: 48px; background: var(--grad-gemini);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .speaking .orb-glow { 
-      opacity: 0.6; transform: scale(1.15); animation: pulseGlow 2s infinite alternate;
-    }
+    .speaking .orb-glow { opacity: 0.6; transform: scale(1.15); animation: pulseGlow 2s infinite alternate; }
     .speaking .orb-core { transform: scale(1.05); }
     .ringing-shake .orb-glow {
-      opacity: 0.4; background: linear-gradient(135deg, #4285f4, #0b57d0);
-      animation: pulseGlow 1s infinite alternate;
+      opacity: 0.4; background: linear-gradient(135deg, #4285f4, #0b57d0); animation: pulseGlow 1s infinite alternate;
     }
-    @keyframes pulseGlow {
-      0% { filter: blur(28px); }
-      100% { filter: blur(40px); }
-    }
+    @keyframes pulseGlow { 0% { filter: blur(28px); } 100% { filter: blur(40px); } }
 
     .agent-label { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:500; margin-bottom:4px; }
     .agent-sublabel { font-size:0.95rem; color:var(--text-dim); }
 
     .transcript-wrap {
       width:100%; max-width:440px; margin-top: 24px; padding:0 12px;
-      height: 140px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
-      scroll-behavior: smooth;
+      height: 140px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; scroll-behavior: smooth;
     }
     .transcript-wrap::-webkit-scrollbar{ width:0px; }
     .t-line { 
-      font-size:0.95rem; line-height:1.5; opacity:0; 
-      animation:slideUp 0.3s forwards; padding: 12px 16px; border-radius: 20px; max-width: 85%;
+      font-size:0.95rem; line-height:1.5; opacity:0; animation:slideUp 0.3s forwards; 
+      padding: 12px 16px; border-radius: 20px; max-width: 85%;
     }
     .t-line.user { background: var(--accent-light); color: var(--text-main); align-self: flex-end; border-bottom-right-radius: 4px; }
     .t-line.ai { background: #ffffff; border: 1px solid var(--border); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
@@ -316,8 +222,7 @@
     @keyframes slideUp { from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
 
     .call-controls {
-      position:absolute; bottom:40px; width:100%; display:flex; gap:20px;
-      align-items:center; justify-content:center;
+      position:absolute; bottom:40px; width:100%; display:flex; gap:20px; align-items:center; justify-content:center;
     }
     .ctrl-btn {
       width:56px; height:56px; border-radius:50%; border:1px solid var(--border);
@@ -328,8 +233,7 @@
     .ctrl-btn.muted { background: var(--text-main); color: #fff; border-color: var(--text-main); }
     .ctrl-end {
       width:72px; height:72px; border-radius:50%; border:none; background:var(--danger);
-      color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;
-      transition:all 0.2s ease;
+      color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease;
     }
     .ctrl-end:hover { background: #8c1d18; }
 
@@ -337,95 +241,78 @@
        TEXT CHAT SCREEN (HUMAN ONLY)
     ════════════════════════════════ */
     .chat-container {
-      background: var(--bg-surface);
-      border-radius: 32px;
-      width: 100%;
-      max-width: 440px;
-      height: 85svh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-      border: 1px solid var(--border);
-      overflow: hidden;
+      background: var(--bg-surface); border-radius: 32px; width: 100%; max-width: 440px;
+      height: 85svh; display: flex; flex-direction: column; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border); overflow: hidden; transition: all 0.3s ease;
     }
     .chat-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--bg-surface);
+      padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex;
+      justify-content: space-between; align-items: center; background: var(--bg-surface);
     }
     .chat-header .brand-header { margin-bottom: 0; }
     .chat-header .brand-logo { width: 32px; height: 32px; border-radius: 8px; }
     .chat-header .brand-logo .material-symbols-rounded { font-size: 18px; }
     .chat-header .brand-title { font-size: 1.15rem; }
     .close-btn {
-      background: none; border: none; cursor: pointer; color: var(--text-dim);
-      display: flex; align-items: center; justify-content: center;
-      width: 32px; height: 32px; border-radius: 50%;
+      background: none; border: none; cursor: pointer; color: var(--text-dim); display: flex; 
+      align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%;
     }
     .close-btn:hover { background: var(--bg-main); }
 
     .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: var(--bg-main);
+      flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-main);
     }
     .msg-bubble {
-      padding: 12px 16px;
-      border-radius: 20px;
-      max-width: 85%;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      animation: slideUp 0.3s forwards;
+      padding: 12px 16px; border-radius: 20px; max-width: 85%; font-size: 0.95rem;
+      line-height: 1.5; animation: slideUp 0.3s forwards;
     }
-    .msg-bubble.system {
-      align-self: center; background: none; color: var(--text-dim); font-size: 0.8rem; text-align: center;
-    }
-    .msg-bubble.user {
-      align-self: flex-end; background: var(--text-main); color: #fff; border-bottom-right-radius: 4px;
-    }
-    .msg-bubble.agent {
-      align-self: flex-start; background: #fff; border: 1px solid var(--border); border-bottom-left-radius: 4px;
-    }
-    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .msg-bubble.system { align-self: center; background: none; color: var(--text-dim); font-size: 0.8rem; text-align: center; }
+    .msg-bubble.user { align-self: flex-end; background: var(--text-main); color: #fff; border-bottom-right-radius: 4px; }
+    .msg-bubble.agent { align-self: flex-start; background: #fff; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .chat-messages::-webkit-scrollbar { width: 6px; }
     .chat-messages::-webkit-scrollbar-thumb { background: #d1d1d1; border-radius: 4px; }
 
     .chat-input-area {
-      padding: 16px 20px;
-      background: var(--bg-surface);
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 12px;
+      padding: 16px 20px; background: var(--bg-surface); border-top: 1px solid var(--border); display: flex; gap: 12px;
     }
     .chat-input {
-      flex: 1;
-      background: var(--bg-main);
-      border: 1px solid transparent;
-      border-radius: 99px;
-      padding: 12px 20px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: all 0.2s;
+      flex: 1; background: var(--bg-main); border: 1px solid transparent; border-radius: 99px;
+      padding: 12px 20px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: all 0.2s;
     }
     .chat-input:focus { border-color: var(--accent); background: #fff; }
     .send-btn {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: var(--accent); color: white; border: none;
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
-      transition: all 0.2s ease;
+      width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: white; border: none;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;
     }
     .send-btn:hover { background: #0842a0; transform: scale(1.05); }
     .send-btn .material-symbols-rounded { font-size: 20px; margin-left: 2px; }
 
-    .material-symbols-rounded { 
-      font-family:'Material Symbols Rounded'; font-style:normal; font-weight:400; user-select:none; 
+    /* ════════════════════════════════
+       DESKTOP / LARGER SCREENS RESPONSIVE
+    ════════════════════════════════ */
+    @media (min-width: 768px) {
+      .setup-card { max-width: 600px; padding: 56px; }
+      .brand-title { font-size: 1.7rem; }
+      .setup-sub { font-size: 1.1rem; }
+      .type-card { padding: 24px; }
+      
+      .chat-container {
+        max-width: 700px; 
+        height: 75svh; 
+        border-radius: 24px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+      }
+      .chat-header { padding: 24px 32px; }
+      .chat-messages { padding: 32px; gap: 16px; }
+      .msg-bubble { font-size: 1rem; padding: 14px 20px; max-width: 75%; }
+      .chat-input-area { padding: 20px 32px; gap: 16px; }
+      .chat-input { padding: 16px 24px; font-size: 1rem; }
+      .send-btn { width: 52px; height: 52px; }
+      
+      .orb-wrap { width: 320px; height: 320px; }
+      .orb-core { width: 180px; height: 180px; }
+      .orb-core .orb-icon { font-size: 64px; }
+      .transcript-wrap { max-width: 600px; height: 180px; }
     }
   </style>
 </head>
@@ -438,10 +325,10 @@
         <div class="brand-logo">
           <span class="material-symbols-rounded">graphic_eq</span>
         </div>
-        <h1 class="brand-title">Rare Grade</h1>
+        <h1 class="brand-title">Rare Grade Support</h1>
       </div>
       
-      <p class="setup-sub">How would you like to connect with support today?</p>
+      <p class="setup-sub">How would you like to connect with our support team today?</p>
       
       <!-- Agent Type Selection -->
       <div class="type-selector">
@@ -451,7 +338,7 @@
         </div>
         <div class="type-card" data-type="human" onclick="selectAgentType('human')">
           <span class="material-symbols-rounded">chat</span>
-          <div class="type-card-title">Live Chat Agent</div>
+          <div class="type-card-title">Live Text Chat</div>
         </div>
       </div>
       
@@ -462,14 +349,14 @@
           <div class="voice-chip selected" data-voice="ara" onclick="selectVoice(this)">
             <div class="voice-chip-info">
               <div class="voice-chip-name">Ara</div>
-              <div class="voice-chip-desc">Warm & Friendly</div>
+              <div class="voice-chip-desc">Warm & Friendly Technician</div>
             </div>
             <div class="voice-chip-check"></div>
           </div>
           <div class="voice-chip" data-voice="rex" onclick="selectVoice(this)">
             <div class="voice-chip-info">
               <div class="voice-chip-name">Rex</div>
-              <div class="voice-chip-desc">Professional Consultant</div>
+              <div class="voice-chip-desc">System Diagnostic Expert</div>
             </div>
             <div class="voice-chip-check"></div>
           </div>
@@ -524,7 +411,7 @@
           <div class="brand-logo" style="background: var(--accent);">
             <span class="material-symbols-rounded">support_agent</span>
           </div>
-          <h1 class="brand-title">Live Support</h1>
+          <h1 class="brand-title">Live Technician Chat</h1>
         </div>
         <button class="close-btn" onclick="endChat()">
           <span class="material-symbols-rounded">close</span>
@@ -536,7 +423,7 @@
       </div>
       
       <div class="chat-input-area">
-        <input type="text" class="chat-input" id="chatInput" placeholder="Message agent..." onkeypress="handleChatKey(event)"/>
+        <input type="text" class="chat-input" id="chatInput" placeholder="Message support..." onkeypress="handleChatKey(event)"/>
         <button class="send-btn" onclick="sendChatMessage()">
           <span class="material-symbols-rounded">send</span>
         </button>
@@ -547,9 +434,13 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getRemoteConfig, fetchAndActivate, getString } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-remote-config.js";
+  import { io } from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
 
   const API_BASE = "https://api.x.ai/v1";
   let XAI_API_KEY = "";
+  
+  // Connect to your Rare Grade Tech backend signaling server
+  const socket = io('http://localhost:3000');
   
   let isCallActive=false, isRinging=false, isTransferring=false, isMuted=false;
   let currentVoice='ara', selectedAgentType='ai', conversationHistory=[], callTimeout=null;
@@ -680,8 +571,14 @@
     if(speechRecognition) try{ speechRecognition.stop(); }catch(e){} 
   }
 
+  // UPDATED SYSTEM PROMPT: Strictly tech support, triggers transfer for everything else
   function getSystemPrompt() {
-    return `You are an AI handling a live call for Rare Grade Tech. CRITICAL: Keep responses to 1-3 short sentences. Speak naturally. CALL TRANSFER: If the user asks for a human, include [TRANSFER] in your response.`;
+    return `You are an AI handling technical and system support for Rare Grade Tech. 
+    CRITICAL INSTRUCTIONS:
+    1. ONLY answer questions related to technical support, system troubleshooting, or software issues.
+    2. If the user asks about ANYTHING ELSE (like billing, sales, account management, or general non-tech inquiries), politely tell them you only handle technical support and ask if they would like to be transferred to a live human agent.
+    3. If the user explicitly asks to speak to a human or agrees to a transfer, output exactly [TRANSFER].
+    4. Keep responses strictly to 1-3 short sentences. Speak naturally.`;
   }
 
   function startAICall() {
@@ -711,7 +608,7 @@
     els.orbWrap.classList.remove('ringing-shake'); els.orbIcon.innerText='graphic_eq';
     updateStatus("Connected","s-active"); els.agentSub.innerText='Listening for you…'; haptic('start');
     
-    const greet = "Hello, you've reached Rare Grade Tech. How can I help you today?";
+    const greet = "Hello, you've reached Rare Grade Tech support. I'm your AI technical assistant. How can I help you today?";
     conversationHistory.push({ role:"assistant", content:greet });
     logT(greet,"ai"); speakAI(greet);
   }
@@ -796,7 +693,23 @@
   }
   window.clearTranscript = () => { els.transcript.innerHTML=''; };
 
-  // --- TEXT CHAT LOGIC (HUMAN) ---
+  // --- TEXT CHAT LOGIC (REAL AGENT VIA SOCKET.IO) ---
+  
+  // Listen for incoming messages from the dashboard/agent
+  socket.on('chat-message', (data) => {
+    // data should look like { text: "Hello from support", sender: "agent" }
+    appendChatMsg(data.text, "agent");
+    haptic('start');
+  });
+
+  socket.on('agent-joined', (data) => {
+    appendChatMsg(`Agent ${data.name || ''} has joined the session.`, "system");
+  });
+
+  socket.on('agent-left', () => {
+    appendChatMsg("The agent has left the chat.", "system");
+  });
+
   function startTextChat(fromTransfer) {
     // Shutdown voice logic if running
     isCallActive = false; 
@@ -813,22 +726,13 @@
     els.chatMessages.innerHTML = '';
     
     if (fromTransfer) {
-      appendChatMsg("Voice call dropped. Transferring to text chat...", "system");
+      appendChatMsg("Voice call ended. Transferring to text chat...", "system");
     }
     
     appendChatMsg("Connecting you to the next available agent...", "system");
     
-    // Mock Human Agent joining
-    setTimeout(() => {
-      appendChatMsg("Agent Sarah has joined the session.", "system");
-      haptic('start');
-      setTimeout(() => {
-        const greetText = fromTransfer ? 
-          "Hi! I see you were transferred from our AI assistant. How can I help you today?" : 
-          "Hello! I'm Sarah from Support. How can I assist you today?";
-        appendChatMsg(greetText, "agent");
-      }, 1000);
-    }, 1500);
+    // Emit event to your backend to queue/connect the user to the agent dashboard
+    socket.emit('join-chat', { role: 'user', transferContext: fromTransfer });
   }
 
   window.handleChatKey = (e) => {
@@ -839,13 +743,13 @@
     const text = els.chatInput.value.trim();
     if(!text) return;
     
+    // Display locally
     appendChatMsg(text, "user");
-    els.chatInput.value = '';
     
-    // Mock agent reply for prototype
-    setTimeout(() => {
-      appendChatMsg("Let me check on that for you...", "agent");
-    }, 1200);
+    // Transmit to the Rare Grade Tech dashboard via socket
+    socket.emit('chat-message', { text: text, sender: 'user' });
+    
+    els.chatInput.value = '';
   };
 
   function appendChatMsg(text, type) {
@@ -857,6 +761,8 @@
   }
 
   window.endChat = () => {
+    // Notify dashboard that user left
+    socket.emit('leave-chat');
     els.chat.classList.add('hidden');
     els.setup.classList.remove('hidden');
   };
