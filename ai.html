@@ -1,284 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Rare Grade | Support Flow</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg-main: #f0f4f9; --bg-surface: #ffffff; --text-main: #1f1f1f; --text-dim: #444746; --border: #e3e3e3;
-      --gemini-blue: #4285f4; --gemini-purple: #9b72cb; --gemini-red: #d96570;
-      --grad-gemini: linear-gradient(135deg, var(--gemini-blue), var(--gemini-purple), var(--gemini-red));
-      --accent: #0b57d0; --accent-light: #d3e3fd; --danger: #b3261e; --success: #146c2e;
-    }
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-main); height: 100svh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-    h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
-    
-    /* Screen Management */
-    .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; transition: opacity 0.4s ease, transform 0.4s ease; padding: 24px; }
-    .hidden { opacity:0; pointer-events:none; transform: scale(0.98); }
-    
-    /* Setup Card */
-    .setup-card { background: var(--bg-surface); border-radius: 32px; padding: 40px; width: 100%; max-width: 440px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); transition: all 0.3s ease; }
-    .brand-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-    .brand-logo { width: 40px; height: 40px; border-radius: 12px; background: var(--grad-gemini); display: flex; align-items: center; justify-content: center; color: white; }
-    .brand-title { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.5px; }
-    .setup-sub { color: var(--text-dim); font-size: 1rem; line-height: 1.5; margin-bottom: 32px; }
-    
-    /* Selectors */
-    .type-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-    .type-card { border: 1px solid var(--border); border-radius: 20px; padding: 20px 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--bg-surface); }
-    .type-card:hover { background: #f8fafd; border-color: #c2e7ff; }
-    .type-card.selected { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
-    .type-card .material-symbols-rounded { font-size: 28px; margin-bottom: 8px; }
-    .type-card.selected .material-symbols-rounded { background: var(--grad-gemini); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
-    .voice-section { transition: opacity 0.3s ease, height 0.3s ease; overflow: hidden; }
-    .voice-section.collapsed { opacity: 0; height: 0; pointer-events: none; margin-bottom: 0; }
-    .voice-section-title { font-size: 0.85rem; font-weight: 600; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .voice-chips { display:flex; flex-direction:column; gap:8px; margin-bottom:32px; }
-    .voice-chip { display:flex; align-items:center; gap:16px; padding:16px; border-radius:16px; border:1px solid var(--border); background:var(--bg-surface); cursor:pointer; transition:all 0.2s ease; }
-    .voice-chip.selected { border-color: var(--gemini-purple); background: #fcfaff; }
-    .voice-chip-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; }
-    .voice-chip.selected .voice-chip-check { background: var(--gemini-purple); border-color: var(--gemini-purple); }
-    .voice-chip.selected .voice-chip-check::after { content: '✓'; font-size: 12px; color: white; font-weight: bold; }
-
-    .start-btn { width:100%; padding:16px; border-radius: 99px; background: var(--text-main); border:none; color:#fff; font-family:'Outfit',sans-serif; font-size: 1.05rem; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;}
-
-    /* Call Screen */
-    .call-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dim); background: var(--bg-surface); padding: 6px 16px; border-radius: 99px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 12px; }
-    .status-dot { width:8px; height:8px; border-radius:50%; background:var(--text-dim); }
-    .status-dot.s-active { background: var(--success); }
-    .status-dot.s-listening { background: var(--accent); }
-    .status-dot.s-ringing { background: var(--gemini-purple); }
-
-    .orb-wrap { position:relative; width:240px; height:240px; display:flex; align-items:center; justify-content:center; margin: 40px 0; }
-    .orb-core { width: 140px; height: 140px; border-radius: 50%; background: var(--bg-surface); display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: relative; z-index: 2; }
-    .orb-glow { position: absolute; inset: -20px; border-radius: 50%; background: var(--grad-gemini); filter: blur(28px); opacity: 0.15; z-index: 0; }
-    .speaking .orb-glow { opacity: 0.6; transform: scale(1.15); animation: pulseGlow 2s infinite alternate; }
-    @keyframes pulseGlow { from { filter: blur(28px); } to { filter: blur(40px); } }
-
-    /* Chat Screen */
-    #chatScreen { padding: 0; }
-    .chat-container { background: var(--bg-surface); width: 100%; height: 100svh; display: flex; flex-direction: column; overflow: hidden; }
-    .chat-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-main); }
-    .msg-bubble { padding: 12px 16px; border-radius: 20px; max-width: 85%; font-size: 0.95rem; line-height: 1.5; }
-    .msg-bubble.user { align-self: flex-end; background: var(--text-main); color: #fff; border-bottom-right-radius: 4px; }
-    .msg-bubble.agent { align-self: flex-start; background: #fff; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-    .msg-bubble.system { align-self: center; background: none; color: var(--text-dim); font-size: 0.8rem; text-align: center; }
-    .chat-input-area { padding: 16px 20px calc(16px + env(safe-area-inset-bottom)); background: var(--bg-surface); border-top: 1px solid var(--border); display: flex; gap: 12px; }
-    .chat-input { flex: 1; background: var(--bg-main); border: 1px solid transparent; border-radius: 99px; padding: 12px 20px; outline: none; }
-    .send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: white; border: none; display: flex; align-items: center; justify-content: center; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RareGrade | Live Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .chat-scroll::-webkit-scrollbar { width: 4px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .msg-client { border-radius: 18px 18px 4px 18px; background: #2563eb; color: white; }
+        .msg-agent { border-radius: 18px 18px 18px 4px; background: #f1f5f9; color: #1e293b; }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 h-screen flex flex-col items-center justify-center p-4">
 
-  <!-- SETUP SCREEN -->
-  <div class="screen" id="setupScreen">
-    <div class="setup-card">
-      <div class="brand-header">
-        <div class="brand-logo"><span class="material-symbols-rounded">graphic_eq</span></div>
-        <h1 class="brand-title">Rare Grade Support</h1>
-      </div>
-      <p class="setup-sub">How would you like to connect with our support team today?</p>
-      
-      <div class="type-selector">
-        <div class="type-card selected" data-type="ai" onclick="selectAgentType('ai')">
-          <span class="material-symbols-rounded">auto_awesome</span><div class="type-card-title">AI Call Assistant</div>
+    <!-- CHAT CONTAINER -->
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[600px] border border-gray-100">
+        
+        <!-- HEADER -->
+        <header class="bg-blue-600 p-4 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-headset text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold leading-tight">RareGrade Support</h2>
+                    <p class="text-[11px] opacity-80" id="support-status">Typically replies in minutes</p>
+                </div>
+            </div>
+            <button onclick="location.reload()" class="opacity-70 hover:opacity-100"><i class="fa-solid fa-rotate"></i></button>
+        </header>
+
+        <!-- MESSAGES AREA -->
+        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 chat-scroll bg-gray-50/50">
+            <!-- Welcome Message -->
+            <div class="flex flex-col items-start">
+                <div class="msg-agent p-3 text-sm shadow-sm">
+                    Hello! How can we help you today? Please enter your name and message below to start a live chat.
+                </div>
+            </div>
         </div>
-        <div class="type-card" data-type="human" onclick="selectAgentType('human')">
-          <span class="material-symbols-rounded">chat</span><div class="type-card-title">Live Text Chat</div>
+
+        <!-- RESOLVED OVERLAY -->
+        <div id="resolved-notice" class="hidden bg-yellow-50 p-3 text-center border-t border-yellow-100">
+            <p class="text-xs text-yellow-700 font-medium">This conversation has been marked as resolved.</p>
+            <button onclick="startNewChat()" class="text-xs text-blue-600 underline mt-1">Start new conversation</button>
         </div>
-      </div>
-      
-      <div class="voice-section" id="voiceSection">
-        <div class="voice-section-title">Select a Voice Profile</div>
-        <div class="voice-chips">
-          <div class="voice-chip selected" data-voice="ara" onclick="selectVoice(this)">
-            <div class="voice-chip-info"><div class="voice-chip-name">Ara</div><div class="voice-chip-desc">Warm & Friendly</div></div>
-            <div class="voice-chip-check"></div>
-          </div>
-          <div class="voice-chip" data-voice="rex" onclick="selectVoice(this)">
-            <div class="voice-chip-info"><div class="voice-chip-name">Rex</div><div class="voice-chip-desc">Tech Expert</div></div>
-            <div class="voice-chip-check"></div>
-          </div>
+
+        <!-- INPUT AREA -->
+        <div id="input-area" class="p-4 bg-white border-t border-gray-100">
+            <!-- Name Field (Only shown if no active chat) -->
+            <div id="name-field-container" class="mb-2">
+                <input type="text" id="client-name" placeholder="Your Name" class="w-full p-2 text-sm bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-blue-500 mb-2">
+            </div>
+
+            <div class="flex items-end gap-2">
+                <textarea id="client-msg" rows="1" placeholder="Type your message..." 
+                    class="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-xl resize-none outline-none focus:border-blue-500 text-sm"
+                    onkeypress="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); handleSend(); }"></textarea>
+                <button onclick="handleSend()" id="send-btn" class="w-11 h-11 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition active:scale-90 shadow-md">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
-      </div>
-      
-      <button class="start-btn" onclick="startFlow()">
-        <span class="material-symbols-rounded" id="connectIcon" style="display:none;">login</span>
-        <span id="connectText">Connect Now</span>
-      </button>
     </div>
-  </div>
 
-  <!-- VOICE CALL SCREEN -->
-  <div class="screen hidden" id="callScreen">
-    <div class="call-status"><div class="status-dot" id="sDot"></div><span id="sText">Connecting...</span></div>
-    <div class="orb-wrap" id="orbWrap">
-      <div class="orb-glow"></div><div class="orb-core"><span class="material-symbols-rounded orb-icon" id="orbIcon">phone_in_talk</span></div>
-    </div>
-    <div class="agent-label">Support Assistant</div><div class="agent-sublabel" id="agentSub">Ringing…</div>
-    <div class="transcript-wrap" id="transcriptBox" style="height:100px; overflow-y:auto; width:100%; max-width:400px; padding:20px;"></div>
-    <div style="display:flex; gap:20px; margin-top:40px;">
-      <button class="start-btn" style="background:var(--danger); width:72px; height:72px;" onclick="endAICall()"><span class="material-symbols-rounded">call_end</span></button>
-    </div>
-  </div>
+    <p class="mt-4 text-gray-400 text-[10px] uppercase tracking-widest">Powered by RareGrade Systems</p>
 
-  <!-- TEXT CHAT SCREEN -->
-  <div class="screen hidden" id="chatScreen">
-    <div class="chat-container">
-      <div class="chat-header">
-        <div class="brand-header"><h1 class="brand-title">Technician Chat</h1></div>
-        <button onclick="endChat()" style="background:none; border:none; cursor:pointer;"><span class="material-symbols-rounded">close</span></button>
-      </div>
-      <div class="chat-messages" id="chatMessages"></div>
-      <div class="chat-input-area">
-        <input type="text" class="chat-input" id="chatInput" placeholder="Message support..." onkeypress="if(event.key==='Enter') sendChatMessage()"/>
-        <button class="send-btn" onclick="sendChatMessage()"><span class="material-symbols-rounded">send</span></button>
-      </div>
-    </div>
-  </div>
+    <!-- FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCh7Ute6LeSAxcNDEQwZg5m0cA4ujnLCfg",
+            authDomain: "test-17881.firebaseapp.com",
+            projectId: "test-17881",
+            storageBucket: "test-17881.firebasestorage.app",
+            messagingSenderId: "1057428047643",
+            appId: "1:1057428047643:web:f3801c0d933225a5cd35be"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, push, onChildAdded, onValue, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        let chatId = localStorage.getItem('rg_chat_id');
+        let clientName = localStorage.getItem('rg_client_name');
 
-  const app = initializeApp({
-    apiKey:"AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
-    authDomain:"fire-b-a8878.firebaseapp.com",
-    projectId:"fire-b-a8878",
-    databaseURL:"https://fire-b-a8878-default-rtdb.firebaseio.com",
-    appId:"1:658673187627:web:6e4c29af661785f0afa36e"
-  });
+        if (chatId) {
+            initChatSession();
+            document.getElementById('name-field-container').classList.add('hidden');
+        }
 
-  const db = getDatabase(app);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+        async function handleSend() {
+            const msgInput = document.getElementById('client-msg');
+            const nameInput = document.getElementById('client-name');
+            const text = msgInput.value.trim();
+            
+            if (!text) return;
 
-  let currentUser = null, myChatId, myChatRef, myMessagesRef, hasAgentJoined = false;
-  let selectedAgentType = 'ai', currentVoice = 'ara', isCallActive = false;
+            // If it's a first-time message
+            if (!chatId) {
+                const name = nameInput.value.trim() || "Anonymous Client";
+                clientName = name;
+                localStorage.setItem('rg_client_name', name);
+                
+                const newChatRef = db.ref('live_support_chats').push();
+                chatId = newChatRef.key;
+                localStorage.setItem('rg_chat_id', chatId);
 
-  const els = {
-    setup: document.getElementById('setupScreen'),
-    call: document.getElementById('callScreen'),
-    chat: document.getElementById('chatScreen'),
-    chatMessages: document.getElementById('chatMessages'),
-    chatInput: document.getElementById('chatInput'),
-    connectText: document.getElementById('connectText'),
-    connectIcon: document.getElementById('connectIcon')
-  };
+                await newChatRef.set({
+                    clientName: clientName,
+                    status: 'pending',
+                    lastMessage: text,
+                    lastActivity: firebase.database.ServerValue.TIMESTAMP,
+                    agentId: null
+                });
 
-  onAuthStateChanged(auth, user => { currentUser = user; updateBtnUI(); });
+                document.getElementById('name-field-container').classList.add('hidden');
+                initChatSession();
+            }
 
-  window.selectAgentType = type => {
-    selectedAgentType = type;
-    document.querySelectorAll('.type-card').forEach(c => c.classList.toggle('selected', c.dataset.type === type));
-    document.getElementById('voiceSection').classList.toggle('collapsed', type === 'human');
-    updateBtnUI();
-  };
+            // Push the message
+            await db.ref(`live_support_chats/${chatId}/messages`).push({
+                sender: 'client',
+                text: text,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
 
-  window.selectVoice = el => {
-    document.querySelectorAll('.voice-chip').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected'); currentVoice = el.dataset.voice;
-  };
+            // Update Metadata
+            await db.ref(`live_support_chats/${chatId}`).update({
+                lastMessage: text,
+                lastActivity: firebase.database.ServerValue.TIMESTAMP
+            });
 
-  function updateBtnUI() {
-    const isLoginNeeded = (selectedAgentType === 'human' && !currentUser);
-    els.connectText.innerText = isLoginNeeded ? "Sign in to Chat" : "Connect Now";
-    els.connectIcon.style.display = isLoginNeeded ? "inline-block" : "none";
-  }
+            msgInput.value = '';
+        }
 
-  window.startFlow = () => { selectedAgentType === 'human' ? startTextChat(false) : startAICall(); };
+        function initChatSession() {
+            const chatBox = document.getElementById('chat-box');
+            const statusText = document.getElementById('support-status');
+            
+            // Listen for Messages
+            db.ref(`live_support_chats/${chatId}/messages`).on('child_added', (snap) => {
+                const m = snap.val();
+                appendMessage(m.sender, m.text, m.timestamp);
+            });
 
-  // --- AI CALL STUBS (For Logic Continuity) ---
-  function startAICall() {
-    isCallActive = true; els.setup.classList.add('hidden'); els.call.classList.remove('hidden');
-    setTimeout(() => { if(isCallActive) document.getElementById('agentSub').innerText = "AI Connected"; }, 2000);
-  }
-  window.endAICall = () => { isCallActive = false; els.call.classList.add('hidden'); els.setup.classList.remove('hidden'); };
+            // Listen for Agent Assignment & Resolution
+            db.ref(`live_support_chats/${chatId}`).on('value', (snap) => {
+                const data = snap.val();
+                if (!data) return;
 
-  // --- SYNCHRONIZED TEXT CHAT LOGIC ---
-  async function startTextChat(fromTransfer) {
-    if (!currentUser) {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        currentUser = result.user;
-      } catch (e) { return; }
-    }
+                if (data.agentName) {
+                    statusText.innerText = `Chatting with ${data.agentName}`;
+                    statusText.classList.add('text-green-200');
+                }
 
-    isCallActive = false;
-    els.setup.classList.add('hidden'); els.call.classList.add('hidden'); els.chat.classList.remove('hidden');
-    els.chatMessages.innerHTML = '';
-    appendChatMsg("Finding a technician...", "system");
+                if (data.status === 'resolved') {
+                    document.getElementById('input-area').classList.add('hidden');
+                    document.getElementById('resolved-notice').classList.remove('hidden');
+                }
+            });
+        }
 
-    myChatId = 'chat_' + Date.now();
-    // Matches Dashboard Node
-    myChatRef = ref(db, 'live_support_chats/' + myChatId);
-    myMessagesRef = ref(db, 'live_support_chats/' + myChatId + '/messages');
+        function appendMessage(sender, text, timestamp) {
+            const chatBox = document.getElementById('chat-box');
+            const isClient = sender === 'client';
+            const time = new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-    const timestamp = Date.now();
-    const welcomeMsg = fromTransfer ? "Transferred from AI Call." : "Chat started.";
+            const html = `
+                <div class="flex flex-col ${isClient ? 'items-end' : 'items-start'}">
+                    <div class="max-w-[85%] p-3 text-sm shadow-sm ${isClient ? 'msg-client' : 'msg-agent'}">
+                        ${text}
+                    </div>
+                    <span class="text-[9px] text-gray-400 mt-1">${time}</span>
+                </div>
+            `;
+            chatBox.insertAdjacentHTML('beforeend', html);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
-    // Set structure for Support Desk Dashboard
-    set(myChatRef, {
-      id: myChatId,
-      status: 'pending', // Triggers "New" badge on dashboard
-      clientName: currentUser.displayName || 'User',
-      clientId: currentUser.uid,
-      lastMessage: welcomeMsg,
-      lastActivity: timestamp,
-      agentId: null,
-      context: fromTransfer ? 'AI Transfer' : 'Direct Chat'
-    });
-
-    onDisconnect(myChatRef).update({ status: 'resolved' });
-
-    onValue(myChatRef, snap => {
-      const data = snap.val();
-      if (data?.status === 'active' && !hasAgentJoined && data.agentId) {
-        hasAgentJoined = true;
-        appendChatMsg(`${data.agentName} has joined.`, "system");
-      }
-      if (data?.status === 'resolved') {
-        appendChatMsg("Session closed.", "system");
-        els.chatInput.disabled = true;
-      }
-    });
-
-    onChildAdded(myMessagesRef, snap => {
-      const m = snap.val();
-      if (m.sender === 'agent') appendChatMsg(m.text, 'agent');
-    });
-  }
-
-  window.sendChatMessage = () => {
-    const text = els.chatInput.value.trim();
-    if (!text) return;
-    appendChatMsg(text, 'user');
-    const ts = Date.now();
-    push(myMessagesRef, { text, sender: 'client', timestamp: ts });
-    update(myChatRef, { lastMessage: text, lastActivity: ts });
-    els.chatInput.value = '';
-  };
-
-  function appendChatMsg(text, type) {
-    const b = document.createElement('div');
-    b.className = `msg-bubble ${type}`;
-    b.innerText = text;
-    els.chatMessages.appendChild(b);
-    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
-  }
-
-  window.endChat = () => {
-    if (myChatRef) update(myChatRef, { status: 'resolved' });
-    els.chat.classList.add('hidden'); els.setup.classList.remove('hidden');
-  };
-</script>
+        function startNewChat() {
+            localStorage.removeItem('rg_chat_id');
+            location.reload();
+        }
+    </script>
 </body>
 </html>
