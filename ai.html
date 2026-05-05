@@ -3,33 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Support | Rare Grade</title>
-  <!-- Using Outfit for headers (similar to Uber Move) and Inter for UI body -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <title>Rare Grade | Voice Agent</title>
+  <!-- Using Google's Outfit and Inter to mimic the proprietary Google Sans aesthetic -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
   <style>
     :root {
-      /* Uber-style Minimalist Palette */
-      --bg-main: #f6f6f6;
-      --bg-card: #ffffff;
-      --border: #e2e2e2;
-      --black: #000000;
-      --text-main: #000000;
-      --text-dim: #545454;
-      --text-light: #ffffff;
-      --accent: #276ef1; /* Standard link/active blue */
-      --danger: #e11d48;
-      --success: #05a357;
-      --font-head: 'Outfit', sans-serif;
-      --font-body: 'Inter', sans-serif;
+      /* Gemini-inspired Palette */
+      --bg-main: #f0f4f9;
+      --bg-surface: #ffffff;
+      --text-main: #1f1f1f;
+      --text-dim: #444746;
+      --border: #e3e3e3;
+      
+      /* The Signature Gradient */
+      --gemini-blue: #4285f4;
+      --gemini-purple: #9b72cb;
+      --gemini-red: #d96570;
+      --grad-gemini: linear-gradient(135deg, var(--gemini-blue), var(--gemini-purple), var(--gemini-red));
+      
+      --accent: #0b57d0;
+      --accent-light: #d3e3fd;
+      --danger: #b3261e;
+      --danger-light: #f9dedc;
+      --success: #146c2e;
     }
 
     *, *::before, *::after { 
-      margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; 
+      margin:0; 
+      padding:0; 
+      box-sizing:border-box; 
+      -webkit-tap-highlight-color:transparent; 
     }
 
     body {
-      font-family: var(--font-body);
+      font-family: 'Inter', sans-serif;
       background: var(--bg-main);
       color: var(--text-main);
       height: 100svh;
@@ -39,430 +47,972 @@
       position: relative;
     }
 
-    /* Screen Management */
+    h1, h2, h3, .brand-font {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* ── SCREENS ── */
     .screen {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10; transition: opacity 0.3s ease, transform 0.3s ease;
+      position: absolute; 
+      inset: 0;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center;
+      z-index: 10; 
+      transition: opacity 0.4s ease, transform 0.4s ease;
       padding: 24px;
-      background: var(--bg-main);
     }
-    .hidden { opacity: 0; pointer-events: none; transform: scale(0.98); z-index: -1; }
+    .hidden { opacity:0; pointer-events:none; transform: scale(0.98); }
 
-    /* AUTH & SETUP SCREENS */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+    /* ════════════════════════════════
+       SETUP SCREEN 
+    ════════════════════════════════ */
+    .setup-card {
+      background: var(--bg-surface);
+      border-radius: 32px;
       padding: 40px;
-      width: 100%; max-width: 400px;
-      text-align: center;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      width: 100%; 
+      max-width: 440px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
     }
 
-    .brand-icon {
-      width: 64px; height: 64px; margin: 0 auto 24px;
-      background: var(--black);
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .brand-logo {
+      width: 40px;
+      height: 40px;
       border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
+      background: var(--grad-gemini);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
     }
-
-    .title { font-family: var(--font-head); font-size: 2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-    .subtitle { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; margin-bottom: 32px; }
-    
-    .status-badge {
-      display: inline-block; padding: 4px 12px; border-radius: 99px;
-      font-size: 0.75rem; font-weight: 600; margin-bottom: 16px;
-      background: #e8f5e9; color: var(--success); text-transform: uppercase; letter-spacing: 0.5px;
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
     }
 
-    /* BUTTONS */
-    .btn {
-      width: 100%; padding: 16px; border-radius: 8px;
-      font-family: var(--font-body); font-size: 1rem; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;
-      transition: all 0.2s; border: none; margin-bottom: 12px;
+    .setup-sub {
+      color: var(--text-dim); 
+      font-size: 1rem; 
+      line-height: 1.5; 
+      margin-bottom: 32px;
     }
-    .btn-primary { background: var(--black); color: var(--text-light); }
-    .btn-primary:hover { background: #333; }
-    .btn-outline { background: transparent; border: 1px solid var(--black); color: var(--black); }
-    .btn-outline:hover { background: rgba(0,0,0,0.05); }
 
-    /* CALL SCREEN */
-    .call-header { position: absolute; top: 0; width: 100%; padding: 40px 24px 0; display: flex; flex-direction: column; align-items: center; }
-    .call-app-name { font-family: var(--font-head); font-size: 1.25rem; font-weight: 600; }
-    .call-status { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dim); margin-top: 8px; font-weight: 500; }
-    
-    .orb-wrap { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; margin: 40px 0; }
+    /* Agent Type Selector */
+    .type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .type-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--bg-surface);
+    }
+    .type-card:hover {
+      background: #f8fafd;
+      border-color: #c2e7ff;
+    }
+    .type-card.selected {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .type-card .material-symbols-rounded {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .type-card.selected .material-symbols-rounded {
+      background: var(--grad-gemini);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .type-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    /* Voice selector chips */
+    .voice-section {
+      transition: opacity 0.3s ease, height 0.3s ease;
+      overflow: hidden;
+    }
+    .voice-section.collapsed {
+      opacity: 0;
+      height: 0;
+      pointer-events: none;
+      margin-bottom: 0;
+    }
+    .voice-section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .voice-chips { 
+      display:flex; 
+      flex-direction:column; 
+      gap:8px; 
+      margin-bottom:32px; 
+    }
+    .voice-chip {
+      display:flex; 
+      align-items:center; 
+      gap:16px;
+      padding:16px; 
+      border-radius:16px;
+      border:1px solid var(--border); 
+      background:var(--bg-surface);
+      cursor:pointer; 
+      transition:all 0.2s ease;
+    }
+    .voice-chip:hover { 
+      background: var(--bg-main);
+    }
+    .voice-chip.selected {
+      border-color: var(--gemini-purple); 
+      background: #fcfaff;
+    }
+    .voice-chip-info { 
+      text-align:left; 
+      flex:1;
+    }
+    .voice-chip-name { 
+      font-family:'Outfit',sans-serif; 
+      font-size:1rem; 
+      font-weight:500; 
+      color:var(--text-main); 
+    }
+    .voice-chip-desc { 
+      font-size:0.85rem; 
+      color:var(--text-dim); 
+    }
+    .voice-chip-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .voice-chip.selected .voice-chip-check {
+      background: var(--gemini-purple);
+      border-color: var(--gemini-purple);
+    }
+    .voice-chip.selected .voice-chip-check::after {
+      content: '✓';
+      font-size: 12px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .start-btn {
+      width:100%; 
+      padding:16px; 
+      border-radius: 99px;
+      background: var(--text-main);
+      border:none; 
+      color:#fff;
+      font-family:'Outfit',sans-serif; 
+      font-size:1.05rem; 
+      font-weight:500;
+      cursor:pointer;
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      gap:8px;
+      transition:all 0.2s ease;
+    }
+    .start-btn:hover { 
+      background: black;
+      transform: translateY(-1px);
+    }
+
+    /* ════════════════════════════════
+       CALL SCREEN
+    ════════════════════════════════ */
+    .call-header {
+      position:absolute; 
+      top:0; 
+      width:100%;
+      padding:40px 24px 0;
+      display:flex; 
+      flex-direction:column; 
+      align-items:center;
+    }
+    .call-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: var(--bg-surface);
+      padding: 6px 16px;
+      border-radius: 99px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-top: 12px;
+      font-weight: 500;
+    }
+    .status-dot {
+      width:8px; 
+      height:8px; 
+      border-radius:50%; 
+      background:var(--text-dim); 
+    }
+    .status-dot.s-active { background: var(--success); }
+    .status-dot.s-listening { background: var(--accent); }
+    .status-dot.s-ringing, .status-dot.s-transferring { background: var(--gemini-purple); }
+
+    /* ── THE ORB (Gemini Style) ── */
+    .orb-wrap {
+      position:relative; 
+      width:240px; 
+      height:240px;
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      margin: 40px 0;
+    }
     .orb-core {
-      width: 120px; height: 120px; border-radius: 50%; background: var(--black);
-      display: flex; align-items: center; justify-content: center; color: white;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.2); z-index: 2; transition: transform 0.3s;
+      width: 140px; 
+      height: 140px; 
+      border-radius: 50%;
+      background: var(--bg-surface);
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      position: relative; 
+      z-index: 2;
+      transition: all 0.5s ease;
     }
-    .speaking .orb-core { transform: scale(1.05); background: var(--accent); }
-    .orb-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); width: 100%; height: 100%; animation: pulseRing 2s infinite; opacity: 0; }
-    @keyframes pulseRing { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
-
-    .agent-label { font-family: var(--font-head); font-size: 1.5rem; font-weight: 600; margin-bottom: 4px; }
-    .agent-sublabel { color: var(--text-dim); font-size: 0.95rem; }
-
-    .call-controls { position: absolute; bottom: 48px; display: flex; gap: 24px; align-items: center; }
-    .ctrl-btn { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--black); transition: 0.2s; }
-    .ctrl-btn:hover { background: #f0f0f0; }
-    .ctrl-btn.muted { background: var(--black); color: white; }
-    .ctrl-end { width: 64px; height: 64px; border-radius: 50%; background: var(--danger); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-    /* CHAT SCREEN */
-    .chat-screen { position: absolute; inset: 0; background: var(--bg-card); display: flex; flex-direction: column; z-index: 30; }
-    .chat-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: white; }
-    .chat-back { background: none; border: none; cursor: pointer; display: flex; padding: 8px; margin-left: -8px; }
-    .chat-agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: #e2e2e2; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-    .chat-info h3 { font-family: var(--font-head); font-size: 1rem; margin: 0; }
-    .chat-info p { font-size: 0.8rem; color: var(--success); margin: 0; font-weight: 500; }
     
-    .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--bg-main); }
-    .chat-msg { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4; }
-    .chat-msg.user { align-self: flex-end; background: var(--black); color: white; border-bottom-right-radius: 2px; }
-    .chat-msg.agent { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 2px; }
+    /* Soft glowing backgrounds replicating the "Spark" */
+    .orb-glow {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: var(--grad-gemini);
+      filter: blur(28px);
+      opacity: 0.15;
+      z-index: 0;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
 
-    .chat-controls { background: white; padding: 16px 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
-    .chat-input { flex: 1; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 1rem; outline: none; background: var(--bg-main); }
-    .chat-input:focus { border-color: var(--black); background: white; }
-    .chat-send { background: var(--black); color: white; border: none; width: 48px; height: 48px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .orb-core .orb-icon {
+      font-size: 48px; 
+      background: var(--grad-gemini);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: all 0.3s ease;
+    }
 
+    .speaking .orb-glow { 
+      opacity: 0.6; 
+      transform: scale(1.15);
+      animation: pulseGlow 2s infinite alternate;
+    }
+    .speaking .orb-core {
+      transform: scale(1.05);
+    }
+    
+    .ringing-shake .orb-glow {
+      opacity: 0.4;
+      background: linear-gradient(135deg, #4285f4, #0b57d0);
+      animation: pulseGlow 1s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { filter: blur(28px); }
+      100% { filter: blur(40px); }
+    }
+
+    .agent-label {
+      font-family:'Outfit',sans-serif; 
+      font-size:1.5rem; 
+      font-weight:500; 
+      color:var(--text-main);
+      margin-bottom:4px;
+    }
+    .agent-sublabel { 
+      font-size:0.95rem; 
+      color:var(--text-dim); 
+    }
+
+    /* ── TRANSCRIPT ── */
+    .transcript-wrap {
+      width:100%; 
+      max-width:440px;
+      margin-top: 24px;
+      padding:0 12px;
+      height: 140px; 
+      overflow-y:auto;
+      display:flex; 
+      flex-direction:column; 
+      gap:12px;
+      scroll-behavior: smooth;
+    }
+    .transcript-wrap::-webkit-scrollbar{ width:0px; }
+    
+    .t-line { 
+      font-size:0.95rem; 
+      line-height:1.5; 
+      opacity:0; 
+      animation:slideUp 0.3s forwards; 
+      padding: 12px 16px;
+      border-radius: 20px;
+      max-width: 85%;
+    }
+    .t-line.user { 
+      background: var(--accent-light);
+      color: var(--text-main); 
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .t-line.ai { 
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text-main); 
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    @keyframes slideUp { 
+      from{ opacity:0; transform:translateY(10px); } 
+      to{ opacity:1; transform:translateY(0); } 
+    }
+
+    /* ── CALL CONTROLS ── */
+    .call-controls {
+      position:absolute; 
+      bottom:40px;
+      width:100%; 
+      display:flex; 
+      gap:20px;
+      align-items:center; 
+      justify-content:center;
+    }
+    .ctrl-btn {
+      width:56px; 
+      height:56px; 
+      border-radius:50%; 
+      border:1px solid var(--border);
+      background:var(--bg-surface); 
+      color:var(--text-main); 
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      cursor:pointer; 
+      transition:all 0.2s ease;
+    }
+    .ctrl-btn:hover { 
+      background:var(--bg-main); 
+    }
+    .ctrl-btn.muted { 
+      background: var(--text-main); 
+      color: #fff; 
+      border-color: var(--text-main);
+    }
+    .ctrl-end {
+      width:72px; 
+      height:72px; 
+      border-radius:50%; 
+      border:none;
+      background:var(--danger);
+      color:#fff; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      cursor:pointer; 
+      transition:all 0.2s ease;
+    }
+    .ctrl-end:hover { 
+      background: #8c1d18;
+    }
+
+    /* ════════════════════════════════
+       TRANSFER OVERLAY
+    ════════════════════════════════ */
+    .transfer-overlay {
+      position:absolute; 
+      inset:0; 
+      z-index:20;
+      display:flex; 
+      flex-direction:column; 
+      align-items:center; 
+      justify-content:center;
+      padding:32px; 
+      text-align:center;
+      background: var(--bg-main);
+      opacity:0; 
+      pointer-events:none; 
+      transition:opacity 0.4s ease;
+    }
+    .transfer-overlay.active { opacity:1; pointer-events:auto; }
+
+    .transfer-orb {
+      width:100px; 
+      height:100px; 
+      border-radius:50%;
+      background: var(--bg-surface);
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      margin-bottom:24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    .transfer-orb::before {
+      content: '';
+      position: absolute;
+      inset: -16px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.15;
+      filter: blur(20px);
+      animation: pulseGlow 1.5s infinite alternate;
+    }
+    
+    .transfer-title {
+      font-family:'Outfit',sans-serif; 
+      font-size:1.5rem; 
+      font-weight:500; 
+      color:var(--text-main); 
+      margin-bottom:8px;
+    }
+    .transfer-sub { 
+      color:var(--text-dim); 
+      font-size:0.95rem; 
+      line-height:1.5; 
+      max-width:280px; 
+    }
+
+    .loading-dots { 
+      display:flex; 
+      gap:8px; 
+      margin-top:24px; 
+    }
+    .ld { 
+      width:8px; 
+      height:8px; 
+      border-radius:50%; 
+      background:var(--accent); 
+      animation:ldBounce 1.4s infinite ease-in-out both; 
+    }
+    .ld:nth-child(1){ animation-delay:-0.32s; }
+    .ld:nth-child(2){ animation-delay:-0.16s; }
+    @keyframes ldBounce { 
+      0%, 80%, 100% { transform: scale(0); } 
+      40% { transform: scale(1); } 
+    }
+
+    .material-symbols-rounded { 
+      font-family:'Material Symbols Rounded'; 
+      font-style:normal; 
+      font-weight:400; 
+      user-select:none; 
+    }
   </style>
 </head>
 <body>
 
-  <!-- AUTH SCREEN -->
-  <div class="screen" id="authScreen">
-    <div class="card">
-      <div class="brand-icon">
-        <span class="material-symbols-rounded" style="font-size: 32px;">support_agent</span>
+  <!-- SETUP SCREEN -->
+  <div class="screen" id="setupScreen">
+    <div class="setup-card">
+      <div class="brand-header">
+        <div class="brand-logo">
+          <span class="material-symbols-rounded">graphic_eq</span>
+        </div>
+        <h1 class="brand-title">Rare Grade</h1>
       </div>
-      <h1 class="title">Rare Grade Help</h1>
-      <p class="subtitle">Sign in to access personalized technical support and account assistance.</p>
-      <button class="btn btn-primary" onclick="signInWithGoogle()">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" style="background: white; border-radius: 50%; padding: 2px;">
-        Continue with Google
-      </button>
-    </div>
-  </div>
-
-  <!-- SETUP SCREEN (Choose Option) -->
-  <div class="screen hidden" id="setupScreen">
-    <div class="card">
-      <div id="userBadge" class="status-badge">Authenticating...</div>
-      <h1 class="title" id="welcomeText">Welcome</h1>
-      <p class="subtitle">How would you like to get support today?</p>
       
-      <button class="btn btn-primary" onclick="startCall()">
-        <span class="material-symbols-rounded">call</span>
-        Talk to AI Assistant
-      </button>
-      <button class="btn btn-outline" onclick="startLiveChat()">
-        <span class="material-symbols-rounded">chat</span>
-        Chat with Human Agent
-      </button>
-      <button class="btn btn-outline" style="margin-top: 16px; border-color: transparent; color: var(--text-dim);" onclick="signOutUser()">
-        Sign Out
+      <p class="setup-sub">How would you like to connect with support today?</p>
+      
+      <!-- Agent Type Selection -->
+      <div class="type-selector">
+        <div class="type-card selected" data-type="ai" onclick="selectAgentType('ai')">
+          <span class="material-symbols-rounded">auto_awesome</span>
+          <div class="type-card-title">AI Assistant</div>
+        </div>
+        <div class="type-card" data-type="human" onclick="selectAgentType('human')">
+          <span class="material-symbols-rounded">support_agent</span>
+          <div class="type-card-title">Human Agent</div>
+        </div>
+      </div>
+      
+      <!-- Voice Chips (Hides when Human is selected) -->
+      <div class="voice-section" id="voiceSection">
+        <div class="voice-section-title">Select a Voice Profile</div>
+        <div class="voice-chips" id="voiceChips">
+          <div class="voice-chip selected" data-voice="ara" onclick="selectVoice(this)">
+            <div class="voice-chip-info">
+              <div class="voice-chip-name">Ara</div>
+              <div class="voice-chip-desc">Warm & Friendly</div>
+            </div>
+            <div class="voice-chip-check"></div>
+          </div>
+          <div class="voice-chip" data-voice="rex" onclick="selectVoice(this)">
+            <div class="voice-chip-info">
+              <div class="voice-chip-name">Rex</div>
+              <div class="voice-chip-desc">Professional Consultant</div>
+            </div>
+            <div class="voice-chip-check"></div>
+          </div>
+          <div class="voice-chip" data-voice="eve" onclick="selectVoice(this)">
+            <div class="voice-chip-info">
+              <div class="voice-chip-name">Eve</div>
+              <div class="voice-chip-desc">Energetic Expert</div>
+            </div>
+            <div class="voice-chip-check"></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startFlow()">
+        Connect Now
       </button>
     </div>
   </div>
 
-  <!-- CALL SCREEN -->
+  <!-- CALL SCREEN (AI) -->
   <div class="screen hidden" id="callScreen">
     <div class="call-header">
-      <div class="call-app-name">AI Voice Support</div>
-      <div class="call-status">
+      <div class="call-status" id="callStatus">
+        <div class="status-dot" id="sDot"></div>
         <span id="sText">Connecting...</span>
       </div>
     </div>
 
     <div class="orb-wrap" id="orbWrap">
-      <div class="orb-ring" style="animation-delay: 0s;"></div>
-      <div class="orb-ring" style="animation-delay: 1s;"></div>
+      <div class="orb-glow"></div>
       <div class="orb-core">
-        <span class="material-symbols-rounded" id="orbIcon" style="font-size: 48px;">graphic_eq</span>
+        <span class="material-symbols-rounded orb-icon" id="orbIcon">phone_in_talk</span>
       </div>
     </div>
 
-    <div class="agent-label">System Assistant</div>
-    <div class="agent-sublabel" id="agentSub">Listening...</div>
+    <div class="agent-label" id="agentName">AI Assistant</div>
+    <div class="agent-sublabel" id="agentSub">Ringing…</div>
+
+    <div class="transcript-wrap" id="transcriptBox"></div>
 
     <div class="call-controls">
       <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
         <span class="material-symbols-rounded" id="muteIcon">mic</span>
       </button>
       <button class="ctrl-end" onclick="endCall()">
-        <span class="material-symbols-rounded" style="font-size:28px;">call_end</span>
+        <span class="material-symbols-rounded" style="font-size:32px;">call_end</span>
+      </button>
+      <button class="ctrl-btn" onclick="clearTranscript()">
+        <span class="material-symbols-rounded">delete_sweep</span>
       </button>
     </div>
   </div>
 
-  <!-- LIVE CHAT SCREEN -->
-  <div class="chat-screen hidden" id="chatScreen">
-    <div class="chat-header">
-      <button class="chat-back" onclick="leaveLiveChat()">
-        <span class="material-symbols-rounded">arrow_back</span>
+  <!-- TRANSFER OVERLAY (Human Connect) -->
+  <div class="transfer-overlay" id="transferOverlay">
+    <div class="transfer-orb" id="tOrb">
+      <span class="material-symbols-rounded" style="font-size:40px; color:var(--accent);">support_agent</span>
+    </div>
+    <div class="transfer-title" id="tTitle">Connecting to Agent</div>
+    <div class="transfer-sub" id="tSub">Routing you to the next available live human agent. Please hold...</div>
+    <div class="loading-dots" id="tDots">
+      <div class="ld"></div><div class="ld"></div><div class="ld"></div>
+    </div>
+    <div class="call-controls" style="position:relative;bottom:auto;margin-top:40px;">
+      <button class="ctrl-btn" id="humanMuteBtn" onclick="toggleHumanMute()">
+        <span class="material-symbols-rounded" id="humanMuteIcon">mic</span>
       </button>
-      <div class="chat-agent-avatar">👨‍💻</div>
-      <div class="chat-info">
-        <h3>Human Support Agent</h3>
-        <p>● Online</p>
-      </div>
-    </div>
-    <div class="chat-messages" id="chatMessages">
-      <!-- Messages will load here from Firebase -->
-    </div>
-    <div class="chat-controls">
-      <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-      <button class="chat-send" onclick="sendChatMessage()">
-        <span class="material-symbols-rounded">send</span>
+      <button class="ctrl-end" onclick="endCall()">
+        <span class="material-symbols-rounded" style="font-size:32px;">call_end</span>
       </button>
     </div>
   </div>
 
 <script type="module">
-  // Firebase Imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
   import { getRemoteConfig, fetchAndActivate, getString } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-remote-config.js";
-
-  // Configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
-    authDomain: "fire-b-a8878.firebaseapp.com",
-    projectId: "fire-b-a8878",
-    databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
-    appId: "1:658673187627:web:6e4c29af661785f0afa36e"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getDatabase(app);
-  
-  // Remote Config for X.AI
-  const rc = getRemoteConfig(app);
-  rc.settings.minimumFetchIntervalMillis = 0;
-  let XAI_API_KEY = "";
-  fetchAndActivate(rc).then(() => { XAI_API_KEY = getString(rc, 'xai_api_key'); }).catch(console.error);
+  import { io } from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
 
   const API_BASE = "https://api.x.ai/v1";
+  let XAI_API_KEY = "";
+  const socket = io('http://localhost:3000');
+  const rtcConfig = { iceServers:[{ urls:'stun:stun.l.google.com:19302' }] };
   
-  // State
-  let currentUser = null;
-  let chatRef = null;
-  let isCallActive = false, isMuted = false;
-  let conversationHistory = [];
-  let currentAudio = null, speechRecognition = null;
+  let peerConnection, localStream;
+  let isCallActive=false, isRinging=false, isTransferring=false, isMuted=false;
+  let currentVoice='ara', selectedAgentType='ai', conversationHistory=[], callTimeout=null;
+  let currentAudio=null, speechRecognition=null, ringAudioCtx=null, ringInterval=null;
+  let currentCallId=null;
 
-  // DOM Elements
+  const $ = id => document.getElementById(id);
   const els = {
-    auth: document.getElementById('authScreen'),
-    setup: document.getElementById('setupScreen'),
-    call: document.getElementById('callScreen'),
-    chat: document.getElementById('chatScreen'),
-    userBadge: document.getElementById('userBadge'),
-    welcomeText: document.getElementById('welcomeText'),
-    chatMessages: document.getElementById('chatMessages'),
-    chatInput: document.getElementById('chatInput'),
-    orbWrap: document.getElementById('orbWrap'),
-    sText: document.getElementById('sText'),
-    agentSub: document.getElementById('agentSub')
+    setup:$('setupScreen'), 
+    call:$('callScreen'), 
+    transfer:$('transferOverlay'),
+    voiceSection:$('voiceSection'),
+    orbWrap:$('orbWrap'), 
+    orbIcon:$('orbIcon'),
+    sDot:$('sDot'), 
+    sText:$('sText'), 
+    agentSub:$('agentSub'),
+    transcript:$('transcriptBox'), 
+    muteBtn:$('muteBtn'), 
+    muteIcon:$('muteIcon'),
+    tTitle:$('tTitle'), 
+    tSub:$('tSub'), 
+    tDots:$('tDots'),
+    humanMuteBtn:$('humanMuteBtn'), 
+    humanMuteIcon:$('humanMuteIcon'), 
+    tOrb:$('tOrb'),
   };
 
-  function showScreen(screenId) {
-    Object.values(els).forEach(el => el?.classList && el.classList.add('hidden'));
-    document.getElementById(screenId).classList.remove('hidden');
-  }
-
-  /* =========================================
-     AUTHENTICATION & USER CHECK
-     ========================================= */
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUser = user;
-      const isNewUser = (user.metadata.creationTime === user.metadata.lastSignInTime);
-      
-      els.userBadge.innerText = isNewUser ? "New User" : "Retained User";
-      els.welcomeText.innerText = `Welcome, ${user.displayName.split(' ')[0]}`;
-      
-      showScreen('setupScreen');
-    } else {
-      currentUser = null;
-      showScreen('authScreen');
-    }
+  // Firebase Init
+  const app = initializeApp({
+    apiKey:"AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+    authDomain:"fire-b-a8878.firebaseapp.com",
+    projectId:"fire-b-a8878",
+    databaseURL:"https://fire-b-a8878-default-rtdb.firebaseio.com",
+    appId:"1:658673187627:web:6e4c29af661785f0afa36e"
   });
+  const rc = getRemoteConfig(app);
+  rc.settings.minimumFetchIntervalMillis = 0;
+  fetchAndActivate(rc).then(() => { XAI_API_KEY = getString(rc,'xai_api_key'); }).catch(console.error);
 
-  window.signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).catch(err => alert("Sign in failed: " + err.message));
-  };
-
-  window.signOutUser = () => {
-    signOut(auth);
-  };
-
-  /* =========================================
-     LIVE CHAT (HUMAN AGENT)
-     ========================================= */
-  window.startLiveChat = () => {
-    showScreen('chatScreen');
-    els.chatMessages.innerHTML = ''; 
+  // UI Selections
+  window.selectAgentType = (type) => {
+    selectedAgentType = type;
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    document.querySelector(`[data-type="${type}"]`).classList.add('selected');
     
-    // Setup Firebase DB listener for this user's chats
-    chatRef = ref(db, `chats/${currentUser.uid}`);
-    onChildAdded(chatRef, (snapshot) => {
-      const data = snapshot.val();
-      renderChatMsg(data.sender, data.text);
-    });
-
-    // Auto welcome message if empty (mocking agent)
-    setTimeout(() => {
-      if (els.chatMessages.children.length === 0) {
-        push(chatRef, { sender: 'agent', text: "Hi! You've reached Human Support. How can we help you today?", timestamp: serverTimestamp() });
-      }
-    }, 500);
+    if(type === 'human') {
+      els.voiceSection.classList.add('collapsed');
+    } else {
+      els.voiceSection.classList.remove('collapsed');
+    }
   };
 
-  window.sendChatMessage = () => {
-    const text = els.chatInput.value.trim();
-    if (!text || !chatRef) return;
-    
-    push(chatRef, {
-      sender: 'user',
-      text: text,
-      timestamp: serverTimestamp()
-    });
-    els.chatInput.value = '';
+  window.selectVoice = (el) => {
+    document.querySelectorAll('.voice-chip').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    currentVoice = el.dataset.voice;
   };
 
-  function renderChatMsg(sender, text) {
-    const div = document.createElement('div');
-    div.className = `chat-msg ${sender}`;
-    div.textContent = text;
-    els.chatMessages.appendChild(div);
-    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  // Haptic Feedback
+  const haptic = t => { 
+    if(!navigator.vibrate) return; 
+    if(t==='start') navigator.vibrate(40); 
+    else if(t==='stop') navigator.vibrate([30,50,30]); 
+    else navigator.vibrate([100,100,100]); 
+  };
+
+  // Ringtone generator
+  function startRingtone() {
+    const AC = window.AudioContext||window.webkitAudioContext;
+    ringAudioCtx = new AC();
+    const play = () => {
+      if(!ringAudioCtx||ringAudioCtx.state==='closed') return; 
+      haptic('ring');
+      const o1=ringAudioCtx.createOscillator(), o2=ringAudioCtx.createOscillator(), g=ringAudioCtx.createGain();
+      o1.type=o2.type='sine'; o1.frequency.value=440; o2.frequency.value=480;
+      o1.connect(g); o2.connect(g); g.connect(ringAudioCtx.destination);
+      const t=ringAudioCtx.currentTime;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.2,t+0.05);
+      g.gain.setValueAtTime(0.2,t+1.3); g.gain.linearRampToValueAtTime(0,t+1.45);
+      o1.start(t); o2.start(t); o1.stop(t+1.55); o2.stop(t+1.55);
+    };
+    play(); 
+    ringInterval = setInterval(play, 3200);
   }
 
-  window.leaveLiveChat = () => {
-    showScreen('setupScreen');
-    // Disable listener by reloading screen structure conceptually, 
-    // real app would unsubscribe `onChildAdded` here.
+  function stopRingtone() {
+    if(ringInterval) clearInterval(ringInterval);
+    if(ringAudioCtx&&ringAudioCtx.state!=='closed') ringAudioCtx.close();
+    ringAudioCtx=null;
+  }
+
+  // Routing the setup button
+  window.startFlow = () => {
+    if (selectedAgentType === 'human') {
+      els.setup.classList.add('hidden');
+      connectHuman();
+    } else {
+      startAICall();
+    }
   };
 
-  /* =========================================
-     AI VOICE CALL 
-     ========================================= */
+  function getSystemPrompt() {
+    return `You are an AI handling a live call for Rare Grade Tech. CRITICAL: Keep responses to 1-3 short sentences. Speak naturally. CALL TRANSFER: If the user asks for a human, include [TRANSFER] in your response.`;
+  }
+
+  // Speech Recognition setup
   function initSR() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { alert("Speech Recognition not supported in this browser."); return false; }
-    speechRecognition = new SR();
-    speechRecognition.continuous = false; 
-    speechRecognition.interimResults = false;
-    speechRecognition.onresult = async e => {
-      if (!isCallActive) return;
-      const text = e.results[0][0].transcript.trim();
-      if (text) await processUtterance(text);
+    const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR) return false;
+    speechRecognition = new SR(); 
+    speechRecognition.continuous=false; 
+    speechRecognition.interimResults=false;
+    speechRecognition.onstart = () => { 
+      if(isCallActive&&!isMuted&&!isRinging&&!isTransferring) updateStatus("Listening…","s-listening"); 
     };
-    speechRecognition.onend = () => { if (isCallActive && !isMuted) speechRecognition.start(); };
+    speechRecognition.onresult = async e => {
+      if(!isCallActive||isRinging||isTransferring) return;
+      const text = e.results[0][0].transcript.trim();
+      if(!text) return; 
+      logT(text,"user"); 
+      await processUtterance(text);
+    };
+    speechRecognition.onerror = e => { 
+      if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&e.error==='no-speech') 
+        setTimeout(()=>{ if(isCallActive&&!isRinging) startListen(); },600); 
+    };
+    speechRecognition.onend = () => { 
+      if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&(!currentAudio||currentAudio.paused)) 
+        startListen(); 
+    };
     return true;
   }
 
-  window.startCall = () => {
-    if (!XAI_API_KEY || !initSR()) return;
-    isCallActive = true; 
-    isMuted = false;
+  function startListen() { 
+    if(speechRecognition&&isCallActive&&!isMuted&&!isRinging&&!isTransferring) 
+      try{ speechRecognition.start(); }catch(e){} 
+  }
+  function stopListen() { 
+    if(speechRecognition) try{ speechRecognition.stop(); }catch(e){} 
+  }
+
+  function startAICall() {
+    if(!XAI_API_KEY||!initSR()) return;
+    currentVoice = document.querySelector('.voice-chip.selected')?.dataset.voice||'ara';
+    isCallActive=true; 
+    isRinging=true; 
+    isTransferring=false; 
+    isMuted=false;
+    conversationHistory=[{ role:"system", content:getSystemPrompt() }];
     currentAudio = new Audio();
-    conversationHistory = [{ role: "system", content: "You are a helpful technical support AI. Be concise (1-2 sentences). If user needs human help, append [HUMAN_REQUEST]." }];
     
-    showScreen('callScreen');
-    els.sText.innerText = "Connected";
-    els.agentSub.innerText = "Listening...";
+    els.setup.classList.add('hidden'); 
+    els.call.classList.remove('hidden');
     
-    const greet = "Hi there. I'm your AI assistant. How can I help you today?";
-    conversationHistory.push({ role: "assistant", content: greet });
+    els.orbWrap.classList.remove('speaking'); 
+    els.orbWrap.classList.add('ringing-shake');
+    els.orbIcon.innerText='phone_in_talk'; 
+    els.agentSub.innerText='Ringing…'; 
+    els.transcript.innerHTML='';
+    
+    updateStatus("Ringing…","s-ringing"); 
+    startRingtone();
+    callTimeout = setTimeout(answerCall, 3200);
+  }
+
+  function answerCall() {
+    if(!isCallActive) return; 
+    isRinging=false; 
+    stopRingtone();
+    els.orbWrap.classList.remove('ringing-shake'); 
+    els.orbIcon.innerText='graphic_eq';
+    updateStatus("Connected","s-active"); 
+    els.agentSub.innerText='Listening for you…'; 
+    haptic('start');
+    
+    const greet = "Hello, you've reached Rare Grade Tech. How can I help you today?";
+    conversationHistory.push({ role:"assistant", content:greet });
+    logT(greet,"ai"); 
     speakAI(greet);
-  };
+  }
 
   async function processUtterance(text) {
-    if(speechRecognition) speechRecognition.stop();
-    els.sText.innerText = "Thinking...";
-    els.agentSub.innerText = "Processing...";
-    els.orbWrap.classList.remove('speaking');
+    stopListen(); 
+    haptic('stop'); 
+    updateStatus("Thinking…","s-active");
+    els.orbWrap.classList.remove('speaking'); 
+    els.agentSub.innerText='Processing…';
     
-    conversationHistory.push({ role: 'user', content: text });
-
+    conversationHistory.push({ role:'user', content:text });
+    
     try {
-      const res = await fetch(`${API_BASE}/chat/completions`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: "grok-beta", messages: conversationHistory, stream: false })
+      const res = await fetch(`${API_BASE}/chat/completions`,{
+        method:'POST', 
+        headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
+        body: JSON.stringify({ 
+          model:"grok-4-1-fast-non-reasoning", 
+          messages:conversationHistory, 
+          stream:false 
+        })
       });
-      const data = await res.json();
+      const data = await res.json(); 
       let reply = data.choices[0].message.content;
-
-      if (reply.includes("[HUMAN_REQUEST]")) {
-        reply = reply.replace("[HUMAN_REQUEST]", "").trim();
-        await speakAI(reply);
-        setTimeout(() => {
-           endCall(); 
-           startLiveChat(); 
-        }, 3000);
+      
+      if(reply.includes("[TRANSFER]")) {
+        isTransferring=true; 
+        reply=reply.replace("[TRANSFER]","").trim();
+        logT(reply,"ai"); 
+        await speakAI(reply,true); 
         return;
       }
-
-      conversationHistory.push({ role: 'assistant', content: reply });
+      
+      conversationHistory.push({ role:'assistant', content:reply });
+      logT(reply,"ai"); 
       await speakAI(reply);
-    } catch (err) {
-      if (speechRecognition && isCallActive && !isMuted) speechRecognition.start();
+    } catch(err) { 
+      setTimeout(()=>startListen(),2000); 
     }
   }
 
-  async function speakAI(text) {
-    if (!isCallActive) return;
-    els.sText.innerText = "Speaking";
-    els.agentSub.innerText = "Assistant is speaking...";
+  async function speakAI(text, isTransfer=false) {
+    if(!isCallActive) return;
+    updateStatus("Speaking…","s-active"); 
+    els.agentSub.innerText='Speaking…'; 
     els.orbWrap.classList.add('speaking');
-
+    
     try {
-      const r = await fetch(`${API_BASE}/tts`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, voice_id: 'ara', language: 'en' })
+      const r = await fetch(`${API_BASE}/tts`,{
+        method:'POST', 
+        headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
+        body:JSON.stringify({ text, voice_id:currentVoice, language:'en' })
       });
-      const blob = await r.blob();
-      currentAudio.src = URL.createObjectURL(blob);
+      const blob = await r.blob(); 
+      currentAudio.src=URL.createObjectURL(blob);
+      
       currentAudio.onended = () => {
-        els.orbWrap.classList.remove('speaking');
-        els.sText.innerText = "Connected";
-        els.agentSub.innerText = "Listening...";
-        if (isCallActive && !isMuted && speechRecognition) speechRecognition.start();
+        els.orbWrap.classList.remove('speaking'); 
+        els.agentSub.innerText='Listening for you…';
+        if(isTransfer){ 
+          els.call.classList.add('hidden');
+          connectHuman(); 
+          return; 
+        }
+        if(isCallActive&&!isMuted){ startListen(); haptic('start'); }
       };
       await currentAudio.play();
-    } catch {
-      if (speechRecognition && isCallActive && !isMuted) speechRecognition.start();
+    } catch { 
+      startListen(); 
     }
   }
 
-  window.toggleMute = () => {
-    isMuted = !isMuted;
-    document.getElementById('muteBtn').classList.toggle('muted', isMuted);
-    document.getElementById('muteIcon').innerText = isMuted ? 'mic_off' : 'mic';
-    if (isMuted && speechRecognition) speechRecognition.stop();
-    else if (!isMuted && speechRecognition) speechRecognition.start();
+  // WebRTC Human Transfer
+  async function connectHuman() {
+    isCallActive = true;
+    updateStatus("Transferring…","s-transferring");
+    els.transfer.classList.add('active'); 
+    startRingtone();
+    
+    currentCallId = Math.random().toString(36).substring(2,10);
+    
+    try {
+      localStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      peerConnection = new RTCPeerConnection(rtcConfig);
+      localStream.getTracks().forEach(t=>peerConnection.addTrack(t,localStream));
+      peerConnection.ontrack = e => { const a=new Audio(); a.srcObject=e.streams[0]; a.play(); };
+      peerConnection.onicecandidate = e => { 
+        if(e.candidate) socket.emit('ice-candidate',{ candidate:e.candidate, callId:currentCallId }); 
+      };
+      peerConnection.onconnectionstatechange = () => { 
+        if(peerConnection.connectionState==='connected') handlePickup(); 
+      };
+      
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      socket.emit('offer',{ callId:currentCallId, offer, socketId:socket.id });
+    } catch(err) {
+      console.error(err); 
+      els.tSub.innerText='Microphone error. Check permissions.'; 
+      els.tDots.style.display='none'; 
+      stopRingtone();
+    }
+  }
+
+  socket.on('answer', async d => { 
+    if(d.callId===currentCallId&&peerConnection) 
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer)); 
+  });
+  socket.on('ice-candidate', async d => { 
+    if(d.callId===currentCallId&&peerConnection) 
+      try{ await peerConnection.addIceCandidate(d.candidate); }catch(e){} 
+  });
+
+  function handlePickup() {
+    stopRingtone(); 
+    els.tTitle.innerText='Agent Connected';
+    els.tSub.innerText='You are now speaking with a human agent.';
+    els.tDots.style.display='none'; 
+    haptic('start');
+  }
+
+  window.toggleHumanMute = () => {
+    isMuted=!isMuted;
+    els.humanMuteBtn.classList.toggle('muted',isMuted); 
+    els.humanMuteIcon.innerText=isMuted?'mic_off':'mic';
+    if(localStream) localStream.getAudioTracks()[0].enabled=!isMuted;
   };
 
   window.endCall = () => {
-    isCallActive = false;
-    if (speechRecognition) speechRecognition.stop();
-    if (currentAudio) currentAudio.pause();
-    showScreen('setupScreen');
+    isCallActive=isRinging=isTransferring=false; 
+    clearTimeout(callTimeout); 
+    stopRingtone(); 
+    stopListen();
+    if(currentAudio){ currentAudio.pause(); currentAudio=null; }
+    if(peerConnection){ peerConnection.close(); peerConnection=null; }
+    if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localStream=null; }
+    currentCallId=null;
+    
+    els.transfer.classList.remove('active'); 
+    els.call.classList.add('hidden');
+    
+    setTimeout(()=>{
+      els.setup.classList.remove('hidden');
+      els.tTitle.innerText='Connecting to Agent'; 
+      els.tSub.innerText='Routing you to the next available live human agent. Please hold...';
+      els.tDots.style.display='flex'; 
+    },500);
   };
 
+  window.toggleMute = () => {
+    if(isRinging||isTransferring) return; 
+    isMuted=!isMuted;
+    els.muteBtn.classList.toggle('muted',isMuted); 
+    els.muteIcon.innerText=isMuted?'mic_off':'mic';
+    if(isMuted){ 
+      stopListen(); 
+      updateStatus("Muted",""); 
+    }
+    else{ 
+      if(!currentAudio||currentAudio.paused){ 
+        startListen(); 
+      } 
+    }
+  };
+
+  function updateStatus(text, cls) {
+    els.sDot.className='status-dot '+(cls||''); 
+    els.sText.innerText=text;
+  }
+
+  function logT(text, sender) {
+    const d=document.createElement('div'); 
+    d.className='t-line '+sender;
+    d.innerText=text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+    els.transcript.appendChild(d); 
+    els.transcript.scrollTop=els.transcript.scrollHeight;
+  }
+
+  window.clearTranscript = () => { els.transcript.innerHTML=''; };
 </script>
 </body>
 </html>
