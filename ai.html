@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Rare Grade | Technical Support</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <title>Support | Rare Grade</title>
+  <!-- Using Outfit for headers (similar to Uber Move) and Inter for UI body -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
   <style>
     :root {
-      --bg-light: #f8f6fc;
+      /* Uber-style Minimalist Palette */
+      --bg-main: #f6f6f6;
       --bg-card: #ffffff;
-      --bg-mid: #f0e9ff;
-      --border: rgba(120, 70, 200, 0.12);
-      --purple-lo: #6d28d9;
-      --purple-hi: #9333ea;
-      --pink: #db2777;
-      --grad: linear-gradient(135deg, var(--purple-lo), var(--pink));
-      --grad-soft: linear-gradient(135deg, #a78bfa, #f472b6);
-      --text-main: #1f1238;
-      --text-dim: #6b5a8c;
+      --border: #e2e2e2;
+      --black: #000000;
+      --text-main: #000000;
+      --text-dim: #545454;
       --text-light: #ffffff;
+      --accent: #276ef1; /* Standard link/active blue */
       --danger: #e11d48;
-      --success: #10b981;
+      --success: #05a357;
+      --font-head: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
     }
 
     *, *::before, *::after { 
-      margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; 
+      margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; 
     }
 
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg-light);
+      font-family: var(--font-body);
+      background: var(--bg-main);
       color: var(--text-main);
       height: 100svh;
       display: flex; 
@@ -39,230 +39,134 @@
       position: relative;
     }
 
-    body::before {
-      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-      background-repeat: repeat; background-size: 180px; opacity: 0.7;
-    }
-
-    .bg-mesh {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background: radial-gradient(ellipse 70% 65% at 25% 15%, rgba(109,40,217,0.12) 0%, transparent 60%),
-                  radial-gradient(ellipse 55% 55% at 75% 75%, rgba(236,72,153,0.1) 0%, transparent 65%),
-                  var(--bg-light);
-      transition: opacity 0.6s ease;
-    }
-
+    /* Screen Management */
     .screen {
       position: absolute; inset: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 10; transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 10; transition: opacity 0.3s ease, transform 0.3s ease;
       padding: 24px;
+      background: var(--bg-main);
     }
-    .hidden { opacity:0; pointer-events:none; transform: scale(0.95); }
+    .hidden { opacity: 0; pointer-events: none; transform: scale(0.98); z-index: -1; }
 
-    /* SETUP SCREEN */
-    .setup-card {
+    /* AUTH & SETUP SCREENS */
+    .card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      backdrop-filter: blur(24px);
-      border-radius: 32px;
-      padding: 48px 40px;
-      width: 100%; max-width: 420px;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%; max-width: 400px;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255,255,255,0.6) inset;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
     }
 
-    .brand-orb {
-      width: 88px; height: 88px; margin: 0 auto 28px;
-      border-radius: 50%;
-      background: var(--grad);
+    .brand-icon {
+      width: 64px; height: 64px; margin: 0 auto 24px;
+      background: var(--black);
+      border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 45px rgba(147,51,234,0.4), 0 25px 50px -12px rgba(147,51,234,0.3);
-      position: relative;
+      color: white;
     }
-    .brand-orb::after {
-      content:''; position:absolute; inset:-8px; border-radius:50%;
-      background: conic-gradient(from 0deg, var(--purple-hi), var(--pink), var(--purple-lo), var(--purple-hi));
-      z-index:-1; opacity:0.45; animation: spin 4.5s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .setup-label { font-family:'Syne',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:3.5px; text-transform:uppercase; color:var(--purple-hi); margin-bottom:8px; }
-    .setup-title { font-family:'Syne',sans-serif; font-size:2.25rem; font-weight:800; color:var(--text-main); line-height:1.05; margin-bottom:12px; }
-    .setup-sub { color:var(--text-dim); font-size:0.95rem; line-height:1.55; margin-bottom:36px; }
+    .title { font-family: var(--font-head); font-size: 2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .subtitle { color: var(--text-dim); font-size: 0.95rem; line-height: 1.5; margin-bottom: 32px; }
+    
+    .status-badge {
+      display: inline-block; padding: 4px 12px; border-radius: 99px;
+      font-size: 0.75rem; font-weight: 600; margin-bottom: 16px;
+      background: #e8f5e9; color: var(--success); text-transform: uppercase; letter-spacing: 0.5px;
+    }
 
-    .voice-chips { display:flex; flex-direction:column; gap:12px; margin-bottom:32px; }
-    .voice-chip {
-      display:flex; align-items:center; gap:16px;
-      padding:18px 20px; border-radius:20px;
-      border:1px solid var(--border); background:var(--bg-card);
-      cursor:pointer; transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    /* BUTTONS */
+    .btn {
+      width: 100%; padding: 16px; border-radius: 8px;
+      font-family: var(--font-body); font-size: 1rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;
+      transition: all 0.2s; border: none; margin-bottom: 12px;
     }
-    .voice-chip:hover { border-color:var(--purple-hi); transform: translateY(-2px); box-shadow: 0 12px 24px rgba(147,51,234,0.12); }
-    .voice-chip.selected {
-      border-color:var(--purple-hi); 
-      background: linear-gradient(135deg, #f8f0ff, #fdf4ff);
-      box-shadow: 0 0 0 3px rgba(147,51,234,0.15), 0 10px 30px rgba(147,51,234,0.15);
-    }
-    .voice-chip-dot { width:42px; height:42px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .voice-chip-info { text-align:left; flex:1; }
-    .voice-chip-name { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; color:var(--text-main); }
-    .voice-chip-desc { font-size:0.8rem; color:var(--text-dim); margin-top:2px; }
-    .voice-chip-check {
-      width:22px; height:22px; border-radius:50%; border:2.5px solid var(--border);
-      margin-left:auto; flex-shrink:0; transition:all 0.25s;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .voice-chip.selected .voice-chip-check { background:var(--purple-hi); border-color:var(--purple-hi); }
-    .voice-chip.selected .voice-chip-check::after { content: '✓'; font-size: 13px; color: white; }
-
-    .start-btn {
-      width:100%; padding:18px; border-radius:9999px;
-      background: var(--grad); border:none; color:var(--text-light);
-      font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700;
-      letter-spacing:0.6px; cursor:pointer;
-      display:flex; align-items:center; justify-content:center; gap:12px;
-      transition:all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-      box-shadow: 0 15px 35px -5px rgba(147,51,234,0.35);
-    }
-    .start-btn:hover { transform: translateY(-4px); box-shadow: 0 20px 45px -5px rgba(147,51,234,0.45); }
+    .btn-primary { background: var(--black); color: var(--text-light); }
+    .btn-primary:hover { background: #333; }
+    .btn-outline { background: transparent; border: 1px solid var(--black); color: var(--black); }
+    .btn-outline:hover { background: rgba(0,0,0,0.05); }
 
     /* CALL SCREEN */
-    .call-header { position:absolute; top:0; width:100%; padding:40px 24px 0; display:flex; flex-direction:column; align-items:center; }
-    .call-app-name { font-family:'Syne',sans-serif; font-size:1.25rem; font-weight:700; color:var(--text-main); }
-    .call-status { display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--text-dim); margin-top:8px; font-weight:500; }
-    .status-dot { width:8px; height:8px; border-radius:50%; background:var(--text-dim); flex-shrink:0; }
-    .status-dot.s-active { background:#22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.3); }
-    .status-dot.s-listening { background:#3b82f6; animation:pulseDot 1.8s infinite; }
-    .status-dot.s-ringing { background:#eab308; animation:pulseDot 1.2s infinite; }
-
-    @keyframes pulseDot {
-      0% { box-shadow: 0 0 0 0 rgba(147,51,234,0.5); }
-      70% { box-shadow: 0 0 0 10px rgba(147,51,234,0); }
-      100%{ box-shadow: 0 0 0 0 rgba(147,51,234,0); }
+    .call-header { position: absolute; top: 0; width: 100%; padding: 40px 24px 0; display: flex; flex-direction: column; align-items: center; }
+    .call-app-name { font-family: var(--font-head); font-size: 1.25rem; font-weight: 600; }
+    .call-status { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dim); margin-top: 8px; font-weight: 500; }
+    
+    .orb-wrap { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; margin: 40px 0; }
+    .orb-core {
+      width: 120px; height: 120px; border-radius: 50%; background: var(--black);
+      display: flex; align-items: center; justify-content: center; color: white;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2); z-index: 2; transition: transform 0.3s;
     }
+    .speaking .orb-core { transform: scale(1.05); background: var(--accent); }
+    .orb-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); width: 100%; height: 100%; animation: pulseRing 2s infinite; opacity: 0; }
+    @keyframes pulseRing { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 
-    .orb-wrap { position:relative; width:220px; height:220px; display:flex; align-items:center; justify-content:center; margin:20px 0 32px; }
-    .orb-ring { position:absolute; border-radius:50%; border:2px solid rgba(147,51,234,0.2); }
-    .orb-ring:nth-child(1){ width:220px; height:220px; }
-    .orb-ring:nth-child(2){ width:175px; height:175px; border-color:rgba(147,51,234,0.3); }
-    .speaking .orb-ring:nth-child(1){ animation:orbPulse 1.4s ease-in-out infinite; }
-    .speaking .orb-ring:nth-child(2){ animation:orbPulse 1.4s ease-in-out infinite 0.3s; }
-    .ringing-shake .orb-ring:nth-child(1){ animation:orbPulse 0.7s ease-in-out infinite; }
+    .agent-label { font-family: var(--font-head); font-size: 1.5rem; font-weight: 600; margin-bottom: 4px; }
+    .agent-sublabel { color: var(--text-dim); font-size: 0.95rem; }
 
-    @keyframes orbPulse { 0%,100%{ transform:scale(1); opacity:0.75; } 50% { transform:scale(1.08); opacity:1; } }
-
-    .orb-core { width:138px; height:138px; border-radius:50%; position:relative; z-index:2; cursor:pointer; }
-    .orb-core-inner {
-      width:100%; height:100%; border-radius:50%;
-      background: radial-gradient(circle at 38% 32%, #c4b5fd, #7c3aed 65%, #4c1d95);
-      display:flex; align-items:center; justify-content:center;
-      box-shadow: 0 0 50px rgba(147,51,234,0.4), inset 0 3px 8px rgba(255,255,255,0.35);
-    }
-    .orb-core .orb-icon { font-size:52px; color:#fff; text-shadow:0 0 25px rgba(255,255,255,0.6); }
-    .speaking .orb-core { filter: drop-shadow(0 0 30px var(--purple-hi)); }
-
-    .wave-bars { display:flex; align-items:center; gap:5px; position:absolute; z-index:2; opacity:0; transition:opacity 0.3s; }
-    .speaking .wave-bars { opacity:1; }
-    .wave-bar { width:5px; background:#fff; border-radius:9999px; height:22px; animation:waveBounce 0.75s ease-in-out infinite; }
-    .wave-bar:nth-child(2){ animation-delay:0.12s; animation-duration:0.65s; }
-    @keyframes waveBounce { 0%,100%{ transform:scaleY(0.35); } 50%{ transform:scaleY(1.9); } }
-
-    .agent-label { font-family:'Syne',sans-serif; font-size:1.45rem; font-weight:700; color:var(--text-main); margin-bottom:6px; }
-    .agent-sublabel { font-size:0.9rem; color:var(--text-dim); font-weight:500; }
-
-    .transcript-wrap {
-      width:100%; max-width:500px; background:var(--bg-card); border:1px solid var(--border);
-      border-radius:24px; padding:20px 24px; max-height:160px; overflow-y:auto;
-      box-shadow:0 10px 30px rgba(0,0,0,0.08);
-    }
+    .call-controls { position: absolute; bottom: 48px; display: flex; gap: 24px; align-items: center; }
+    .ctrl-btn { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--black); transition: 0.2s; }
+    .ctrl-btn:hover { background: #f0f0f0; }
+    .ctrl-btn.muted { background: var(--black); color: white; }
+    .ctrl-end { width: 64px; height: 64px; border-radius: 50%; background: var(--danger); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
     /* CHAT SCREEN */
-    .chat-screen {
-      position: absolute; inset: 0; background: var(--bg-light); z-index: 30;
-      display: flex; flex-direction: column; display: none;
-    }
-    .chat-header {
-      padding: 20px 24px; background: white; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 12px;
-    }
-    .chat-agent-dot {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--success); display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 18px;
-    }
-    .chat-controls {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: white; padding: 16px 24px; border-top: 1px solid var(--border);
-      display: flex; gap: 12px;
-    }
-    .chat-input {
-      flex: 1; padding: 14px 20px; border: 1px solid var(--border);
-      border-radius: 9999px; font-size: 1rem; outline: none;
-    }
-    .chat-send {
-      width: 52px; height: 52px; border-radius: 50%; background: var(--purple-hi);
-      color: white; border: none; display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-    }
-    .chat-messages {
-      flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;
-    }
-    .chat-msg {
-      max-width: 80%; padding: 14px 18px; border-radius: 20px; font-size: 0.95rem; line-height: 1.5;
-    }
-    .chat-msg.user {
-      align-self: flex-end; background: var(--purple-hi); color: white; border-bottom-right-radius: 4px;
-    }
-    .chat-msg.agent {
-      align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 4px;
-    }
+    .chat-screen { position: absolute; inset: 0; background: var(--bg-card); display: flex; flex-direction: column; z-index: 30; }
+    .chat-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: white; }
+    .chat-back { background: none; border: none; cursor: pointer; display: flex; padding: 8px; margin-left: -8px; }
+    .chat-agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: #e2e2e2; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .chat-info h3 { font-family: var(--font-head); font-size: 1rem; margin: 0; }
+    .chat-info p { font-size: 0.8rem; color: var(--success); margin: 0; font-weight: 500; }
+    
+    .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--bg-main); }
+    .chat-msg { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4; }
+    .chat-msg.user { align-self: flex-end; background: var(--black); color: white; border-bottom-right-radius: 2px; }
+    .chat-msg.agent { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 2px; }
 
-    .call-controls { position:absolute; bottom:48px; width:100%; display:flex; gap:28px; align-items:center; justify-content:center; }
-    .ctrl-btn, .ctrl-end { /* same as previous version */ }
+    .chat-controls { background: white; padding: 16px 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
+    .chat-input { flex: 1; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 1rem; outline: none; background: var(--bg-main); }
+    .chat-input:focus { border-color: var(--black); background: white; }
+    .chat-send { background: var(--black); color: white; border: none; width: 48px; height: 48px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
   </style>
 </head>
 <body>
-  <div class="bg-mesh" id="bgMesh"></div>
 
-  <!-- SETUP SCREEN -->
-  <div class="screen" id="setupScreen">
-    <div class="setup-card">
-      <div class="brand-orb">
-        <span class="material-symbols-rounded" style="color:#fff;font-size:38px;">support_agent</span>
+  <!-- AUTH SCREEN -->
+  <div class="screen" id="authScreen">
+    <div class="card">
+      <div class="brand-icon">
+        <span class="material-symbols-rounded" style="font-size: 32px;">support_agent</span>
       </div>
-      <p class="setup-label">RARE GRADE</p>
-      <h1 class="setup-title">Tech Support</h1>
-      <p class="setup-sub">AI-powered technical and system support. Speak naturally — we're here to help.</p>
+      <h1 class="title">Rare Grade Help</h1>
+      <p class="subtitle">Sign in to access personalized technical support and account assistance.</p>
+      <button class="btn btn-primary" onclick="signInWithGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" style="background: white; border-radius: 50%; padding: 2px;">
+        Continue with Google
+      </button>
+    </div>
+  </div>
+
+  <!-- SETUP SCREEN (Choose Option) -->
+  <div class="screen hidden" id="setupScreen">
+    <div class="card">
+      <div id="userBadge" class="status-badge">Authenticating...</div>
+      <h1 class="title" id="welcomeText">Welcome</h1>
+      <p class="subtitle">How would you like to get support today?</p>
       
-      <div class="voice-chips" id="voiceChips">
-        <div class="voice-chip selected" data-voice="ara" onclick="selectVoice(this)">
-          <div class="voice-chip-dot" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">
-            <span class="material-symbols-rounded" style="color:#fff;font-size:20px;">record_voice_over</span>
-          </div>
-          <div class="voice-chip-info">
-            <div class="voice-chip-name">Ara</div>
-            <div class="voice-chip-desc">Warm Technical Support</div>
-          </div>
-          <div class="voice-chip-check"></div>
-        </div>
-        <div class="voice-chip" data-voice="rex" onclick="selectVoice(this)">
-          <div class="voice-chip-dot" style="background:linear-gradient(135deg,#1e40af,#3b82f6);">
-            <span class="material-symbols-rounded" style="color:#fff;font-size:20px;">person</span>
-          </div>
-          <div class="voice-chip-info">
-            <div class="voice-chip-name">Rex</div>
-            <div class="voice-chip-desc">Senior System Engineer</div>
-          </div>
-          <div class="voice-chip-check"></div>
-        </div>
-      </div>
-
-      <button class="start-btn" onclick="startCall()">
+      <button class="btn btn-primary" onclick="startCall()">
         <span class="material-symbols-rounded">call</span>
-        Start Voice Support
+        Talk to AI Assistant
+      </button>
+      <button class="btn btn-outline" onclick="startLiveChat()">
+        <span class="material-symbols-rounded">chat</span>
+        Chat with Human Agent
+      </button>
+      <button class="btn btn-outline" style="margin-top: 16px; border-color: transparent; color: var(--text-dim);" onclick="signOutUser()">
+        Sign Out
       </button>
     </div>
   </div>
@@ -270,57 +174,50 @@
   <!-- CALL SCREEN -->
   <div class="screen hidden" id="callScreen">
     <div class="call-header">
-      <div class="call-app-name">Rare Grade Tech Support</div>
-      <div class="call-status" id="callStatus">
-        <div class="status-dot" id="sDot"></div>
+      <div class="call-app-name">AI Voice Support</div>
+      <div class="call-status">
         <span id="sText">Connecting...</span>
       </div>
     </div>
 
     <div class="orb-wrap" id="orbWrap">
-      <div class="orb-ring"></div>
-      <div class="orb-ring"></div>
+      <div class="orb-ring" style="animation-delay: 0s;"></div>
+      <div class="orb-ring" style="animation-delay: 1s;"></div>
       <div class="orb-core">
-        <div class="orb-core-inner">
-          <span class="material-symbols-rounded orb-icon" id="orbIcon">ring_volume</span>
-          <div class="wave-bars">
-            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-            <div class="wave-bar"></div><div class="wave-bar"></div>
-          </div>
-        </div>
+        <span class="material-symbols-rounded" id="orbIcon" style="font-size: 48px;">graphic_eq</span>
       </div>
     </div>
 
-    <div class="agent-label" id="agentName">AI Technical Assistant</div>
-    <div class="agent-sublabel" id="agentSub">Ringing…</div>
-
-    <div class="transcript-wrap" id="transcriptBox"></div>
+    <div class="agent-label">System Assistant</div>
+    <div class="agent-sublabel" id="agentSub">Listening...</div>
 
     <div class="call-controls">
       <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
         <span class="material-symbols-rounded" id="muteIcon">mic</span>
       </button>
       <button class="ctrl-end" onclick="endCall()">
-        <span class="material-symbols-rounded" style="font-size:32px;">call_end</span>
-      </button>
-      <button class="ctrl-btn" onclick="clearTranscript()">
-        <span class="material-symbols-rounded">delete_sweep</span>
+        <span class="material-symbols-rounded" style="font-size:28px;">call_end</span>
       </button>
     </div>
   </div>
 
   <!-- LIVE CHAT SCREEN -->
-  <div class="chat-screen" id="chatScreen">
+  <div class="chat-screen hidden" id="chatScreen">
     <div class="chat-header">
-      <div class="chat-agent-dot">👩‍💼</div>
-      <div>
-        <strong id="liveAgentName">Sarah Patel</strong><br>
-        <small style="color:var(--success)">● Online • Technical Support</small>
+      <button class="chat-back" onclick="leaveLiveChat()">
+        <span class="material-symbols-rounded">arrow_back</span>
+      </button>
+      <div class="chat-agent-avatar">👨‍💻</div>
+      <div class="chat-info">
+        <h3>Human Support Agent</h3>
+        <p>● Online</p>
       </div>
     </div>
-    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-messages" id="chatMessages">
+      <!-- Messages will load here from Firebase -->
+    </div>
     <div class="chat-controls">
-      <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
       <button class="chat-send" onclick="sendChatMessage()">
         <span class="material-symbols-rounded">send</span>
       </button>
@@ -328,215 +225,122 @@
   </div>
 
 <script type="module">
+  // Firebase Imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
   import { getRemoteConfig, fetchAndActivate, getString } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-remote-config.js";
 
-  const API_BASE = "https://api.x.ai/v1";
-  let XAI_API_KEY = "";
-  let peerConnection, localStream; // kept for future but not used for transfer
-  let isCallActive=false, isRinging=false, isMuted=false;
-  let currentVoice='ara', conversationHistory=[], callTimeout=null;
-  let currentAudio=null, speechRecognition=null, ringAudioCtx=null, ringInterval=null;
-
-  const $ = id => document.getElementById(id);
-  const els = {
-    setup: $('setupScreen'),
-    call: $('callScreen'),
-    chat: $('chatScreen'),
-    bgMesh: $('bgMesh'),
-    orbWrap: $('orbWrap'),
-    orbIcon: $('orbIcon'),
-    sDot: $('sDot'),
-    sText: $('sText'),
-    agentSub: $('agentSub'),
-    transcript: $('transcriptBox'),
-    muteBtn: $('muteBtn'),
-    muteIcon: $('muteIcon'),
-    liveAgentName: $('liveAgentName'),
-    chatMessages: $('chatMessages'),
-    chatInput: $('chatInput')
+  // Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+    authDomain: "fire-b-a8878.firebaseapp.com",
+    projectId: "fire-b-a8878",
+    databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
+    appId: "1:658673187627:web:6e4c29af661785f0afa36e"
   };
 
-  // Firebase
-  const app = initializeApp({
-    apiKey:"AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
-    authDomain:"fire-b-a8878.firebaseapp.com",
-    projectId:"fire-b-a8878",
-    databaseURL:"https://fire-b-a8878-default-rtdb.firebaseio.com",
-    appId:"1:658673187627:web:6e4c29af661785f0afa36e"
-  });
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+  
+  // Remote Config for X.AI
   const rc = getRemoteConfig(app);
   rc.settings.minimumFetchIntervalMillis = 0;
-  fetchAndActivate(rc).then(() => { XAI_API_KEY = getString(rc,'xai_api_key'); }).catch(console.error);
+  let XAI_API_KEY = "";
+  fetchAndActivate(rc).then(() => { XAI_API_KEY = getString(rc, 'xai_api_key'); }).catch(console.error);
 
-  window.selectVoice = (el) => {
-    document.querySelectorAll('.voice-chip').forEach(c=>c.classList.remove('selected'));
-    el.classList.add('selected');
-    currentVoice = el.dataset.voice;
+  const API_BASE = "https://api.x.ai/v1";
+  
+  // State
+  let currentUser = null;
+  let chatRef = null;
+  let isCallActive = false, isMuted = false;
+  let conversationHistory = [];
+  let currentAudio = null, speechRecognition = null;
+
+  // DOM Elements
+  const els = {
+    auth: document.getElementById('authScreen'),
+    setup: document.getElementById('setupScreen'),
+    call: document.getElementById('callScreen'),
+    chat: document.getElementById('chatScreen'),
+    userBadge: document.getElementById('userBadge'),
+    welcomeText: document.getElementById('welcomeText'),
+    chatMessages: document.getElementById('chatMessages'),
+    chatInput: document.getElementById('chatInput'),
+    orbWrap: document.getElementById('orbWrap'),
+    sText: document.getElementById('sText'),
+    agentSub: document.getElementById('agentSub')
   };
 
-  const haptic = t => { if(!navigator.vibrate) return; if(t==='start') navigator.vibrate(40); else if(t==='stop') navigator.vibrate([30,50,30]); };
-
-  function startRingtone() {
-    const AC = window.AudioContext||window.webkitAudioContext;
-    ringAudioCtx = new AC();
-    const play = () => {
-      if(!ringAudioCtx) return;
-      const o1=ringAudioCtx.createOscillator(), g=ringAudioCtx.createGain();
-      o1.type='sine'; o1.frequency.value=520;
-      o1.connect(g); g.connect(ringAudioCtx.destination);
-      const t=ringAudioCtx.currentTime;
-      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.25,t+0.05);
-      g.gain.linearRampToValueAtTime(0,t+1.4);
-      o1.start(t); o1.stop(t+1.5);
-    };
-    play(); ringInterval = setInterval(play, 2800);
+  function showScreen(screenId) {
+    Object.values(els).forEach(el => el?.classList && el.classList.add('hidden'));
+    document.getElementById(screenId).classList.remove('hidden');
   }
 
-  function stopRingtone() {
-    if(ringInterval) clearInterval(ringInterval);
-    if(ringAudioCtx) ringAudioCtx.close();
-  }
-
-  function getSystemPrompt() {
-    return `You are a helpful technical support AI for Rare Grade Tech. 
-    You ONLY assist with technical issues, system troubleshooting, software, hardware, account access, and system support.
-    Be clear, concise, and professional. Keep responses to 1-3 short sentences.
-    If the user needs advanced help, complex configuration, or clearly wants to speak with a human, reply with [HUMAN_REQUEST] at the end of your response.`;
-  }
-
-  function initSR() {
-    const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR) return false;
-    speechRecognition = new SR();
-    speechRecognition.continuous=false; speechRecognition.interimResults=false;
-    speechRecognition.onresult = async e => {
-      if(!isCallActive||isRinging) return;
-      const text = e.results[0][0].transcript.trim();
-      if(text) { logT(text,"user"); await processUtterance(text); }
-    };
-    speechRecognition.onend = () => { if(isCallActive&&!isMuted) startListen(); };
-    return true;
-  }
-
-  function startListen() {
-    if(speechRecognition&&isCallActive&&!isMuted&&!isRinging) speechRecognition.start();
-  }
-  function stopListen() { if(speechRecognition) speechRecognition.stop(); }
-
-  window.startCall = () => {
-    if(!XAI_API_KEY||!initSR()) return;
-    currentVoice = document.querySelector('.voice-chip.selected')?.dataset.voice||'ara';
-    isCallActive=true; isRinging=true; isMuted=false;
-    conversationHistory=[{ role:"system", content:getSystemPrompt() }];
-    currentAudio = new Audio();
-
-    els.setup.classList.add('hidden');
-    els.call.classList.remove('hidden');
-    els.orbWrap.classList.add('ringing-shake');
-    els.orbIcon.innerText='ring_volume';
-    els.agentSub.innerText='Ringing…';
-    els.transcript.innerHTML='';
-
-    updateStatus("Ringing…","s-ringing");
-    startRingtone();
-    callTimeout = setTimeout(answerCall, 2800);
-  };
-
-  function answerCall() {
-    if(!isCallActive) return;
-    isRinging=false; stopRingtone();
-    els.orbWrap.classList.remove('ringing-shake');
-    els.orbIcon.innerText='graphic_eq';
-    updateStatus("Connected","s-active");
-    els.agentSub.innerText='Listening for you…';
-    haptic('start');
-
-    const greet = "Hello, this is Rare Grade Technical Support. What system or technical issue can I help you with today?";
-    conversationHistory.push({ role:"assistant", content:greet });
-    logT(greet,"ai");
-    speakAI(greet);
-  }
-
-  async function processUtterance(text) {
-    stopListen();
-    haptic('stop');
-    updateStatus("Thinking…","s-active");
-    els.orbWrap.classList.remove('speaking');
-    els.agentSub.innerText='Processing…';
-
-    conversationHistory.push({ role:'user', content:text });
-
-    try {
-      const res = await fetch(`${API_BASE}/chat/completions`,{
-        method:'POST',
-        headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
-        body: JSON.stringify({ model:"grok-4-1-fast-non-reasoning", messages:conversationHistory, stream:false })
-      });
-      const data = await res.json();
-      let reply = data.choices[0].message.content;
-
-      if(reply.includes("[HUMAN_REQUEST]")) {
-        reply = reply.replace("[HUMAN_REQUEST]","").trim();
-        logT(reply,"ai");
-        await speakAI(reply);
-        setTimeout(() => askForLiveChat(), 800);
-        return;
-      }
-
-      conversationHistory.push({ role:'assistant', content:reply });
-      logT(reply,"ai");
-      await speakAI(reply);
-    } catch(err) {
-      setTimeout(()=>startListen(),1500);
-    }
-  }
-
-  async function speakAI(text) {
-    if(!isCallActive) return;
-    updateStatus("Speaking…","s-active");
-    els.agentSub.innerText='Speaking…';
-    els.orbWrap.classList.add('speaking');
-
-    try {
-      const r = await fetch(`${API_BASE}/tts`,{
-        method:'POST',
-        headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' },
-        body:JSON.stringify({ text, voice_id:currentVoice, language:'en' })
-      });
-      const blob = await r.blob();
-      currentAudio.src=URL.createObjectURL(blob);
-      currentAudio.onended = () => {
-        els.orbWrap.classList.remove('speaking');
-        els.agentSub.innerText='Listening for you…';
-        if(isCallActive&&!isMuted) startListen();
-      };
-      await currentAudio.play();
-    } catch { startListen(); }
-  }
-
-  function askForLiveChat() {
-    if(confirm("Would you like to continue this conversation with a live technical support agent?")) {
-      openLiveChat();
+  /* =========================================
+     AUTHENTICATION & USER CHECK
+     ========================================= */
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user;
+      const isNewUser = (user.metadata.creationTime === user.metadata.lastSignInTime);
+      
+      els.userBadge.innerText = isNewUser ? "New User" : "Retained User";
+      els.welcomeText.innerText = `Welcome, ${user.displayName.split(' ')[0]}`;
+      
+      showScreen('setupScreen');
     } else {
-      speakAI("No problem. Is there anything else I can help you with technically?");
+      currentUser = null;
+      showScreen('authScreen');
     }
-  }
+  });
 
-  function openLiveChat() {
-    isCallActive = false;
-    stopListen();
-    stopRingtone();
-    if(currentAudio) currentAudio.pause();
+  window.signInWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).catch(err => alert("Sign in failed: " + err.message));
+  };
 
-    els.call.classList.add('hidden');
-    els.chat.style.display = 'flex';
+  window.signOutUser = () => {
+    signOut(auth);
+  };
 
-    // Welcome message from live agent
-    addChatMessage("agent", "Hi, I'm Sarah Patel from Technical Support. I'm here to help you. What's the issue you're facing?");
-  }
+  /* =========================================
+     LIVE CHAT (HUMAN AGENT)
+     ========================================= */
+  window.startLiveChat = () => {
+    showScreen('chatScreen');
+    els.chatMessages.innerHTML = ''; 
+    
+    // Setup Firebase DB listener for this user's chats
+    chatRef = ref(db, `chats/${currentUser.uid}`);
+    onChildAdded(chatRef, (snapshot) => {
+      const data = snapshot.val();
+      renderChatMsg(data.sender, data.text);
+    });
 
-  function addChatMessage(sender, text) {
+    // Auto welcome message if empty (mocking agent)
+    setTimeout(() => {
+      if (els.chatMessages.children.length === 0) {
+        push(chatRef, { sender: 'agent', text: "Hi! You've reached Human Support. How can we help you today?", timestamp: serverTimestamp() });
+      }
+    }, 500);
+  };
+
+  window.sendChatMessage = () => {
+    const text = els.chatInput.value.trim();
+    if (!text || !chatRef) return;
+    
+    push(chatRef, {
+      sender: 'user',
+      text: text,
+      timestamp: serverTimestamp()
+    });
+    els.chatInput.value = '';
+  };
+
+  function renderChatMsg(sender, text) {
     const div = document.createElement('div');
     div.className = `chat-msg ${sender}`;
     div.textContent = text;
@@ -544,55 +348,121 @@
     els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
   }
 
-  window.sendChatMessage = () => {
-    const input = els.chatInput;
-    const text = input.value.trim();
-    if(!text) return;
-    addChatMessage("user", text);
-    input.value = '';
-
-    // Simulate agent reply (for demo)
-    setTimeout(() => {
-      const replies = [
-        "Thanks for the details. Let me guide you through the fix.",
-        "Can you tell me the exact error message you're seeing?",
-        "I've noted that down. One moment while I check our system."
-      ];
-      addChatMessage("agent", replies[Math.floor(Math.random()*replies.length)]);
-    }, 1200);
+  window.leaveLiveChat = () => {
+    showScreen('setupScreen');
+    // Disable listener by reloading screen structure conceptually, 
+    // real app would unsubscribe `onChildAdded` here.
   };
 
+  /* =========================================
+     AI VOICE CALL 
+     ========================================= */
+  function initSR() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert("Speech Recognition not supported in this browser."); return false; }
+    speechRecognition = new SR();
+    speechRecognition.continuous = false; 
+    speechRecognition.interimResults = false;
+    speechRecognition.onresult = async e => {
+      if (!isCallActive) return;
+      const text = e.results[0][0].transcript.trim();
+      if (text) await processUtterance(text);
+    };
+    speechRecognition.onend = () => { if (isCallActive && !isMuted) speechRecognition.start(); };
+    return true;
+  }
+
+  window.startCall = () => {
+    if (!XAI_API_KEY || !initSR()) return;
+    isCallActive = true; 
+    isMuted = false;
+    currentAudio = new Audio();
+    conversationHistory = [{ role: "system", content: "You are a helpful technical support AI. Be concise (1-2 sentences). If user needs human help, append [HUMAN_REQUEST]." }];
+    
+    showScreen('callScreen');
+    els.sText.innerText = "Connected";
+    els.agentSub.innerText = "Listening...";
+    
+    const greet = "Hi there. I'm your AI assistant. How can I help you today?";
+    conversationHistory.push({ role: "assistant", content: greet });
+    speakAI(greet);
+  };
+
+  async function processUtterance(text) {
+    if(speechRecognition) speechRecognition.stop();
+    els.sText.innerText = "Thinking...";
+    els.agentSub.innerText = "Processing...";
+    els.orbWrap.classList.remove('speaking');
+    
+    conversationHistory.push({ role: 'user', content: text });
+
+    try {
+      const res = await fetch(`${API_BASE}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: "grok-beta", messages: conversationHistory, stream: false })
+      });
+      const data = await res.json();
+      let reply = data.choices[0].message.content;
+
+      if (reply.includes("[HUMAN_REQUEST]")) {
+        reply = reply.replace("[HUMAN_REQUEST]", "").trim();
+        await speakAI(reply);
+        setTimeout(() => {
+           endCall(); 
+           startLiveChat(); 
+        }, 3000);
+        return;
+      }
+
+      conversationHistory.push({ role: 'assistant', content: reply });
+      await speakAI(reply);
+    } catch (err) {
+      if (speechRecognition && isCallActive && !isMuted) speechRecognition.start();
+    }
+  }
+
+  async function speakAI(text) {
+    if (!isCallActive) return;
+    els.sText.innerText = "Speaking";
+    els.agentSub.innerText = "Assistant is speaking...";
+    els.orbWrap.classList.add('speaking');
+
+    try {
+      const r = await fetch(`${API_BASE}/tts`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, voice_id: 'ara', language: 'en' })
+      });
+      const blob = await r.blob();
+      currentAudio.src = URL.createObjectURL(blob);
+      currentAudio.onended = () => {
+        els.orbWrap.classList.remove('speaking');
+        els.sText.innerText = "Connected";
+        els.agentSub.innerText = "Listening...";
+        if (isCallActive && !isMuted && speechRecognition) speechRecognition.start();
+      };
+      await currentAudio.play();
+    } catch {
+      if (speechRecognition && isCallActive && !isMuted) speechRecognition.start();
+    }
+  }
+
   window.toggleMute = () => {
-    if(isRinging) return;
     isMuted = !isMuted;
-    els.muteBtn.classList.toggle('muted', isMuted);
-    els.muteIcon.innerText = isMuted ? 'mic_off' : 'mic';
-    if(isMuted) stopListen();
-    else startListen();
+    document.getElementById('muteBtn').classList.toggle('muted', isMuted);
+    document.getElementById('muteIcon').innerText = isMuted ? 'mic_off' : 'mic';
+    if (isMuted && speechRecognition) speechRecognition.stop();
+    else if (!isMuted && speechRecognition) speechRecognition.start();
   };
 
   window.endCall = () => {
-    isCallActive = isRinging = false;
-    stopRingtone(); stopListen();
-    if(currentAudio) currentAudio.pause();
-    els.call.classList.add('hidden');
-    els.setup.classList.remove('hidden');
+    isCallActive = false;
+    if (speechRecognition) speechRecognition.stop();
+    if (currentAudio) currentAudio.pause();
+    showScreen('setupScreen');
   };
 
-  function updateStatus(text, cls) {
-    els.sDot.className = 'status-dot ' + (cls || '');
-    els.sText.innerText = text;
-  }
-
-  function logT(text, sender) {
-    const d = document.createElement('div');
-    d.className = 't-line ' + sender;
-    d.innerText = text;
-    els.transcript.appendChild(d);
-    els.transcript.scrollTop = els.transcript.scrollHeight;
-  }
-
-  window.clearTranscript = () => { els.transcript.innerHTML=''; };
 </script>
 </body>
 </html>
