@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Rare Grade | Support Flow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg-main: #f0f4f9; --bg-surface: #ffffff; --text-main: #1f1f1f; --text-dim: #444746; --border: #e3e3e3;
+      --gemini-blue: #4285f4; --gemini-purple: #9b72cb; --gemini-red: #d96570;
+      --grad-gemini: linear-gradient(135deg, var(--gemini-blue), var(--gemini-purple), var(--gemini-red));
+      --accent: #0b57d0; --accent-light: #d3e3fd; --danger: #b3261e; --success: #146c2e;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-main); height: 100svh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
+    .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; transition: opacity 0.4s ease, transform 0.4s ease; padding: 24px; }
+    .hidden { opacity:0; pointer-events:none; transform: scale(0.98); }
+    .setup-card { background: var(--bg-surface); border-radius: 32px; padding: 40px; width: 100%; max-width: 440px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); transition: all 0.3s ease; }
+    .brand-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .brand-logo { width: 40px; height: 40px; border-radius: 12px; background: var(--grad-gemini); display: flex; align-items: center; justify-content: center; color: white; }
+    .brand-title { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.5px; }
+    .setup-sub { color: var(--text-dim); font-size: 1rem; line-height: 1.5; margin-bottom: 32px; }
+    .type-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .type-card { border: 1px solid var(--border); border-radius: 20px; padding: 20px 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--bg-surface); }
+    .type-card:hover { background: #f8fafd; border-color: #c2e7ff; }
+    .type-card.selected { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+    .type-card .material-symbols-rounded { font-size: 28px; margin-bottom: 8px; }
+    .type-card.selected .material-symbols-rounded { background: var(--grad-gemini); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .type-card-title { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.95rem; }
+    .voice-section { transition: opacity 0.3s ease, height 0.3s ease; overflow: hidden; }
+    .voice-section.collapsed { opacity: 0; height: 0; pointer-events: none; margin-bottom: 0; }
+    .voice-section-title { font-size: 0.85rem; font-weight: 600; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .voice-chips { display:flex; flex-direction:column; gap:8px; margin-bottom:32px; }
+    .voice-chip { display:flex; align-items:center; gap:16px; padding:16px; border-radius:16px; border:1px solid var(--border); background:var(--bg-surface); cursor:pointer; transition:all 0.2s ease; }
+    .voice-chip:hover { background: var(--bg-main); }
+    .voice-chip.selected { border-color: var(--gemini-purple); background: #fcfaff; }
+    .voice-chip-info { text-align:left; flex:1; }
+    .voice-chip-name { font-family:'Outfit',sans-serif; font-size:1rem; font-weight:500; color:var(--text-main); }
+    .voice-chip-desc { font-size:0.85rem; color:var(--text-dim); }
+    .voice-chip-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .voice-chip.selected .voice-chip-check { background: var(--gemini-purple); border-color: var(--gemini-purple); }
+    .voice-chip.selected .voice-chip-check::after { content: '✓'; font-size: 12px; color: white; font-weight: bold; }
+    .start-btn { width:100%; padding:16px; border-radius: 99px; background: var(--text-main); border:none; color:#fff; font-family:'Outfit',sans-serif; font-size:1.05rem; font-weight:500; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center; gap:8px;}
+    .start-btn:hover { background: black; transform: translateY(-1px); }
+    
+    /* Call Screen */
+    .call-header { position:absolute; top:0; width:100%; padding:40px 24px 0; display:flex; flex-direction:column; align-items:center; }
+    .call-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dim); background: var(--bg-surface); padding: 6px 16px; border-radius: 99px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 12px; font-weight: 500; }
+    .status-dot { width:8px; height:8px; border-radius:50%; background:var(--text-dim); }
+    .status-dot.s-active { background: var(--success); } .status-dot.s-listening { background: var(--accent); } .status-dot.s-ringing { background: var(--gemini-purple); }
+    .orb-wrap { position:relative; width:240px; height:240px; display:flex; align-items:center; justify-content:center; margin: 40px 0; }
+    .orb-core { width: 140px; height: 140px; border-radius: 50%; background: var(--bg-surface); display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: relative; z-index: 2; transition: all 0.5s ease; }
+    .orb-glow { position: absolute; inset: -20px; border-radius: 50%; background: var(--grad-gemini); filter: blur(28px); opacity: 0.15; z-index: 0; transition: opacity 0.5s ease, transform 0.5s ease; }
+    .orb-core .orb-icon { font-size: 48px; background: var(--grad-gemini); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .speaking .orb-glow { opacity: 0.6; transform: scale(1.15); animation: pulseGlow 2s infinite alternate; }
+    .speaking .orb-core { transform: scale(1.05); }
+    .ringing-shake .orb-glow { opacity: 0.4; background: linear-gradient(135deg, #4285f4, #0b57d0); animation: pulseGlow 1s infinite alternate; }
+    @keyframes pulseGlow { 0% { filter: blur(28px); } 100% { filter: blur(40px); } }
+    .agent-label { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:500; margin-bottom:4px; }
+    .agent-sublabel { font-size:0.95rem; color:var(--text-dim); }
+    .transcript-wrap { width:100%; max-width:440px; margin-top: 24px; padding:0 12px; height: 140px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; scroll-behavior: smooth; }
+    .transcript-wrap::-webkit-scrollbar{ width:0px; }
+    .t-line { font-size:0.95rem; line-height:1.5; opacity:0; animation:slideUp 0.3s forwards; padding: 12px 16px; border-radius: 20px; max-width: 85%; }
+    .t-line.user { background: var(--accent-light); color: var(--text-main); align-self: flex-end; border-bottom-right-radius: 4px; }
+    .t-line.ai { background: #ffffff; border: 1px solid var(--border); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+    @keyframes slideUp { from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+    .call-controls { position:absolute; bottom:40px; width:100%; display:flex; gap:20px; align-items:center; justify-content:center; }
+    .ctrl-btn { width:56px; height:56px; border-radius:50%; border:1px solid var(--border); background:var(--bg-surface); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; }
+    .ctrl-btn:hover { background:var(--bg-main); }
+    .ctrl-btn.muted { background: var(--text-main); color: #fff; border-color: var(--text-main); }
+    .ctrl-end { width:72px; height:72px; border-radius:50%; border:none; background:var(--danger); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; }
+    .ctrl-end:hover { background: #8c1d18; }
+    
+    /* Text Chat Screen - Mobile Full Screen Overrides */
+    #chatScreen { padding: 0; } /* Removes padding to allow 100% width/height */
+    .chat-container { 
+      background: var(--bg-surface); 
+      border-radius: 0; /* Removes rounded corners for full mobile screen */
+      width: 100%; 
+      max-width: 100%; 
+      height: 100svh; /* Fills entire viewport */
+      display: flex; 
+      flex-direction: column; 
+      box-shadow: none; 
+      border: none;
+      overflow: hidden; 
+      transition: all 0.3s ease; 
+    }
+    .chat-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); }
+    .chat-header .brand-header { margin-bottom: 0; }
+    .chat-header .brand-logo { width: 32px; height: 32px; border-radius: 8px; }
+    .chat-header .brand-logo .material-symbols-rounded { font-size: 18px; }
+    .chat-header .brand-title { font-size: 1.15rem; }
+    .close-btn { background: none; border: none; cursor: pointer; color: var(--text-dim); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; }
+    .close-btn:hover { background: var(--bg-main); }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-main); }
+    .msg-bubble { padding: 12px 16px; border-radius: 20px; max-width: 85%; font-size: 0.95rem; line-height: 1.5; animation: slideUp 0.3s forwards; }
+    .msg-bubble.system { align-self: center; background: none; color: var(--text-dim); font-size: 0.8rem; text-align: center; }
+    .msg-bubble.user { align-self: flex-end; background: var(--text-main); color: #fff; border-bottom-right-radius: 4px; }
+    .msg-bubble.agent { align-self: flex-start; background: #fff; border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .chat-messages::-webkit-scrollbar { width: 6px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #d1d1d1; border-radius: 4px; }
+    .chat-input-area { 
+      padding: 16px 20px calc(16px + env(safe-area-inset-bottom)); /* Pushes input cleanly above iPhone home bar */
+      background: var(--bg-surface); 
+      border-top: 1px solid var(--border); 
+      display: flex; 
+      gap: 12px; 
+    }
+    .chat-input { flex: 1; background: var(--bg-main); border: 1px solid transparent; border-radius: 99px; padding: 12px 20px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: all 0.2s; }
+    .chat-input:focus { border-color: var(--accent); background: #fff; }
+    .send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
+    .send-btn:hover { background: #0842a0; transform: scale(1.05); }
+    .send-btn .material-symbols-rounded { font-size: 20px; margin-left: 2px; }
+    .material-symbols-rounded { font-family:'Material Symbols Rounded'; font-style:normal; font-weight:400; user-select:none; }
+    
+    /* Desktop Overrides */
+    @media (min-width: 768px) {
+      .setup-card { max-width: 600px; padding: 56px; }
+      .brand-title { font-size: 1.7rem; } .setup-sub { font-size: 1.1rem; }
+      #chatScreen { padding: 24px; } /* Restore padding for desktop */
+      .chat-container { 
+        max-width: 700px; 
+        height: 75svh; 
+        border-radius: 24px; /* Restore rounded edges */
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08); 
+        border: 1px solid var(--border); 
+      }
+      .chat-header { padding: 24px 32px; } .chat-messages { padding: 32px; gap: 16px; }
+      .msg-bubble { font-size: 1rem; padding: 14px 20px; max-width: 75%; }
+      .chat-input-area { padding: 20px 32px; gap: 16px; } .chat-input { padding: 16px 24px; font-size: 1rem; }
+      .send-btn { width: 52px; height: 52px; } .orb-wrap { width: 320px; height: 320px; }
+      .orb-core { width: 180px; height: 180px; } .orb-core .orb-icon { font-size: 64px; }
+      .transcript-wrap { max-width: 600px; height: 180px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SETUP SCREEN -->
+  <div class="screen" id="setupScreen">
+    <div class="setup-card">
+      <div class="brand-header">
+        <div class="brand-logo"><span class="material-symbols-rounded">graphic_eq</span></div>
+        <h1 class="brand-title">Rare Grade Support</h1>
+      </div>
+      <p class="setup-sub">How would you like to connect with our support team today?</p>
+      
+      <div class="type-selector">
+        <div class="type-card selected" data-type="ai" onclick="selectAgentType('ai')">
+          <span class="material-symbols-rounded">auto_awesome</span><div class="type-card-title">AI Call Assistant</div>
+        </div>
+        <div class="type-card" data-type="human" onclick="selectAgentType('human')">
+          <span class="material-symbols-rounded">chat</span><div class="type-card-title">Live Text Chat</div>
+        </div>
+      </div>
+      
+      <div class="voice-section" id="voiceSection">
+        <div class="voice-section-title">Select a Voice Profile</div>
+        <div class="voice-chips" id="voiceChips">
+          <div class="voice-chip selected" data-voice="ara" onclick="selectVoice(this)">
+            <div class="voice-chip-info"><div class="voice-chip-name">Ara</div><div class="voice-chip-desc">Warm & Friendly Technician</div></div>
+            <div class="voice-chip-check"></div>
+          </div>
+          <div class="voice-chip" data-voice="rex" onclick="selectVoice(this)">
+            <div class="voice-chip-info"><div class="voice-chip-name">Rex</div><div class="voice-chip-desc">System Diagnostic Expert</div></div>
+            <div class="voice-chip-check"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Connect Button -->
+      <button class="start-btn" id="connectBtn" onclick="startFlow()">
+        <span class="material-symbols-rounded" id="connectIcon" style="display:none;">login</span>
+        <span id="connectText">Connect Now</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- VOICE CALL SCREEN (AI) -->
+  <div class="screen hidden" id="callScreen">
+    <div class="call-header">
+      <div class="call-status" id="callStatus"><div class="status-dot" id="sDot"></div><span id="sText">Connecting...</span></div>
+    </div>
+    <div class="orb-wrap" id="orbWrap">
+      <div class="orb-glow"></div><div class="orb-core"><span class="material-symbols-rounded orb-icon" id="orbIcon">phone_in_talk</span></div>
+    </div>
+    <div class="agent-label" id="agentName">AI Assistant</div><div class="agent-sublabel" id="agentSub">Ringing…</div>
+    <div class="transcript-wrap" id="transcriptBox"></div>
+    <div class="call-controls">
+      <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()"><span class="material-symbols-rounded" id="muteIcon">mic</span></button>
+      <button class="ctrl-end" onclick="endAICall()"><span class="material-symbols-rounded" style="font-size:32px;">call_end</span></button>
+      <button class="ctrl-btn" onclick="clearTranscript()"><span class="material-symbols-rounded">delete_sweep</span></button>
+    </div>
+  </div>
+
+  <!-- TEXT CHAT SCREEN (HUMAN) -->
+  <div class="screen hidden" id="chatScreen">
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="brand-header">
+          <div class="brand-logo" style="background: var(--accent);"><span class="material-symbols-rounded">support_agent</span></div>
+          <h1 class="brand-title">Live Technician Chat</h1>
+        </div>
+        <button class="close-btn" onclick="endChat()"><span class="material-symbols-rounded">close</span></button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Message support..." onkeypress="handleChatKey(event)"/>
+        <button class="send-btn" onclick="sendChatMessage()"><span class="material-symbols-rounded">send</span></button>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  // FIREBASE IMPORTS
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getRemoteConfig, fetchAndActivate, getString } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-remote-config.js";
+  import { getDatabase, ref, set, push, onChildAdded, onValue, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  const API_BASE = "https://api.x.ai/v1";
+  let XAI_API_KEY = "";
+  
+  let isCallActive=false, isRinging=false, isTransferring=false, isMuted=false;
+  let currentVoice='ara', selectedAgentType='ai', conversationHistory=[], callTimeout=null;
+  let currentAudio=null, speechRecognition=null, ringAudioCtx=null, ringInterval=null;
+
+  // Firebase Chat & Auth State
+  let db, auth, provider, currentUser = null;
+  let myChatId, myChatRef, myMessagesRef;
+  let hasAgentJoined = false;
+
+  const $ = id => document.getElementById(id);
+  const els = {
+    setup:$('setupScreen'), call:$('callScreen'), chat:$('chatScreen'),
+    voiceSection:$('voiceSection'), orbWrap:$('orbWrap'), orbIcon:$('orbIcon'),
+    sDot:$('sDot'), sText:$('sText'), agentSub:$('agentSub'),
+    transcript:$('transcriptBox'), muteBtn:$('muteBtn'), muteIcon:$('muteIcon'),
+    chatMessages:$('chatMessages'), chatInput:$('chatInput'),
+    connectBtn:$('connectBtn'), connectText:$('connectText'), connectIcon:$('connectIcon')
+  };
+
+  // Firebase Init
+  const app = initializeApp({
+    apiKey:"AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+    authDomain:"fire-b-a8878.firebaseapp.com",
+    projectId:"fire-b-a8878",
+    databaseURL:"https://fire-b-a8878-default-rtdb.firebaseio.com",
+    appId:"1:658673187627:web:6e4c29af661785f0afa36e"
+  });
+  
+  // Initialize Realtime DB & Auth
+  db = getDatabase(app);
+  auth = getAuth(app);
+  provider = new GoogleAuthProvider();
+
+  // Listen for user login state
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    updateConnectButtonUI();
+  });
+
+  const rc = getRemoteConfig(app);
+  rc.settings.minimumFetchIntervalMillis = 0;
+  fetchAndActivate(rc).then(() => { XAI_API_KEY = getString(rc,'xai_api_key'); }).catch(console.error);
+
+  // UI Selections
+  window.selectAgentType = (type) => {
+    selectedAgentType = type;
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+    
+    if(type === 'human') { 
+      els.voiceSection.classList.add('collapsed'); 
+    } else { 
+      els.voiceSection.classList.remove('collapsed'); 
+    }
+    updateConnectButtonUI();
+  };
+
+  function updateConnectButtonUI() {
+    if (selectedAgentType === 'human' && !currentUser) {
+      els.connectText.innerText = "Sign in with Google to Chat";
+      els.connectIcon.style.display = "inline-block";
+    } else {
+      els.connectText.innerText = "Connect Now";
+      els.connectIcon.style.display = "none";
+    }
+  }
+
+  window.selectVoice = (el) => {
+    document.querySelectorAll('.voice-chip').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected'); currentVoice = el.dataset.voice;
+  };
+
+  // Flow Controller with Auth Check
+  window.startFlow = () => {
+    if (selectedAgentType === 'human') { 
+      startTextChat(false); 
+    } else { 
+      startAICall(); 
+    }
+  };
+
+  // --- AUDIO & AI CALL LOGIC (UNCHANGED) ---
+  const haptic = t => { if(!navigator.vibrate) return; if(t==='start') navigator.vibrate(40); else if(t==='stop') navigator.vibrate([30,50,30]); else navigator.vibrate([100,100,100]); };
+  function startRingtone() { const AC = window.AudioContext||window.webkitAudioContext; ringAudioCtx = new AC(); const play = () => { if(!ringAudioCtx||ringAudioCtx.state==='closed') return; haptic('ring'); const o1=ringAudioCtx.createOscillator(), o2=ringAudioCtx.createOscillator(), g=ringAudioCtx.createGain(); o1.type=o2.type='sine'; o1.frequency.value=440; o2.frequency.value=480; o1.connect(g); o2.connect(g); g.connect(ringAudioCtx.destination); const t=ringAudioCtx.currentTime; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.2,t+0.05); g.gain.setValueAtTime(0.2,t+1.3); g.gain.linearRampToValueAtTime(0,t+1.45); o1.start(t); o2.start(t); o1.stop(t+1.55); o2.stop(t+1.55); }; play(); ringInterval = setInterval(play, 3200); }
+  function stopRingtone() { if(ringInterval) clearInterval(ringInterval); if(ringAudioCtx&&ringAudioCtx.state!=='closed') ringAudioCtx.close(); ringAudioCtx=null; }
+  function initSR() { const SR = window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR) return false; speechRecognition = new SR(); speechRecognition.continuous=false; speechRecognition.interimResults=false; speechRecognition.onstart = () => { if(isCallActive&&!isMuted&&!isRinging&&!isTransferring) updateStatus("Listening…","s-listening"); }; speechRecognition.onresult = async e => { if(!isCallActive||isRinging||isTransferring) return; const text = e.results[0][0].transcript.trim(); if(!text) return; logT(text,"user"); await processUtterance(text); }; speechRecognition.onerror = e => { if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&e.error==='no-speech') setTimeout(()=>{ if(isCallActive&&!isRinging) startListen(); },600); }; speechRecognition.onend = () => { if(isCallActive&&!isMuted&&!isRinging&&!isTransferring&&(!currentAudio||currentAudio.paused)) startListen(); }; return true; }
+  function startListen() { if(speechRecognition&&isCallActive&&!isMuted&&!isRinging&&!isTransferring) try{ speechRecognition.start(); }catch(e){} }
+  function stopListen() { if(speechRecognition) try{ speechRecognition.stop(); }catch(e){} }
+  function getSystemPrompt() { return `You are an AI handling technical and system support for Rare Grade Tech. CRITICAL INSTRUCTIONS: 1. ONLY answer questions related to technical support, system troubleshooting, or software issues. 2. If the user asks about ANYTHING ELSE, politely tell them you only handle technical support and ask if they would like to be transferred to a live human agent. 3. If the user explicitly asks to speak to a human or agrees to a transfer, output exactly [TRANSFER]. 4. Keep responses strictly to 1-3 short sentences. Speak naturally.`; }
+
+  function startAICall() {
+    if(!XAI_API_KEY||!initSR()) return; currentVoice = document.querySelector('.voice-chip.selected')?.dataset.voice||'ara'; isCallActive=true; isRinging=true; isTransferring=false; isMuted=false; conversationHistory=[{ role:"system", content:getSystemPrompt() }]; currentAudio = new Audio();
+    els.setup.classList.add('hidden'); els.call.classList.remove('hidden'); els.orbWrap.classList.remove('speaking'); els.orbWrap.classList.add('ringing-shake'); els.orbIcon.innerText='phone_in_talk'; els.agentSub.innerText='Ringing…'; els.transcript.innerHTML='';
+    updateStatus("Ringing…","s-ringing"); startRingtone(); callTimeout = setTimeout(answerCall, 3200);
+  }
+
+  function answerCall() {
+    if(!isCallActive) return; isRinging=false; stopRingtone(); els.orbWrap.classList.remove('ringing-shake'); els.orbIcon.innerText='graphic_eq'; updateStatus("Connected","s-active"); els.agentSub.innerText='Listening for you…'; haptic('start');
+    const greet = "Hello, you've reached Rare Grade Tech support. I'm your AI technical assistant. How can I help you today?"; conversationHistory.push({ role:"assistant", content:greet }); logT(greet,"ai"); speakAI(greet);
+  }
+
+  async function processUtterance(text) {
+    stopListen(); haptic('stop'); updateStatus("Thinking…","s-active"); els.orbWrap.classList.remove('speaking'); els.agentSub.innerText='Processing…'; conversationHistory.push({ role:'user', content:text });
+    try {
+      const res = await fetch(`${API_BASE}/chat/completions`,{ method:'POST', headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' }, body: JSON.stringify({ model:"grok-4-1-fast-non-reasoning", messages:conversationHistory, stream:false }) });
+      const data = await res.json(); let reply = data.choices[0].message.content;
+      if(reply.includes("[TRANSFER]")) { isTransferring=true; reply=reply.replace("[TRANSFER]","").trim(); logT(reply,"ai"); await speakAI(reply,true); return; }
+      conversationHistory.push({ role:'assistant', content:reply }); logT(reply,"ai"); await speakAI(reply);
+    } catch(err) { setTimeout(()=>startListen(),2000); }
+  }
+
+  async function speakAI(text, isTransfer=false) {
+    if(!isCallActive) return; updateStatus("Speaking…","s-active"); els.agentSub.innerText='Speaking…'; els.orbWrap.classList.add('speaking');
+    try {
+      const r = await fetch(`${API_BASE}/tts`,{ method:'POST', headers:{ 'Authorization':`Bearer ${XAI_API_KEY}`,'Content-Type':'application/json' }, body:JSON.stringify({ text, voice_id:currentVoice, language:'en' }) });
+      const blob = await r.blob(); currentAudio.src=URL.createObjectURL(blob);
+      currentAudio.onended = () => { 
+        els.orbWrap.classList.remove('speaking'); els.agentSub.innerText='Listening for you…'; 
+        if(isTransfer){ 
+          startTextChat(true); 
+          return; 
+        } 
+        if(isCallActive&&!isMuted){ startListen(); haptic('start'); } 
+      };
+      await currentAudio.play();
+    } catch { startListen(); }
+  }
+
+  window.endAICall = () => { isCallActive=isRinging=isTransferring=false; clearTimeout(callTimeout); stopRingtone(); stopListen(); if(currentAudio){ currentAudio.pause(); currentAudio=null; } els.call.classList.add('hidden'); els.setup.classList.remove('hidden'); };
+  window.toggleMute = () => { if(isRinging||isTransferring) return; isMuted=!isMuted; els.muteBtn.classList.toggle('muted',isMuted); els.muteIcon.innerText=isMuted?'mic_off':'mic'; if(isMuted){ stopListen(); updateStatus("Muted",""); } else{ if(!currentAudio||currentAudio.paused){ startListen(); } } };
+  function updateStatus(text, cls) { els.sDot.className='status-dot '+(cls||''); els.sText.innerText=text; }
+  function logT(text, sender) { const d=document.createElement('div'); d.className='t-line '+sender; d.innerText=text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1'); els.transcript.appendChild(d); els.transcript.scrollTop=els.transcript.scrollHeight; }
+  window.clearTranscript = () => { els.transcript.innerHTML=''; };
+
+
+  // --- TEXT CHAT LOGIC (FIREBASE AUTH & REALTIME DB) ---
+
+  async function startTextChat(fromTransfer) {
+    
+    // Check if user needs to authenticate with Google
+    if (!currentUser) {
+      try {
+        els.connectText.innerText = "Authenticating...";
+        const result = await signInWithPopup(auth, provider);
+        currentUser = result.user;
+      } catch (error) {
+        console.error("Authentication failed", error);
+        alert("You must sign in with Google to chat with a live agent.");
+        els.connectText.innerText = "Sign in with Google to Chat";
+        return; // Stop the flow if auth fails/is cancelled
+      }
+    }
+
+    // Stop voice flow if coming from AI
+    isCallActive = false; stopListen(); stopRingtone(); if(currentAudio) { currentAudio.pause(); currentAudio=null; }
+    
+    // UI Setup
+    els.setup.classList.add('hidden'); els.call.classList.add('hidden'); els.chat.classList.remove('hidden');
+    els.chatMessages.innerHTML = '';
+    
+    if (fromTransfer) appendChatMsg("Voice call ended. Transferring to text chat...", "system");
+    appendChatMsg("Connecting you to the next available agent...", "system");
+
+    // 1. Create a new chat session in Firebase (NOW WITH USER ID & NAME)
+    myChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    myChatRef = ref(db, 'chats/' + myChatId);
+    myMessagesRef = ref(db, 'chats/' + myChatId + '/messages');
+    hasAgentJoined = false;
+
+    // Push the authenticated user data to the dashboard
+    set(myChatRef, {
+      id: myChatId,
+      status: 'queued',
+      context: fromTransfer ? 'Transferred from AI Assistant' : 'Direct Live Chat',
+      customerId: currentUser.uid,                     // Send Secure Google ID
+      customerName: currentUser.displayName || 'User', // Send Real Google Name
+      customerEmail: currentUser.email || '',          // Send Real Email
+      createdAt: Date.now()
+    });
+
+    // Handle user disconnecting unexpectedly
+    onDisconnect(myChatRef).update({ status: 'ended' });
+
+    // 2. Listen for Agent Joining
+    onValue(myChatRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data && data.status === 'active' && !hasAgentJoined) {
+        hasAgentJoined = true;
+        haptic('start');
+        appendChatMsg(`Agent ${data.agentName || ''} has joined the session.`, "system");
+      }
+    });
+
+    // 3. Listen for Incoming Messages (Ignore our own local renders)
+    onChildAdded(myMessagesRef, (snapshot) => {
+      const msg = snapshot.val();
+      if (msg.sender === 'agent' || msg.sender === 'system') {
+        appendChatMsg(msg.text, msg.sender);
+        haptic('start');
+      }
+    });
+  }
+
+  window.handleChatKey = (e) => { if(e.key === 'Enter') sendChatMessage(); };
+
+  window.sendChatMessage = () => {
+    const text = els.chatInput.value.trim();
+    if(!text || !myMessagesRef) return;
+    
+    appendChatMsg(text, "user");
+    
+    push(myMessagesRef, {
+      text: text,
+      sender: 'user',
+      timestamp: Date.now()
+    });
+    
+    els.chatInput.value = '';
+  };
+
+  function appendChatMsg(text, type) {
+    const bubble = document.createElement('div');
+    bubble.className = `msg-bubble ${type}`;
+    bubble.innerText = text;
+    els.chatMessages.appendChild(bubble);
+    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  }
+
+  window.endChat = () => {
+    if (myChatRef) {
+      update(myChatRef, { status: 'ended' });
+    }
+    els.chat.classList.add('hidden');
+    els.setup.classList.remove('hidden');
+    updateConnectButtonUI(); // Reset button UI if needed
+  };
+
+</script>
+</body>
+</html>lets match the firebase nodes for this client t match and correspond with the dashboard for chats
