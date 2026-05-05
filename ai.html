@@ -6,246 +6,458 @@
     <title>RareGrade Support</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; }
-        .chat-scroll::-webkit-scrollbar { width: 4px; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue-deep: #1a3a8f;
+            --blue-mid: #2563eb;
+            --blue-bright: #3b82f6;
+            --blue-glow: rgba(37, 99, 235, 0.45);
+            --surface: #ffffff;
+            --surface-2: #f8fafc;
+            --border: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #060d1f;
+            overflow: hidden;
+        }
+
+        /* ═══════════════════════════════════════
+           BACKGROUND SCENE
+        ═══════════════════════════════════════ */
+        .bg-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 20%, #0d2260 0%, #060d1f 70%);
+            overflow: hidden;
+        }
+        .bg-scene::before {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, transparent 70%);
+            top: -200px; left: 50%; transform: translateX(-50%);
+            filter: blur(40px);
+            animation: bgpulse 6s ease-in-out infinite alternate;
+        }
+        .bg-scene::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.12) 0%, transparent 100%),
+                radial-gradient(1px 1px at 75% 15%, rgba(255,255,255,0.09) 0%, transparent 100%),
+                radial-gradient(1px 1px at 45% 65%, rgba(255,255,255,0.07) 0%, transparent 100%),
+                radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.06) 0%, transparent 100%),
+                radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 100%);
+        }
+        @keyframes bgpulse {
+            from { opacity: 0.7; transform: translateX(-50%) scale(1); }
+            to   { opacity: 1;   transform: translateX(-50%) scale(1.12); }
+        }
+
+        /* ═══════════════════════════════════════
+           OVERLAY BACKDROP
+        ═══════════════════════════════════════ */
+        #chat-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ═══════════════════════════════════════
+           MODAL SHELL — DESKTOP
+        ═══════════════════════════════════════ */
+        .chat-modal {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 24px;
+            background: #ffffff;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08),
+                0 25px 60px rgba(0,0,0,0.55),
+                0 0 80px var(--blue-glow),
+                0 0 160px rgba(37,99,235,0.18);
+            animation: modal-in 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+        }
+
+        /* Glow ring */
+        .chat-modal::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.5) 0%, rgba(37,99,235,0.2) 50%, rgba(99,102,241,0.4) 100%);
+            z-index: -1;
+            animation: glowring 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowring {
+            from { opacity: 0.6; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes modal-in {
+            from { opacity: 0; transform: translateY(24px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ═══════════════════════════════════════
+           MOBILE BOTTOM SHEET
+        ═══════════════════════════════════════ */
+        @media (max-width: 600px) {
+            #chat-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+            .chat-modal {
+                max-width: 100%;
+                max-height: 92dvh;
+                border-radius: 22px 22px 0 0;
+                animation: sheet-in 0.38s cubic-bezier(0.34, 1.25, 0.64, 1) forwards;
+                box-shadow:
+                    0 0 0 1px rgba(255,255,255,0.06),
+                    0 -20px 60px rgba(0,0,0,0.6),
+                    0 0 60px var(--blue-glow),
+                    0 0 120px rgba(37,99,235,0.2);
+            }
+            .chat-modal::before {
+                border-radius: 23px 23px 0 0;
+            }
+            @keyframes sheet-in {
+                from { opacity: 0; transform: translateY(60px); }
+                to   { opacity: 1; transform: translateY(0); }
+            }
+            /* Drag handle on mobile */
+            .drag-handle {
+                display: block !important;
+            }
+        }
+
+        .drag-handle {
+            display: none;
+            width: 40px; height: 4px;
+            background: #d1d5db;
+            border-radius: 4px;
+            margin: 10px auto 0;
+            flex-shrink: 0;
+        }
+
+        /* ═══════════════════════════════════════
+           HEADER
+        ═══════════════════════════════════════ */
+        .modal-header {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #1a3a8f 0%, #2563eb 60%, #3b82f6 100%);
+            padding: 18px 20px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='28'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        /* ═══════════════════════════════════════
+           SCROLLABLE BODY
+        ═══════════════════════════════════════ */
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        .modal-body::-webkit-scrollbar { width: 4px; }
+        .modal-body::-webkit-scrollbar-track { background: transparent; }
+        .modal-body::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ── BUBBLES ── */
-        .msg-bubble { max-width: 82%; padding: 11px 15px; font-size: 0.9rem; line-height: 1.55; word-break: break-word; }
-        .msg-client { border-radius: 18px 18px 4px 18px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; margin-left: auto; }
-        .msg-agent  { border-radius: 18px 18px 18px 4px; background: #f1f5f9; color: #1e293b; }
-        .msg-system { background: transparent; color: #94a3b8; font-size: 0.75rem; text-align: center; font-style: italic; padding: 4px 0; }
-        .msg-image { max-width: 220px; border-radius: 12px; cursor: pointer; display: block; margin-top: 6px; }
+        /* ═══════════════════════════════════════
+           BUBBLES
+        ═══════════════════════════════════════ */
+        .msg-bubble { max-width: 82%; padding: 11px 15px; font-size: 0.875rem; line-height: 1.6; word-break: break-word; }
+        .msg-client { border-radius: 18px 18px 4px 18px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; margin-left: auto; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .msg-agent  { border-radius: 18px 18px 18px 4px; background: #f1f5f9; color: #1e293b; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .msg-system { background: transparent; color: #94a3b8; font-size: 0.72rem; text-align: center; font-style: italic; padding: 2px 0; }
+        .msg-image  { max-width: 220px; border-radius: 12px; cursor: pointer; display: block; margin-top: 6px; }
 
-        /* ── TYPING ── */
-        .typing-dots span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #94a3b8; animation: tdot 1.2s infinite ease-in-out; }
+        /* ═══════════════════════════════════════
+           TYPING INDICATOR
+        ═══════════════════════════════════════ */
+        .typing-dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; animation: tdot 1.2s infinite ease-in-out; }
         .typing-dots span:nth-child(2) { animation-delay: .2s; }
         .typing-dots span:nth-child(3) { animation-delay: .4s; }
         @keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-5px);opacity:1} }
 
-        /* ── STATUS TICKS ── */
+        /* ═══════════════════════════════════════
+           STATUS / TICKS
+        ═══════════════════════════════════════ */
         .tick { font-size: 10px; color: rgba(255,255,255,0.5); margin-left: 4px; }
         .tick.delivered { color: #93c5fd; }
 
-        /* ── SLIDE ANIMATIONS ── */
-        @keyframes slide-up   { from{transform:translateY(14px);opacity:0} to{transform:translateY(0);opacity:1} }
-        @keyframes fade-in    { from{opacity:0} to{opacity:1} }
-        .slide-up  { animation: slide-up .28s ease forwards; }
+        @keyframes spulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        .spulse { animation: spulse 2s infinite; }
+
+        /* ═══════════════════════════════════════
+           ANIMATIONS
+        ═══════════════════════════════════════ */
+        @keyframes slide-up  { from{transform:translateY(12px);opacity:0} to{transform:translateY(0);opacity:1} }
+        @keyframes fade-in   { from{opacity:0} to{opacity:1} }
+        @keyframes slide-dn  { from{transform:translateY(-16px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .slide-up  { animation: slide-up .26s ease forwards; }
         .fade-in   { animation: fade-in .3s ease forwards; }
+        .agent-joined-banner { animation: slide-dn .4s cubic-bezier(.34,1.56,.64,1) forwards; }
 
-        /* ── AGENT JOINED BANNER ── */
-        @keyframes slide-down { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
-        .agent-joined-banner { animation: slide-down .4s cubic-bezier(.34,1.56,.64,1) forwards; }
+        /* ═══════════════════════════════════════
+           FORM CONTROLS
+        ═══════════════════════════════════════ */
+        .form-input {
+            width: 100%; padding: 11px 14px;
+            background: #f8fafc; border: 1.5px solid #e2e8f0;
+            border-radius: 12px; font-size: 0.875rem; outline: none;
+            transition: border-color .15s, background .15s;
+            font-family: inherit; color: var(--text-primary);
+        }
+        .form-input:focus { border-color: #2563eb; background: #fff; }
+        select.form-input {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+        }
 
-        /* ── QUICK REPLIES ── */
-        .quick-reply-btn { border: 1.5px solid #e2e8f0; color: #475569; border-radius: 20px; padding: 6px 14px; font-size: 0.8rem; font-weight: 600; cursor: pointer; background: #fff; transition: all .15s; white-space: nowrap; }
+        /* ═══════════════════════════════════════
+           QUICK REPLIES
+        ═══════════════════════════════════════ */
+        .quick-reply-btn {
+            border: 1.5px solid #e2e8f0; color: #475569;
+            border-radius: 20px; padding: 6px 14px;
+            font-size: 0.78rem; font-weight: 600;
+            cursor: pointer; background: #fff;
+            transition: all .15s; white-space: nowrap;
+            font-family: inherit;
+        }
         .quick-reply-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
 
-        /* ── STAR RATING ── */
-        .star { font-size: 1.8rem; cursor: pointer; color: #d1d5db; transition: color .15s, transform .15s; }
-        .star:hover, .star.active { color: #f59e0b; transform: scale(1.15); }
+        /* ═══════════════════════════════════════
+           STAR RATING
+        ═══════════════════════════════════════ */
+        .star { font-size: 2rem; cursor: pointer; color: #d1d5db; transition: color .15s, transform .15s; }
+        .star:hover, .star.active { color: #f59e0b; transform: scale(1.18); }
 
-        /* ── FORM INPUTS ── */
-        .form-input { width: 100%; padding: 11px 14px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 0.875rem; outline: none; transition: border-color .15s; font-family: inherit; }
-        .form-input:focus { border-color: #2563eb; background: #fff; }
-        select.form-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
-
-        .header-grad { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%); }
-
-        /* ── LIGHTBOX ── */
+        /* ═══════════════════════════════════════
+           LIGHTBOX
+        ═══════════════════════════════════════ */
         #lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.92); display: flex; align-items: center; justify-content: center; cursor: zoom-out; }
         #lightbox.hidden { display: none; }
         #lightbox img { max-width: 94vw; max-height: 94vh; border-radius: 12px; }
 
-        /* status pulse */
-        @keyframes spulse { 0%,100%{opacity:1} 50%{opacity:.45} }
-        .spulse { animation: spulse 2s infinite; }
-
-        /* Confirm modal */
-        #confirm-modal { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        /* ═══════════════════════════════════════
+           CONFIRM MODAL
+        ═══════════════════════════════════════ */
+        #confirm-modal { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,.65); display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         #confirm-modal.hidden { display: none; }
     </style>
 </head>
-<body class="bg-slate-50 h-[100dvh] flex flex-col overflow-hidden">
+<body>
 
-    <!-- HEADER -->
-    <div class="header-grad text-white shrink-0 shadow-sm z-10">
-        <div class="flex items-center justify-between px-4 py-3 max-w-4xl mx-auto w-full">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                    <i class="fa-solid fa-headset text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-base leading-none">RareGrade Support</h1>
-                    <div class="flex items-center gap-1.5 mt-1" id="status-row">
-                        <span class="w-2 h-2 bg-orange-400 rounded-full spulse" id="status-dot"></span>
-                        <span class="text-[11px] font-medium text-white/70 uppercase tracking-wide" id="status-text">Connecting…</span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="confirmClose()" id="end-session-btn" class="hidden px-4 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white text-xs font-bold transition flex items-center gap-1.5" title="End Session">
-                    <i class="fa-solid fa-power-off"></i> End Session
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- BACKGROUND -->
+    <div class="bg-scene"></div>
 
-    <!-- MAIN CONTENT AREA -->
-    <div class="flex-1 flex flex-col overflow-hidden max-w-4xl mx-auto w-full bg-white shadow-sm border-x border-gray-100">
+    <!-- CHAT OVERLAY -->
+    <div id="chat-overlay">
+        <div class="chat-modal">
 
-        <!-- PRE-CHAT SCREEN -->
-        <div id="pre-chat-screen" class="flex-1 overflow-y-auto chat-scroll p-6">
-            <div class="max-w-md mx-auto pt-4">
-                <div class="text-center mb-6">
-                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                        <i class="fa-solid fa-comments text-blue-600 text-xl"></i>
-                    </div>
-                    <h2 class="font-bold text-gray-900 text-xl">Start a conversation</h2>
-                    <p class="text-sm text-gray-400 mt-1">We typically reply within a few minutes.</p>
-                </div>
-                <div class="space-y-4" id="pre-chat-form">
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Your Name *</label>
-                        <input type="text" id="pc-name" class="form-input" placeholder="e.g. Jane Smith">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Email Address</label>
-                        <input type="email" id="pc-email" class="form-input" placeholder="jane@example.com">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Issue Type *</label>
-                        <select id="pc-issue" class="form-input">
-                            <option value="">Select a category…</option>
-                            <option value="Billing">💳 Billing</option>
-                            <option value="Technical">🔧 Technical</option>
-                            <option value="Account">👤 Account</option>
-                            <option value="Order">📦 Order</option>
-                            <option value="Other">💬 Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Priority</label>
-                        <div class="flex gap-2">
-                            <label class="flex-1">
-                                <input type="radio" name="priority" value="Low" class="sr-only" checked>
-                                <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-blue-300 transition selected-priority" data-val="Low">🟢 Low</div>
-                            </label>
-                            <label class="flex-1">
-                                <input type="radio" name="priority" value="Medium" class="sr-only">
-                                <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-yellow-300 transition" data-val="Medium">🟡 Medium</div>
-                            </label>
-                            <label class="flex-1">
-                                <input type="radio" name="priority" value="High" class="sr-only">
-                                <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-red-300 transition" data-val="High">🔴 High</div>
-                            </label>
+            <!-- Drag handle (mobile only) -->
+            <div class="drag-handle"></div>
+
+            <!-- HEADER -->
+            <div class="modal-header" id="modal-header">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm flex-shrink-0">
+                            <i class="fa-solid fa-headset text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-bold text-white text-[15px] leading-tight">RareGrade Support</h1>
+                            <div class="flex items-center gap-1.5 mt-0.5" id="status-row">
+                                <span class="w-2 h-2 bg-orange-400 rounded-full spulse" id="status-dot"></span>
+                                <span class="text-[11px] font-semibold text-white/70 uppercase tracking-wide" id="status-text">Connecting…</span>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Brief Description *</label>
-                        <textarea id="pc-desc" class="form-input resize-none" rows="3" placeholder="What's the issue? The more detail, the faster we can help."></textarea>
-                    </div>
-                    <button onclick="submitPreChatForm()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition active:scale-95 shadow-lg shadow-blue-200 mt-2">
-                        Start Chat <i class="fa-solid fa-arrow-right ml-1.5 text-xs"></i>
-                    </button>
-                    <p id="pc-error" class="text-red-500 text-xs text-center hidden">Please fill in all required fields.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- CHAT SCREEN -->
-        <div id="chat-screen" class="hidden flex-1 flex flex-col overflow-hidden bg-slate-50/30">
-            <!-- Messages -->
-            <div id="chat-box" class="flex-1 overflow-y-auto chat-scroll p-4 md:p-6 space-y-4"></div>
-
-            <!-- Agent typing indicator -->
-            <div id="agent-typing" class="hidden px-4 pb-2 shrink-0">
-                <div class="flex items-center gap-2">
-                    <div class="msg-bubble msg-agent py-2 px-3 inline-flex items-center gap-2 shadow-sm">
-                        <div class="typing-dots flex gap-1"><span></span><span></span><span></span></div>
-                        <span class="text-xs text-gray-400">Agent is typing…</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Input Area (Floats at bottom) -->
-            <div class="bg-white border-t border-gray-100 p-3 shrink-0 flex flex-col shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
-                
-                <!-- Persistent Quick replies -->
-                <div id="quick-replies" class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100 overflow-x-auto no-scrollbar hidden">
-                    <div class="flex gap-2 flex-1" id="quick-reply-list"></div>
-                    <button onclick="closeClientQuickReplies()" class="shrink-0 text-gray-400 hover:text-gray-600 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100"><i class="fa-solid fa-xmark text-xs"></i></button>
-                </div>
-
-                <!-- File preview -->
-                <div id="file-preview-bar" class="hidden mb-2 flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-gray-200">
-                    <img id="fp-thumb" src="" class="w-10 h-10 rounded-lg object-cover hidden">
-                    <div id="fp-icon" class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 hidden"><i class="fa-solid fa-file text-sm"></i></div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-semibold text-gray-700 truncate" id="fp-name"></p>
-                        <p class="text-[10px] text-gray-400" id="fp-size"></p>
-                    </div>
-                    <button onclick="clearFilePreview()" class="w-6 h-6 rounded-lg text-gray-400 hover:text-red-500 flex items-center justify-center hover:bg-red-50 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
-                </div>
-
-                <div class="flex items-end gap-2">
-                    <label class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer transition shrink-0">
-                        <i class="fa-solid fa-paperclip text-sm"></i>
-                        <input type="file" id="file-input" accept="image/*,.pdf,.txt,.log,.csv" class="hidden" onchange="handleFileSelect(event)">
-                    </label>
-                    <textarea id="client-msg" rows="1" placeholder="Type a message…"
-                        class="flex-1 p-3 bg-gray-100 border border-transparent rounded-xl resize-none outline-none focus:border-blue-300 focus:bg-white transition text-sm leading-relaxed"
-                        oninput="onClientInput(this)"
-                        onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();handleSend();}"></textarea>
-                    <button onclick="handleSend()" class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center hover:bg-blue-700 transition active:scale-95 shadow-md shrink-0">
-                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    <button onclick="confirmClose()" id="end-session-btn" class="hidden px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-power-off text-[10px]"></i> End
                     </button>
                 </div>
             </div>
-        </div>
 
-        <!-- RATING SCREEN -->
-        <div id="rating-screen" class="hidden flex-1 flex flex-col items-center justify-center p-6 bg-white">
-            <div id="rating-form" class="w-full max-w-sm">
-                <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-circle-check text-green-600 text-2xl"></i>
+            <!-- ── PRE-CHAT SCREEN ── -->
+            <div id="pre-chat-screen" class="modal-body">
+                <div class="p-5">
+                    <div class="text-center mb-5 pt-1">
+                        <p class="text-[13px] text-slate-400 mt-1">Fill in the details below and we'll connect you with an agent.</p>
+                    </div>
+                    <div class="space-y-4" id="pre-chat-form">
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">Your Name <span class="text-red-400">*</span></label>
+                            <input type="text" id="pc-name" class="form-input" placeholder="e.g. Jane Smith">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">Email Address</label>
+                            <input type="email" id="pc-email" class="form-input" placeholder="jane@example.com">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">Issue Type <span class="text-red-400">*</span></label>
+                            <select id="pc-issue" class="form-input">
+                                <option value="">Select a category…</option>
+                                <option value="Billing">💳 Billing</option>
+                                <option value="Technical">🔧 Technical</option>
+                                <option value="Account">👤 Account</option>
+                                <option value="Order">📦 Order</option>
+                                <option value="Other">💬 Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">Priority</label>
+                            <div class="flex gap-2">
+                                <label class="flex-1">
+                                    <input type="radio" name="priority" value="Low" class="sr-only" checked>
+                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-blue-300 transition selected-priority" data-val="Low">🟢 Low</div>
+                                </label>
+                                <label class="flex-1">
+                                    <input type="radio" name="priority" value="Medium" class="sr-only">
+                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-yellow-300 transition" data-val="Medium">🟡 Medium</div>
+                                </label>
+                                <label class="flex-1">
+                                    <input type="radio" name="priority" value="High" class="sr-only">
+                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-red-300 transition" data-val="High">🔴 High</div>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">Brief Description <span class="text-red-400">*</span></label>
+                            <textarea id="pc-desc" class="form-input resize-none" rows="3" placeholder="What's the issue? The more detail, the faster we can help."></textarea>
+                        </div>
+                        <button onclick="submitPreChatForm()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition active:scale-95 shadow-lg shadow-blue-200 mt-1 flex items-center justify-center gap-2">
+                            Start Chat <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                        <p id="pc-error" class="text-red-500 text-xs text-center hidden">Please fill in all required fields.</p>
+                    </div>
                 </div>
-                <h2 class="font-bold text-gray-900 text-xl text-center mb-1">Session ended</h2>
-                <p class="text-sm text-gray-400 text-center mb-6">How was your support experience?</p>
-                <div class="flex justify-center gap-2 mb-6" id="star-row">
-                    <span class="star" data-v="1" onclick="selectStar(1)">★</span>
-                    <span class="star" data-v="2" onclick="selectStar(2)">★</span>
-                    <span class="star" data-v="3" onclick="selectStar(3)">★</span>
-                    <span class="star" data-v="4" onclick="selectStar(4)">★</span>
-                    <span class="star" data-v="5" onclick="selectStar(5)">★</span>
+            </div>
+
+            <!-- ── CHAT SCREEN ── -->
+            <div id="chat-screen" class="hidden flex-col overflow-hidden" style="flex:1;min-height:0;">
+                <!-- Messages -->
+                <div id="chat-box" class="modal-body flex-1 p-4 space-y-3" style="background:#f8fafc;"></div>
+
+                <!-- Agent typing indicator -->
+                <div id="agent-typing" class="hidden px-4 pb-2 flex-shrink-0 bg-white border-t border-gray-100">
+                    <div class="flex items-center gap-2 pt-2">
+                        <div class="msg-bubble msg-agent py-2 px-3 inline-flex items-center gap-2">
+                            <div class="typing-dots flex gap-1"><span></span><span></span><span></span></div>
+                            <span class="text-xs text-gray-400">Agent is typing…</span>
+                        </div>
+                    </div>
                 </div>
-                <textarea id="rating-comment" class="form-input resize-none mb-4 text-sm" rows="3" placeholder="Any additional feedback? (optional)"></textarea>
-                <button onclick="submitRating()" id="submit-rating-btn" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition disabled:opacity-50 active:scale-95" disabled>
-                    Submit Feedback
-                </button>
-                <button onclick="skipRating()" class="w-full py-2.5 text-xs font-bold text-gray-400 hover:text-gray-600 transition mt-2">Skip</button>
-            </div>
-            <div id="rating-thanks" class="hidden text-center w-full max-w-sm">
-                <div class="text-5xl mb-4">🎉</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">Thank you!</h3>
-                <p class="text-sm text-gray-400 mb-8">Your feedback helps us improve.</p>
-                <button onclick="startNewChat()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition shadow-lg shadow-blue-200">Start New Chat</button>
-            </div>
-        </div>
 
-    </div>
+                <!-- Input Area -->
+                <div class="bg-white border-t border-gray-100 p-3 flex-shrink-0 flex flex-col shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
+                    <!-- Quick replies -->
+                    <div id="quick-replies" class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100 overflow-x-auto no-scrollbar hidden">
+                        <div class="flex gap-2 flex-1" id="quick-reply-list"></div>
+                        <button onclick="closeClientQuickReplies()" class="flex-shrink-0 text-gray-400 hover:text-gray-600 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                    </div>
+                    <!-- File preview -->
+                    <div id="file-preview-bar" class="hidden mb-2 flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-gray-200">
+                        <img id="fp-thumb" src="" class="w-10 h-10 rounded-lg object-cover hidden">
+                        <div id="fp-icon" class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 hidden"><i class="fa-solid fa-file text-sm"></i></div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-gray-700 truncate" id="fp-name"></p>
+                            <p class="text-[10px] text-gray-400" id="fp-size"></p>
+                        </div>
+                        <button onclick="clearFilePreview()" class="w-6 h-6 rounded-lg text-gray-400 hover:text-red-500 flex items-center justify-center hover:bg-red-50 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <label class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer transition flex-shrink-0">
+                            <i class="fa-solid fa-paperclip text-sm"></i>
+                            <input type="file" id="file-input" accept="image/*,.pdf,.txt,.log,.csv" class="hidden" onchange="handleFileSelect(event)">
+                        </label>
+                        <textarea id="client-msg" rows="1" placeholder="Type a message…"
+                            class="flex-1 p-3 bg-gray-100 border border-transparent rounded-xl resize-none outline-none focus:border-blue-300 focus:bg-white transition text-sm leading-relaxed"
+                            style="font-family:inherit;"
+                            oninput="onClientInput(this)"
+                            onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();handleSend();}"></textarea>
+                        <button onclick="handleSend()" class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center hover:bg-blue-700 transition active:scale-95 shadow-md flex-shrink-0">
+                            <i class="fa-solid fa-paper-plane text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-    <!-- ========== IMAGE LIGHTBOX ========== -->
+            <!-- ── RATING SCREEN ── -->
+            <div id="rating-screen" class="hidden flex-col items-center justify-center p-6 bg-white" style="flex:1;">
+                <div id="rating-form" class="w-full max-w-sm">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-circle-check text-green-600 text-2xl"></i>
+                    </div>
+                    <h2 class="font-bold text-gray-900 text-xl text-center mb-1">Session ended</h2>
+                    <p class="text-sm text-gray-400 text-center mb-6">How was your support experience?</p>
+                    <div class="flex justify-center gap-2 mb-6" id="star-row">
+                        <span class="star" onclick="selectStar(1)">★</span>
+                        <span class="star" onclick="selectStar(2)">★</span>
+                        <span class="star" onclick="selectStar(3)">★</span>
+                        <span class="star" onclick="selectStar(4)">★</span>
+                        <span class="star" onclick="selectStar(5)">★</span>
+                    </div>
+                    <textarea id="rating-comment" class="form-input resize-none mb-4 text-sm" rows="3" placeholder="Any additional feedback? (optional)"></textarea>
+                    <button onclick="submitRating()" id="submit-rating-btn" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition disabled:opacity-50 active:scale-95" disabled>
+                        Submit Feedback
+                    </button>
+                    <button onclick="skipRating()" class="w-full py-2.5 text-xs font-bold text-gray-400 hover:text-gray-600 transition mt-2">Skip</button>
+                </div>
+                <div id="rating-thanks" class="hidden text-center w-full max-w-sm">
+                    <div class="text-5xl mb-4">🎉</div>
+                    <h3 class="font-bold text-gray-900 text-xl mb-2">Thank you!</h3>
+                    <p class="text-sm text-gray-400 mb-8">Your feedback helps us improve.</p>
+                    <button onclick="startNewChat()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition shadow-lg shadow-blue-200">Start New Chat</button>
+                </div>
+            </div>
+
+        </div><!-- /chat-modal -->
+    </div><!-- /chat-overlay -->
+
+    <!-- ═══ LIGHTBOX ═══ -->
     <div id="lightbox" class="hidden" onclick="this.classList.add('hidden')">
         <img id="lb-img" src="">
     </div>
 
-    <!-- ========== CLOSE CONFIRM MODAL ========== -->
+    <!-- ═══ CONFIRM MODAL ═══ -->
     <div id="confirm-modal" class="hidden">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -275,7 +487,7 @@
         databaseURL: "https://test-17881-default-rtdb.firebaseio.com"
     };
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const db      = firebase.database();
     const storage = firebase.storage();
 
     // ── STATE ──
@@ -301,7 +513,7 @@
         });
     });
 
-    // ── END SESSION ACTIONS ──
+    // ── END SESSION ──
     function confirmClose() {
         if (!chatId) return;
         document.getElementById('confirm-modal').classList.remove('hidden');
@@ -325,10 +537,8 @@
         const issue = document.getElementById('pc-issue').value;
         const desc  = document.getElementById('pc-desc').value.trim();
         const err   = document.getElementById('pc-error');
-
         if (!name || !issue || !desc) { err.classList.remove('hidden'); return; }
         err.classList.add('hidden');
-
         clientName = name;
         localStorage.setItem('rg_client_name', name);
         createChatSession(name, email, issue, activePriority, desc);
@@ -338,62 +548,52 @@
         const newRef = db.ref('live_support_chats').push();
         chatId = newRef.key;
         localStorage.setItem('rg_chat_id', chatId);
-
         const ts = firebase.database.ServerValue.TIMESTAMP;
         await newRef.set({
-            clientName:   name,
-            clientEmail:  email || '',
-            topic:        issue,
-            priority:     priority,
-            status:       'pending',
-            lastMessage:  firstMsg,
-            lastActivity: ts,
-            agentId:      null
+            clientName: name, clientEmail: email || '', topic: issue,
+            priority, status: 'pending', lastMessage: firstMsg,
+            lastActivity: ts, agentId: null
         });
-
         await db.ref(`live_support_chats/${chatId}/messages`).push({
             sender: 'client', text: firstMsg, timestamp: ts, status: 'sent'
         });
-
         showChatScreen();
         initChatSession();
     }
 
     function showChatScreen() {
         document.getElementById('pre-chat-screen').classList.add('hidden');
-        document.getElementById('chat-screen').classList.remove('hidden');
-        document.getElementById('chat-screen').classList.add('flex');
+        const cs = document.getElementById('chat-screen');
+        cs.classList.remove('hidden');
+        cs.style.display = 'flex';
         document.getElementById('end-session-btn').classList.remove('hidden');
         renderClientQR();
     }
 
-    // ── INIT SESSION (resume or new) ──
+    // ── INIT SESSION ──
     function initChatSession() {
         updateStatus('pending');
 
-        db.ref(`live_support_chats/${chatId}/messages`).on('child_added', (snap) => {
+        db.ref(`live_support_chats/${chatId}/messages`).on('child_added', snap => {
             const m = snap.val();
-            const key = snap.key;
-            appendMessage(m.sender, m.text, m.timestamp, m.status, key, m.fileURL, m.fileType, m.fileName);
+            appendMessage(m.sender, m.text, m.timestamp, m.status, snap.key, m.fileURL, m.fileType, m.fileName);
         });
 
-        db.ref(`live_support_chats/${chatId}`).on('value', (snap) => {
+        db.ref(`live_support_chats/${chatId}`).on('value', snap => {
             const data = snap.val();
             if (!data) return;
-
             if (data.agentId && data.status !== 'resolved' && !agentJoinedBannerShown) {
                 agentJoinedBannerShown = true;
                 showAgentJoinedBanner(data.agentName || 'An agent');
                 updateStatus('active', data.agentName);
             }
-
             if (data.status === 'resolved') {
                 updateStatus('resolved');
                 showRatingScreen();
             }
         });
 
-        db.ref(`live_support_chats/${chatId}/agentTyping`).on('value', (snap) => {
+        db.ref(`live_support_chats/${chatId}/agentTyping`).on('value', snap => {
             const isTyping = snap.val() === true;
             document.getElementById('agent-typing').classList.toggle('hidden', !isTyping);
             if (isTyping) scrollToBottom();
@@ -401,25 +601,25 @@
 
         db.ref(`live_support_chats/${chatId}/clientRead`).set(firebase.database.ServerValue.TIMESTAMP);
 
-        db.ref(`live_support_chats/${chatId}/agentRead`).on('value', (snap) => {
+        db.ref(`live_support_chats/${chatId}/agentRead`).on('value', snap => {
             if (snap.val()) {
                 document.querySelectorAll('.tick').forEach(el => { el.textContent = '✓✓'; el.classList.add('delivered'); });
             }
         });
     }
 
-    // ── STATUS BAR ──
+    // ── STATUS ──
     function updateStatus(state, agentName) {
         const dot  = document.getElementById('status-dot');
         const text = document.getElementById('status-text');
         if (state === 'pending') {
-            dot.className  = 'w-2 h-2 bg-orange-400 rounded-full spulse';
+            dot.className = 'w-2 h-2 bg-orange-400 rounded-full spulse';
             text.textContent = 'Waiting for agent…';
         } else if (state === 'active') {
-            dot.className  = 'w-2 h-2 bg-green-400 rounded-full spulse';
+            dot.className = 'w-2 h-2 bg-green-400 rounded-full spulse';
             text.textContent = `${agentName || 'Agent'} is here`;
         } else if (state === 'resolved') {
-            dot.className  = 'w-2 h-2 bg-gray-400 rounded-full';
+            dot.className = 'w-2 h-2 bg-gray-400 rounded-full';
             text.textContent = 'Session closed';
             document.getElementById('end-session-btn').classList.add('hidden');
         }
@@ -442,31 +642,24 @@
     // ── SEND ──
     async function handleSend() {
         const input = document.getElementById('client-msg');
-        const text  = input.value.trim();
+        const text = input.value.trim();
         if (!text && !pendingFile) return;
         if (!chatId) return;
-
         input.value = ''; input.style.height = '';
         clearTypingSignal();
-
         const ts = firebase.database.ServerValue.TIMESTAMP;
         let msgData = { sender: 'client', text: text || '', timestamp: ts, status: 'sending' };
-
         if (pendingFile) {
             const file = pendingFile;
             clearFilePreview();
             try {
                 const url = await uploadFile(file);
-                msgData.fileURL  = url;
-                msgData.fileName = file.name;
-                msgData.fileType = file.type;
+                msgData.fileURL = url; msgData.fileName = file.name; msgData.fileType = file.type;
             } catch(e) { alert('Upload failed. Please try again.'); return; }
         }
-
         const newMsg = await db.ref(`live_support_chats/${chatId}/messages`).push(msgData);
         await newMsg.update({ status: 'sent' });
         await db.ref(`live_support_chats/${chatId}`).update({ lastMessage: text || '[attachment]', lastActivity: ts });
-
         db.ref(`live_support_chats/${chatId}/clientTyping`).set(false);
         db.ref(`live_support_chats/${chatId}/clientRead`).set(firebase.database.ServerValue.TIMESTAMP);
     }
@@ -483,8 +676,7 @@
             el.className = 'flex justify-center slide-up';
             el.innerHTML = `<div class="msg-bubble msg-system">${text}</div>`;
             box.appendChild(el);
-            scrollToBottom();
-            return;
+            scrollToBottom(); return;
         }
 
         let content = '';
@@ -505,7 +697,7 @@
             <div class="msg-bubble shadow-sm ${isClient ? 'msg-client' : 'msg-agent'}">
                 ${content}
                 <div class="flex items-center ${isClient ? 'justify-end' : 'justify-start'} gap-1 mt-1">
-                    <span style="font-size:10px;opacity:.55">${time}</span>
+                    <span style="font-size:10px;opacity:.5">${time}</span>
                     ${tickHtml}
                 </div>
             </div>`;
@@ -515,12 +707,12 @@
 
     function scrollToBottom() {
         const box = document.getElementById('chat-box');
-        box.scrollTop = box.scrollHeight;
+        requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
     }
 
     let clientTypingRef = null;
     function onClientInput(el) {
-        el.style.height = ''; el.style.height = el.scrollHeight + 'px';
+        el.style.height = ''; el.style.height = Math.min(el.scrollHeight, 120) + 'px';
         if (!chatId) return;
         if (!clientTypingRef) clientTypingRef = db.ref(`live_support_chats/${chatId}/clientTyping`);
         clientTypingRef.set(true);
@@ -532,18 +724,16 @@
     // ── QUICK REPLIES ──
     function renderClientQR() {
         if (clientQrClosed) return;
-        const suggestions = ['Billing issue', 'Can\'t log in', 'Order problem', 'Technical Support'];
+        const suggestions = ['Billing issue', "Can't log in", 'Order problem', 'Technical Support'];
         const wrap = document.getElementById('quick-replies');
         const list = document.getElementById('quick-reply-list');
         list.innerHTML = suggestions.map(s => `<button class="quick-reply-btn shrink-0" onclick="useQuickReply('${s}')">${s}</button>`).join('');
         wrap.classList.remove('hidden');
     }
-    
     function closeClientQuickReplies() {
         clientQrClosed = true;
         document.getElementById('quick-replies').classList.add('hidden');
     }
-
     function useQuickReply(text) {
         const input = document.getElementById('client-msg');
         input.value = text;
@@ -558,17 +748,14 @@
         pendingFile = file;
         document.getElementById('fp-name').textContent = file.name;
         document.getElementById('fp-size').textContent = (file.size / 1024).toFixed(1) + ' KB';
-        const bar = document.getElementById('file-preview-bar');
-        bar.classList.remove('hidden');
+        document.getElementById('file-preview-bar').classList.remove('hidden');
         const thumb = document.getElementById('fp-thumb');
         const icon  = document.getElementById('fp-icon');
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = ev => { thumb.src = ev.target.result; thumb.classList.remove('hidden'); icon.classList.add('hidden'); };
             reader.readAsDataURL(file);
-        } else {
-            thumb.classList.add('hidden'); icon.classList.remove('hidden');
-        }
+        } else { thumb.classList.add('hidden'); icon.classList.remove('hidden'); }
     }
     function clearFilePreview() {
         pendingFile = null;
@@ -587,9 +774,10 @@
     // ── RATING ──
     function showRatingScreen() {
         document.getElementById('end-session-btn').classList.add('hidden');
-        document.getElementById('chat-screen').classList.add('hidden');
-        document.getElementById('rating-screen').classList.remove('hidden');
-        document.getElementById('rating-screen').classList.add('flex');
+        const cs = document.getElementById('chat-screen');
+        cs.classList.add('hidden'); cs.style.display = '';
+        const rs = document.getElementById('rating-screen');
+        rs.classList.remove('hidden'); rs.style.display = 'flex';
     }
     function selectStar(n) {
         selectedRating = n;
@@ -608,7 +796,6 @@
         document.getElementById('rating-thanks').classList.remove('hidden');
         localStorage.removeItem('rg_chat_id');
     }
-
     function startNewChat() {
         localStorage.removeItem('rg_chat_id');
         localStorage.removeItem('rg_client_name');
