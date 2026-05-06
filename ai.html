@@ -26,42 +26,39 @@
         html, body {
             height: 100%;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
             overflow: hidden;
         }
 
         /* ═══════════════════════════════════════
-           BACKGROUND SCENE (Clean White Neon)
+           BACKGROUND SCENE — identical on all viewports
         ═══════════════════════════════════════ */
         .bg-scene {
             position: fixed;
             inset: 0;
             z-index: 0;
-            background: #f1f5f9; /* Soft cool grey base */
+            background: #f1f5f9;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-        
-        /* Central glowing white bloom */
+
         .bg-scene::before {
             content: '';
             position: absolute;
             width: 150vw;
             height: 150vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: radial-gradient(circle, #ffffff 0%, rgba(255,255,255,0) 65%);
             filter: blur(40px);
             z-index: 1;
             animation: pulse-bloom 8s ease-in-out infinite alternate;
         }
 
-        /* Subtle grid pattern */
         .bg-grid {
             position: absolute;
             inset: 0;
             z-index: 2;
-            background-image: 
+            background-image:
                 linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
             background-size: 40px 40px;
@@ -69,7 +66,6 @@
             -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
         }
 
-        /* Diagonal glowing neon lines */
         .neon-line {
             position: absolute;
             width: 150%;
@@ -81,12 +77,12 @@
         }
 
         @keyframes pulse-bloom {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.1); opacity: 1; }
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
         }
 
         /* ═══════════════════════════════════════
-           OVERLAY BACKDROP
+           OVERLAY
         ═══════════════════════════════════════ */
         #chat-overlay {
             position: fixed;
@@ -99,7 +95,7 @@
         }
 
         /* ═══════════════════════════════════════
-           MODAL SHELL — DESKTOP
+           MODAL — DESKTOP
         ═══════════════════════════════════════ */
         .chat-modal {
             position: relative;
@@ -111,21 +107,18 @@
             border-radius: 24px;
             background: #ffffff;
             overflow: hidden;
-            box-shadow: 0 24px 50px -12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
-            animation: modal-in 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
-        }
-
-        .chat-modal::before {
-            display: none;
+            box-shadow: 0 24px 60px -12px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.05);
+            animation: modal-in 0.48s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+            transform-origin: center bottom;
         }
 
         @keyframes modal-in {
-            from { opacity: 0; transform: translateY(24px) scale(0.96); }
+            from { opacity: 0; transform: translateY(32px) scale(0.94); }
             to   { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* ═══════════════════════════════════════
-           MOBILE BOTTOM SHEET
+           MOBILE — same bg, bottom sheet
         ═══════════════════════════════════════ */
         @media (max-width: 600px) {
             #chat-overlay {
@@ -136,25 +129,21 @@
                 max-width: 100%;
                 max-height: 92dvh;
                 border-radius: 22px 22px 0 0;
-                animation: sheet-in 0.38s cubic-bezier(0.34, 1.25, 0.64, 1) forwards;
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
-            }
-            .chat-modal::before {
-                display: none;
+                animation: sheet-in 0.44s cubic-bezier(0.34, 1.25, 0.64, 1) forwards;
+                box-shadow: 0 -12px 50px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+                transform-origin: center bottom;
             }
             @keyframes sheet-in {
-                from { opacity: 0; transform: translateY(60px); }
-                to   { opacity: 1; transform: translateY(0); }
+                from { opacity: 0; transform: translateY(80px) scale(0.98); }
+                to   { opacity: 1; transform: translateY(0) scale(1); }
             }
-            .drag-handle {
-                display: block !important;
-            }
+            .drag-handle { display: block !important; }
         }
 
         .drag-handle {
             display: none;
             width: 40px; height: 4px;
-            background: #cbd5e1; 
+            background: #cbd5e1;
             border-radius: 4px;
             margin: 10px auto 0;
             flex-shrink: 0;
@@ -186,7 +175,7 @@
             overflow-y: auto;
             min-height: 0;
         }
-        .modal-body::-webkit-scrollbar { width: 4px; }
+        .modal-body::-webkit-scrollbar { width: 3px; }
         .modal-body::-webkit-scrollbar-track { background: transparent; }
         .modal-body::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
@@ -197,10 +186,11 @@
            BUBBLES
         ═══════════════════════════════════════ */
         .msg-bubble { max-width: 82%; padding: 11px 15px; font-size: 0.875rem; line-height: 1.6; word-break: break-word; }
-        .msg-client { border-radius: 18px 18px 4px 18px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; margin-left: auto; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
-        .msg-agent  { border-radius: 18px 18px 18px 4px; background: #f1f5f9; color: #1e293b; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .msg-client { border-radius: 18px 18px 4px 18px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; margin-left: auto; box-shadow: 0 4px 14px rgba(37,99,235,0.28); }
+        .msg-agent  { border-radius: 18px 18px 18px 4px; background: #f1f5f9; color: #1e293b; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .msg-system { background: transparent; color: #94a3b8; font-size: 0.72rem; text-align: center; font-style: italic; padding: 2px 0; }
-        .msg-image  { max-width: 220px; border-radius: 12px; cursor: pointer; display: block; margin-top: 6px; }
+        .msg-image  { max-width: 220px; border-radius: 12px; cursor: pointer; display: block; margin-top: 6px; transition: opacity 0.15s; }
+        .msg-image:hover { opacity: 0.9; }
 
         /* ═══════════════════════════════════════
            TYPING INDICATOR
@@ -213,7 +203,7 @@
         /* ═══════════════════════════════════════
            STATUS / TICKS
         ═══════════════════════════════════════ */
-        .tick { font-size: 10px; color: rgba(255,255,255,0.5); margin-left: 4px; }
+        .tick { font-size: 10px; color: rgba(255,255,255,0.5); margin-left: 4px; transition: color 0.3s ease; }
         .tick.delivered { color: #93c5fd; }
 
         @keyframes spulse { 0%,100%{opacity:1} 50%{opacity:.4} }
@@ -222,12 +212,31 @@
         /* ═══════════════════════════════════════
            ANIMATIONS
         ═══════════════════════════════════════ */
-        @keyframes slide-up  { from{transform:translateY(12px);opacity:0} to{transform:translateY(0);opacity:1} }
+        @keyframes slide-up  { from{transform:translateY(14px);opacity:0} to{transform:translateY(0);opacity:1} }
         @keyframes fade-in   { from{opacity:0} to{opacity:1} }
-        @keyframes slide-dn  { from{transform:translateY(-16px);opacity:0} to{transform:translateY(0);opacity:1} }
-        .slide-up  { animation: slide-up .26s ease forwards; }
+        @keyframes slide-dn  { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
+        @keyframes pop-in    { from{transform:scale(0.88);opacity:0} to{transform:scale(1);opacity:1} }
+        @keyframes bounce-in { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.06);opacity:1} 80%{transform:scale(0.97)} 100%{transform:scale(1)} }
+
+        .slide-up  { animation: slide-up .28s cubic-bezier(0.34,1.2,0.64,1) forwards; }
         .fade-in   { animation: fade-in .3s ease forwards; }
-        .agent-joined-banner { animation: slide-dn .4s cubic-bezier(.34,1.56,.64,1) forwards; }
+        .agent-joined-banner { animation: slide-dn .42s cubic-bezier(.34,1.5,.64,1) forwards; }
+
+        /* Screen transition */
+        .screen-out {
+            animation: screen-out 0.22s cubic-bezier(0.4,0,1,1) forwards;
+        }
+        .screen-in {
+            animation: screen-in 0.38s cubic-bezier(0.34,1.25,0.64,1) forwards;
+        }
+        @keyframes screen-out {
+            from { opacity: 1; transform: scale(1) translateY(0); }
+            to   { opacity: 0; transform: scale(0.96) translateY(8px); }
+        }
+        @keyframes screen-in {
+            from { opacity: 0; transform: scale(0.97) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
         /* ═══════════════════════════════════════
            FORM CONTROLS
@@ -236,10 +245,10 @@
             width: 100%; padding: 11px 14px;
             background: #f8fafc; border: 1.5px solid #e2e8f0;
             border-radius: 12px; font-size: 0.875rem; outline: none;
-            transition: border-color .15s, background .15s;
+            transition: border-color .18s cubic-bezier(0.4,0,0.2,1), background .18s, box-shadow .18s;
             font-family: inherit; color: var(--text-primary);
         }
-        .form-input:focus { border-color: #2563eb; background: #fff; }
+        .form-input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         select.form-input {
             appearance: none; cursor: pointer;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
@@ -251,37 +260,47 @@
         ═══════════════════════════════════════ */
         .quick-reply-btn {
             border: 1.5px solid #e2e8f0; color: #475569;
-            border-radius: 20px; padding: 6px 14px;
+            border-radius: 99px; padding: 6px 14px;
             font-size: 0.78rem; font-weight: 600;
             cursor: pointer; background: #fff;
-            transition: all .15s; white-space: nowrap;
+            transition: all .18s cubic-bezier(0.34,1.2,0.64,1); white-space: nowrap;
             font-family: inherit;
         }
-        .quick-reply-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .quick-reply-btn:hover { background: #f8fafc; border-color: #93c5fd; color: #2563eb; transform: translateY(-1px); }
+        .quick-reply-btn:active { transform: scale(0.96); }
 
         /* ═══════════════════════════════════════
            STAR RATING
         ═══════════════════════════════════════ */
-        .star { font-size: 2rem; cursor: pointer; color: #d1d5db; transition: color .15s, transform .15s; }
-        .star:hover, .star.active { color: #f59e0b; transform: scale(1.18); }
+        .star { font-size: 2rem; cursor: pointer; color: #d1d5db; transition: color .18s ease, transform .2s cubic-bezier(0.34,1.5,0.64,1); display: inline-block; }
+        .star:hover, .star.active { color: #f59e0b; transform: scale(1.22); }
 
         /* ═══════════════════════════════════════
            LIGHTBOX
         ═══════════════════════════════════════ */
-        #lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.92); display: flex; align-items: center; justify-content: center; cursor: zoom-out; }
+        #lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.92); display: flex; align-items: center; justify-content: center; cursor: zoom-out; animation: fade-in 0.2s ease; }
         #lightbox.hidden { display: none; }
-        #lightbox img { max-width: 94vw; max-height: 94vh; border-radius: 12px; }
+        #lightbox img { max-width: 94vw; max-height: 94vh; border-radius: 12px; animation: pop-in 0.24s cubic-bezier(0.34,1.4,0.64,1); }
 
         /* ═══════════════════════════════════════
            CONFIRM MODAL
         ═══════════════════════════════════════ */
-        #confirm-modal { position: fixed; inset: 0; z-index: 10000; background: rgba(15,23,42,.4); display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+        #confirm-modal { position: fixed; inset: 0; z-index: 10000; background: rgba(15,23,42,.45); display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(6px); animation: fade-in 0.2s ease; }
         #confirm-modal.hidden { display: none; }
+        #confirm-modal > div { animation: pop-in 0.28s cubic-bezier(0.34,1.4,0.64,1); }
+
+        /* ═══════════════════════════════════════
+           PRIORITY SELECTOR
+        ═══════════════════════════════════════ */
+        .priority-btn {
+            transition: all 0.18s cubic-bezier(0.34,1.2,0.64,1);
+        }
+        .priority-btn:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
 
-    <!-- BACKGROUND (Clean White Neon Scene) -->
+    <!-- BACKGROUND — identical on desktop & mobile -->
     <div class="bg-scene">
         <div class="bg-grid"></div>
         <div class="neon-line" style="top: 25%; left: -25%; transform: rotate(-15deg);"></div>
@@ -310,7 +329,7 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="confirmClose()" id="end-session-btn" class="hidden px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white text-xs font-bold transition flex items-center gap-1.5">
+                    <button onclick="confirmClose()" id="end-session-btn" class="hidden px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
                         <i class="fa-solid fa-power-off text-[10px]"></i> End
                     </button>
                 </div>
@@ -347,15 +366,15 @@
                             <div class="flex gap-2">
                                 <label class="flex-1">
                                     <input type="radio" name="priority" value="Low" class="sr-only" checked>
-                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-blue-300 transition selected-priority" data-val="Low">🟢 Low</div>
+                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-blue-500 bg-blue-50 text-xs font-bold text-blue-700 cursor-pointer" data-val="Low">🟢 Low</div>
                                 </label>
                                 <label class="flex-1">
                                     <input type="radio" name="priority" value="Medium" class="sr-only">
-                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-yellow-300 transition" data-val="Medium">🟡 Medium</div>
+                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-yellow-300" data-val="Medium">🟡 Medium</div>
                                 </label>
                                 <label class="flex-1">
                                     <input type="radio" name="priority" value="High" class="sr-only">
-                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-red-300 transition" data-val="High">🔴 High</div>
+                                    <div class="priority-btn text-center py-2.5 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 cursor-pointer hover:border-red-300" data-val="High">🔴 High</div>
                                 </label>
                             </div>
                         </div>
@@ -363,7 +382,7 @@
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Brief Description <span class="text-red-400">*</span></label>
                             <textarea id="pc-desc" class="form-input resize-none" rows="3" placeholder="What's the issue? The more detail, the faster we can help."></textarea>
                         </div>
-                        <button onclick="submitPreChatForm()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition active:scale-95 shadow-lg shadow-blue-200 mt-1 flex items-center justify-center gap-2">
+                        <button onclick="submitPreChatForm()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-blue-200 mt-1 flex items-center justify-center gap-2">
                             Start Chat <i class="fa-solid fa-arrow-right text-xs"></i>
                         </button>
                         <p id="pc-error" class="text-red-500 text-xs text-center hidden">Please fill in all required fields.</p>
@@ -373,7 +392,6 @@
 
             <!-- ── CHAT SCREEN ── -->
             <div id="chat-screen" class="hidden flex-col overflow-hidden" style="flex:1;min-height:0;">
-                <!-- Messages -->
                 <div id="chat-box" class="modal-body flex-1 p-4 space-y-3" style="background:#f8fafc;"></div>
 
                 <!-- Agent typing indicator -->
@@ -391,7 +409,7 @@
                     <!-- Quick replies -->
                     <div id="quick-replies" class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100 overflow-x-auto no-scrollbar hidden">
                         <div class="flex gap-2 flex-1" id="quick-reply-list"></div>
-                        <button onclick="closeClientQuickReplies()" class="flex-shrink-0 text-gray-400 hover:text-gray-600 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <button onclick="closeClientQuickReplies()" class="flex-shrink-0 text-gray-400 hover:text-gray-600 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 transition">
                             <i class="fa-solid fa-xmark text-xs"></i>
                         </button>
                     </div>
@@ -406,16 +424,16 @@
                         <button onclick="clearFilePreview()" class="w-6 h-6 rounded-lg text-gray-400 hover:text-red-500 flex items-center justify-center hover:bg-red-50 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
                     </div>
                     <div class="flex items-end gap-2">
-                        <label class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer transition flex-shrink-0">
+                        <label class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer transition-all flex-shrink-0 active:scale-95">
                             <i class="fa-solid fa-paperclip text-sm"></i>
                             <input type="file" id="file-input" accept="image/*,.pdf,.txt,.log,.csv" class="hidden" onchange="handleFileSelect(event)">
                         </label>
                         <textarea id="client-msg" rows="1" placeholder="Type a message…"
-                            class="flex-1 p-3 bg-gray-100 border border-transparent rounded-xl resize-none outline-none focus:border-blue-300 focus:bg-white transition text-sm leading-relaxed"
-                            style="font-family:inherit;"
+                            class="flex-1 p-3 bg-gray-100 border border-transparent rounded-xl resize-none outline-none focus:border-blue-300 focus:bg-white transition-all text-sm leading-relaxed"
+                            style="font-family:inherit;transition:border-color 0.18s,background 0.18s,box-shadow 0.18s;"
                             oninput="onClientInput(this)"
                             onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();handleSend();}"></textarea>
-                        <button onclick="handleSend()" class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center hover:bg-blue-700 transition active:scale-95 shadow-md flex-shrink-0">
+                        <button onclick="handleSend()" class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center hover:bg-blue-700 transition-all active:scale-95 shadow-md flex-shrink-0">
                             <i class="fa-solid fa-paper-plane text-sm"></i>
                         </button>
                     </div>
@@ -438,28 +456,28 @@
                         <span class="star" onclick="selectStar(5)">★</span>
                     </div>
                     <textarea id="rating-comment" class="form-input resize-none mb-4 text-sm" rows="3" placeholder="Any additional feedback? (optional)"></textarea>
-                    <button onclick="submitRating()" id="submit-rating-btn" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition disabled:opacity-50 active:scale-95" disabled>
+                    <button onclick="submitRating()" id="submit-rating-btn" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all disabled:opacity-50 active:scale-95" disabled>
                         Submit Feedback
                     </button>
                     <button onclick="skipRating()" class="w-full py-2.5 text-xs font-bold text-gray-400 hover:text-gray-600 transition mt-2">Skip</button>
                 </div>
                 <div id="rating-thanks" class="hidden text-center w-full max-w-sm">
-                    <div class="text-5xl mb-4">🎉</div>
+                    <div class="text-5xl mb-4" style="animation:bounce-in 0.5s cubic-bezier(0.34,1.5,0.64,1) forwards;">🎉</div>
                     <h3 class="font-bold text-gray-900 text-xl mb-2">Thank you!</h3>
                     <p class="text-sm text-gray-400 mb-8">Your feedback helps us improve.</p>
-                    <button onclick="startNewChat()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition shadow-lg shadow-blue-200">Start New Chat</button>
+                    <button onclick="startNewChat()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-200 active:scale-95">Start New Chat</button>
                 </div>
             </div>
 
         </div><!-- /chat-modal -->
     </div><!-- /chat-overlay -->
 
-    <!-- ═══ LIGHTBOX ═══ -->
+    <!-- LIGHTBOX -->
     <div id="lightbox" class="hidden" onclick="this.classList.add('hidden')">
         <img id="lb-img" src="">
     </div>
 
-    <!-- ═══ CONFIRM MODAL ═══ -->
+    <!-- CONFIRM MODAL -->
     <div id="confirm-modal" class="hidden">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -468,8 +486,8 @@
             <h3 class="font-bold text-gray-900 text-lg mb-2">End this session?</h3>
             <p class="text-sm text-gray-500 mb-6">This will close the chat for both you and the support agent.</p>
             <div class="flex gap-3">
-                <button onclick="document.getElementById('confirm-modal').classList.add('hidden')" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition">Cancel</button>
-                <button onclick="closeAndEnd()" class="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition shadow-md">End Session</button>
+                <button onclick="document.getElementById('confirm-modal').classList.add('hidden')" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition active:scale-95">Cancel</button>
+                <button onclick="closeAndEnd()" class="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition shadow-md active:scale-95">End Session</button>
             </div>
         </div>
     </div>
@@ -564,10 +582,17 @@
     }
 
     function showChatScreen() {
-        document.getElementById('pre-chat-screen').classList.add('hidden');
-        const cs = document.getElementById('chat-screen');
-        cs.classList.remove('hidden');
-        cs.style.display = 'flex';
+        const pre = document.getElementById('pre-chat-screen');
+        pre.classList.add('screen-out');
+        setTimeout(() => {
+            pre.classList.add('hidden');
+            pre.classList.remove('screen-out');
+            const cs = document.getElementById('chat-screen');
+            cs.classList.remove('hidden');
+            cs.style.display = 'flex';
+            cs.classList.add('screen-in');
+            setTimeout(() => cs.classList.remove('screen-in'), 400);
+        }, 200);
         document.getElementById('end-session-btn').classList.remove('hidden');
         renderClientQR();
     }
@@ -777,9 +802,20 @@
     function showRatingScreen() {
         document.getElementById('end-session-btn').classList.add('hidden');
         const cs = document.getElementById('chat-screen');
-        cs.classList.add('hidden'); cs.style.display = '';
-        const rs = document.getElementById('rating-screen');
-        rs.classList.remove('hidden'); rs.style.display = 'flex';
+        if (!cs.classList.contains('hidden')) {
+            cs.classList.add('screen-out');
+            setTimeout(() => {
+                cs.classList.add('hidden'); cs.style.display = '';
+                cs.classList.remove('screen-out');
+                const rs = document.getElementById('rating-screen');
+                rs.classList.remove('hidden'); rs.style.display = 'flex';
+                rs.classList.add('screen-in');
+                setTimeout(() => rs.classList.remove('screen-in'), 420);
+            }, 200);
+        } else {
+            const rs = document.getElementById('rating-screen');
+            rs.classList.remove('hidden'); rs.style.display = 'flex';
+        }
     }
     function selectStar(n) {
         selectedRating = n;
@@ -790,12 +826,18 @@
         const comment = document.getElementById('rating-comment').value.trim();
         await db.ref(`live_support_chats/${chatId}/rating`).set({ score: selectedRating, comment, timestamp: firebase.database.ServerValue.TIMESTAMP });
         document.getElementById('rating-form').classList.add('hidden');
-        document.getElementById('rating-thanks').classList.remove('hidden');
+        const thanks = document.getElementById('rating-thanks');
+        thanks.classList.remove('hidden');
+        thanks.classList.add('screen-in');
+        setTimeout(() => thanks.classList.remove('screen-in'), 400);
         localStorage.removeItem('rg_chat_id');
     }
     function skipRating() {
         document.getElementById('rating-form').classList.add('hidden');
-        document.getElementById('rating-thanks').classList.remove('hidden');
+        const thanks = document.getElementById('rating-thanks');
+        thanks.classList.remove('hidden');
+        thanks.classList.add('screen-in');
+        setTimeout(() => thanks.classList.remove('screen-in'), 400);
         localStorage.removeItem('rg_chat_id');
     }
     function startNewChat() {
