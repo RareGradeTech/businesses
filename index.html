@@ -1,130 +1,203 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Video Hub</title>
+    <title>VISION - Premium Video Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        glass: 'rgba(255, 255, 255, 0.05)',
-                        glassBorder: 'rgba(255, 255, 255, 0.1)',
+                        premiumWhite: '#ffffff',
+                        premiumBlack: '#000000',
+                        premiumGray: '#f8f9fa',
+                        premiumBorder: '#e5e7eb'
                     },
                     boxShadow: {
-                        'glow': '0 0 20px rgba(59, 130, 246, 0.5)',
-                        'glow-hover': '0 0 30px rgba(96, 165, 250, 0.8)',
+                        'premium': '0 4px 30px rgba(0, 0, 0, 0.03)',
+                        'hover-card': '0 20px 40px rgba(0, 0, 0, 0.08)',
+                        'pill-shadow': '0 2px 10px rgba(0, 0, 0, 0.05)'
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Custom scrollbar for a premium feel */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+        /* Smooth Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+
+        /* View Slide/Swipe Transitions */
+        .view-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+        .app-view {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            width: 100%;
+        }
+        .view-hidden-left {
+            transform: translateX(-100%);
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+        .view-hidden-right {
+            transform: translateX(100%);
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+        .view-active {
+            transform: translateX(0);
+            opacity: 1;
+            position: relative;
+        }
     </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen font-sans overflow-x-hidden">
+<body class="bg-premiumWhite text-premiumBlack min-h-screen font-sans overflow-x-hidden antialiased">
 
-    <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-7xl z-50">
-        <div class="bg-glass backdrop-blur-xl border border-glassBorder rounded-full px-6 py-3 flex justify-between items-center shadow-lg">
-            <div class="text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 cursor-pointer" onclick="showView('feedView')">
+    <nav class="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-premiumBorder flex items-center justify-between px-6 z-50 transition-all duration-300">
+        <div class="flex items-center gap-4">
+            <button class="p-2 hover:bg-premiumGray rounded-full transition-colors duration-200 lg:hidden" onclick="toggleSidebar()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <div class="text-xl font-black tracking-tighter cursor-pointer flex items-center gap-1" onclick="showView('feedView')">
+                <span class="bg-premiumBlack text-white px-2.5 py-0.5 rounded-lg text-base font-black">V</span>
                 VISION
             </div>
-            
-            <div class="hidden md:flex w-1/3">
-                <input type="text" placeholder="Search videos..." class="w-full bg-black/50 border border-gray-700 rounded-full px-5 py-2 text-sm focus:outline-none focus:border-blue-500 focus:shadow-glow transition-all duration-300">
+        </div>
+        
+        <div class="hidden md:flex w-1/3 max-w-xl">
+            <div class="relative w-full flex items-center">
+                <input type="text" placeholder="Search premium content..." class="w-full bg-premiumGray border border-premiumBorder rounded-full pl-5 pr-12 py-2 text-sm text-premiumBlack placeholder-gray-400 focus:outline-none focus:bg-white focus:border-premiumBlack focus:shadow-pill-shadow transition-all duration-300">
+                <button class="absolute right-1 p-1.5 bg-premiumBlack text-white rounded-full hover:bg-gray-800 transition-colors duration-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
             </div>
+        </div>
 
-            <div class="flex gap-4">
-                <button onclick="showView('uploadView')" class="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-300 hover:shadow-glow text-sm font-medium">
-                    Upload
-                </button>
-                <button id="authBtn" class="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-500 transition-all duration-300 hover:shadow-glow text-sm font-medium">
-                    Sign In
-                </button>
-            </div>
+        <div class="flex items-center gap-3">
+            <button onclick="showView('uploadView')" class="px-5 py-2 rounded-full border border-premiumBorder text-sm font-medium hover:bg-premiumGray transition-all duration-300 hover:scale-105 active:scale-95">
+                Upload
+            </button>
+            <button id="authBtn" class="px-5 py-2 rounded-full bg-premiumBlack text-white text-sm font-medium hover:bg-gray-800 transition-all duration-300 hover:shadow-pill-shadow hover:scale-105 active:scale-95">
+                Sign In
+            </button>
         </div>
     </nav>
 
-    <main class="pt-32 pb-12 px-6 max-w-7xl mx-auto min-h-screen">
-
-        <div id="feedView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div id="loadingFeed" class="col-span-full text-center text-gray-500 py-10">Loading feed...</div>
-        </div>
-
-        <div id="uploadView" class="hidden max-w-2xl mx-auto">
-            <div class="bg-glass backdrop-blur-2xl border border-glassBorder rounded-3xl p-8 shadow-2xl">
-                <h2 class="text-2xl font-bold mb-6 text-center">Upload Video</h2>
-                <form id="uploadForm" class="space-y-6">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-2">Video Title</label>
-                        <input type="text" id="videoTitle" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:shadow-glow transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-2">Description</label>
-                        <textarea id="videoDesc" rows="3" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:shadow-glow transition-all"></textarea>
-                    </div>
-                    <div class="relative border-2 border-dashed border-gray-600 rounded-2xl p-10 text-center hover:border-blue-500 transition-colors group cursor-pointer">
-                        <input type="file" id="videoFile" accept="video/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <div class="text-gray-400 group-hover:text-blue-400 transition-colors">
-                            <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                            <p id="fileNameDisplay">Drag and drop or click to select video</p>
-                        </div>
-                    </div>
-                    <button type="submit" id="uploadBtn" class="w-full py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 font-bold text-lg hover:shadow-glow-hover transition-all duration-300 transform hover:-translate-y-1">
-                        Upload to Cloudinary
-                    </button>
-                    <div id="uploadStatus" class="text-center text-sm hidden mt-4 text-blue-400">Uploading... Please wait.</div>
-                </form>
+    <div class="pt-16 flex min-h-screen">
+        
+        <aside id="sidebar" class="fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-premiumBorder p-4 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40">
+            <div class="space-y-1">
+                <button onclick="showView('feedView')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 hover:bg-premiumGray group">
+                    <svg class="w-5 h-5 text-gray-500 group-hover:text-premiumBlack transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Home Feed
+                </button>
+                <button onclick="showView('uploadView')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 hover:bg-premiumGray group">
+                    <svg class="w-5 h-5 text-gray-500 group-hover:text-premiumBlack transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Upload Video
+                </button>
             </div>
-        </div>
+            <hr class="my-4 border-premiumBorder">
+            <div class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Subscribed Channels</div>
+            <div class="mt-2 px-4 text-sm text-gray-500 italic">Sign in to view subscriptions</div>
+        </aside>
 
-        <div id="playerView" class="hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-black rounded-2xl overflow-hidden shadow-glow border border-glassBorder aspect-video">
-                        <video id="mainPlayer" controls class="w-full h-full object-contain"></video>
-                    </div>
-                    <div>
-                        <h1 id="playerTitle" class="text-3xl font-bold mb-2">Video Title</h1>
-                        <div class="flex justify-between items-center border-b border-gray-800 pb-4 mb-4">
-                            <span id="playerUploader" class="text-gray-400">Uploaded by...</span>
-                            <button id="likeBtn" class="px-6 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                                <span id="likeCount">0</span>
+        <main class="flex-1 lg:pl-64 min-h-screen bg-premiumWhite transition-all duration-300">
+            <div class="p-6 md:p-8 max-w-[1600px] mx-auto view-container">
+
+                <div id="feedView" class="app-view view-active grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-6 gap-y-10">
+                    <div id="loadingFeed" class="col-span-full text-center text-gray-400 py-20 font-medium">Assembling your custom feed...</div>
+                </div>
+
+                <div id="uploadView" class="app-view view-hidden-right max-w-xl mx-auto">
+                    <div class="bg-white border border-premiumBorder rounded-3xl p-8 shadow-premium">
+                        <h2 class="text-2xl font-black tracking-tight mb-2">Upload Content</h2>
+                        <p class="text-sm text-gray-500 mb-6">Publish pristine video directly to the platform global feed.</p>
+                        
+                        <form id="uploadForm" class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Video Title</label>
+                                <input type="text" id="videoTitle" required class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Description</label>
+                                <textarea id="videoDesc" rows="3" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all"></textarea>
+                            </div>
+                            <div class="relative border border-dashed border-gray-300 rounded-2xl p-8 text-center hover:bg-premiumGray transition-colors duration-200 group cursor-pointer">
+                                <input type="file" id="videoFile" accept="video/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                <div class="text-gray-400">
+                                    <svg class="w-10 h-10 mx-auto mb-2 text-gray-300 group-hover:text-premiumBlack transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                    <p id="fileNameDisplay" class="text-sm font-medium text-gray-600 transition-colors group-hover:text-premiumBlack">Choose a high-res video asset</p>
+                                </div>
+                            </div>
+                            <button type="submit" id="uploadBtn" class="w-full py-3.5 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-900 transition-all duration-300 active:scale-95 shadow-pill-shadow">
+                                Deploy to Network
                             </button>
-                        </div>
-                        <p id="playerDesc" class="text-gray-300 bg-white/5 p-4 rounded-xl border border-white/5"></p>
+                            <div id="uploadStatus" class="text-center text-xs font-semibold hidden text-gray-600 animate-pulse">Uploading asset binaries to Cloudinary...</div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="bg-glass backdrop-blur-lg border border-glassBorder rounded-2xl p-6 h-[800px] flex flex-col">
-                    <h3 class="text-xl font-bold mb-4">Comments</h3>
-                    <div id="commentsList" class="flex-1 overflow-y-auto space-y-4 mb-4 pr-2">
+                <div id="playerView" class="app-view view-hidden-right">
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                        <div class="xl:col-span-2 space-y-6">
+                            <div class="bg-premiumBlack rounded-2xl overflow-hidden shadow-hover-card border border-premiumBorder aspect-video">
+                                <video id="mainPlayer" controls class="w-full h-full object-contain"></video>
+                            </div>
+                            <div class="bg-white p-2">
+                                <h1 id="playerTitle" class="text-2xl md:text-3xl font-black tracking-tight mb-3">Video Title</h1>
+                                <div class="flex flex-wrap justify-between items-center gap-4 border-b border-premiumBorder pb-5 mb-5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-premiumBlack flex items-center justify-center text-white font-bold text-sm">V</div>
+                                        <div>
+                                            <div id="playerUploader" class="font-bold text-sm">Uploader Profile</div>
+                                            <div class="text-xs text-gray-400">Verified Publisher</div>
+                                        </div>
+                                    </div>
+                                    <button id="likeBtn" class="px-6 py-2.5 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all duration-200 flex items-center gap-2 font-semibold text-sm active:scale-95">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 00.458 1.27l1.791 2.15a1 1 0 001.524-.103l2.842-4.263a2 2 0 00.325-.992V10.5a1.5 1.5 0 00-1.5-1.5H10.15l.422-1.9a1.5 1.5 0 00-1.472-1.826H7.132a2 2 0 00-1.92 1.413L4.17 8.358A2 2 0 006 10.333z"></path></svg>
+                                        <span id="likeCount">0</span>
+                                    </button>
+                                </div>
+                                <div class="bg-premiumGray p-4 rounded-2xl border border-premiumBorder">
+                                    <div class="text-xs font-bold text-gray-400 mb-1">METADATA MANIFEST</div>
+                                    <p id="playerDesc" class="text-sm text-gray-700 leading-relaxed"></p>
+                                </div>
+                            </div>
                         </div>
-                    <form id="commentForm" class="mt-auto flex gap-2">
-                        <input type="text" id="commentInput" placeholder="Add a comment..." required class="flex-1 bg-black/50 border border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500">
-                        <button type="submit" class="p-2 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
 
-    </main>
+                        <div class="bg-white border border-premiumBorder rounded-2xl p-5 h-[calc(100vh-12rem)] min-h-[500px] flex flex-col shadow-premium">
+                            <h3 class="text-lg font-black tracking-tight mb-4 flex items-center gap-2">
+                                Response Module
+                            </h3>
+                            <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 mb-4 pr-1">
+                                </div>
+                            <form id="commentForm" class="mt-auto flex gap-2 pt-3 border-t border-premiumBorder">
+                                <input type="text" id="commentInput" placeholder="Add a public comment..." required class="flex-1 bg-premiumGray border border-premiumBorder rounded-full px-4 py-2.5 text-sm text-premiumBlack placeholder-gray-400 focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
+                                <button type="submit" class="p-2.5 rounded-full bg-premiumBlack text-white hover:bg-gray-800 transition-colors duration-200 shadow-pill-shadow">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, push, set, onValue, serverTimestamp, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCh7Ute6LeSAxcNDEQwZg5m0cA4ujnLCfg",
@@ -144,18 +217,47 @@
         
         let currentUser = null;
         let currentPlayingVideoId = null;
+        let activeViewId = 'feedView';
 
-        // View Router
+        // High-Fidelity Swiping Router
         window.showView = (viewId) => {
-            ['feedView', 'uploadView', 'playerView'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
+            if (viewId === activeViewId) return;
+
+            const views = ['feedView', 'uploadView', 'playerView'];
+            const currentIndex = views.indexOf(activeViewId);
+            const targetIndex = views.indexOf(viewId);
+
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if (id === viewId) {
+                    el.className = "app-view view-active";
+                } else {
+                    const baseClass = "app-view ";
+                    if (views.indexOf(id) < targetIndex) {
+                        el.className = baseClass + "view-hidden-left";
+                    } else {
+                        el.className = baseClass + "view-hidden-right";
+                    }
+                }
             });
-            document.getElementById(viewId).classList.remove('hidden');
+
+            activeViewId = viewId;
             if(viewId === 'feedView') loadFeed();
             if(viewId !== 'playerView') document.getElementById('mainPlayer').pause();
+            
+            // Auto close mobile drawer sidebar on route change
+            if(window.innerWidth < 1024) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
         };
 
-        // Authentication Logic
+        // Sidebar responsive switch
+        window.toggleSidebar = () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        };
+
+        // Authentication Pipeline
         const authBtn = document.getElementById('authBtn');
         authBtn.addEventListener('click', () => {
             if (currentUser) {
@@ -169,7 +271,6 @@
             currentUser = user;
             if (user) {
                 authBtn.textContent = 'Sign Out';
-                // Save user profile to DB
                 set(ref(db, 'users/' + user.uid), {
                     displayName: user.displayName,
                     email: user.email,
@@ -180,7 +281,7 @@
             }
         });
 
-        // File Input UI Update
+        // Dynamic Native Interactivity UI updates
         const videoFileInput = document.getElementById('videoFile');
         videoFileInput.addEventListener('change', (e) => {
             if(e.target.files.length > 0) {
@@ -188,10 +289,10 @@
             }
         });
 
-        // 1. CLOUDINARY UPLOAD LOGIC & DB SAVE
+        // Cloudinary Pipeline & Storage Engine mapping
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!currentUser) return alert("Please sign in to upload.");
+            if (!currentUser) return alert("Sign in is required to execute upload queries.");
 
             const file = videoFileInput.files[0];
             const title = document.getElementById('videoTitle').value;
@@ -203,12 +304,10 @@
             statusTxt.classList.remove('hidden');
 
             try {
-                // Prepare FormData for Cloudinary Unsigned Upload
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('upload_preset', CLOUDINARY_PRESET);
 
-                // Upload to Cloudinary REST API
                 const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, {
                     method: 'POST',
                     body: formData
@@ -217,10 +316,8 @@
                 const cloudData = await uploadRes.json();
                 
                 if(cloudData.secure_url) {
-                    // Generate thumbnail dynamically from Cloudinary by changing extension to .jpg
                     const thumbnailUrl = cloudData.secure_url.replace(/\.[^/.]+$/, ".jpg");
 
-                    // Save to Firebase Realtime DB
                     const newVideoRef = push(ref(db, 'videos'));
                     await set(newVideoRef, {
                         title: title,
@@ -232,24 +329,22 @@
                         timestamp: serverTimestamp()
                     });
 
-                    alert("Upload Successful!");
                     document.getElementById('uploadForm').reset();
-                    document.getElementById('fileNameDisplay').textContent = "Drag and drop or click to select video";
+                    document.getElementById('fileNameDisplay').textContent = "Choose a high-res video asset";
                     window.showView('feedView');
                 } else {
-                    throw new Error("Upload failed. Check Cloudinary settings.");
+                    throw new Error("Asset structural parsing failure.");
                 }
-
             } catch (error) {
                 console.error(error);
-                alert("Error: " + error.message);
+                alert("Error parsing transaction payload: " + error.message);
             } finally {
                 submitBtn.disabled = false;
                 statusTxt.classList.add('hidden');
             }
         });
 
-        // 2. VIDEO FEED LOGIC
+        // Video Feed Component Assembly
         function loadFeed() {
             const feedContainer = document.getElementById('feedView');
             const videosRef = query(ref(db, 'videos'));
@@ -257,7 +352,7 @@
             onValue(videosRef, (snapshot) => {
                 feedContainer.innerHTML = '';
                 if (!snapshot.exists()) {
-                    feedContainer.innerHTML = '<div class="col-span-full text-center text-gray-500">No videos found. Be the first to upload!</div>';
+                    feedContainer.innerHTML = '<div class="col-span-full text-center text-gray-400 py-20">Network empty. Broadcast vectors await.</div>';
                     return;
                 }
 
@@ -265,33 +360,34 @@
                     const videoId = childSnapshot.key;
                     const data = childSnapshot.val();
 
-                    // Glassmorphism Video Card with Glow
                     const card = document.createElement('div');
-                    card.className = "bg-glass backdrop-blur-md border border-glassBorder rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-glow transform hover:-translate-y-1";
+                    card.className = "flex flex-col group cursor-pointer transition-all duration-300";
                     card.onclick = () => playVideo(videoId, data);
                     
                     card.innerHTML = `
-                        <div class="aspect-video relative overflow-hidden">
-                            <img src="${data.thumbnailUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Thumbnail">
-                            <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <div class="aspect-video relative overflow-hidden bg-premiumGray rounded-2xl border border-premiumBorder mb-3 transition-all duration-500 ease-out group-hover:scale-[1.02] group-hover:shadow-hover-card">
+                            <img src="${data.thumbnailUrl}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" alt="Media frame">
                         </div>
-                        <div class="p-5">
-                            <h3 class="font-bold text-lg mb-1 truncate">${data.title}</h3>
-                            <p class="text-sm text-gray-400">${data.uploaderName || 'Anonymous'}</p>
+                        <div class="flex gap-3 px-1">
+                            <div class="w-9 h-9 rounded-full bg-premiumBlack flex-shrink-0 flex items-center justify-center text-white text-xs font-black">V</div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-sm tracking-tight text-premiumBlack leading-snug group-hover:text-gray-600 transition-colors line-clamp-2">${data.title}</h3>
+                                <p class="text-xs text-gray-400 font-semibold mt-1">${data.uploaderName || 'Verified User'}</p>
+                            </div>
                         </div>
                     `;
-                    feedContainer.prepend(card); // Newest first
+                    feedContainer.prepend(card);
                 });
             });
         }
 
-        // 3. VIDEO PLAYER & REALTIME ENGAGEMENT
+        // Active Streaming Module
         window.playVideo = (videoId, data) => {
             currentPlayingVideoId = videoId;
             document.getElementById('mainPlayer').src = data.videoUrl;
             document.getElementById('playerTitle').textContent = data.title;
-            document.getElementById('playerUploader').textContent = data.uploaderName || 'Anonymous';
-            document.getElementById('playerDesc').textContent = data.description || 'No description provided.';
+            document.getElementById('playerUploader').textContent = data.uploaderName || 'Verified User';
+            document.getElementById('playerDesc').textContent = data.description || 'No declarative metadata attached to this bundle.';
             
             document.getElementById('mainPlayer').play();
             window.showView('playerView');
@@ -300,10 +396,10 @@
             listenToLikes(videoId);
         };
 
-        // Comments Submission
+        // Realtime Response processing Engine
         document.getElementById('commentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!currentUser) return alert("Please sign in to comment.");
+            if (!currentUser) return alert("Authentication parameter required to insert nodes.");
             
             const input = document.getElementById('commentInput');
             const text = input.value;
@@ -321,7 +417,6 @@
             input.value = '';
         });
 
-        // Realtime Comments Listener
         function listenToComments(videoId) {
             const commentsRef = ref(db, `comments/${videoId}`);
             const list = document.getElementById('commentsList');
@@ -332,27 +427,28 @@
                     snapshot.forEach((child) => {
                         const comment = child.val();
                         const el = document.createElement('div');
-                        el.className = "bg-white/5 border border-white/5 p-3 rounded-xl";
+                        el.className = "bg-premiumGray border border-premiumBorder p-3.5 rounded-2xl transition-all duration-300 hover:bg-white hover:border-gray-300";
                         el.innerHTML = `
-                            <span class="font-bold text-sm text-blue-400">${comment.userName || 'User'}</span>
-                            <p class="text-sm text-gray-200 mt-1">${comment.text}</p>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-xs text-premiumBlack">${comment.userName || 'User'}</span>
+                            </div>
+                            <p class="text-xs text-gray-700 leading-normal">${comment.text}</p>
                         `;
                         list.appendChild(el);
                     });
-                    // Scroll to bottom
                     list.scrollTop = list.scrollHeight;
                 } else {
-                    list.innerHTML = '<p class="text-sm text-gray-500 text-center">No comments yet.</p>';
+                    list.innerHTML = '<p class="text-xs text-gray-400 text-center py-6 font-medium">Comments stream currently empty.</p>';
                 }
             });
         }
 
-        // Likes Logic
+        // Likes Tracking Node Matrix
         const likeBtn = document.getElementById('likeBtn');
         likeBtn.onclick = () => {
-            if(!currentUser) return alert("Sign in to like videos.");
+            if(!currentUser) return alert("Sign-in credential token validation failed.");
             const likeRef = ref(db, `likes/${currentPlayingVideoId}/${currentUser.uid}`);
-            set(likeRef, true); // Overwrites to true
+            set(likeRef, true);
         };
 
         function listenToLikes(videoId) {
@@ -363,9 +459,7 @@
             });
         }
 
-        // Initialize App
         window.onload = () => loadFeed();
-
     </script>
 </body>
 </html>
