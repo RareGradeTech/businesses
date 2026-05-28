@@ -332,6 +332,130 @@
         }
         .empty-state-icon svg { width: 32px; height: 32px; color: #9ca3af; }
 
+        /* ── Fullscreen scrollable experience ── */
+        /* Allow scrolling when in fullscreen mode */
+        :fullscreen,
+        :-webkit-full-screen,
+        :-moz-full-screen,
+        :-ms-fullscreen {
+            overflow-y: auto !important;
+            background: #000 !important;
+        }
+
+        /* Fullscreen container that wraps player + more videos */
+        #fullscreenScrollContainer {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        #fullscreenScrollContainer.active {
+            display: block;
+        }
+        .fs-video-slot {
+            width: 100%;
+            height: 100vh;
+            min-height: 100vh;
+            position: relative;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background: #000;
+        }
+        .fs-video-slot video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+        .fs-overlay {
+            position: relative;
+            z-index: 2;
+            padding: 20px 20px 40px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            color: #fff;
+            pointer-events: none;
+        }
+        .fs-overlay .fs-title {
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+        .fs-overlay .fs-uploader {
+            font-size: 13px;
+            opacity: 0.8;
+            font-weight: 600;
+        }
+        .fs-close-btn {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 10001;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.2s;
+        }
+        .fs-close-btn:hover { background: rgba(255,255,255,0.28); }
+        .fs-scroll-hint {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10001;
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            animation: fadeHint 3s ease 1.5s forwards;
+            pointer-events: none;
+        }
+        @keyframes fadeHint { 0%{opacity:1} 80%{opacity:1} 100%{opacity:0} }
+        .fs-scroll-hint svg { animation: bounceDown 1s ease infinite; }
+        @keyframes bounceDown { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
+
+        /* ── Autoplay muted badge ── */
+        #autoplayBadge {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 7px 16px;
+            border-radius: 999px;
+            z-index: 200;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(6px);
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        #autoplayBadge.show { display: flex; }
+
         /* ── Responsive tweaks ── */
         @media (max-width: 640px) {
             .tab-card { padding: 14px; border-radius: 16px; }
@@ -347,6 +471,24 @@
     </style>
 </head>
 <body class="bg-premiumWhite text-premiumBlack min-h-screen font-sans overflow-x-hidden antialiased">
+
+<!-- ══════════════════════ FULLSCREEN SCROLL PLAYER ══════════════════════ -->
+<div id="fullscreenScrollContainer">
+    <button class="fs-close-btn" id="fsCloseBtn" onclick="closeFullscreenScroll()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="fs-scroll-hint" id="fsScrollHint">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        SCROLL FOR MORE
+    </div>
+    <div id="fsSlots"></div>
+</div>
+
+<!-- ══════════════════════ AUTOPLAY MUTED BADGE ══════════════════════ -->
+<div id="autoplayBadge" onclick="unmuteAutoplay()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+    Tap to unmute
+</div>
 
 <!-- ══════════════════════ TOAST CONTAINER ══════════════════════ -->
 <div id="toastContainer"></div>
@@ -513,8 +655,13 @@
         <div id="playerView" class="app-view view-hidden-right">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
                 <div class="xl:col-span-2 space-y-5">
-                    <div class="player-wrapper">
+                    <div class="player-wrapper" style="position:relative;">
                         <video id="mainPlayer" controls playsinline preload="metadata"></video>
+                        <button onclick="openFullscreenScroll()" title="Fullscreen scroll view"
+                            style="position:absolute;top:10px;right:10px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:background 0.2s;"
+                            onmouseover="this.style.background='rgba(0,0,0,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.55)'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                        </button>
                     </div>
 
                     <div>
@@ -1128,6 +1275,7 @@
     }
 
     // ── Load feed from Firebase ──
+    let _autoplayDone = false;
     function loadFeed() {
         showSkeletons(8);
         buildCategoryBar();
@@ -1139,6 +1287,11 @@
                 allVideos.reverse();
             }
             renderFeed();
+            // Autoplay first video on first load
+            if (!_autoplayDone && allVideos.length > 0) {
+                _autoplayDone = true;
+                setTimeout(autoplayFirstVideo, 600);
+            }
         });
     }
 
@@ -1478,6 +1631,153 @@
             refreshIcons();
         }
     });
+
+    // ════════════════════════════════════
+    // FULLSCREEN SCROLL PLAYER
+    // ════════════════════════════════════
+    let fsActiveVideoEls = [];
+    let fsIntersectionObserver = null;
+
+    window.openFullscreenScroll = () => {
+        const container = document.getElementById('fullscreenScrollContainer');
+        const slotsDiv = document.getElementById('fsSlots');
+        slotsDiv.innerHTML = '';
+        fsActiveVideoEls = [];
+
+        // Build list: current video first, then the rest
+        const currentIdx = allVideos.findIndex(v => v.id === currentPlayingVideoId);
+        const ordered = currentIdx >= 0
+            ? [...allVideos.slice(currentIdx), ...allVideos.slice(0, currentIdx)]
+            : [...allVideos];
+
+        ordered.forEach((v, i) => {
+            const slot = document.createElement('div');
+            slot.className = 'fs-video-slot';
+            slot.dataset.videoId = v.id;
+
+            const vid = document.createElement('video');
+            vid.setAttribute('playsinline', '');
+            vid.setAttribute('preload', i === 0 ? 'auto' : 'none');
+            vid.src = v.videoUrl;
+            vid.loop = false;
+            vid.muted = false;
+            if (i === 0) {
+                const mainPlayer = document.getElementById('mainPlayer');
+                vid.currentTime = mainPlayer.currentTime || 0;
+            }
+
+            const overlay = document.createElement('div');
+            overlay.className = 'fs-overlay';
+            overlay.innerHTML = `<div class="fs-title">${v.title}</div><div class="fs-uploader">${v.uploaderName || 'Verified User'}</div>`;
+
+            slot.appendChild(vid);
+            slot.appendChild(overlay);
+            slotsDiv.appendChild(slot);
+            fsActiveVideoEls.push({ slot, vid, videoData: v });
+        });
+
+        container.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // Pause the main player
+        const mainPlayer = document.getElementById('mainPlayer');
+        mainPlayer.pause();
+
+        // Play first slot
+        if (fsActiveVideoEls.length > 0) {
+            fsActiveVideoEls[0].vid.play().catch(() => {});
+        }
+
+        // Observe intersection to auto-play/pause on scroll
+        if (fsIntersectionObserver) fsIntersectionObserver.disconnect();
+        fsIntersectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const slotEl = entry.target;
+                const match = fsActiveVideoEls.find(f => f.slot === slotEl);
+                if (!match) return;
+                if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+                    // Pause all others
+                    fsActiveVideoEls.forEach(f => { if (f.slot !== slotEl) f.vid.pause(); });
+                    match.vid.play().catch(() => {});
+                    // Update main player data so back-navigation works
+                    currentPlayingVideoId = match.videoData.id;
+                } else {
+                    match.vid.pause();
+                }
+            });
+        }, { threshold: 0.6 });
+
+        fsActiveVideoEls.forEach(f => fsIntersectionObserver.observe(f.slot));
+
+        setTimeout(refreshIcons, 100);
+    };
+
+    window.closeFullscreenScroll = () => {
+        const container = document.getElementById('fullscreenScrollContainer');
+        container.classList.remove('active');
+        document.body.style.overflow = '';
+
+        if (fsIntersectionObserver) { fsIntersectionObserver.disconnect(); fsIntersectionObserver = null; }
+
+        // Resume main player with the last viewed video
+        const currentVideoData = allVideos.find(v => v.id === currentPlayingVideoId);
+        if (currentVideoData) {
+            const mainPlayer = document.getElementById('mainPlayer');
+            const activeFs = fsActiveVideoEls.find(f => f.videoData.id === currentPlayingVideoId);
+            if (activeFs) {
+                mainPlayer.src = currentVideoData.videoUrl;
+                mainPlayer.currentTime = activeFs.vid.currentTime || 0;
+                mainPlayer.play().catch(() => {});
+            }
+            document.getElementById('playerTitle').textContent = currentVideoData.title;
+            document.getElementById('playerUploader').textContent = currentVideoData.uploaderName || 'Verified User';
+            document.getElementById('playerDesc').textContent = currentVideoData.description || 'No description provided.';
+        }
+
+        // Clear slots to free memory
+        setTimeout(() => {
+            fsActiveVideoEls.forEach(f => { f.vid.pause(); f.vid.src = ''; });
+            fsActiveVideoEls = [];
+            document.getElementById('fsSlots').innerHTML = '';
+        }, 300);
+    };
+
+    // ── Keyboard ESC closes fullscreen scroll ──
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && document.getElementById('fullscreenScrollContainer').classList.contains('active')) {
+            closeFullscreenScroll();
+        }
+    });
+
+    // ════════════════════════════════════
+    // AUTOPLAY ON APP LOAD
+    // ════════════════════════════════════
+    function autoplayFirstVideo() {
+        if (allVideos.length === 0) return;
+        const first = allVideos[0];
+        currentPlayingVideoId = first.id;
+
+        // Show the feed (stay on feed) but autoplay in background using a floating mini preview
+        // Actually: open player view silently
+        window.playVideo(first.id, first);
+
+        // Try muted autoplay; if successful show unmute badge
+        const player = document.getElementById('mainPlayer');
+        player.muted = true;
+        player.play().then(() => {
+            const badge = document.getElementById('autoplayBadge');
+            badge.classList.add('show');
+            setTimeout(() => badge.classList.remove('show'), 5000);
+        }).catch(() => {
+            player.muted = false;
+        });
+    }
+
+    window.unmuteAutoplay = () => {
+        const player = document.getElementById('mainPlayer');
+        player.muted = false;
+        document.getElementById('autoplayBadge').classList.remove('show');
+    };
 
     // ── Play video ──
     window.playVideo = (videoId, data) => {
