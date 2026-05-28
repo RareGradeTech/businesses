@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VISION - Premium Video Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -18,448 +22,1003 @@
                     boxShadow: {
                         'premium': '0 4px 30px rgba(0, 0, 0, 0.03)',
                         'hover-card': '0 20px 40px rgba(0, 0, 0, 0.08)',
-                        'pill-shadow': '0 2px 10px rgba(0, 0, 0, 0.05)'
+                        'pill-shadow': '0 2px 10px rgba(0, 0, 0, 0.05)',
+                        'sheet': '0 -8px 40px rgba(0,0,0,0.12)'
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif']
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Smooth Custom Scrollbar */
+        /* ── Scrollbar ── */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #ffffff; }
         ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
 
-        /* View Slide/Swipe Transitions */
-        .view-container {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
+        /* ── View transitions ── */
+        .view-container { position: relative; width: 100%; overflow: hidden; }
+        .app-view { transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease; width: 100%; }
+        .view-hidden-left  { transform: translateX(-100%); opacity: 0; position: absolute; pointer-events: none; top: 0; left: 0; }
+        .view-hidden-right { transform: translateX(100%);  opacity: 0; position: absolute; pointer-events: none; top: 0; left: 0; }
+        .view-active       { transform: translateX(0);     opacity: 1; position: relative; }
+
+        /* ── Shimmer skeleton ── */
+        @keyframes shimmer {
+            0%   { background-position: -800px 0; }
+            100% { background-position: 800px 0; }
         }
-        .app-view {
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
-            width: 100%;
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 800px 100%;
+            animation: shimmer 1.6s infinite linear;
+            border-radius: 8px;
         }
-        .view-hidden-left {
-            transform: translateX(-100%);
-            opacity: 0;
-            position: absolute;
-            pointer-events: none;
+        .skeleton-card { display: flex; flex-direction: column; gap: 10px; }
+        .skeleton-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 16px; }
+        .skeleton-row   { height: 13px; border-radius: 6px; }
+        .skeleton-row.w-3-4 { width: 75%; }
+        .skeleton-row.w-1-2 { width: 50%; }
+
+        /* ── Category pills ── */
+        .pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+            border: 1.5px solid #e5e7eb; background: #fff; color: #555;
+            cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+            user-select: none;
         }
-        .view-hidden-right {
-            transform: translateX(100%);
-            opacity: 0;
-            position: absolute;
-            pointer-events: none;
+        .pill:hover { background: #f8f9fa; border-color: #d1d5db; color: #111; transform: translateY(-1px); }
+        .pill.active { background: #000; border-color: #000; color: #fff; }
+        .pill svg { width: 14px; height: 14px; }
+
+        /* ── Upload progress bar ── */
+        #uploadProgressWrap {
+            height: 6px; background: #f0f0f0; border-radius: 999px; overflow: hidden;
+            margin-top: 12px; display: none;
         }
-        .view-active {
-            transform: translateX(0);
-            opacity: 1;
-            position: relative;
+        #uploadProgressBar {
+            height: 100%; background: #000; border-radius: 999px; width: 0%;
+            transition: width 0.3s ease;
         }
+
+        /* ── Success Modal ── */
+        #successModal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+            animation: fadeIn 0.25s ease;
+        }
+        #successModal.open { display: flex; }
+        .modal-card {
+            background: #fff; border-radius: 24px; padding: 40px 36px;
+            text-align: center; max-width: 360px; width: 90%;
+            animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+        }
+        .modal-check {
+            width: 64px; height: 64px; background: #000; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; animation: popIn 0.4s 0.15s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+
+        /* ── Bottom Sheet (mobile) ── */
+        #bottomSheet {
+            position: fixed; inset: 0; z-index: 9000; display: none;
+        }
+        #bottomSheet.open { display: block; }
+        #bottomSheetOverlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+            animation: fadeIn 0.2s ease;
+        }
+        #bottomSheetPanel {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: #fff; border-radius: 24px 24px 0 0;
+            padding: 16px 20px 32px;
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
+            animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .sheet-handle {
+            width: 40px; height: 4px; background: #e5e7eb; border-radius: 999px;
+            margin: 0 auto 16px;
+        }
+        .sheet-action {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 8px; border-radius: 14px; cursor: pointer;
+            font-weight: 600; font-size: 14px; transition: background 0.15s;
+        }
+        .sheet-action:hover { background: #f8f9fa; }
+        .sheet-action svg { width: 20px; height: 20px; color: #555; }
+
+        /* ── Video player fix ── */
+        #mainPlayer {
+            width: 100%; height: 100%;
+            display: block;
+            background: #000;
+            object-fit: contain;
+        }
+        .player-wrapper {
+            position: relative; background: #000;
+            border-radius: 18px; overflow: hidden;
+            width: 100%; aspect-ratio: 16/9;
+        }
+
+        /* ── Feed card – fixed size ── */
+        .video-card {
+            display: flex; flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.2s ease;
+        }
+        .video-card:hover { transform: translateY(-3px); }
+        .video-card:hover .card-thumb { box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .card-thumb {
+            width: 100%; aspect-ratio: 16/9; overflow: hidden;
+            background: #f0f0f0; border-radius: 16px;
+            border: 1px solid #e5e7eb; margin-bottom: 10px;
+            transition: box-shadow 0.3s ease;
+        }
+        .card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+        .video-card:hover .card-thumb img { transform: scale(1.04); }
+
+        /* ── Animations ── */
+        @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleIn  { from { transform: scale(0.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes popIn    { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes slideUp  { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes slideIn  { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .stagger-in { animation: slideIn 0.4s ease both; }
+        .stagger-in:nth-child(1) { animation-delay: 0s; }
+        .stagger-in:nth-child(2) { animation-delay: 0.06s; }
+        .stagger-in:nth-child(3) { animation-delay: 0.12s; }
+        .stagger-in:nth-child(4) { animation-delay: 0.18s; }
+        .stagger-in:nth-child(5) { animation-delay: 0.24s; }
+        .stagger-in:nth-child(6) { animation-delay: 0.30s; }
+        .stagger-in:nth-child(7) { animation-delay: 0.36s; }
+        .stagger-in:nth-child(8) { animation-delay: 0.42s; }
+
+        /* ── Sidebar nav active ── */
+        .nav-btn.active { background: #f3f4f6; font-weight: 700; color: #000; }
+        .nav-btn { transition: background 0.15s; }
+
+        /* ── Mobile bottom nav ── */
+        #mobileNav {
+            display: none;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+            border-top: 1px solid #e5e7eb; padding: 8px 0 env(safe-area-inset-bottom, 8px);
+            z-index: 50;
+        }
+        @media (max-width: 1023px) {
+            #mobileNav { display: flex; }
+            body { padding-bottom: 64px; }
+        }
+        .mob-nav-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 3px; padding: 6px; cursor: pointer; color: #999; transition: color 0.2s;
+            font-size: 10px; font-weight: 600; letter-spacing: 0.02em;
+            background: none; border: none;
+        }
+        .mob-nav-btn.active { color: #000; }
+        .mob-nav-btn svg { width: 22px; height: 22px; }
+
+        /* ── Category bar ── */
+        #categoryBar {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+            scrollbar-width: none; -ms-overflow-style: none;
+            margin-bottom: 20px;
+        }
+        #categoryBar::-webkit-scrollbar { display: none; }
+
+        /* ── Comment card ── */
+        .comment-item { animation: slideIn 0.3s ease both; }
+
+        /* ── Like btn animation ── */
+        #likeBtn.liked { background: #000; color: #fff; border-color: #000; }
+        #likeBtn.liked svg { fill: #fff; }
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.25); }
+            60% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        .like-pop { animation: heartBeat 0.4s ease; }
+
+        /* subscribe btn */
+        #subscribeBtn { transition: all 0.2s ease; }
+        #subscribeBtn.subscribed { background: #f3f4f6; color: #555; border-color: #e5e7eb; }
+
+        /* Search input focus ring */
+        .search-wrap input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,0.08); }
     </style>
 </head>
 <body class="bg-premiumWhite text-premiumBlack min-h-screen font-sans overflow-x-hidden antialiased">
 
-    <nav class="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-premiumBorder flex items-center justify-between px-6 z-50 transition-all duration-300">
-        <div class="flex items-center gap-4">
-            <button class="p-2 hover:bg-premiumGray rounded-full transition-colors duration-200 lg:hidden" onclick="toggleSidebar()">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
-            <div class="text-xl font-black tracking-tighter cursor-pointer flex items-center gap-1" onclick="showView('feedView')">
-                <span class="bg-premiumBlack text-white px-2.5 py-0.5 rounded-lg text-base font-black">V</span>
-                VISION
-            </div>
+<!-- ══════════════════════ NAVBAR ══════════════════════ -->
+<nav class="fixed top-0 left-0 right-0 h-16 bg-white/85 backdrop-blur-md border-b border-premiumBorder flex items-center justify-between px-4 md:px-6 z-50">
+    <div class="flex items-center gap-3">
+        <button class="p-2 hover:bg-premiumGray rounded-full transition-colors lg:hidden" onclick="toggleSidebar()">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div class="text-xl font-black tracking-tighter cursor-pointer flex items-center gap-1" onclick="showView('feedView')">
+            <span class="bg-premiumBlack text-white px-2.5 py-0.5 rounded-lg text-base font-black">V</span>
+            VISION
         </div>
-        
-        <div class="hidden md:flex w-1/3 max-w-xl">
-            <div class="relative w-full flex items-center">
-                <input type="text" placeholder="Search premium content..." class="w-full bg-premiumGray border border-premiumBorder rounded-full pl-5 pr-12 py-2 text-sm text-premiumBlack placeholder-gray-400 focus:outline-none focus:bg-white focus:border-premiumBlack focus:shadow-pill-shadow transition-all duration-300">
-                <button class="absolute right-1 p-1.5 bg-premiumBlack text-white rounded-full hover:bg-gray-800 transition-colors duration-200">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </button>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button onclick="showView('uploadView')" class="px-5 py-2 rounded-full border border-premiumBorder text-sm font-medium hover:bg-premiumGray transition-all duration-300 hover:scale-105 active:scale-95">
-                Upload
-            </button>
-            <button id="authBtn" class="px-5 py-2 rounded-full bg-premiumBlack text-white text-sm font-medium hover:bg-gray-800 transition-all duration-300 hover:shadow-pill-shadow hover:scale-105 active:scale-95">
-                Sign In
-            </button>
-        </div>
-    </nav>
-
-    <div class="pt-16 flex min-h-screen">
-        
-        <aside id="sidebar" class="fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-premiumBorder p-4 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40">
-            <div class="space-y-1">
-                <button onclick="showView('feedView')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 hover:bg-premiumGray group">
-                    <svg class="w-5 h-5 text-gray-500 group-hover:text-premiumBlack transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    Home Feed
-                </button>
-                <button onclick="showView('uploadView')" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 hover:bg-premiumGray group">
-                    <svg class="w-5 h-5 text-gray-500 group-hover:text-premiumBlack transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Upload Video
-                </button>
-            </div>
-            <hr class="my-4 border-premiumBorder">
-            <div class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Subscribed Channels</div>
-            <div class="mt-2 px-4 text-sm text-gray-500 italic">Sign in to view subscriptions</div>
-        </aside>
-
-        <main class="flex-1 lg:pl-64 min-h-screen bg-premiumWhite transition-all duration-300">
-            <div class="p-6 md:p-8 max-w-[1600px] mx-auto view-container">
-
-                <div id="feedView" class="app-view view-active grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-6 gap-y-10">
-                    <div id="loadingFeed" class="col-span-full text-center text-gray-400 py-20 font-medium">Assembling your custom feed...</div>
-                </div>
-
-                <div id="uploadView" class="app-view view-hidden-right max-w-xl mx-auto">
-                    <div class="bg-white border border-premiumBorder rounded-3xl p-8 shadow-premium">
-                        <h2 class="text-2xl font-black tracking-tight mb-2">Upload Content</h2>
-                        <p class="text-sm text-gray-500 mb-6">Publish pristine video directly to the platform global feed.</p>
-                        
-                        <form id="uploadForm" class="space-y-5">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Video Title</label>
-                                <input type="text" id="videoTitle" required class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Description</label>
-                                <textarea id="videoDesc" rows="3" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all"></textarea>
-                            </div>
-                            <div class="relative border border-dashed border-gray-300 rounded-2xl p-8 text-center hover:bg-premiumGray transition-colors duration-200 group cursor-pointer">
-                                <input type="file" id="videoFile" accept="video/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                <div class="text-gray-400">
-                                    <svg class="w-10 h-10 mx-auto mb-2 text-gray-300 group-hover:text-premiumBlack transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                    <p id="fileNameDisplay" class="text-sm font-medium text-gray-600 transition-colors group-hover:text-premiumBlack">Choose a high-res video asset</p>
-                                </div>
-                            </div>
-                            <button type="submit" id="uploadBtn" class="w-full py-3.5 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-900 transition-all duration-300 active:scale-95 shadow-pill-shadow">
-                                Deploy to Network
-                            </button>
-                            <div id="uploadStatus" class="text-center text-xs font-semibold hidden text-gray-600 animate-pulse">Uploading asset binaries to Cloudinary...</div>
-                        </form>
-                    </div>
-                </div>
-
-                <div id="playerView" class="app-view view-hidden-right">
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                        <div class="xl:col-span-2 space-y-6">
-                            <div class="bg-premiumBlack rounded-2xl overflow-hidden shadow-hover-card border border-premiumBorder aspect-video">
-                                <video id="mainPlayer" controls class="w-full h-full object-contain"></video>
-                            </div>
-                            <div class="bg-white p-2">
-                                <h1 id="playerTitle" class="text-2xl md:text-3xl font-black tracking-tight mb-3">Video Title</h1>
-                                <div class="flex flex-wrap justify-between items-center gap-4 border-b border-premiumBorder pb-5 mb-5">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-premiumBlack flex items-center justify-center text-white font-bold text-sm">V</div>
-                                        <div>
-                                            <div id="playerUploader" class="font-bold text-sm">Uploader Profile</div>
-                                            <div class="text-xs text-gray-400">Verified Publisher</div>
-                                        </div>
-                                    </div>
-                                    <button id="likeBtn" class="px-6 py-2.5 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all duration-200 flex items-center gap-2 font-semibold text-sm active:scale-95">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 00.458 1.27l1.791 2.15a1 1 0 001.524-.103l2.842-4.263a2 2 0 00.325-.992V10.5a1.5 1.5 0 00-1.5-1.5H10.15l.422-1.9a1.5 1.5 0 00-1.472-1.826H7.132a2 2 0 00-1.92 1.413L4.17 8.358A2 2 0 006 10.333z"></path></svg>
-                                        <span id="likeCount">0</span>
-                                    </button>
-                                </div>
-                                <div class="bg-premiumGray p-4 rounded-2xl border border-premiumBorder">
-                                    <div class="text-xs font-bold text-gray-400 mb-1">METADATA MANIFEST</div>
-                                    <p id="playerDesc" class="text-sm text-gray-700 leading-relaxed"></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white border border-premiumBorder rounded-2xl p-5 h-[calc(100vh-12rem)] min-h-[500px] flex flex-col shadow-premium">
-                            <h3 class="text-lg font-black tracking-tight mb-4 flex items-center gap-2">
-                                Response Module
-                            </h3>
-                            <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 mb-4 pr-1">
-                                </div>
-                            <form id="commentForm" class="mt-auto flex gap-2 pt-3 border-t border-premiumBorder">
-                                <input type="text" id="commentInput" placeholder="Add a public comment..." required class="flex-1 bg-premiumGray border border-premiumBorder rounded-full px-4 py-2.5 text-sm text-premiumBlack placeholder-gray-400 focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
-                                <button type="submit" class="p-2.5 rounded-full bg-premiumBlack text-white hover:bg-gray-800 transition-colors duration-200 shadow-pill-shadow">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getDatabase, ref, push, set, onValue, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    <div class="hidden md:flex w-1/3 max-w-xl search-wrap">
+        <div class="relative w-full flex items-center">
+            <input type="text" id="searchInput" placeholder="Search videos..." class="w-full bg-premiumGray border border-premiumBorder rounded-full pl-5 pr-12 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:bg-white focus:border-premiumBlack transition-all duration-300" oninput="filterFeed(this.value)">
+            <button class="absolute right-1 p-1.5 bg-premiumBlack text-white rounded-full hover:bg-gray-800 transition-colors">
+                <i data-lucide="search" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCh7Ute6LeSAxcNDEQwZg5m0cA4ujnLCfg",
-            authDomain: "test-17881.firebaseapp.com",
-            projectId: "test-17881",
-            storageBucket: "test-17881.firebasestorage.app",
-            messagingSenderId: "1057428047643",
-            appId: "1:1057428047643:web:f3801c0d933225a5cd35be"
-        };
+    <div class="flex items-center gap-2">
+        <button onclick="showView('uploadView')" class="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full border border-premiumBorder text-sm font-semibold hover:bg-premiumGray transition-all hover:scale-105 active:scale-95">
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+            Upload
+        </button>
+        <button id="notifBtn" class="relative p-2 hover:bg-premiumGray rounded-full transition-colors">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <button id="authBtn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-premiumBlack text-white text-sm font-semibold hover:bg-gray-800 transition-all hover:shadow-pill-shadow hover:scale-105 active:scale-95">
+            <i data-lucide="user" class="w-4 h-4"></i>
+            <span id="authBtnText">Sign In</span>
+        </button>
+    </div>
+</nav>
 
-        const CLOUDINARY_CLOUD = 'dqkujefxj'; 
-        const CLOUDINARY_PRESET = 'banter_box';
+<!-- ══════════════════════ SIDEBAR ══════════════════════ -->
+<aside id="sidebar" class="fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-premiumBorder p-4 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 overflow-y-auto">
+    <div class="space-y-1">
+        <button onclick="showView('feedView')" id="nav-feedView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="home" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Home Feed
+        </button>
+        <button onclick="showView('uploadView')" id="nav-uploadView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="upload-cloud" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Upload Video
+        </button>
+        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="compass" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Explore
+        </button>
+        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="bookmark" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Saved
+        </button>
+        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="history" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Watch History
+        </button>
+        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="trending-up" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Trending
+        </button>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        
-        let currentUser = null;
-        let currentPlayingVideoId = null;
-        let activeViewId = 'feedView';
+    <hr class="my-4 border-premiumBorder">
+    <div class="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Subscriptions</div>
+    <div id="sidebarSubs" class="text-sm text-gray-400 italic px-4">Sign in to view subscriptions</div>
 
-        // High-Fidelity Swiping Router
-        window.showView = (viewId) => {
-            if (viewId === activeViewId) return;
+    <hr class="my-4 border-premiumBorder">
+    <div class="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Explore More</div>
+    <div class="space-y-1">
+        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="settings" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Settings
+        </button>
+        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+            <i data-lucide="help-circle" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
+            Help & Feedback
+        </button>
+    </div>
+</aside>
 
-            const views = ['feedView', 'uploadView', 'playerView'];
-            const currentIndex = views.indexOf(activeViewId);
-            const targetIndex = views.indexOf(viewId);
+<!-- ══════════════════════ MAIN ══════════════════════ -->
+<main class="flex-1 lg:pl-64 min-h-screen bg-premiumWhite transition-all duration-300 pt-16">
+    <div class="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto view-container">
 
-            views.forEach(id => {
-                const el = document.getElementById(id);
-                if (id === viewId) {
-                    el.className = "app-view view-active";
-                } else {
-                    const baseClass = "app-view ";
-                    if (views.indexOf(id) < targetIndex) {
-                        el.className = baseClass + "view-hidden-left";
-                    } else {
-                        el.className = baseClass + "view-hidden-right";
-                    }
-                }
-            });
+        <!-- ── FEED VIEW ── -->
+        <div id="feedView" class="app-view view-active">
+            <!-- Category pills -->
+            <div id="categoryBar"></div>
+            <!-- Grid -->
+            <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8"></div>
+        </div>
 
-            activeViewId = viewId;
-            if(viewId === 'feedView') loadFeed();
-            if(viewId !== 'playerView') document.getElementById('mainPlayer').pause();
-            
-            // Auto close mobile drawer sidebar on route change
-            if(window.innerWidth < 1024) {
-                document.getElementById('sidebar').classList.add('-translate-x-full');
-            }
-        };
+        <!-- ── UPLOAD VIEW ── -->
+        <div id="uploadView" class="app-view view-hidden-right max-w-xl mx-auto">
+            <div class="bg-white border border-premiumBorder rounded-3xl p-8 shadow-premium">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-2xl bg-premiumBlack flex items-center justify-center">
+                        <i data-lucide="upload-cloud" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black tracking-tight">Upload Content</h2>
+                        <p class="text-sm text-gray-400">Publish pristine video to the platform.</p>
+                    </div>
+                </div>
 
-        // Sidebar responsive switch
-        window.toggleSidebar = () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
-        };
+                <form id="uploadForm" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Video Title *</label>
+                        <input type="text" id="videoTitle" required placeholder="Enter a captivating title..." class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Category</label>
+                        <select id="videoCategory" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack transition-all">
+                            <option value="All">All</option>
+                            <option value="Music">Music</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Tech">Tech</option>
+                            <option value="Education">Education</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Food">Food</option>
+                            <option value="Lifestyle">Lifestyle</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="News">News</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Description</label>
+                        <textarea id="videoDesc" rows="3" placeholder="What's this video about?" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all resize-none"></textarea>
+                    </div>
+                    <div class="relative border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:bg-premiumGray hover:border-gray-300 transition-all group cursor-pointer" id="dropZone">
+                        <input type="file" id="videoFile" accept="video/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <i data-lucide="film" class="w-10 h-10 mx-auto mb-3 text-gray-300 group-hover:text-premiumBlack transition-colors"></i>
+                        <p id="fileNameDisplay" class="text-sm font-semibold text-gray-500 group-hover:text-premiumBlack transition-colors">Drop your video here or click to browse</p>
+                        <p class="text-xs text-gray-400 mt-1">MP4, MOV, AVI up to 500MB</p>
+                    </div>
 
-        // Authentication Pipeline
-        const authBtn = document.getElementById('authBtn');
-        authBtn.addEventListener('click', () => {
-            if (currentUser) {
-                signOut(auth);
-            } else {
-                signInWithPopup(auth, new GoogleAuthProvider());
+                    <!-- Upload Progress -->
+                    <div id="uploadProgressWrap">
+                        <div class="flex justify-between text-xs font-semibold text-gray-400 mb-1.5">
+                            <span>Uploading to cloud...</span>
+                            <span id="uploadPct">0%</span>
+                        </div>
+                        <div id="uploadProgressBar"></div>
+                    </div>
+
+                    <button type="submit" id="uploadBtn" class="w-full py-3.5 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-900 transition-all active:scale-95 shadow-pill-shadow flex items-center justify-center gap-2">
+                        <i data-lucide="rocket" class="w-4 h-4"></i>
+                        Deploy to Network
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ── PLAYER VIEW ── -->
+        <div id="playerView" class="app-view view-hidden-right">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
+                <!-- Video + info -->
+                <div class="xl:col-span-2 space-y-5">
+                    <!-- ✅ FIXED: aspect-ratio container with proper video sizing -->
+                    <div class="player-wrapper">
+                        <video id="mainPlayer" controls playsinline preload="metadata"></video>
+                    </div>
+
+                    <div>
+                        <h1 id="playerTitle" class="text-xl md:text-2xl lg:text-3xl font-black tracking-tight mb-3">Video Title</h1>
+                        <div class="flex flex-wrap justify-between items-center gap-3 border-b border-premiumBorder pb-4 mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-premiumBlack flex items-center justify-center text-white font-bold text-sm flex-shrink-0">V</div>
+                                <div>
+                                    <div id="playerUploader" class="font-bold text-sm">Uploader</div>
+                                    <div class="text-xs text-gray-400">Verified Publisher</div>
+                                </div>
+                                <button id="subscribeBtn" onclick="toggleSubscribe()" class="ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95">
+                                    Subscribe
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="likeBtn" onclick="handleLike()" class="px-5 py-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all flex items-center gap-2 font-semibold text-sm active:scale-95">
+                                    <i data-lucide="thumbs-up" class="w-4 h-4"></i>
+                                    <span id="likeCount">0</span>
+                                </button>
+                                <button onclick="handleShare()" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95">
+                                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="handleSave()" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95">
+                                    <i data-lucide="bookmark" class="w-4 h-4"></i>
+                                </button>
+                                <!-- Mobile more-actions → bottom sheet -->
+                                <button onclick="openBottomSheet('videoActions')" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95 lg:hidden">
+                                    <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="bg-premiumGray p-4 rounded-2xl border border-premiumBorder">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-gray-400"></i>
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Description</span>
+                            </div>
+                            <p id="playerDesc" class="text-sm text-gray-700 leading-relaxed">No description provided.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments panel -->
+                <div class="bg-white border border-premiumBorder rounded-2xl p-5 flex flex-col shadow-premium" style="height: calc(100vh - 10rem); min-height: 500px;">
+                    <h3 class="text-base font-black tracking-tight mb-4 flex items-center gap-2">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                        Comments
+                        <span id="commentCount" class="ml-auto text-xs font-semibold text-gray-400 bg-premiumGray px-2.5 py-1 rounded-full">0</span>
+                    </h3>
+                    <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 mb-4 pr-1"></div>
+                    <form id="commentForm" class="mt-auto flex gap-2 pt-3 border-t border-premiumBorder">
+                        <input type="text" id="commentInput" placeholder="Add a comment..." required class="flex-1 bg-premiumGray border border-premiumBorder rounded-full px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
+                        <button type="submit" class="p-2.5 rounded-full bg-premiumBlack text-white hover:bg-gray-800 transition-colors">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end view-container -->
+</main>
+
+<!-- ══════════════════════ MOBILE BOTTOM NAV ══════════════════════ -->
+<nav id="mobileNav">
+    <button class="mob-nav-btn active" id="mob-feedView" onclick="showView('feedView')">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        Home
+    </button>
+    <button class="mob-nav-btn" onclick="window.openMobileSearch()">
+        <i data-lucide="search" class="w-5 h-5"></i>
+        Search
+    </button>
+    <button class="mob-nav-btn" id="mob-uploadView" onclick="showView('uploadView')">
+        <div class="w-9 h-9 bg-premiumBlack rounded-full flex items-center justify-center -mt-3">
+            <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+        </div>
+    </button>
+    <button class="mob-nav-btn">
+        <i data-lucide="bookmark" class="w-5 h-5"></i>
+        Saved
+    </button>
+    <button class="mob-nav-btn" id="mob-authBtn" onclick="document.getElementById('authBtn').click()">
+        <i data-lucide="user" class="w-5 h-5"></i>
+        Profile
+    </button>
+</nav>
+
+<!-- ══════════════════════ BOTTOM SHEET ══════════════════════ -->
+<div id="bottomSheet">
+    <div id="bottomSheetOverlay" onclick="closeBottomSheet()"></div>
+    <div id="bottomSheetPanel">
+        <div class="sheet-handle"></div>
+        <div id="bottomSheetContent"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════ SUCCESS MODAL ══════════════════════ -->
+<div id="successModal">
+    <div class="modal-card">
+        <div class="modal-check">
+            <i data-lucide="check" class="w-7 h-7 text-white"></i>
+        </div>
+        <h3 class="text-xl font-black tracking-tight mb-2">Video Published!</h3>
+        <p class="text-sm text-gray-500 mb-6">Your content is now live on the VISION network and visible to all viewers.</p>
+        <button onclick="closeSuccessModal()" class="w-full py-3 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-800 transition-all active:scale-95">
+            View Feed
+        </button>
+    </div>
+</div>
+
+<!-- ══════════════════════ MOBILE SEARCH OVERLAY ══════════════════════ -->
+<div id="mobileSearchOverlay" class="fixed inset-0 z-[9999] bg-white p-5 transform translate-y-full transition-transform duration-300 ease-in-out" style="top:0">
+    <div class="flex items-center gap-3 mb-5 pt-2">
+        <button onclick="closeMobileSearch()" class="p-2">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </button>
+        <input type="text" id="mobileSearchInput" placeholder="Search videos..." class="flex-1 bg-premiumGray rounded-full px-5 py-2.5 text-sm focus:outline-none" oninput="filterFeed(this.value)">
+    </div>
+    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Categories</div>
+    <div id="mobileSearchPills" class="flex flex-wrap gap-2"></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getDatabase, ref, push, set, onValue, serverTimestamp, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCh7Ute6LeSAxcNDEQwZg5m0cA4ujnLCfg",
+        authDomain: "test-17881.firebaseapp.com",
+        projectId: "test-17881",
+        storageBucket: "test-17881.firebasestorage.app",
+        messagingSenderId: "1057428047643",
+        appId: "1:1057428047643:web:f3801c0d933225a5cd35be",
+        databaseURL: "https://test-17881-default-rtdb.firebaseio.com"
+    };
+
+    const CLOUDINARY_CLOUD = 'dqkujefxj';
+    const CLOUDINARY_PRESET = 'banter_box';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let currentUser = null;
+    let currentPlayingVideoId = null;
+    let activeViewId = 'feedView';
+    let allVideos = [];
+    let activeCategory = 'All';
+    let subscribedChannels = new Set();
+    let likedVideos = new Set();
+
+    const CATEGORIES = [
+        { label: 'All', icon: 'layout-grid' },
+        { label: 'Music', icon: 'music' },
+        { label: 'Gaming', icon: 'gamepad-2' },
+        { label: 'Tech', icon: 'cpu' },
+        { label: 'Education', icon: 'book-open' },
+        { label: 'Sports', icon: 'trophy' },
+        { label: 'Travel', icon: 'map-pin' },
+        { label: 'Food', icon: 'utensils' },
+        { label: 'Lifestyle', icon: 'heart' },
+        { label: 'Comedy', icon: 'laugh' },
+        { label: 'News', icon: 'newspaper' },
+    ];
+
+    // ── Init icons ──
+    function refreshIcons() { if (window.lucide) window.lucide.createIcons(); }
+    setTimeout(refreshIcons, 50);
+
+    // ── Build category pills ──
+    function buildCategoryBar() {
+        const bar = document.getElementById('categoryBar');
+        const mBar = document.getElementById('mobileSearchPills');
+        if (!bar) return;
+        bar.innerHTML = '';
+        if (mBar) mBar.innerHTML = '';
+
+        CATEGORIES.forEach(cat => {
+            const pill = document.createElement('button');
+            pill.className = 'pill' + (cat.label === activeCategory ? ' active' : '');
+            pill.dataset.category = cat.label;
+            pill.innerHTML = `<i data-lucide="${cat.icon}"></i>${cat.label}`;
+            pill.onclick = () => setCategory(cat.label);
+            bar.appendChild(pill);
+
+            if (mBar) {
+                const p2 = pill.cloneNode(true);
+                p2.onclick = () => { setCategory(cat.label); closeMobileSearch(); };
+                mBar.appendChild(p2);
             }
         });
+        refreshIcons();
+    }
 
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                authBtn.textContent = 'Sign Out';
-                set(ref(db, 'users/' + user.uid), {
-                    displayName: user.displayName,
-                    email: user.email,
-                    photoURL: user.photoURL
+    function setCategory(cat) {
+        activeCategory = cat;
+        document.querySelectorAll('.pill').forEach(p => {
+            p.classList.toggle('active', p.dataset.category === cat);
+        });
+        renderFeed(document.getElementById('searchInput')?.value || '');
+    }
+
+    // ── Render feed ──
+    function renderFeed(searchQuery = '') {
+        const grid = document.getElementById('feedGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        const q = searchQuery.toLowerCase().trim();
+        let filtered = allVideos.filter(v => {
+            const matchCat = activeCategory === 'All' || (v.category || 'All') === activeCategory;
+            const matchSearch = !q || v.title.toLowerCase().includes(q) || (v.uploaderName || '').toLowerCase().includes(q);
+            return matchCat && matchSearch;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-20">
+                <div class="text-5xl mb-3">📭</div>
+                <p class="font-semibold">No videos found</p>
+                <p class="text-sm mt-1">Try a different category or search term</p>
+            </div>`;
+            return;
+        }
+
+        filtered.forEach((v, i) => {
+            const card = document.createElement('div');
+            card.className = 'video-card stagger-in';
+            card.style.animationDelay = `${i * 0.06}s`;
+            card.onclick = () => window.playVideo(v.id, v);
+            card.innerHTML = `
+                <div class="card-thumb">
+                    <img src="${v.thumbnailUrl || 'https://placehold.co/640x360/f0f0f0/999?text=Video'}" alt="${v.title}" loading="lazy" onerror="this.src='https://placehold.co/640x360/f0f0f0/999?text=Video'">
+                </div>
+                <div class="flex gap-3 px-0.5">
+                    <div class="w-9 h-9 rounded-full bg-premiumBlack flex-shrink-0 flex items-center justify-center text-white text-xs font-black mt-0.5">${(v.uploaderName||'V')[0].toUpperCase()}</div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-sm tracking-tight leading-snug line-clamp-2 mb-0.5">${v.title}</h3>
+                        <p class="text-xs text-gray-400 font-medium">${v.uploaderName || 'Verified User'}</p>
+                        ${v.category && v.category !== 'All' ? `<span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-premiumGray text-gray-500">${v.category}</span>` : ''}
+                    </div>
+                </div>`;
+            grid.appendChild(card);
+        });
+        refreshIcons();
+    }
+
+    // ── Skeleton loader ──
+    function showSkeletons(count = 8) {
+        const grid = document.getElementById('feedGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            const sk = document.createElement('div');
+            sk.className = 'skeleton-card';
+            sk.innerHTML = `
+                <div class="skeleton-thumb shimmer"></div>
+                <div class="flex gap-3 mt-2">
+                    <div class="shimmer rounded-full flex-shrink-0" style="width:36px;height:36px;border-radius:50%"></div>
+                    <div class="flex-1 space-y-2 mt-1">
+                        <div class="shimmer skeleton-row"></div>
+                        <div class="shimmer skeleton-row w-3-4"></div>
+                        <div class="shimmer skeleton-row w-1-2"></div>
+                    </div>
+                </div>`;
+            grid.appendChild(sk);
+        }
+    }
+
+    // ── Load feed from Firebase ──
+    function loadFeed() {
+        showSkeletons(8);
+        buildCategoryBar();
+        const videosRef = ref(db, 'videos');
+        onValue(videosRef, snapshot => {
+            allVideos = [];
+            if (snapshot.exists()) {
+                snapshot.forEach(child => {
+                    allVideos.push({ id: child.key, ...child.val() });
                 });
+                allVideos.reverse();
+            }
+            renderFeed();
+        });
+    }
+
+    window.filterFeed = (q) => renderFeed(q);
+
+    // ── View router ──
+    window.showView = (viewId) => {
+        if (viewId === activeViewId) return;
+        const views = ['feedView', 'uploadView', 'playerView'];
+        const targetIndex = views.indexOf(viewId);
+        views.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (id === viewId) {
+                el.className = 'app-view view-active';
             } else {
-                authBtn.textContent = 'Sign In';
+                el.className = 'app-view ' + (views.indexOf(id) < targetIndex ? 'view-hidden-left' : 'view-hidden-right');
             }
         });
+        activeViewId = viewId;
 
-        // Dynamic Native Interactivity UI updates
-        const videoFileInput = document.getElementById('videoFile');
-        videoFileInput.addEventListener('change', (e) => {
-            if(e.target.files.length > 0) {
-                document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
-            }
-        });
+        // Update sidebar active state
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        const navBtn = document.getElementById('nav-' + viewId);
+        if (navBtn) navBtn.classList.add('active');
 
-        // Cloudinary Pipeline & Storage Engine mapping
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return alert("Sign in is required to execute upload queries.");
+        // Update mobile nav
+        document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+        const mobBtn = document.getElementById('mob-' + viewId);
+        if (mobBtn) mobBtn.classList.add('active');
 
-            const file = videoFileInput.files[0];
-            const title = document.getElementById('videoTitle').value;
-            const desc = document.getElementById('videoDesc').value;
-            
-            const submitBtn = document.getElementById('uploadBtn');
-            const statusTxt = document.getElementById('uploadStatus');
-            submitBtn.disabled = true;
-            statusTxt.classList.remove('hidden');
+        if (viewId === 'feedView') loadFeed();
+        if (viewId !== 'playerView') {
+            const p = document.getElementById('mainPlayer');
+            if (p) { p.pause(); p.src = ''; }
+        }
+        if (window.innerWidth < 1024) {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(refreshIcons, 100);
+    };
 
-            try {
+    window.toggleSidebar = () => {
+        document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    };
+
+    // ── Auth ──
+    const authBtn = document.getElementById('authBtn');
+    authBtn.addEventListener('click', () => {
+        currentUser ? signOut(auth) : signInWithPopup(auth, new GoogleAuthProvider());
+    });
+    onAuthStateChanged(auth, user => {
+        currentUser = user;
+        const btnText = document.getElementById('authBtnText');
+        if (user) {
+            btnText.textContent = 'Sign Out';
+            set(ref(db, 'users/' + user.uid), { displayName: user.displayName, email: user.email, photoURL: user.photoURL });
+            document.getElementById('sidebarSubs').innerHTML = `<div class="text-sm font-semibold text-premiumBlack flex items-center gap-2"><span class="w-7 h-7 rounded-full bg-premiumBlack text-white flex items-center justify-center text-xs font-black">${user.displayName[0]}</span>${user.displayName}</div>`;
+        } else {
+            btnText.textContent = 'Sign In';
+            document.getElementById('sidebarSubs').textContent = 'Sign in to view subscriptions';
+        }
+        setTimeout(refreshIcons, 50);
+    });
+
+    // ── File picker ──
+    document.getElementById('videoFile').addEventListener('change', e => {
+        if (e.target.files.length > 0) {
+            document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
+        }
+    });
+
+    // ── Upload with progress ──
+    document.getElementById('uploadForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!currentUser) return alert("Please sign in to upload.");
+
+        const file = document.getElementById('videoFile').files[0];
+        const title = document.getElementById('videoTitle').value;
+        const desc = document.getElementById('videoDesc').value;
+        const category = document.getElementById('videoCategory').value;
+
+        const submitBtn = document.getElementById('uploadBtn');
+        const progressWrap = document.getElementById('uploadProgressWrap');
+        const progressBar = document.getElementById('uploadProgressBar');
+        const pct = document.getElementById('uploadPct');
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i> Uploading...';
+        progressWrap.style.display = 'block';
+        refreshIcons();
+
+        try {
+            // XHR for real progress
+            const cloudData = await new Promise((resolve, reject) => {
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('upload_preset', CLOUDINARY_PRESET);
+                formData.append('resource_type', 'video');
 
-                const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, {
-                    method: 'POST',
-                    body: formData
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+                xhr.upload.addEventListener('progress', ev => {
+                    if (ev.lengthComputable) {
+                        const p = Math.round((ev.loaded / ev.total) * 100);
+                        progressBar.style.width = p + '%';
+                        pct.textContent = p + '%';
+                    }
                 });
-                
-                const cloudData = await uploadRes.json();
-                
-                if(cloudData.secure_url) {
-                    const thumbnailUrl = cloudData.secure_url.replace(/\.[^/.]+$/, ".jpg");
+                xhr.onload = () => {
+                    if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
+                    else reject(new Error('Upload failed'));
+                };
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.send(formData);
+            });
 
-                    const newVideoRef = push(ref(db, 'videos'));
-                    await set(newVideoRef, {
-                        title: title,
-                        description: desc,
-                        videoUrl: cloudData.secure_url,
-                        thumbnailUrl: thumbnailUrl,
-                        uploaderId: currentUser.uid,
-                        uploaderName: currentUser.displayName,
-                        timestamp: serverTimestamp()
-                    });
+            if (cloudData.secure_url) {
+                const thumbUrl = cloudData.secure_url.replace(/\.[^/.]+$/, '.jpg');
+                const newRef = push(ref(db, 'videos'));
+                await set(newRef, {
+                    title, description: desc, category,
+                    videoUrl: cloudData.secure_url,
+                    thumbnailUrl: thumbUrl,
+                    uploaderId: currentUser.uid,
+                    uploaderName: currentUser.displayName,
+                    timestamp: serverTimestamp()
+                });
 
-                    document.getElementById('uploadForm').reset();
-                    document.getElementById('fileNameDisplay').textContent = "Choose a high-res video asset";
-                    window.showView('feedView');
-                } else {
-                    throw new Error("Asset structural parsing failure.");
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Error parsing transaction payload: " + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                statusTxt.classList.add('hidden');
+                document.getElementById('uploadForm').reset();
+                document.getElementById('fileNameDisplay').textContent = 'Drop your video here or click to browse';
+                progressWrap.style.display = 'none';
+                progressBar.style.width = '0%';
+                pct.textContent = '0%';
+                openSuccessModal();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Upload failed: ' + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i data-lucide="rocket" class="w-4 h-4"></i> Deploy to Network';
+            refreshIcons();
+        }
+    });
+
+    // ── Play video ──
+    window.playVideo = (videoId, data) => {
+        currentPlayingVideoId = videoId;
+        const player = document.getElementById('mainPlayer');
+        player.src = data.videoUrl;
+        player.load();
+        player.play().catch(() => {});
+
+        document.getElementById('playerTitle').textContent = data.title;
+        document.getElementById('playerUploader').textContent = data.uploaderName || 'Verified User';
+        document.getElementById('playerDesc').textContent = data.description || 'No description provided.';
+
+        const subBtn = document.getElementById('subscribeBtn');
+        subBtn.textContent = subscribedChannels.has(data.uploaderId) ? 'Subscribed' : 'Subscribe';
+        subBtn.className = subscribedChannels.has(data.uploaderId)
+            ? 'ml-1 px-4 py-1.5 rounded-full bg-premiumGray text-gray-600 text-xs font-bold border border-premiumBorder transition-all active:scale-95 subscribed'
+            : 'ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95';
+
+        window.showView('playerView');
+        listenToComments(videoId);
+        listenToLikes(videoId);
+        setTimeout(refreshIcons, 100);
+    };
+
+    // ── Subscribe ──
+    window.toggleSubscribe = () => {
+        if (!currentUser) return alert('Please sign in to subscribe.');
+        const subBtn = document.getElementById('subscribeBtn');
+        const video = allVideos.find(v => v.id === currentPlayingVideoId);
+        if (!video) return;
+        if (subscribedChannels.has(video.uploaderId)) {
+            subscribedChannels.delete(video.uploaderId);
+            subBtn.textContent = 'Subscribe';
+            subBtn.className = 'ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95';
+        } else {
+            subscribedChannels.add(video.uploaderId);
+            subBtn.textContent = 'Subscribed';
+            subBtn.className = 'ml-1 px-4 py-1.5 rounded-full bg-premiumGray text-gray-600 text-xs font-bold border border-premiumBorder transition-all active:scale-95 subscribed';
+        }
+    };
+
+    // ── Share ──
+    window.handleShare = () => {
+        if (navigator.share) {
+            navigator.share({ title: document.getElementById('playerTitle').textContent, url: window.location.href });
+        } else {
+            openBottomSheet('share');
+        }
+    };
+
+    // ── Save ──
+    window.handleSave = () => {
+        const btn = event.currentTarget;
+        btn.classList.add('bg-premiumBlack', 'text-white', 'border-premiumBlack');
+        setTimeout(() => btn.classList.remove('bg-premiumBlack', 'text-white', 'border-premiumBlack'), 1500);
+    };
+
+    // ── Comments ──
+    document.getElementById('commentForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!currentUser) return alert('Sign in to comment.');
+        const input = document.getElementById('commentInput');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        const newRef = push(ref(db, `comments/${currentPlayingVideoId}`));
+        await set(newRef, { text, userId: currentUser.uid, userName: currentUser.displayName, timestamp: serverTimestamp() });
+    });
+
+    function listenToComments(videoId) {
+        const list = document.getElementById('commentsList');
+        const countEl = document.getElementById('commentCount');
+        onValue(ref(db, `comments/${videoId}`), snapshot => {
+            list.innerHTML = '';
+            if (snapshot.exists()) {
+                let count = 0;
+                snapshot.forEach(child => {
+                    count++;
+                    const c = child.val();
+                    const el = document.createElement('div');
+                    el.className = 'comment-item bg-premiumGray border border-premiumBorder p-3.5 rounded-2xl hover:bg-white hover:border-gray-300 transition-all';
+                    el.innerHTML = `
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <div class="w-6 h-6 rounded-full bg-premiumBlack text-white text-[10px] font-black flex items-center justify-center">${(c.userName||'U')[0]}</div>
+                            <span class="font-bold text-xs">${c.userName || 'User'}</span>
+                        </div>
+                        <p class="text-xs text-gray-700 leading-normal pl-8">${c.text}</p>`;
+                    list.appendChild(el);
+                });
+                countEl.textContent = count;
+                list.scrollTop = list.scrollHeight;
+            } else {
+                countEl.textContent = '0';
+                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-6 font-medium">Be the first to comment.</p>';
             }
         });
+    }
 
-        // Video Feed Component Assembly
-        function loadFeed() {
-            const feedContainer = document.getElementById('feedView');
-            const videosRef = query(ref(db, 'videos'));
-
-            onValue(videosRef, (snapshot) => {
-                feedContainer.innerHTML = '';
-                if (!snapshot.exists()) {
-                    feedContainer.innerHTML = '<div class="col-span-full text-center text-gray-400 py-20">Network empty. Broadcast vectors await.</div>';
-                    return;
-                }
-
-                snapshot.forEach((childSnapshot) => {
-                    const videoId = childSnapshot.key;
-                    const data = childSnapshot.val();
-
-                    const card = document.createElement('div');
-                    card.className = "flex flex-col group cursor-pointer transition-all duration-300";
-                    card.onclick = () => playVideo(videoId, data);
-                    
-                    card.innerHTML = `
-                        <div class="aspect-video relative overflow-hidden bg-premiumGray rounded-2xl border border-premiumBorder mb-3 transition-all duration-500 ease-out group-hover:scale-[1.02] group-hover:shadow-hover-card">
-                            <img src="${data.thumbnailUrl}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" alt="Media frame">
-                        </div>
-                        <div class="flex gap-3 px-1">
-                            <div class="w-9 h-9 rounded-full bg-premiumBlack flex-shrink-0 flex items-center justify-center text-white text-xs font-black">V</div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-bold text-sm tracking-tight text-premiumBlack leading-snug group-hover:text-gray-600 transition-colors line-clamp-2">${data.title}</h3>
-                                <p class="text-xs text-gray-400 font-semibold mt-1">${data.uploaderName || 'Verified User'}</p>
-                            </div>
-                        </div>
-                    `;
-                    feedContainer.prepend(card);
-                });
-            });
-        }
-
-        // Active Streaming Module
-        window.playVideo = (videoId, data) => {
-            currentPlayingVideoId = videoId;
-            document.getElementById('mainPlayer').src = data.videoUrl;
-            document.getElementById('playerTitle').textContent = data.title;
-            document.getElementById('playerUploader').textContent = data.uploaderName || 'Verified User';
-            document.getElementById('playerDesc').textContent = data.description || 'No declarative metadata attached to this bundle.';
-            
-            document.getElementById('mainPlayer').play();
-            window.showView('playerView');
-
-            listenToComments(videoId);
-            listenToLikes(videoId);
-        };
-
-        // Realtime Response processing Engine
-        document.getElementById('commentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return alert("Authentication parameter required to insert nodes.");
-            
-            const input = document.getElementById('commentInput');
-            const text = input.value;
-            
-            if(text.trim() === '') return;
-
-            const newCommentRef = push(ref(db, `comments/${currentPlayingVideoId}`));
-            await set(newCommentRef, {
-                text: text,
-                userId: currentUser.uid,
-                userName: currentUser.displayName,
-                timestamp: serverTimestamp()
-            });
-
-            input.value = '';
-        });
-
-        function listenToComments(videoId) {
-            const commentsRef = ref(db, `comments/${videoId}`);
-            const list = document.getElementById('commentsList');
-            
-            onValue(commentsRef, (snapshot) => {
-                list.innerHTML = '';
-                if(snapshot.exists()) {
-                    snapshot.forEach((child) => {
-                        const comment = child.val();
-                        const el = document.createElement('div');
-                        el.className = "bg-premiumGray border border-premiumBorder p-3.5 rounded-2xl transition-all duration-300 hover:bg-white hover:border-gray-300";
-                        el.innerHTML = `
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="font-bold text-xs text-premiumBlack">${comment.userName || 'User'}</span>
-                            </div>
-                            <p class="text-xs text-gray-700 leading-normal">${comment.text}</p>
-                        `;
-                        list.appendChild(el);
-                    });
-                    list.scrollTop = list.scrollHeight;
-                } else {
-                    list.innerHTML = '<p class="text-xs text-gray-400 text-center py-6 font-medium">Comments stream currently empty.</p>';
-                }
-            });
-        }
-
-        // Likes Tracking Node Matrix
-        const likeBtn = document.getElementById('likeBtn');
-        likeBtn.onclick = () => {
-            if(!currentUser) return alert("Sign-in credential token validation failed.");
-            const likeRef = ref(db, `likes/${currentPlayingVideoId}/${currentUser.uid}`);
+    // ── Likes ──
+    window.handleLike = () => {
+        if (!currentUser) return alert('Sign in to like videos.');
+        const likeRef = ref(db, `likes/${currentPlayingVideoId}/${currentUser.uid}`);
+        const btn = document.getElementById('likeBtn');
+        if (likedVideos.has(currentPlayingVideoId)) {
+            likedVideos.delete(currentPlayingVideoId);
+            set(likeRef, null);
+            btn.classList.remove('liked');
+        } else {
+            likedVideos.add(currentPlayingVideoId);
             set(likeRef, true);
-        };
-
-        function listenToLikes(videoId) {
-            const likesRef = ref(db, `likes/${videoId}`);
-            onValue(likesRef, (snapshot) => {
-                const count = snapshot.exists() ? snapshot.size : 0;
-                document.getElementById('likeCount').textContent = count;
-            });
+            btn.classList.add('liked', 'like-pop');
+            setTimeout(() => btn.classList.remove('like-pop'), 400);
         }
+    };
 
-        window.onload = () => loadFeed();
-    </script>
+    function listenToLikes(videoId) {
+        onValue(ref(db, `likes/${videoId}`), snapshot => {
+            document.getElementById('likeCount').textContent = snapshot.exists() ? snapshot.size : 0;
+            const btn = document.getElementById('likeBtn');
+            if (currentUser && snapshot.exists() && snapshot.hasChild(currentUser.uid)) {
+                btn.classList.add('liked');
+                likedVideos.add(videoId);
+            } else {
+                btn.classList.remove('liked');
+            }
+        });
+    }
+
+    // ── Bottom Sheet ──
+    window.openBottomSheet = (type) => {
+        const content = document.getElementById('bottomSheetContent');
+        if (type === 'videoActions') {
+            content.innerHTML = `
+                <div class="text-sm font-black mb-4 text-gray-400 uppercase tracking-wider px-2">Video Options</div>
+                <div class="sheet-action" onclick="handleShare(); closeBottomSheet()">
+                    <i data-lucide="share-2"></i> Share Video
+                </div>
+                <div class="sheet-action" onclick="closeBottomSheet()">
+                    <i data-lucide="flag"></i> Report
+                </div>
+                <div class="sheet-action" onclick="closeBottomSheet()">
+                    <i data-lucide="ban"></i> Not Interested
+                </div>`;
+        } else if (type === 'share') {
+            content.innerHTML = `
+                <div class="text-sm font-black mb-4 text-gray-400 uppercase tracking-wider px-2">Share via</div>
+                <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="copy"></i> Copy Link</div>
+                <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="mail"></i> Send via Email</div>
+                <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="message-circle"></i> Send Message</div>`;
+        }
+        document.getElementById('bottomSheet').classList.add('open');
+        refreshIcons();
+    };
+    window.closeBottomSheet = () => {
+        document.getElementById('bottomSheet').classList.remove('open');
+    };
+
+    // ── Success Modal ──
+    function openSuccessModal() {
+        document.getElementById('successModal').classList.add('open');
+        refreshIcons();
+    }
+    window.closeSuccessModal = () => {
+        document.getElementById('successModal').classList.remove('open');
+        window.showView('feedView');
+    };
+
+    // ── Mobile search ──
+    window.openMobileSearch = () => {
+        const overlay = document.getElementById('mobileSearchOverlay');
+        overlay.style.transform = 'translateY(0)';
+        document.getElementById('mobileSearchInput').focus();
+        buildCategoryBar();
+    };
+    window.closeMobileSearch = () => {
+        document.getElementById('mobileSearchOverlay').style.transform = 'translateY(100%)';
+    };
+
+    // ── Init ──
+    window.onload = () => {
+        loadFeed();
+        refreshIcons();
+    };
+</script>
 </body>
 </html>
