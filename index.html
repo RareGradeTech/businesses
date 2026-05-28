@@ -1,235 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VÉLOCE | Premium Car Rentals</title>
+    <title>Premium Video Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                        glassBorder: 'rgba(255, 255, 255, 0.1)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.5)',
+                        'glow-hover': '0 0 30px rgba(96, 165, 250, 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #09090b;
-            color: #fafafa;
-            overflow-x: hidden;
-        }
-        
-        /* Premium Glassmorphism */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
-            transform: translateY(-4px);
-        }
-
-        .glass-input {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #ffffff;
-            transition: all 0.3s ease;
-        }
-
-        .glass-input:focus {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
-            outline: none;
-        }
-
-        /* Active Navigation Tab Style */
-        .nav-active {
-            background: #ffffff;
-            color: #000000 !important;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-
-        /* Smooth View Transitions */
-        .view-section {
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        .view-hidden {
-            display: none !important;
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #09090b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 9999px;
-        }
-
-        /* Pill Shape utilities */
-        .pill-button {
-            border-radius: 9999px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* Custom scrollbar for a premium feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between pb-28">
+<body class="bg-gray-950 text-white min-h-screen font-sans overflow-x-hidden">
 
-    <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-white/[0.02] rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-white/[0.01] rounded-full blur-[120px] pointer-events-none"></div>
-
-    <div id="auth-view" class="flex-1 flex flex-col justify-center items-center px-4 z-10">
-        <div class="glass-panel w-full max-w-md p-8 rounded-[32px] text-center space-y-8 relative overflow-hidden">
-            <div class="space-y-2">
-                <h1 class="text-3xl font-light tracking-[0.3em] uppercase text-white">VÉLOCE</h1>
-                <p class="text-xs tracking-widest text-zinc-400 uppercase">Elevated Mobility Systems</p>
+    <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-7xl z-50">
+        <div class="bg-glass backdrop-blur-xl border border-glassBorder rounded-full px-6 py-3 flex justify-between items-center shadow-lg">
+            <div class="text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 cursor-pointer" onclick="showView('feedView')">
+                VISION
             </div>
             
-            <div class="py-6 flex justify-center">
-                <div class="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02]">
-                    <i class="fa-solid fa-key text-2xl text-zinc-300"></i>
-                </div>
+            <div class="hidden md:flex w-1/3">
+                <input type="text" placeholder="Search videos..." class="w-full bg-black/50 border border-gray-700 rounded-full px-5 py-2 text-sm focus:outline-none focus:border-blue-500 focus:shadow-glow transition-all duration-300">
             </div>
 
-            <div class="space-y-4">
-                <h2 class="text-xl font-medium tracking-wide">Authentication Required</h2>
-                <p class="text-sm text-zinc-400 max-w-xs mx-auto">Access our fleet of high-performance luxury and minimal transit architectures.</p>
-            </div>
-
-            <button id="google-sign-in-btn" class="pill-button w-full py-4 bg-white text-black font-semibold tracking-wide flex items-center justify-center space-x-3 hover:bg-zinc-200 active:scale-[0.98]">
-                <i class="fa-brands fa-google text-lg"></i>
-                <span>Continue with Google</span>
-            </button>
-        </div>
-    </div>
-
-    <div id="app-container" class="hidden w-full max-w-lg mx-auto px-4 pt-6 z-10 flex-1 flex flex-col">
-        
-        <header class="flex justify-between items-center mb-8 px-2">
-            <div>
-                <span class="text-xs tracking-[0.2em] uppercase text-zinc-500 font-semibold block">Welcome back</span>
-                <h3 id="user-display-name" class="text-lg font-medium text-white tracking-wide">User</h3>
-            </div>
-            <div id="user-avatar" class="w-11 h-11 rounded-full border border-white/10 bg-zinc-800 bg-cover bg-center"></div>
-        </header>
-
-        <section id="explore-view" class="view-section space-y-6 flex-1">
-            <div class="relative">
-                <span class="absolute inset-y-0 left-5 flex items-center text-zinc-500">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" id="search-cars" placeholder="Search curated fleet..." class="glass-input pill-button w-full pl-12 pr-6 py-4 text-sm tracking-wide">
-            </div>
-
-            <div class="flex space-x-3 overflow-x-auto pb-2 scrollbar-none">
-                <button class="pill-button px-5 py-2.5 text-xs font-medium tracking-wider uppercase bg-white text-black whitespace-nowrap">All Fleet</button>
-                <button class="pill-button px-5 py-2.5 text-xs font-medium tracking-wider uppercase glass-panel text-zinc-400 hover:text-white whitespace-nowrap">Electric</button>
-                <button class="pill-button px-5 py-2.5 text-xs font-medium tracking-wider uppercase glass-panel text-zinc-400 hover:text-white whitespace-nowrap">Performance</button>
-            </div>
-
-            <div id="cars-container" class="space-y-4">
-                <div class="text-center py-12 text-zinc-500 text-sm">Synchronizing fleet data...</div>
-            </div>
-        </section>
-
-        <section id="bookings-view" class="view-section view-hidden space-y-6 flex-1">
-            <div class="px-2">
-                <h2 class="text-xl font-medium tracking-wide">Your Transits</h2>
-                <p class="text-xs text-zinc-500 tracking-wider uppercase mt-1">Active and upcoming reservations</p>
-            </div>
-
-            <div id="my-bookings-container" class="space-y-4">
-                <div class="text-center py-12 text-zinc-500 text-sm">No active reservations found.</div>
-            </div>
-        </section>
-
-        <section id="add-car-view" class="view-section view-hidden space-y-6 flex-1">
-            <div class="px-2">
-                <h2 class="text-xl font-medium tracking-wide">Expand Fleet</h2>
-                <p class="text-xs text-zinc-500 tracking-wider uppercase mt-1">Register a new vehicle architecture</p>
-            </div>
-
-            <form id="add-car-form" class="space-y-5 glass-panel p-6 rounded-[28px]">
-                <div class="space-y-2">
-                    <label class="text-xs tracking-wider text-zinc-400 uppercase ml-2">Vehicle Specification Name</label>
-                    <input type="text" id="car-model" required placeholder="e.g., Porsche Taycan 4S" class="glass-input pill-button w-full px-5 py-3.5 text-sm">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-xs tracking-wider text-zinc-400 uppercase ml-2">Daily Metric (USD)</label>
-                        <input type="number" id="car-price" required placeholder="240" class="glass-input pill-button w-full px-5 py-3.5 text-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-xs tracking-wider text-zinc-400 uppercase ml-2">Transmission Type</label>
-                        <input type="text" id="car-type" required placeholder="e.g., Automatic" class="glass-input pill-button w-full px-5 py-3.5 text-sm">
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-xs tracking-wider text-zinc-400 uppercase ml-2">Media Architecture Asset</label>
-                    <div class="relative w-full h-32 glass-input rounded-[20px] border-dashed border-white/20 flex flex-col justify-center items-center cursor-pointer overflow-hidden group">
-                        <input type="file" id="car-image-input" required accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-20">
-                        <div id="upload-placeholder" class="text-center space-y-2 pointer-events-none z-10 transition-all">
-                            <i class="fa-solid fa-cloud-arrow-up text-xl text-zinc-400 group-hover:text-white transition-colors"></i>
-                            <p class="text-xs text-zinc-400">Upload vehicle rendering</p>
-                        </div>
-                        <img id="upload-preview" class="absolute inset-0 w-full h-full object-cover hidden z-0">
-                    </div>
-                </div>
-
-                <button type="submit" id="submit-car-btn" class="pill-button w-full py-4 bg-white text-black font-semibold text-sm tracking-wide uppercase hover:bg-zinc-200 active:scale-[0.99] mt-2">
-                    Publish to Fleet Registry
+            <div class="flex gap-4">
+                <button onclick="showView('uploadView')" class="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-300 hover:shadow-glow text-sm font-medium">
+                    Upload
                 </button>
-            </form>
-        </section>
+                <button id="authBtn" class="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-500 transition-all duration-300 hover:shadow-glow text-sm font-medium">
+                    Sign In
+                </button>
+            </div>
+        </div>
+    </nav>
 
-        <nav class="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md glass-panel pill-button p-2.5 flex justify-between items-center z-50 shadow-2xl">
-            <button data-target="explore" class="nav-btn flex-1 py-3 px-2 flex flex-col items-center justify-center space-y-1 text-zinc-400 pill-button nav-active transition-all duration-300">
-                <i class="fa-solid fa-compass text-base"></i>
-                <span class="text-[9px] tracking-widest uppercase font-bold">Explore</span>
-            </button>
-            <button data-target="bookings" class="nav-btn flex-1 py-3 px-2 flex flex-col items-center justify-center space-y-1 text-zinc-400 pill-button transition-all duration-300">
-                <i class="fa-solid fa-calendar-check text-base"></i>
-                <span class="text-[9px] tracking-widest uppercase font-bold">Reserves</span>
-            </button>
-            <button data-target="add-car" class="nav-btn flex-1 py-3 px-2 flex flex-col items-center justify-center space-y-1 text-zinc-400 pill-button transition-all duration-300">
-                <i class="fa-solid fa-plus text-base"></i>
-                <span class="text-[9px] tracking-widest uppercase font-bold">Expand</span>
-            </button>
-            <button id="logout-btn" class="flex-1 py-3 px-2 flex flex-col items-center justify-center space-y-1 text-zinc-500 pill-button hover:text-rose-400 transition-all duration-300">
-                <i class="fa-solid fa-power-off text-base"></i>
-                <span class="text-[9px] tracking-widest uppercase font-bold">Exit</span>
-            </button>
-        </nav>
+    <main class="pt-32 pb-12 px-6 max-w-7xl mx-auto min-h-screen">
 
-    </div>
+        <div id="feedView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div id="loadingFeed" class="col-span-full text-center text-gray-500 py-10">Loading feed...</div>
+        </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+        <div id="uploadView" class="hidden max-w-2xl mx-auto">
+            <div class="bg-glass backdrop-blur-2xl border border-glassBorder rounded-3xl p-8 shadow-2xl">
+                <h2 class="text-2xl font-bold mb-6 text-center">Upload Video</h2>
+                <form id="uploadForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Video Title</label>
+                        <input type="text" id="videoTitle" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:shadow-glow transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Description</label>
+                        <textarea id="videoDesc" rows="3" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:shadow-glow transition-all"></textarea>
+                    </div>
+                    <div class="relative border-2 border-dashed border-gray-600 rounded-2xl p-10 text-center hover:border-blue-500 transition-colors group cursor-pointer">
+                        <input type="file" id="videoFile" accept="video/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div class="text-gray-400 group-hover:text-blue-400 transition-colors">
+                            <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                            <p id="fileNameDisplay">Drag and drop or click to select video</p>
+                        </div>
+                    </div>
+                    <button type="submit" id="uploadBtn" class="w-full py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 font-bold text-lg hover:shadow-glow-hover transition-all duration-300 transform hover:-translate-y-1">
+                        Upload to Cloudinary
+                    </button>
+                    <div id="uploadStatus" class="text-center text-sm hidden mt-4 text-blue-400">Uploading... Please wait.</div>
+                </form>
+            </div>
+        </div>
 
-    <script>
-        // --- System Configurations ---
+        <div id="playerView" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-black rounded-2xl overflow-hidden shadow-glow border border-glassBorder aspect-video">
+                        <video id="mainPlayer" controls class="w-full h-full object-contain"></video>
+                    </div>
+                    <div>
+                        <h1 id="playerTitle" class="text-3xl font-bold mb-2">Video Title</h1>
+                        <div class="flex justify-between items-center border-b border-gray-800 pb-4 mb-4">
+                            <span id="playerUploader" class="text-gray-400">Uploaded by...</span>
+                            <button id="likeBtn" class="px-6 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                <span id="likeCount">0</span>
+                            </button>
+                        </div>
+                        <p id="playerDesc" class="text-gray-300 bg-white/5 p-4 rounded-xl border border-white/5"></p>
+                    </div>
+                </div>
+
+                <div class="bg-glass backdrop-blur-lg border border-glassBorder rounded-2xl p-6 h-[800px] flex flex-col">
+                    <h3 class="text-xl font-bold mb-4">Comments</h3>
+                    <div id="commentsList" class="flex-1 overflow-y-auto space-y-4 mb-4 pr-2">
+                        </div>
+                    <form id="commentForm" class="mt-auto flex gap-2">
+                        <input type="text" id="commentInput" placeholder="Add a comment..." required class="flex-1 bg-black/50 border border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500">
+                        <button type="submit" class="p-2 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, push, set, onValue, serverTimestamp, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyCh7Ute6LeSAxcNDEQwZg5m0cA4ujnLCfg",
             authDomain: "test-17881.firebaseapp.com",
@@ -238,281 +134,238 @@
             messagingSenderId: "1057428047643",
             appId: "1:1057428047643:web:f3801c0d933225a5cd35be"
         };
-        
+
         const CLOUDINARY_CLOUD = 'dqkujefxj'; 
         const CLOUDINARY_PRESET = 'banter_box';
 
-        // Initialize Firebase Global Modules
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        // Application State
-        let currentUser = null;
-        let localFleetCache = [];
-
-        // --- View Controller Switcher ---
-        function setView(targetView) {
-            document.querySelectorAll('.view-section').forEach(view => {
-                view.classList.add('view-hidden');
-            });
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('nav-active');
-            });
-
-            const activeView = document.getElementById(`${targetView}-view`);
-            if(activeView) activeView.classList.remove('view-hidden');
-
-            const activeNav = document.querySelector(`button[data-target="${targetView}"]`);
-            if(activeNav) activeNav.classList.add('nav-active');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // --- Core Application Logic Pipeline ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
         
-        // Identity Authentication Setup
-        document.getElementById('google-sign-in-btn').addEventListener('click', () => {
-            auth.signInWithPopup(provider).catch(error => {
-                alert(`Authentication Exception: ${error.message}`);
+        let currentUser = null;
+        let currentPlayingVideoId = null;
+
+        // View Router
+        window.showView = (viewId) => {
+            ['feedView', 'uploadView', 'playerView'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
             });
-        });
+            document.getElementById(viewId).classList.remove('hidden');
+            if(viewId === 'feedView') loadFeed();
+            if(viewId !== 'playerView') document.getElementById('mainPlayer').pause();
+        };
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            auth.signOut();
-        });
-
-        // Application Routing Guard
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('auth-view').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('hidden');
-                document.getElementById('user-display-name').textContent = user.displayName;
-                document.getElementById('user-avatar').style.backgroundImage = `url('${user.photoURL || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'}')`;
-                
-                // Active real-time listeners initialization
-                syncFleetRegistry();
-                syncUserReservations();
+        // Authentication Logic
+        const authBtn = document.getElementById('authBtn');
+        authBtn.addEventListener('click', () => {
+            if (currentUser) {
+                signOut(auth);
             } else {
-                currentUser = null;
-                document.getElementById('auth-view').classList.remove('hidden');
-                document.getElementById('app-container').classList.add('hidden');
+                signInWithPopup(auth, new GoogleAuthProvider());
             }
         });
 
-        // Navigation Bindings
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const target = e.currentTarget.getAttribute('data-target');
-                setView(target);
-            });
-        });
-
-        // Media Input Asset Preview Render
-        document.getElementById('car-image-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const preview = document.getElementById('upload-preview');
-                    preview.src = event.target.result;
-                    preview.classList.remove('hidden');
-                    document.getElementById('upload-placeholder').classList.add('opacity-0');
-                }
-                reader.readAsDataURL(file);
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                authBtn.textContent = 'Sign Out';
+                // Save user profile to DB
+                set(ref(db, 'users/' + user.uid), {
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL
+                });
+            } else {
+                authBtn.textContent = 'Sign In';
             }
         });
 
-        // --- Cloudinary Integration Engine ---
-        async function uploadMediaAsset(file) {
-            const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`;
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_PRESET);
+        // File Input UI Update
+        const videoFileInput = document.getElementById('videoFile');
+        videoFileInput.addEventListener('change', (e) => {
+            if(e.target.files.length > 0) {
+                document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
+            }
+        });
 
-            const response = await fetch(url, { method: 'POST', body: formData });
-            if (!response.ok) throw new Error('Cloudinary asset dispatch failure');
-            const data = await response.json();
-            return data.secure_url;
-        }
-
-        // --- Form Entry & Injection Operations ---
-        document.getElementById('add-car-form').addEventListener('submit', async (e) => {
+        // 1. CLOUDINARY UPLOAD LOGIC & DB SAVE
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const submitBtn = document.getElementById('submit-car-btn');
-            const fileInput = document.getElementById('car-image-input');
+            if (!currentUser) return alert("Please sign in to upload.");
+
+            const file = videoFileInput.files[0];
+            const title = document.getElementById('videoTitle').value;
+            const desc = document.getElementById('videoDesc').value;
             
-            if (!fileInput.files.length) return alert("System requires a vehicle rendering file.");
-            
+            const submitBtn = document.getElementById('uploadBtn');
+            const statusTxt = document.getElementById('uploadStatus');
             submitBtn.disabled = true;
-            submitBtn.textContent = "Processing Architecture Assets...";
+            statusTxt.classList.remove('hidden');
 
             try {
-                // Execute secure asset deployment to Cloudinary cloud instance
-                const imageUrl = await uploadMediaAsset(fileInput.files[0]);
+                // Prepare FormData for Cloudinary Unsigned Upload
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_PRESET);
 
-                // Construct vehicle entry record package
-                const carRecord = {
-                    id: Date.now().toString(),
-                    model: document.getElementById('car-model').value,
-                    price: parseFloat(document.getElementById('car-price').value),
-                    type: document.getElementById('car-type').value,
-                    image: imageUrl,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                };
+                // Upload to Cloudinary REST API
+                const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const cloudData = await uploadRes.json();
+                
+                if(cloudData.secure_url) {
+                    // Generate thumbnail dynamically from Cloudinary by changing extension to .jpg
+                    const thumbnailUrl = cloudData.secure_url.replace(/\.[^/.]+$/, ".jpg");
 
-                // Store payload safely inside Realtime Database under global fleet index node
-                await db.ref('fleet_registry/').push(carRecord);
-                
-                // Form cleanup procedures
-                document.getElementById('add-car-form').reset();
-                document.getElementById('upload-preview').classList.add('hidden');
-                document.getElementById('upload-placeholder').classList.remove('opacity-0');
-                
-                // Pivot route view direction back into main exploration system pipeline
-                setView('explore');
+                    // Save to Firebase Realtime DB
+                    const newVideoRef = push(ref(db, 'videos'));
+                    await set(newVideoRef, {
+                        title: title,
+                        description: desc,
+                        videoUrl: cloudData.secure_url,
+                        thumbnailUrl: thumbnailUrl,
+                        uploaderId: currentUser.uid,
+                        uploaderName: currentUser.displayName,
+                        timestamp: serverTimestamp()
+                    });
+
+                    alert("Upload Successful!");
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('fileNameDisplay').textContent = "Drag and drop or click to select video";
+                    window.showView('feedView');
+                } else {
+                    throw new Error("Upload failed. Check Cloudinary settings.");
+                }
+
             } catch (error) {
-                alert(`Fleet Sync Failure: ${error.message}`);
+                console.error(error);
+                alert("Error: " + error.message);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = "Publish to Fleet Registry";
+                statusTxt.classList.add('hidden');
             }
         });
 
-        // --- Data Extraction & Reactive Renderers ---
-        function syncFleetRegistry() {
-            db.ref('fleet_registry/').on('value', snapshot => {
-                const data = snapshot.val();
-                const container = document.getElementById('cars-container');
-                container.innerHTML = '';
-                localFleetCache = [];
+        // 2. VIDEO FEED LOGIC
+        function loadFeed() {
+            const feedContainer = document.getElementById('feedView');
+            const videosRef = query(ref(db, 'videos'));
 
-                if (!data) {
-                    // Populate clean mock data schema seamlessly if first run database is detected blank
-                    injectFallbackMockDataset();
+            onValue(videosRef, (snapshot) => {
+                feedContainer.innerHTML = '';
+                if (!snapshot.exists()) {
+                    feedContainer.innerHTML = '<div class="col-span-full text-center text-gray-500">No videos found. Be the first to upload!</div>';
                     return;
                 }
 
-                Object.keys(data).forEach(key => {
-                    const car = data[key];
-                    localFleetCache.push(car);
-                    container.appendChild(createCarCard(car));
-                });
-            });
-        }
+                snapshot.forEach((childSnapshot) => {
+                    const videoId = childSnapshot.key;
+                    const data = childSnapshot.val();
 
-        function createCarCard(car) {
-            const card = document.createElement('div');
-            card.className = 'glass-card rounded-[24px] p-4 flex items-center space-x-4 relative overflow-hidden group';
-            card.innerHTML = `
-                <div class="w-28 h-20 rounded-xl overflow-hidden bg-zinc-900 flex-shrink-0 relative">
-                    <img src="${car.image}" alt="${car.model}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                </div>
-                <div class="flex-1 min-w-0">
-                    <span class="text-[10px] tracking-widest text-zinc-500 font-bold uppercase">${car.type}</span>
-                    <h4 class="text-sm font-medium text-white tracking-wide truncate mt-0.5">${car.model}</h4>
-                    <p class="text-xs text-zinc-400 mt-2 font-medium"><span class="text-white font-semibold text-sm">$${car.price}</span> / day</p>
-                </div>
-                <button onclick="executeReservation('${car.id}', '${car.model.replace(/'/g, "\\'")}', '${car.image}', ${car.price})" class="pill-button px-4 py-2 bg-white text-black text-xs font-semibold uppercase hover:bg-zinc-200 active:scale-95 transition-all">
-                    Book
-                </button>
-            `;
-            return card;
-        }
-
-        // Fleet Search Filter Engine Interceptor
-        document.getElementById('search-cars').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const container = document.getElementById('cars-container');
-            container.innerHTML = '';
-            
-            const filtered = localFleetCache.filter(car => car.model.toLowerCase().includes(query) || car.type.toLowerCase().includes(query));
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-zinc-500 text-sm">No vehicles match query parameter.</div>`;
-                return;
-            }
-
-            filtered.forEach(car => container.appendChild(createCarCard(car)));
-        });
-
-        // --- Transaction Reservation Infrastructure ---
-        async function executeReservation(carId, model, image, price) {
-            if(!currentUser) return;
-            
-            const bookingPayload = {
-                id: Date.now().toString(),
-                carId: carId,
-                model: model,
-                image: image,
-                price: price,
-                userUid: currentUser.uid,
-                dateString: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-
-            try {
-                await db.ref(`user_reservations/${currentUser.uid}`).push(bookingPayload);
-                setView('bookings');
-            } catch (error) {
-                alert(`Reservation system crash: ${error.message}`);
-            }
-        }
-
-        function syncUserReservations() {
-            if(!currentUser) return;
-            db.ref(`user_reservations/${currentUser.uid}`).on('value', snapshot => {
-                const data = snapshot.val();
-                const container = document.getElementById('my-bookings-container');
-                container.innerHTML = '';
-
-                if (!data) {
-                    container.innerHTML = `
-                        <div class="text-center py-16 text-zinc-500 space-y-4">
-                            <i class="fa-solid fa-calendar-minus text-2xl opacity-40"></i>
-                            <p class="text-xs tracking-wider uppercase">No upcoming active reservation profiles</p>
-                        </div>`;
-                    return;
-                }
-
-                Object.keys(data).forEach(key => {
-                    const booking = data[key];
+                    // Glassmorphism Video Card with Glow
                     const card = document.createElement('div');
-                    card.className = 'glass-card rounded-[24px] p-4 flex items-center justify-between relative overflow-hidden';
+                    card.className = "bg-glass backdrop-blur-md border border-glassBorder rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-glow transform hover:-translate-y-1";
+                    card.onclick = () => playVideo(videoId, data);
+                    
                     card.innerHTML = `
-                        <div class="flex items-center space-x-4">
-                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-900 flex-shrink-0">
-                                <img src="${booking.image}" alt="${booking.model}" class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium text-white tracking-wide">${booking.model}</h4>
-                                <p class="text-[11px] text-zinc-400 mt-1"><i class="fa-regular fa-clock mr-1 text-[10px]"></i> Active since ${booking.dateString}</p>
-                            </div>
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="${data.thumbnailUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Thumbnail">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                         </div>
-                        <div class="text-right">
-                            <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 uppercase tracking-widest text-[9px]">Confined</span>
-                            <p class="text-xs font-semibold text-white mt-2">$${booking.price}</p>
+                        <div class="p-5">
+                            <h3 class="font-bold text-lg mb-1 truncate">${data.title}</h3>
+                            <p class="text-sm text-gray-400">${data.uploaderName || 'Anonymous'}</p>
                         </div>
                     `;
-                    container.appendChild(card);
+                    feedContainer.prepend(card); // Newest first
                 });
             });
         }
 
-        // --- Data Population Seed Engine ---
-        function injectFallbackMockDataset() {
-            const fallbackCollection = [
-                { id: "mock1", model: "Audi e-tron GT", price: 290, type: "Electric", image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=400&q=80" },
-                { id: "mock2", model: "Lucid Air Sapphire", price: 380, type: "Electric", image: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=400&q=80" },
-                { id: "mock3", model: "Mercedes-AMG GT Coupe", price: 340, type: "Performance", image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=400&q=80" }
-            ];
+        // 3. VIDEO PLAYER & REALTIME ENGAGEMENT
+        window.playVideo = (videoId, data) => {
+            currentPlayingVideoId = videoId;
+            document.getElementById('mainPlayer').src = data.videoUrl;
+            document.getElementById('playerTitle').textContent = data.title;
+            document.getElementById('playerUploader').textContent = data.uploaderName || 'Anonymous';
+            document.getElementById('playerDesc').textContent = data.description || 'No description provided.';
             
-            fallbackCollection.forEach(car => {
-                db.ref('fleet_registry/').push(car);
+            document.getElementById('mainPlayer').play();
+            window.showView('playerView');
+
+            listenToComments(videoId);
+            listenToLikes(videoId);
+        };
+
+        // Comments Submission
+        document.getElementById('commentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return alert("Please sign in to comment.");
+            
+            const input = document.getElementById('commentInput');
+            const text = input.value;
+            
+            if(text.trim() === '') return;
+
+            const newCommentRef = push(ref(db, `comments/${currentPlayingVideoId}`));
+            await set(newCommentRef, {
+                text: text,
+                userId: currentUser.uid,
+                userName: currentUser.displayName,
+                timestamp: serverTimestamp()
+            });
+
+            input.value = '';
+        });
+
+        // Realtime Comments Listener
+        function listenToComments(videoId) {
+            const commentsRef = ref(db, `comments/${videoId}`);
+            const list = document.getElementById('commentsList');
+            
+            onValue(commentsRef, (snapshot) => {
+                list.innerHTML = '';
+                if(snapshot.exists()) {
+                    snapshot.forEach((child) => {
+                        const comment = child.val();
+                        const el = document.createElement('div');
+                        el.className = "bg-white/5 border border-white/5 p-3 rounded-xl";
+                        el.innerHTML = `
+                            <span class="font-bold text-sm text-blue-400">${comment.userName || 'User'}</span>
+                            <p class="text-sm text-gray-200 mt-1">${comment.text}</p>
+                        `;
+                        list.appendChild(el);
+                    });
+                    // Scroll to bottom
+                    list.scrollTop = list.scrollHeight;
+                } else {
+                    list.innerHTML = '<p class="text-sm text-gray-500 text-center">No comments yet.</p>';
+                }
             });
         }
+
+        // Likes Logic
+        const likeBtn = document.getElementById('likeBtn');
+        likeBtn.onclick = () => {
+            if(!currentUser) return alert("Sign in to like videos.");
+            const likeRef = ref(db, `likes/${currentPlayingVideoId}/${currentUser.uid}`);
+            set(likeRef, true); // Overwrites to true
+        };
+
+        function listenToLikes(videoId) {
+            const likesRef = ref(db, `likes/${videoId}`);
+            onValue(likesRef, (snapshot) => {
+                const count = snapshot.exists() ? snapshot.size : 0;
+                document.getElementById('likeCount').textContent = count;
+            });
+        }
+
+        // Initialize App
+        window.onload = () => loadFeed();
+
     </script>
 </body>
 </html>
