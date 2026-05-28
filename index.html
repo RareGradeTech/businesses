@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script>
         tailwind.config = {
@@ -25,9 +24,7 @@
                         'pill-shadow': '0 2px 10px rgba(0, 0, 0, 0.05)',
                         'sheet': '0 -8px 40px rgba(0,0,0,0.12)'
                     },
-                    fontFamily: {
-                        sans: ['DM Sans', 'sans-serif']
-                    }
+                    fontFamily: { sans: ['DM Sans', 'sans-serif'] }
                 }
             }
         }
@@ -75,15 +72,81 @@
         .pill.active { background: #000; border-color: #000; color: #fff; }
         .pill svg { width: 14px; height: 14px; }
 
-        /* ── Upload progress bar ── */
+        /* ── Upload progress bar ── FIXED ── */
         #uploadProgressWrap {
-            height: 6px; background: #f0f0f0; border-radius: 999px; overflow: hidden;
-            margin-top: 12px; display: none;
+            display: none;
+            margin-top: 12px;
+            background: #f0f0f0;
+            border-radius: 999px;
+            overflow: hidden;
+            height: 8px;
+            width: 100%;
+            position: relative;
         }
         #uploadProgressBar {
-            height: 100%; background: #000; border-radius: 999px; width: 0%;
+            height: 8px;
+            background: #000;
+            border-radius: 999px;
+            width: 0%;
             transition: width 0.3s ease;
+            display: block;
         }
+
+        /* ── Toast Notifications ── */
+        #toastContainer {
+            position: fixed;
+            top: 76px;
+            right: 16px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            max-width: calc(100vw - 32px);
+        }
+        .toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            min-width: 280px;
+            max-width: 360px;
+            pointer-events: all;
+            animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+            position: relative;
+            overflow: hidden;
+        }
+        .toast.toast-out { animation: toastOut 0.3s ease forwards; }
+        .toast-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .toast-icon.success { background: #000; }
+        .toast-icon.info    { background: #3b82f6; }
+        .toast-icon.warning { background: #f59e0b; }
+        .toast-icon.error   { background: #ef4444; }
+        .toast-icon svg { width: 18px; height: 18px; color: #fff; }
+        .toast-body { flex: 1; min-width: 0; }
+        .toast-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 2px; }
+        .toast-msg   { font-size: 12px; color: #6b7280; line-height: 1.4; }
+        .toast-close {
+            width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 6px; flex-shrink: 0;
+            color: #9ca3af; transition: background 0.15s, color 0.15s;
+        }
+        .toast-close:hover { background: #f3f4f6; color: #111; }
+        .toast-progress {
+            position: absolute; bottom: 0; left: 0;
+            height: 3px; background: #000; border-radius: 0 0 0 16px;
+            animation: toastProgress linear forwards;
+        }
+        @keyframes toastIn    { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut   { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
+        @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
 
         /* ── Success Modal ── */
         #successModal {
@@ -105,14 +168,9 @@
         }
 
         /* ── Bottom Sheet (mobile) ── */
-        #bottomSheet {
-            position: fixed; inset: 0; z-index: 9000; display: none;
-        }
+        #bottomSheet { position: fixed; inset: 0; z-index: 9000; display: none; }
         #bottomSheet.open { display: block; }
-        #bottomSheetOverlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.4);
-            animation: fadeIn 0.2s ease;
-        }
+        #bottomSheetOverlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); animation: fadeIn 0.2s ease; }
         #bottomSheetPanel {
             position: absolute; bottom: 0; left: 0; right: 0;
             background: #fff; border-radius: 24px 24px 0 0;
@@ -121,10 +179,7 @@
             animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1);
             max-height: 90vh; overflow-y: auto;
         }
-        .sheet-handle {
-            width: 40px; height: 4px; background: #e5e7eb; border-radius: 999px;
-            margin: 0 auto 16px;
-        }
+        .sheet-handle { width: 40px; height: 4px; background: #e5e7eb; border-radius: 999px; margin: 0 auto 16px; }
         .sheet-action {
             display: flex; align-items: center; gap: 14px;
             padding: 14px 8px; border-radius: 14px; cursor: pointer;
@@ -133,25 +188,12 @@
         .sheet-action:hover { background: #f8f9fa; }
         .sheet-action svg { width: 20px; height: 20px; color: #555; }
 
-        /* ── Video player fix ── */
-        #mainPlayer {
-            width: 100%; height: 100%;
-            display: block;
-            background: #000;
-            object-fit: contain;
-        }
-        .player-wrapper {
-            position: relative; background: #000;
-            border-radius: 18px; overflow: hidden;
-            width: 100%; aspect-ratio: 16/9;
-        }
+        /* ── Video player ── */
+        #mainPlayer { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }
+        .player-wrapper { position: relative; background: #000; border-radius: 18px; overflow: hidden; width: 100%; aspect-ratio: 16/9; }
 
-        /* ── Feed card – fixed size ── */
-        .video-card {
-            display: flex; flex-direction: column;
-            cursor: pointer;
-            transition: transform 0.3s ease, opacity 0.2s ease;
-        }
+        /* ── Feed card ── */
+        .video-card { display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s ease, opacity 0.2s ease; }
         .video-card:hover { transform: translateY(-3px); }
         .video-card:hover .card-thumb { box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .card-thumb {
@@ -227,15 +269,87 @@
         }
         .like-pop { animation: heartBeat 0.4s ease; }
 
-        /* subscribe btn */
+        /* ── Subscribe btn ── */
         #subscribeBtn { transition: all 0.2s ease; }
         #subscribeBtn.subscribed { background: #f3f4f6; color: #555; border-color: #e5e7eb; }
 
         /* Search input focus ring */
         .search-wrap input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,0.08); }
+
+        /* ── Tab views ── */
+        .tab-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+            padding-bottom: 20px; border-bottom: 1px solid #e5e7eb;
+        }
+        .tab-header-icon {
+            width: 44px; height: 44px; border-radius: 14px; background: #000;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .tab-header-icon svg { width: 22px; height: 22px; color: #fff; }
+        .tab-card {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 20px;
+            padding: 20px; transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .tab-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); }
+
+        /* ── Trending rank badge ── */
+        .rank-badge {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 900; flex-shrink: 0;
+        }
+        .rank-1 { background: #000; color: #fff; }
+        .rank-2 { background: #374151; color: #fff; }
+        .rank-3 { background: #6b7280; color: #fff; }
+        .rank-n { background: #f3f4f6; color: #6b7280; }
+
+        /* ── Settings ── */
+        .setting-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 0; border-bottom: 1px solid #f3f4f6; gap: 16px;
+        }
+        .setting-row:last-child { border-bottom: none; }
+        .toggle {
+            width: 44px; height: 24px; border-radius: 999px; background: #e5e7eb;
+            position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+        }
+        .toggle.on { background: #000; }
+        .toggle::after {
+            content: ''; width: 18px; height: 18px; border-radius: 50%;
+            background: #fff; position: absolute; top: 3px; left: 3px;
+            transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .toggle.on::after { transform: translateX(20px); }
+
+        /* ── Saved / History empty state ── */
+        .empty-state {
+            text-align: center; padding: 60px 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .empty-state-icon {
+            width: 72px; height: 72px; border-radius: 20px; background: #f3f4f6;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+        }
+        .empty-state-icon svg { width: 32px; height: 32px; color: #9ca3af; }
+
+        /* ── Responsive tweaks ── */
+        @media (max-width: 640px) {
+            .tab-card { padding: 14px; border-radius: 16px; }
+            .tab-header { margin-bottom: 20px; padding-bottom: 16px; }
+            .toast { min-width: 240px; max-width: calc(100vw - 32px); }
+            #toastContainer { right: 12px; left: 12px; top: 72px; }
+            .modal-card { padding: 28px 20px; }
+        }
+        @media (min-width: 641px) and (max-width: 1023px) {
+            /* Tablet */
+            .player-wrapper { border-radius: 14px; }
+        }
     </style>
 </head>
 <body class="bg-premiumWhite text-premiumBlack min-h-screen font-sans overflow-x-hidden antialiased">
+
+<!-- ══════════════════════ TOAST CONTAINER ══════════════════════ -->
+<div id="toastContainer"></div>
 
 <!-- ══════════════════════ NAVBAR ══════════════════════ -->
 <nav class="fixed top-0 left-0 right-0 h-16 bg-white/85 backdrop-blur-md border-b border-premiumBorder flex items-center justify-between px-4 md:px-6 z-50">
@@ -263,9 +377,9 @@
             <i data-lucide="upload-cloud" class="w-4 h-4"></i>
             Upload
         </button>
-        <button id="notifBtn" class="relative p-2 hover:bg-premiumGray rounded-full transition-colors">
+        <button id="notifBtn" class="relative p-2 hover:bg-premiumGray rounded-full transition-colors" onclick="showNotifDemo()">
             <i data-lucide="bell" class="w-5 h-5"></i>
-            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            <span id="notifDot" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         </button>
         <button id="authBtn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-premiumBlack text-white text-sm font-semibold hover:bg-gray-800 transition-all hover:shadow-pill-shadow hover:scale-105 active:scale-95">
             <i data-lucide="user" class="w-4 h-4"></i>
@@ -285,19 +399,19 @@
             <i data-lucide="upload-cloud" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
             Upload Video
         </button>
-        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+        <button onclick="showView('exploreView')" id="nav-exploreView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
             <i data-lucide="compass" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
             Explore
         </button>
-        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+        <button onclick="showView('savedView')" id="nav-savedView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
             <i data-lucide="bookmark" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
             Saved
         </button>
-        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+        <button onclick="showView('historyView')" id="nav-historyView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
             <i data-lucide="history" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
             Watch History
         </button>
-        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+        <button onclick="showView('trendingView')" id="nav-trendingView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
             <i data-lucide="trending-up" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
             Trending
         </button>
@@ -310,11 +424,11 @@
     <hr class="my-4 border-premiumBorder">
     <div class="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Explore More</div>
     <div class="space-y-1">
-        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+        <button onclick="showView('settingsView')" id="nav-settingsView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
             <i data-lucide="settings" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
             Settings
         </button>
-        <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+        <button onclick="showView('helpView')" id="nav-helpView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
             <i data-lucide="help-circle" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
             Help & Feedback
         </button>
@@ -327,17 +441,15 @@
 
         <!-- ── FEED VIEW ── -->
         <div id="feedView" class="app-view view-active">
-            <!-- Category pills -->
             <div id="categoryBar"></div>
-            <!-- Grid -->
             <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8"></div>
         </div>
 
         <!-- ── UPLOAD VIEW ── -->
         <div id="uploadView" class="app-view view-hidden-right max-w-xl mx-auto">
-            <div class="bg-white border border-premiumBorder rounded-3xl p-8 shadow-premium">
+            <div class="bg-white border border-premiumBorder rounded-3xl p-6 md:p-8 shadow-premium">
                 <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-2xl bg-premiumBlack flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-2xl bg-premiumBlack flex items-center justify-center flex-shrink-0">
                         <i data-lucide="upload-cloud" class="w-5 h-5 text-white"></i>
                     </div>
                     <div>
@@ -378,13 +490,15 @@
                         <p class="text-xs text-gray-400 mt-1">MP4, MOV, AVI up to 500MB</p>
                     </div>
 
-                    <!-- Upload Progress -->
+                    <!-- Upload Progress — FIXED -->
                     <div id="uploadProgressWrap">
-                        <div class="flex justify-between text-xs font-semibold text-gray-400 mb-1.5">
+                        <div class="flex justify-between text-xs font-semibold text-gray-500 mb-2">
                             <span>Uploading to cloud...</span>
                             <span id="uploadPct">0%</span>
                         </div>
-                        <div id="uploadProgressBar"></div>
+                        <div style="height:8px;background:#f0f0f0;border-radius:999px;overflow:hidden;width:100%;">
+                            <div id="uploadProgressBar" style="height:8px;background:#000;border-radius:999px;width:0%;transition:width 0.3s ease;"></div>
+                        </div>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="w-full py-3.5 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-900 transition-all active:scale-95 shadow-pill-shadow flex items-center justify-center gap-2">
@@ -398,9 +512,7 @@
         <!-- ── PLAYER VIEW ── -->
         <div id="playerView" class="app-view view-hidden-right">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-                <!-- Video + info -->
                 <div class="xl:col-span-2 space-y-5">
-                    <!-- ✅ FIXED: aspect-ratio container with proper video sizing -->
                     <div class="player-wrapper">
                         <video id="mainPlayer" controls playsinline preload="metadata"></video>
                     </div>
@@ -429,14 +541,12 @@
                                 <button onclick="handleSave()" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95">
                                     <i data-lucide="bookmark" class="w-4 h-4"></i>
                                 </button>
-                                <!-- Mobile more-actions → bottom sheet -->
                                 <button onclick="openBottomSheet('videoActions')" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95 lg:hidden">
                                     <i data-lucide="more-horizontal" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Description -->
                         <div class="bg-premiumGray p-4 rounded-2xl border border-premiumBorder">
                             <div class="flex items-center gap-2 mb-2">
                                 <i data-lucide="file-text" class="w-3.5 h-3.5 text-gray-400"></i>
@@ -465,6 +575,275 @@
             </div>
         </div>
 
+        <!-- ── EXPLORE VIEW ── -->
+        <div id="exploreView" class="app-view view-hidden-right">
+            <div class="tab-header">
+                <div class="tab-header-icon"><i data-lucide="compass" class="w-5 h-5 text-white"></i></div>
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Explore</h2>
+                    <p class="text-sm text-gray-400">Discover content across all categories</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-8" id="exploreCategoryGrid"></div>
+            <h3 class="text-lg font-black mb-4">All Videos</h3>
+            <div id="exploreGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8"></div>
+        </div>
+
+        <!-- ── SAVED VIEW ── -->
+        <div id="savedView" class="app-view view-hidden-right">
+            <div class="tab-header">
+                <div class="tab-header-icon"><i data-lucide="bookmark" class="w-5 h-5 text-white"></i></div>
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Saved</h2>
+                    <p class="text-sm text-gray-400">Your bookmarked videos</p>
+                </div>
+            </div>
+            <div id="savedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-8"></div>
+        </div>
+
+        <!-- ── HISTORY VIEW ── -->
+        <div id="historyView" class="app-view view-hidden-right">
+            <div class="tab-header">
+                <div class="tab-header-icon"><i data-lucide="history" class="w-5 h-5 text-white"></i></div>
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Watch History</h2>
+                    <p class="text-sm text-gray-400">Videos you've recently watched</p>
+                </div>
+            </div>
+            <div class="flex justify-between items-center mb-5">
+                <span id="historyCount" class="text-sm text-gray-400 font-medium"></span>
+                <button onclick="clearHistory()" class="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-50">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear All
+                </button>
+            </div>
+            <div id="historyList" class="space-y-3"></div>
+        </div>
+
+        <!-- ── TRENDING VIEW ── -->
+        <div id="trendingView" class="app-view view-hidden-right">
+            <div class="tab-header">
+                <div class="tab-header-icon"><i data-lucide="trending-up" class="w-5 h-5 text-white"></i></div>
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Trending</h2>
+                    <p class="text-sm text-gray-400">Most liked videos on the platform</p>
+                </div>
+            </div>
+            <div id="trendingList" class="space-y-3"></div>
+        </div>
+
+        <!-- ── SETTINGS VIEW ── -->
+        <div id="settingsView" class="app-view view-hidden-right max-w-2xl mx-auto">
+            <div class="tab-header">
+                <div class="tab-header-icon"><i data-lucide="settings" class="w-5 h-5 text-white"></i></div>
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Settings</h2>
+                    <p class="text-sm text-gray-400">Manage your preferences</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <!-- Notifications -->
+                <div class="tab-card">
+                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Notifications</div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">New uploads from subscriptions</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Get notified when channels you follow post</div>
+                        </div>
+                        <div class="toggle on" id="toggle-newUploads" onclick="toggleSetting(this, 'New upload notifications enabled')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">Comments & replies</div>
+                            <div class="text-xs text-gray-400 mt-0.5">When someone replies to your comment</div>
+                        </div>
+                        <div class="toggle on" id="toggle-comments" onclick="toggleSetting(this, 'Comment notifications enabled')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">Trending alerts</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Weekly digest of trending content</div>
+                        </div>
+                        <div class="toggle" id="toggle-trending" onclick="toggleSetting(this, 'Trending alerts updated')"></div>
+                    </div>
+                </div>
+
+                <!-- Playback -->
+                <div class="tab-card">
+                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Playback</div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">Autoplay next video</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Automatically play the next video</div>
+                        </div>
+                        <div class="toggle on" id="toggle-autoplay" onclick="toggleSetting(this, 'Autoplay setting updated')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">Default quality</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Auto-select best quality</div>
+                        </div>
+                        <select class="text-xs font-semibold bg-premiumGray border border-premiumBorder rounded-lg px-3 py-2 focus:outline-none">
+                            <option>Auto</option><option>1080p</option><option>720p</option><option>480p</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">Save watch history</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Track videos you've watched</div>
+                        </div>
+                        <div class="toggle on" id="toggle-history" onclick="toggleSetting(this, 'Watch history setting updated')"></div>
+                    </div>
+                </div>
+
+                <!-- Account -->
+                <div class="tab-card">
+                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Account</div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">Account status</div>
+                            <div class="text-xs text-gray-400 mt-0.5" id="settingsAccountStatus">Not signed in</div>
+                        </div>
+                        <button onclick="document.getElementById('authBtn').click()" class="text-xs font-bold px-4 py-2 rounded-full bg-premiumBlack text-white hover:bg-gray-800 transition-all">
+                            Sign In
+                        </button>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="text-sm font-bold">Data & Privacy</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Manage your data preferences</div>
+                        </div>
+                        <button onclick="showToast('info','Privacy','Your data is encrypted and secure.',4000)" class="text-xs font-semibold text-gray-400 hover:text-black transition-colors">View →</button>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div class="tab-card">
+                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">About</div>
+                    <div class="setting-row">
+                        <div class="text-sm font-bold">VISION Platform</div>
+                        <span class="text-xs font-semibold text-gray-400 bg-premiumGray px-3 py-1 rounded-full">v2.4.1</span>
+                    </div>
+                    <div class="setting-row">
+                        <div class="text-sm font-bold">Terms of Service</div>
+                        <button class="text-xs font-semibold text-gray-400 hover:text-black transition-colors">View →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── HELP VIEW ── -->
+        <div id="helpView" class="app-view view-hidden-right max-w-2xl mx-auto">
+            <div class="tab-header">
+                <div class="tab-header-icon"><i data-lucide="help-circle" class="w-5 h-5 text-white"></i></div>
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Help & Feedback</h2>
+                    <p class="text-sm text-gray-400">Get support or share your thoughts</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <!-- FAQ -->
+                <div class="tab-card">
+                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Frequently Asked Questions</div>
+                    <div class="space-y-1" id="faqList">
+                        <div class="faq-item border-b border-premiumBorder last:border-0">
+                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
+                                How do I upload a video?
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
+                            </button>
+                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
+                                Tap the Upload button in the navbar or sidebar. Fill in your title, select a category, add a description, then pick your video file. Hit "Deploy to Network" to publish.
+                            </div>
+                        </div>
+                        <div class="faq-item border-b border-premiumBorder last:border-0">
+                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
+                                Can I watch videos without signing in?
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
+                            </button>
+                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
+                                Yes! You can browse and watch all public videos without an account. Signing in with Google lets you like, comment, subscribe, and upload.
+                            </div>
+                        </div>
+                        <div class="faq-item border-b border-premiumBorder last:border-0">
+                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
+                                What video formats are supported?
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
+                            </button>
+                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
+                                We support MP4, MOV, AVI, and most common video formats up to 500MB per upload. For best quality, we recommend H.264 encoded MP4.
+                            </div>
+                        </div>
+                        <div class="faq-item border-b border-premiumBorder last:border-0">
+                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
+                                How do subscriptions work?
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
+                            </button>
+                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
+                                Click "Subscribe" on any video player to follow that creator. You'll be notified of new uploads and their content will appear in your feed.
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
+                                How do I delete my account?
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
+                            </button>
+                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
+                                Account deletion can be requested via the feedback form below. We'll process your request within 48 hours and remove all associated data.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick links -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button onclick="showToast('info','Docs','Opening documentation...', 3000)" class="tab-card text-left hover:border-gray-400 transition-colors">
+                        <div class="w-9 h-9 rounded-xl bg-premiumGray flex items-center justify-center mb-3">
+                            <i data-lucide="book-open" class="w-5 h-5 text-gray-500"></i>
+                        </div>
+                        <div class="text-sm font-bold mb-1">Documentation</div>
+                        <div class="text-xs text-gray-400">Guides and references</div>
+                    </button>
+                    <button onclick="showToast('info','Community','Opening community forum...', 3000)" class="tab-card text-left hover:border-gray-400 transition-colors">
+                        <div class="w-9 h-9 rounded-xl bg-premiumGray flex items-center justify-center mb-3">
+                            <i data-lucide="users" class="w-5 h-5 text-gray-500"></i>
+                        </div>
+                        <div class="text-sm font-bold mb-1">Community</div>
+                        <div class="text-xs text-gray-400">Forum and discussions</div>
+                    </button>
+                    <button onclick="showToast('success','Report','Thank you for your report!', 3000)" class="tab-card text-left hover:border-gray-400 transition-colors">
+                        <div class="w-9 h-9 rounded-xl bg-premiumGray flex items-center justify-center mb-3">
+                            <i data-lucide="flag" class="w-5 h-5 text-gray-500"></i>
+                        </div>
+                        <div class="text-sm font-bold mb-1">Report Issue</div>
+                        <div class="text-xs text-gray-400">Bug reports</div>
+                    </button>
+                </div>
+
+                <!-- Feedback form -->
+                <div class="tab-card">
+                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Send Feedback</div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-wider">Type</label>
+                            <select id="feedbackType" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack transition-all">
+                                <option>General Feedback</option>
+                                <option>Bug Report</option>
+                                <option>Feature Request</option>
+                                <option>Account Issue</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-wider">Message</label>
+                            <textarea id="feedbackMsg" rows="4" placeholder="Tell us what's on your mind..." class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all resize-none"></textarea>
+                        </div>
+                        <button onclick="submitFeedback()" class="w-full py-3 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-900 transition-all active:scale-95 flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            Submit Feedback
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div><!-- end view-container -->
 </main>
 
@@ -483,7 +862,7 @@
             <i data-lucide="plus" class="w-5 h-5 text-white"></i>
         </div>
     </button>
-    <button class="mob-nav-btn">
+    <button class="mob-nav-btn" id="mob-savedView" onclick="showView('savedView')">
         <i data-lucide="bookmark" class="w-5 h-5"></i>
         Saved
     </button>
@@ -531,7 +910,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getDatabase, ref, push, set, onValue, serverTimestamp, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getDatabase, ref, push, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCh7Ute6LeSAxcNDEQwZg5m0cA4ujnLCfg",
@@ -557,6 +936,11 @@
     let activeCategory = 'All';
     let subscribedChannels = new Set();
     let likedVideos = new Set();
+    let savedVideos = new Set();
+    let watchHistory = [];
+    let videoLikeCounts = {};
+
+    const ALL_VIEWS = ['feedView','uploadView','playerView','exploreView','savedView','historyView','trendingView','settingsView','helpView'];
 
     const CATEGORIES = [
         { label: 'All', icon: 'layout-grid' },
@@ -575,6 +959,70 @@
     // ── Init icons ──
     function refreshIcons() { if (window.lucide) window.lucide.createIcons(); }
     setTimeout(refreshIcons, 50);
+
+    // ════════════════════════════════════
+    // TOAST NOTIFICATIONS
+    // ════════════════════════════════════
+    let toastCounter = 0;
+    window.showToast = (type = 'success', title = '', message = '', duration = 4000) => {
+        const container = document.getElementById('toastContainer');
+        const id = 'toast-' + (++toastCounter);
+        const icons = { success: 'check-circle', info: 'info', warning: 'alert-triangle', error: 'x-circle' };
+        const iconName = icons[type] || 'check-circle';
+
+        const toast = document.createElement('div');
+        toast.id = id;
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <div class="toast-icon ${type}">
+                <i data-lucide="${iconName}"></i>
+            </div>
+            <div class="toast-body">
+                <div class="toast-title">${title}</div>
+                ${message ? `<div class="toast-msg">${message}</div>` : ''}
+            </div>
+            <div class="toast-close" onclick="dismissToast('${id}')">
+                <i data-lucide="x"></i>
+            </div>
+            <div class="toast-progress" style="animation-duration: ${duration}ms;"></div>
+        `;
+        container.appendChild(toast);
+        refreshIcons();
+
+        // Hide notification dot after first view
+        document.getElementById('notifDot')?.style && (document.getElementById('notifDot').style.display = 'none');
+
+        const timer = setTimeout(() => dismissToast(id), duration);
+        toast._timer = timer;
+    };
+
+    window.dismissToast = (id) => {
+        const toast = document.getElementById(id);
+        if (!toast) return;
+        clearTimeout(toast._timer);
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    };
+
+    // Show notifications panel on bell click
+    window.showNotifDemo = () => {
+        showToast('info', 'Notifications', 'You have no new notifications right now.', 3500);
+    };
+
+    // Real-time: listen for new videos and notify if signed in
+    function listenForNewVideos() {
+        let initialLoad = true;
+        onValue(ref(db, 'videos'), snapshot => {
+            if (initialLoad) { initialLoad = false; return; }
+            // A new video was added
+            const videos = [];
+            snapshot.forEach(c => videos.push({ id: c.key, ...c.val() }));
+            const newest = videos[videos.length - 1];
+            if (newest && newest.uploaderName) {
+                showToast('info', 'New Video', `${newest.uploaderName} just uploaded "${newest.title}"`, 5000);
+            }
+        });
+    }
 
     // ── Build category pills ──
     function buildCategoryBar() {
@@ -614,7 +1062,6 @@
         const grid = document.getElementById('feedGrid');
         if (!grid) return;
         grid.innerHTML = '';
-
         const q = searchQuery.toLowerCase().trim();
         let filtered = allVideos.filter(v => {
             const matchCat = activeCategory === 'All' || (v.category || 'All') === activeCategory;
@@ -632,25 +1079,30 @@
         }
 
         filtered.forEach((v, i) => {
-            const card = document.createElement('div');
-            card.className = 'video-card stagger-in';
-            card.style.animationDelay = `${i * 0.06}s`;
-            card.onclick = () => window.playVideo(v.id, v);
-            card.innerHTML = `
-                <div class="card-thumb">
-                    <img src="${v.thumbnailUrl || 'https://placehold.co/640x360/f0f0f0/999?text=Video'}" alt="${v.title}" loading="lazy" onerror="this.src='https://placehold.co/640x360/f0f0f0/999?text=Video'">
-                </div>
-                <div class="flex gap-3 px-0.5">
-                    <div class="w-9 h-9 rounded-full bg-premiumBlack flex-shrink-0 flex items-center justify-center text-white text-xs font-black mt-0.5">${(v.uploaderName||'V')[0].toUpperCase()}</div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-sm tracking-tight leading-snug line-clamp-2 mb-0.5">${v.title}</h3>
-                        <p class="text-xs text-gray-400 font-medium">${v.uploaderName || 'Verified User'}</p>
-                        ${v.category && v.category !== 'All' ? `<span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-premiumGray text-gray-500">${v.category}</span>` : ''}
-                    </div>
-                </div>`;
-            grid.appendChild(card);
+            grid.appendChild(makeVideoCard(v, i, () => window.playVideo(v.id, v)));
         });
         refreshIcons();
+    }
+
+    // ── Make video card (reusable) ──
+    function makeVideoCard(v, i, clickFn) {
+        const card = document.createElement('div');
+        card.className = 'video-card stagger-in';
+        card.style.animationDelay = `${Math.min(i, 7) * 0.06}s`;
+        card.onclick = clickFn;
+        card.innerHTML = `
+            <div class="card-thumb">
+                <img src="${v.thumbnailUrl || 'https://placehold.co/640x360/f0f0f0/999?text=Video'}" alt="${v.title}" loading="lazy" onerror="this.src='https://placehold.co/640x360/f0f0f0/999?text=Video'">
+            </div>
+            <div class="flex gap-3 px-0.5">
+                <div class="w-9 h-9 rounded-full bg-premiumBlack flex-shrink-0 flex items-center justify-center text-white text-xs font-black mt-0.5">${(v.uploaderName||'V')[0].toUpperCase()}</div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-sm tracking-tight leading-snug line-clamp-2 mb-0.5">${v.title}</h3>
+                    <p class="text-xs text-gray-400 font-medium">${v.uploaderName || 'Verified User'}</p>
+                    ${v.category && v.category !== 'All' ? `<span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-premiumGray text-gray-500">${v.category}</span>` : ''}
+                </div>
+            </div>`;
+        return card;
     }
 
     // ── Skeleton loader ──
@@ -683,9 +1135,7 @@
         onValue(videosRef, snapshot => {
             allVideos = [];
             if (snapshot.exists()) {
-                snapshot.forEach(child => {
-                    allVideos.push({ id: child.key, ...child.val() });
-                });
+                snapshot.forEach(child => { allVideos.push({ id: child.key, ...child.val() }); });
                 allVideos.reverse();
             }
             renderFeed();
@@ -697,30 +1147,34 @@
     // ── View router ──
     window.showView = (viewId) => {
         if (viewId === activeViewId) return;
-        const views = ['feedView', 'uploadView', 'playerView'];
-        const targetIndex = views.indexOf(viewId);
-        views.forEach(id => {
+        const targetIndex = ALL_VIEWS.indexOf(viewId);
+        const currentIndex = ALL_VIEWS.indexOf(activeViewId);
+        ALL_VIEWS.forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
             if (id === viewId) {
                 el.className = 'app-view view-active';
             } else {
-                el.className = 'app-view ' + (views.indexOf(id) < targetIndex ? 'view-hidden-left' : 'view-hidden-right');
+                el.className = 'app-view ' + (ALL_VIEWS.indexOf(id) < targetIndex ? 'view-hidden-left' : 'view-hidden-right');
             }
         });
         activeViewId = viewId;
 
-        // Update sidebar active state
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         const navBtn = document.getElementById('nav-' + viewId);
         if (navBtn) navBtn.classList.add('active');
 
-        // Update mobile nav
         document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
         const mobBtn = document.getElementById('mob-' + viewId);
         if (mobBtn) mobBtn.classList.add('active');
 
         if (viewId === 'feedView') loadFeed();
+        if (viewId === 'exploreView') renderExplore();
+        if (viewId === 'savedView') renderSaved();
+        if (viewId === 'historyView') renderHistory();
+        if (viewId === 'trendingView') renderTrending();
+        if (viewId === 'settingsView') renderSettings();
+
         if (viewId !== 'playerView') {
             const p = document.getElementById('mainPlayer');
             if (p) { p.pause(); p.src = ''; }
@@ -736,6 +1190,189 @@
         document.getElementById('sidebar').classList.toggle('-translate-x-full');
     };
 
+    // ════════════════════════════════════
+    // EXPLORE VIEW
+    // ════════════════════════════════════
+    function renderExplore() {
+        // Category grid
+        const cgrid = document.getElementById('exploreCategoryGrid');
+        if (cgrid) {
+            cgrid.innerHTML = '';
+            CATEGORIES.filter(c => c.label !== 'All').forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'tab-card text-center flex flex-col items-center gap-2 py-4 cursor-pointer hover:bg-premiumGray transition-colors';
+                btn.innerHTML = `<i data-lucide="${cat.icon}" class="w-6 h-6 text-gray-500"></i><span class="text-xs font-bold text-gray-700">${cat.label}</span>`;
+                btn.onclick = () => {
+                    showView('feedView');
+                    setTimeout(() => setCategory(cat.label), 100);
+                };
+                cgrid.appendChild(btn);
+            });
+        }
+        // All videos grid
+        const egrid = document.getElementById('exploreGrid');
+        if (egrid) {
+            egrid.innerHTML = '';
+            if (allVideos.length === 0) {
+                egrid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12"><div class="text-4xl mb-2">🎬</div><p class="font-semibold">No videos yet</p></div>`;
+            } else {
+                allVideos.forEach((v, i) => egrid.appendChild(makeVideoCard(v, i, () => window.playVideo(v.id, v))));
+            }
+        }
+        refreshIcons();
+    }
+
+    // ════════════════════════════════════
+    // SAVED VIEW
+    // ════════════════════════════════════
+    function renderSaved() {
+        const grid = document.getElementById('savedGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        const saved = allVideos.filter(v => savedVideos.has(v.id));
+        if (saved.length === 0) {
+            grid.innerHTML = `<div class="col-span-full empty-state">
+                <div class="empty-state-icon"><i data-lucide="bookmark" class="w-8 h-8 text-gray-400"></i></div>
+                <div class="text-base font-black">No saved videos</div>
+                <p class="text-sm text-gray-400">Bookmark videos while watching to find them here</p>
+            </div>`;
+        } else {
+            saved.forEach((v, i) => grid.appendChild(makeVideoCard(v, i, () => window.playVideo(v.id, v))));
+        }
+        refreshIcons();
+    }
+
+    // ════════════════════════════════════
+    // HISTORY VIEW
+    // ════════════════════════════════════
+    function renderHistory() {
+        const list = document.getElementById('historyList');
+        const countEl = document.getElementById('historyCount');
+        if (!list) return;
+        list.innerHTML = '';
+        if (watchHistory.length === 0) {
+            countEl.textContent = '';
+            list.innerHTML = `<div class="empty-state">
+                <div class="empty-state-icon"><i data-lucide="history" class="w-8 h-8 text-gray-400"></i></div>
+                <div class="text-base font-black">No watch history</div>
+                <p class="text-sm text-gray-400">Videos you watch will appear here</p>
+            </div>`;
+        } else {
+            countEl.textContent = `${watchHistory.length} video${watchHistory.length !== 1 ? 's' : ''} watched`;
+            watchHistory.slice().reverse().forEach((v, i) => {
+                const row = document.createElement('div');
+                row.className = 'tab-card flex items-center gap-4 cursor-pointer stagger-in';
+                row.style.animationDelay = `${i * 0.05}s`;
+                row.onclick = () => window.playVideo(v.id, v);
+                row.innerHTML = `
+                    <div class="w-28 sm:w-36 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-premiumGray border border-premiumBorder">
+                        <img src="${v.thumbnailUrl || 'https://placehold.co/320x180/f0f0f0/999?text=Video'}" alt="${v.title}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-sm leading-snug line-clamp-2 mb-1">${v.title}</h3>
+                        <p class="text-xs text-gray-400">${v.uploaderName || 'Verified User'}</p>
+                        ${v.category && v.category !== 'All' ? `<span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-premiumGray text-gray-500">${v.category}</span>` : ''}
+                    </div>
+                    <button onclick="event.stopPropagation(); removeFromHistory('${v.id}')" class="p-2 rounded-full hover:bg-premiumGray text-gray-400 hover:text-red-500 transition-colors flex-shrink-0">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>`;
+                list.appendChild(row);
+            });
+        }
+        refreshIcons();
+    }
+
+    window.removeFromHistory = (id) => {
+        watchHistory = watchHistory.filter(v => v.id !== id);
+        renderHistory();
+        showToast('success', 'Removed', 'Video removed from history', 2500);
+    };
+
+    window.clearHistory = () => {
+        if (watchHistory.length === 0) return;
+        watchHistory = [];
+        renderHistory();
+        showToast('success', 'Cleared', 'Watch history cleared', 2500);
+    };
+
+    // ════════════════════════════════════
+    // TRENDING VIEW
+    // ════════════════════════════════════
+    function renderTrending() {
+        const list = document.getElementById('trendingList');
+        if (!list) return;
+        list.innerHTML = '';
+
+        // Sort by like count
+        const sorted = [...allVideos].sort((a, b) => (videoLikeCounts[b.id] || 0) - (videoLikeCounts[a.id] || 0));
+
+        if (sorted.length === 0) {
+            list.innerHTML = `<div class="empty-state">
+                <div class="empty-state-icon"><i data-lucide="trending-up" class="w-8 h-8 text-gray-400"></i></div>
+                <div class="text-base font-black">No trending videos yet</div>
+                <p class="text-sm text-gray-400">Come back later as more content is published</p>
+            </div>`;
+            refreshIcons(); return;
+        }
+
+        sorted.forEach((v, i) => {
+            const row = document.createElement('div');
+            row.className = 'tab-card flex items-center gap-4 cursor-pointer stagger-in';
+            row.style.animationDelay = `${i * 0.05}s`;
+            row.onclick = () => window.playVideo(v.id, v);
+            const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-n';
+            const likes = videoLikeCounts[v.id] || 0;
+            row.innerHTML = `
+                <div class="rank-badge ${rankClass}">${i + 1}</div>
+                <div class="w-28 sm:w-36 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-premiumGray border border-premiumBorder">
+                    <img src="${v.thumbnailUrl || 'https://placehold.co/320x180/f0f0f0/999?text=Video'}" alt="${v.title}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-sm leading-snug line-clamp-2 mb-1">${v.title}</h3>
+                    <p class="text-xs text-gray-400 mb-1">${v.uploaderName || 'Verified User'}</p>
+                    <div class="flex items-center gap-1 text-xs font-semibold text-gray-500">
+                        <i data-lucide="thumbs-up" class="w-3 h-3"></i> ${likes} like${likes !== 1 ? 's' : ''}
+                    </div>
+                </div>`;
+            list.appendChild(row);
+        });
+        refreshIcons();
+    }
+
+    // ════════════════════════════════════
+    // SETTINGS VIEW
+    // ════════════════════════════════════
+    function renderSettings() {
+        const statusEl = document.getElementById('settingsAccountStatus');
+        if (statusEl && currentUser) {
+            statusEl.textContent = currentUser.displayName + ' · ' + currentUser.email;
+        }
+    }
+
+    window.toggleSetting = (el, label) => {
+        el.classList.toggle('on');
+        const state = el.classList.contains('on') ? 'enabled' : 'disabled';
+        showToast('success', 'Settings', `${label} ${state}`, 2500);
+    };
+
+    // ════════════════════════════════════
+    // HELP VIEW
+    // ════════════════════════════════════
+    window.toggleFaq = (btn) => {
+        const answer = btn.nextElementSibling;
+        const icon = btn.querySelector('[data-lucide="chevron-down"]');
+        const isOpen = !answer.classList.contains('hidden');
+        answer.classList.toggle('hidden', isOpen);
+        if (icon) icon.style.transform = isOpen ? '' : 'rotate(180deg)';
+    };
+
+    window.submitFeedback = () => {
+        const msg = document.getElementById('feedbackMsg')?.value?.trim();
+        if (!msg) { showToast('warning', 'Empty', 'Please write a message first.', 3000); return; }
+        document.getElementById('feedbackMsg').value = '';
+        showToast('success', 'Feedback Sent!', 'Thank you! We\'ll review your message.', 4000);
+    };
+
     // ── Auth ──
     const authBtn = document.getElementById('authBtn');
     authBtn.addEventListener('click', () => {
@@ -748,6 +1385,8 @@
             btnText.textContent = 'Sign Out';
             set(ref(db, 'users/' + user.uid), { displayName: user.displayName, email: user.email, photoURL: user.photoURL });
             document.getElementById('sidebarSubs').innerHTML = `<div class="text-sm font-semibold text-premiumBlack flex items-center gap-2"><span class="w-7 h-7 rounded-full bg-premiumBlack text-white flex items-center justify-center text-xs font-black">${user.displayName[0]}</span>${user.displayName}</div>`;
+            showToast('success', 'Welcome back!', `Signed in as ${user.displayName}`, 4000);
+            listenForNewVideos();
         } else {
             btnText.textContent = 'Sign In';
             document.getElementById('sidebarSubs').textContent = 'Sign in to view subscriptions';
@@ -765,7 +1404,7 @@
     // ── Upload with progress ──
     document.getElementById('uploadForm').addEventListener('submit', async e => {
         e.preventDefault();
-        if (!currentUser) return alert("Please sign in to upload.");
+        if (!currentUser) { showToast('warning', 'Sign In Required', 'Please sign in to upload.', 4000); return; }
 
         const file = document.getElementById('videoFile').files[0];
         const title = document.getElementById('videoTitle').value;
@@ -780,10 +1419,13 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i> Uploading...';
         progressWrap.style.display = 'block';
+        progressBar.style.width = '0%';
+        pct.textContent = '0%';
         refreshIcons();
 
+        showToast('info', 'Upload Started', `Uploading "${title}"...`, 5000);
+
         try {
-            // XHR for real progress
             const cloudData = await new Promise((resolve, reject) => {
                 const formData = new FormData();
                 formData.append('file', file);
@@ -825,10 +1467,11 @@
                 progressBar.style.width = '0%';
                 pct.textContent = '0%';
                 openSuccessModal();
+                showToast('success', 'Published!', `"${title}" is now live on VISION`, 5000);
             }
         } catch (err) {
             console.error(err);
-            alert('Upload failed: ' + err.message);
+            showToast('error', 'Upload Failed', err.message, 5000);
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i data-lucide="rocket" class="w-4 h-4"></i> Deploy to Network';
@@ -854,6 +1497,11 @@
             ? 'ml-1 px-4 py-1.5 rounded-full bg-premiumGray text-gray-600 text-xs font-bold border border-premiumBorder transition-all active:scale-95 subscribed'
             : 'ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95';
 
+        // Track watch history
+        watchHistory = watchHistory.filter(v => v.id !== videoId);
+        watchHistory.push({ id: videoId, ...data });
+        if (watchHistory.length > 50) watchHistory.shift();
+
         window.showView('playerView');
         listenToComments(videoId);
         listenToLikes(videoId);
@@ -862,7 +1510,7 @@
 
     // ── Subscribe ──
     window.toggleSubscribe = () => {
-        if (!currentUser) return alert('Please sign in to subscribe.');
+        if (!currentUser) { showToast('warning', 'Sign In Required', 'Please sign in to subscribe.', 3500); return; }
         const subBtn = document.getElementById('subscribeBtn');
         const video = allVideos.find(v => v.id === currentPlayingVideoId);
         if (!video) return;
@@ -870,10 +1518,12 @@
             subscribedChannels.delete(video.uploaderId);
             subBtn.textContent = 'Subscribe';
             subBtn.className = 'ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95';
+            showToast('info', 'Unsubscribed', `You unsubscribed from ${video.uploaderName}`, 3000);
         } else {
             subscribedChannels.add(video.uploaderId);
             subBtn.textContent = 'Subscribed';
             subBtn.className = 'ml-1 px-4 py-1.5 rounded-full bg-premiumGray text-gray-600 text-xs font-bold border border-premiumBorder transition-all active:scale-95 subscribed';
+            showToast('success', 'Subscribed!', `You're now following ${video.uploaderName}`, 3000);
         }
     };
 
@@ -887,22 +1537,29 @@
     };
 
     // ── Save ──
-    window.handleSave = () => {
-        const btn = event.currentTarget;
-        btn.classList.add('bg-premiumBlack', 'text-white', 'border-premiumBlack');
-        setTimeout(() => btn.classList.remove('bg-premiumBlack', 'text-white', 'border-premiumBlack'), 1500);
+    window.handleSave = (e) => {
+        const videoId = currentPlayingVideoId;
+        if (!videoId) return;
+        if (savedVideos.has(videoId)) {
+            savedVideos.delete(videoId);
+            showToast('info', 'Removed', 'Video removed from saved', 2500);
+        } else {
+            savedVideos.add(videoId);
+            showToast('success', 'Saved!', 'Video added to your saved list', 2500);
+        }
     };
 
     // ── Comments ──
     document.getElementById('commentForm').addEventListener('submit', async e => {
         e.preventDefault();
-        if (!currentUser) return alert('Sign in to comment.');
+        if (!currentUser) { showToast('warning', 'Sign In Required', 'Sign in to comment.', 3500); return; }
         const input = document.getElementById('commentInput');
         const text = input.value.trim();
         if (!text) return;
         input.value = '';
         const newRef = push(ref(db, `comments/${currentPlayingVideoId}`));
         await set(newRef, { text, userId: currentUser.uid, userName: currentUser.displayName, timestamp: serverTimestamp() });
+        showToast('success', 'Comment Posted', '', 2000);
     });
 
     function listenToComments(videoId) {
@@ -936,7 +1593,7 @@
 
     // ── Likes ──
     window.handleLike = () => {
-        if (!currentUser) return alert('Sign in to like videos.');
+        if (!currentUser) { showToast('warning', 'Sign In Required', 'Sign in to like videos.', 3500); return; }
         const likeRef = ref(db, `likes/${currentPlayingVideoId}/${currentUser.uid}`);
         const btn = document.getElementById('likeBtn');
         if (likedVideos.has(currentPlayingVideoId)) {
@@ -948,12 +1605,15 @@
             set(likeRef, true);
             btn.classList.add('liked', 'like-pop');
             setTimeout(() => btn.classList.remove('like-pop'), 400);
+            showToast('success', 'Liked!', '', 1800);
         }
     };
 
     function listenToLikes(videoId) {
         onValue(ref(db, `likes/${videoId}`), snapshot => {
-            document.getElementById('likeCount').textContent = snapshot.exists() ? snapshot.size : 0;
+            const count = snapshot.exists() ? snapshot.size : 0;
+            document.getElementById('likeCount').textContent = count;
+            videoLikeCounts[videoId] = count;
             const btn = document.getElementById('likeBtn');
             if (currentUser && snapshot.exists() && snapshot.hasChild(currentUser.uid)) {
                 btn.classList.add('liked');
@@ -973,25 +1633,23 @@
                 <div class="sheet-action" onclick="handleShare(); closeBottomSheet()">
                     <i data-lucide="share-2"></i> Share Video
                 </div>
-                <div class="sheet-action" onclick="closeBottomSheet()">
+                <div class="sheet-action" onclick="closeBottomSheet(); showToast('success','Reported','Thank you for reporting.',3000)">
                     <i data-lucide="flag"></i> Report
                 </div>
-                <div class="sheet-action" onclick="closeBottomSheet()">
+                <div class="sheet-action" onclick="closeBottomSheet(); showToast('info','Noted','We\'ll show you fewer like this.',3000)">
                     <i data-lucide="ban"></i> Not Interested
                 </div>`;
         } else if (type === 'share') {
             content.innerHTML = `
                 <div class="text-sm font-black mb-4 text-gray-400 uppercase tracking-wider px-2">Share via</div>
-                <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="copy"></i> Copy Link</div>
+                <div class="sheet-action" onclick="navigator.clipboard&&navigator.clipboard.writeText(window.location.href); closeBottomSheet(); showToast('success','Copied','Link copied to clipboard',2500)"><i data-lucide="copy"></i> Copy Link</div>
                 <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="mail"></i> Send via Email</div>
                 <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="message-circle"></i> Send Message</div>`;
         }
         document.getElementById('bottomSheet').classList.add('open');
         refreshIcons();
     };
-    window.closeBottomSheet = () => {
-        document.getElementById('bottomSheet').classList.remove('open');
-    };
+    window.closeBottomSheet = () => { document.getElementById('bottomSheet').classList.remove('open'); };
 
     // ── Success Modal ──
     function openSuccessModal() {
