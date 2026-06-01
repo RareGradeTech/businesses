@@ -489,6 +489,7 @@ let currentUser=null, activeViewId='feedView', allVideos=[], activeCategory='All
 let subscribedChannels=new Set(), likedVideos=new Set(), savedVideos=new Set();
 let watchHistory=[], videoLikeCounts={}, exploreSearchQuery='';
 let feedObserver=null, feedDataListenerUnsub=null;
+let slideVisibility = new Map(); // videoId -> intersectionRatio
 // Profile state
 let viewingUserId=null; // null = own profile, else other user's uid
 let currentProfileTab='videos';
@@ -551,6 +552,7 @@ window.showView=(viewId, opts={})=>{
             try{ v.pause(); v.currentTime=0; }catch(e){}
         });
         if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
+        slideVisibility.clear();
     }
 
     ALL_VIEWS.forEach(id=>{
@@ -591,18 +593,15 @@ window.setFeedTab=(tab,el)=>{ document.querySelectorAll('.top-tab').forEach(t=>t
 // ══════════════════════════
 function initFeed(){
     buildCategoryBar();
-    // Always re-attach observer even if data hasn't changed
     if(!feedDataListenerUnsub){
-        feedLoaded=true;
         const videosRef=ref(db,'videos');
         feedDataListenerUnsub = onValue(videosRef,snapshot=>{
             allVideos=[];
             if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
             allVideos.reverse();
-            renderFeed(true); // true = data changed, rebuild DOM
+            renderFeed(true);
         });
     } else {
-        // Data already loaded, just ensure DOM and observers are fresh
         renderFeed(false);
     }
 }
@@ -611,13 +610,17 @@ function renderFeed(dataChanged=false){
     const feed=document.getElementById('feedView');
     const filtered=allVideos.filter(v=>activeCategory==='All'||(v.category||'All')===activeCategory);
 
-    // Only rebuild DOM if data actually changed or first render
+    // Always kill old observer before touching DOM
+    if(feedObserver){
+        feedObserver.disconnect();
+        feedObserver=null;
+    }
+    slideVisibility.clear();
+
     const existingIds = Array.from(feed.querySelectorAll('.video-slide')).map(s=>s.dataset.videoId).join(',');
     const newIds = filtered.map(v=>v.id).join(',');
 
     if(dataChanged || existingIds !== newIds || feed.querySelectorAll('.video-slide').length === 0){
-        // Disconnect old observer before clearing
-        if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
         feed.innerHTML='';
 
         if(filtered.length===0){
@@ -631,29 +634,47 @@ function renderFeed(dataChanged=false){
 
         filtered.forEach(v=>feed.appendChild(makeSlide(v)));
         ri();
-    } else {
-        // DOM is same, just ensure observers are fresh
-        if(feedObserver){ feedObserver.disconnect(); }
     }
 
-    // Always (re)create observer so it works after view switches
-    feedObserver=new IntersectionObserver(entries=>{
+    // Create robust observer that tracks visibility ratios and only plays the most visible slide
+    feedObserver = new IntersectionObserver((entries)=>{
         entries.forEach(entry=>{
-            const vid=entry.target.querySelector('.slide-video');
-            if(!vid) return;
-            if(entry.isIntersecting && entry.intersectionRatio >= 0.5){
-                vid.muted = true; // required for autoplay
-                const playPromise = vid.play();
-                if(playPromise) playPromise.catch(()=>{});
-                const vdata=allVideos.find(v=>v.id===entry.target.dataset.videoId);
-                if(vdata) addToHistory(vdata);
+            const id = entry.target.dataset.videoId;
+            if(entry.isIntersecting){
+                slideVisibility.set(id, entry.intersectionRatio);
             } else {
-                vid.pause();
-                // Reset to start so next view starts fresh
-                try{ vid.currentTime = 0; }catch(e){}
+                slideVisibility.delete(id);
             }
         });
-    },{threshold:[0,0.25,0.5,0.75,1.0],root:feed});
+
+        // Find the slide with the highest visibility
+        let bestId = null, bestRatio = 0;
+        slideVisibility.forEach((ratio, id)=>{
+            if(ratio > bestRatio){
+                bestRatio = ratio;
+                bestId = id;
+            }
+        });
+
+        // Play the best visible slide, pause all others
+        feed.querySelectorAll('.video-slide').forEach(slide=>{
+            const vid = slide.querySelector('.slide-video');
+            const id = slide.dataset.videoId;
+            if(id === bestId && bestRatio > 0.5){
+                if(vid && vid.paused){
+                    vid.muted = true;
+                    const p = vid.play();
+                    if(p) p.catch(()=>{});
+                    const vdata = allVideos.find(v=>v.id === id);
+                    if(vdata) addToHistory(vdata);
+                }
+            } else {
+                if(vid && !vid.paused){
+                    vid.pause();
+                }
+            }
+        });
+    }, {threshold:[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0], root:feed});
 
     feed.querySelectorAll('.video-slide').forEach(s=>feedObserver.observe(s));
 }
@@ -669,9 +690,10 @@ function makeSlide(v){
     const musicText=`${v.uploaderName||'original sound'} — ${v.title}`;
     const handle='@'+(v.uploaderName||'creator').toLowerCase().replace(/\s+/g,'_');
 
+    // NOTE: no autoplay attribute. We control playback via IntersectionObserver.
     slide.innerHTML=`
         <div class="slide-bg" style="background-image:url('${thumb}');"></div>
-        <video class="slide-video" loop playsinline muted autoplay preload="metadata" src="${v.videoUrl||''}" poster="${thumb}"></video>
+        <video class="slide-video" loop playsinline muted preload="metadata" src="${v.videoUrl||''}" poster="${thumb}"></video>
         <div class="slide-gradient"></div>
         <div class="pause-icon" id="pause-${v.id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)" style="width:60px;height:60px;"><path d="M8 5v14l11-7z"/></svg></div>
         <div class="slide-info">
@@ -736,7 +758,7 @@ function makeSlide(v){
     slide.addEventListener('touchend',e=>{
         if(e.target.closest('.slide-actions')) return;
         const now=Date.now();
-        if(now-lastTap<<300){ handleLike(v.id); spawnHeart(e,slide); }
+        if(now-lastTap < 300){ handleLike(v.id); spawnHeart(e,slide); }
         lastTap=now;
     });
 
@@ -1267,7 +1289,7 @@ function renderTrending(){
     }
     sorted.forEach((v,i)=>{
         const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
-        const rank=i<<1?'rank-1':i<<2?'rank-2':i<<3?'rank-3':'rank-n';
+        const rank = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-n';
         const card=document.createElement('div');
         card.className='hcard';
         card.style.cursor='pointer';
