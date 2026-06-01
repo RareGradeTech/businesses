@@ -566,6 +566,7 @@ let slideVisibility=new Map();
 let isMuted=true;
 let viewingUserId=null;
 let currentProfileTab='videos';
+let activeFeedTab='foryou'; // 'foryou' | 'following'
 
 const ALL_VIEWS=['feedView','uploadView','exploreView','savedView','historyView','trendingView','profileView','settingsView','helpView'];
 const CATEGORIES=[
@@ -638,10 +639,21 @@ onAuthStateChanged(auth,async user=>{
                 photoURL:existing.photoURL||user.photoURL||''
             });
         }
+        // Load who this user follows so Following feed and like state work immediately
+        try{
+            const followsSnap=await get(ref(db,'follows/'+user.uid));
+            subscribedChannels=new Set();
+            if(followsSnap.exists()){
+                followsSnap.forEach(child=>{ if(child.val()===true) subscribedChannels.add(child.key); });
+            }
+        }catch(e){ console.warn('Could not load follows',e); }
+        // Reload feed if Following tab is active so it applies the new follow data
+        if(activeViewId==='feedView') renderFeed();
     } else {
         if(s) s.textContent='Not signed in';
         if(sBtn){ sBtn.textContent='Sign In'; sBtn.style.background='#fe2c55'; sBtn.onclick=handleAuth; }
         document.getElementById('sidebarProfileLabel').textContent='Profile';
+        subscribedChannels=new Set();
     }
     // Only re-render profile when viewing own profile, not someone else's
     if(activeViewId==='profileView'){
@@ -689,8 +701,10 @@ window.showView=(viewId,opts={})=>{
 };
 
 window.setFeedTab=(tab,el)=>{
+    activeFeedTab=tab;
     document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
+    if(activeViewId==='feedView') renderFeed();
 };
 
 // Jump to a video in the feed (called from profile grid, history, saved, etc.)
@@ -755,15 +769,53 @@ function shuffle(arr){
     return arr;
 }
 
+// Smart shuffle: interleave videos from different uploaders so you don't
+// see the same creator back-to-back when multiple users have uploaded.
+function smartShuffle(arr){
+    if(arr.length<=1) return arr;
+    // Group by uploader
+    const byUploader={};
+    arr.forEach(v=>{
+        const uid=v.uploaderId||'unknown';
+        if(!byUploader[uid]) byUploader[uid]=[];
+        byUploader[uid].push(v);
+    });
+    // Shuffle within each uploader's bucket
+    Object.values(byUploader).forEach(bucket=>shuffle(bucket));
+    // Shuffle the uploader order
+    const uploaders=shuffle(Object.keys(byUploader));
+    // Round-robin interleave
+    const result=[];
+    let filled=true;
+    while(filled){
+        filled=false;
+        uploaders.forEach(uid=>{
+            if(byUploader[uid].length>0){ result.push(byUploader[uid].shift()); filled=true; }
+        });
+    }
+    return result;
+}
+
 function initFeed(){
     buildCategoryBar();
     // Always detach and re-attach so newly uploaded videos are always fetched fresh.
     if(feedDataListenerUnsub){ feedDataListenerUnsub(); feedDataListenerUnsub=null; }
+
+    // Show a loading skeleton while Firebase fetches all users' videos
+    const feed=document.getElementById('feedView');
+    if(feed&&allVideos.length===0){
+        feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;gap:14px;">
+            <div style="width:44px;height:44px;border:3px solid #222;border-top-color:#fe2c55;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+            <p style="font-size:13px;font-weight:600;color:#555;">Loading videos…</p>
+        </div>`;
+    }
+
+    // ref(db,'videos') fetches ALL videos from ALL users — the feed is global
     const videosRef=ref(db,'videos');
     feedDataListenerUnsub=onValue(videosRef,snapshot=>{
         allVideos=[];
         if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
-        // Shuffle so users see random videos each visit rather than chronological order
+        // smartShuffle interleaves different uploaders so you never see the same user back-to-back
         shuffle(allVideos);
         renderFeed();
     });
@@ -773,7 +825,35 @@ function renderFeed(){
     const feed=document.getElementById('feedView');
     if(!feed) return;
 
-    const filtered=allVideos.filter(v=>activeCategory==='All'||(v.category||'All')===activeCategory);
+    // Apply category filter
+    let filtered=allVideos.filter(v=>activeCategory==='All'||(v.category||'All')===activeCategory);
+
+    // Apply Following tab filter — only show videos from users this person follows
+    if(activeFeedTab==='following'){
+        if(subscribedChannels.size===0){
+            // Not following anyone or not signed in
+            if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
+            slideVisibility.clear();
+            feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;padding:24px;text-align:center;">
+                <div style="font-size:52px;margin-bottom:14px;">👥</div>
+                <p style="font-weight:800;font-size:16px;color:#ccc;margin-bottom:8px;">No one here yet</p>
+                <p style="font-size:13px;color:#555;margin-bottom:20px;">${currentUser?'Follow some creators to see their videos here.':'Sign in and follow creators to see their videos here.'}</p>
+                <button onclick="setFeedTab('foryou',document.querySelector('.top-tab'))" style="padding:10px 28px;background:linear-gradient(135deg,#fe2c55,#ff6b35);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;">Explore For You</button>
+            </div>`;
+            return;
+        }
+        filtered=filtered.filter(v=>subscribedChannels.has(v.uploaderId));
+        if(filtered.length===0){
+            if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
+            slideVisibility.clear();
+            feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;padding:24px;text-align:center;">
+                <div style="font-size:52px;margin-bottom:14px;">🎬</div>
+                <p style="font-weight:800;font-size:16px;color:#ccc;margin-bottom:8px;">No videos yet</p>
+                <p style="font-size:13px;color:#555;">The creators you follow haven't posted anything yet.</p>
+            </div>`;
+            return;
+        }
+    }
 
     // Rebuild slides
     if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
@@ -789,8 +869,8 @@ function renderFeed(){
         return;
     }
 
-    // Build an initial deck: shuffle a copy and show it
-    const deck=[...shuffle([...filtered])];
+    // Build initial shuffled deck — ensure variety by interleaving across unique uploaders
+    const deck=smartShuffle([...filtered]);
     deck.forEach(v=>feed.appendChild(makeSlide(v)));
 
     // Intersection observer — play the most visible slide, pause others
@@ -823,7 +903,7 @@ function renderFeed(){
                 const slides=Array.from(feed.querySelectorAll('.video-slide'));
                 const currentIndex=slides.findIndex(s=>s.dataset.videoId===id);
                 if(currentIndex>=slides.length-2 && filtered.length>0){
-                    const moreDeck=shuffle([...filtered]);
+                    const moreDeck=smartShuffle([...filtered]);
                     moreDeck.forEach(v=>{
                         const newSlide=makeSlide(v);
                         feed.appendChild(newSlide);
@@ -1055,10 +1135,30 @@ window.handleSubscribe=(videoId,uploaderId,uploaderName)=>{
     if(isSub){
         subscribedChannels.delete(uploaderId);
         if(dot){ dot.style.background='#fe2c55'; dot.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`; }
+        // Update all other follow dots for this uploader in the feed
+        document.querySelectorAll(`[id^="fdot-"]`).forEach(d=>{
+            const slide=d.closest('.video-slide');
+            if(!slide) return;
+            const v=allVideos.find(x=>x.id===slide.dataset.videoId);
+            if(v&&v.uploaderId===uploaderId&&d.id!=='fdot-'+videoId){
+                d.style.background='#fe2c55';
+                d.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+            }
+        });
         showToast('info','Unfollowed',`You unfollowed ${uploaderName}`,3000);
     } else {
         subscribedChannels.add(uploaderId);
         if(dot){ dot.style.background='#aaa'; dot.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;"><polyline points="20 6 9 17 4 12"/></svg>`; }
+        // Update all other follow dots for this uploader in the feed
+        document.querySelectorAll(`[id^="fdot-"]`).forEach(d=>{
+            const slide=d.closest('.video-slide');
+            if(!slide) return;
+            const v=allVideos.find(x=>x.id===slide.dataset.videoId);
+            if(v&&v.uploaderId===uploaderId&&d.id!=='fdot-'+videoId){
+                d.style.background='#aaa';
+                d.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;"><polyline points="20 6 9 17 4 12"/></svg>`;
+            }
+        });
         showToast('success','✅ Following!',`You're now following ${uploaderName}`,3000);
     }
     set(ref(db,`follows/${currentUser.uid}/${uploaderId}`),subscribedChannels.has(uploaderId)?true:null);
@@ -1155,6 +1255,21 @@ window.toggleFollowProfile=()=>{
         showToast('success','✅ Following!','',2500);
     }
     set(ref(db,`follows/${currentUser.uid}/${viewingUserId}`),subscribedChannels.has(viewingUserId)?true:null);
+    // Update follow dots in the live feed for this uploader
+    document.querySelectorAll(`[id^="fdot-"]`).forEach(d=>{
+        const slide=d.closest('.video-slide');
+        if(!slide) return;
+        const v=allVideos.find(x=>x.id===slide.dataset.videoId);
+        if(v&&v.uploaderId===viewingUserId){
+            if(subscribedChannels.has(viewingUserId)){
+                d.style.background='#aaa';
+                d.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;"><polyline points="20 6 9 17 4 12"/></svg>`;
+            } else {
+                d.style.background='#fe2c55';
+                d.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+            }
+        }
+    });
 };
 
 window.switchProfileTab=(tab,el)=>{
