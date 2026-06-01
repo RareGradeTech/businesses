@@ -223,9 +223,9 @@ html,body{height:100%;margin:0;padding:0;background:#000;color:#fff;font-family:
 .msearch:focus{border-color:#fe2c55;} .msearch::placeholder{color:#555;}
 
 /* ── VIDEO PLAYER MODAL ── */
-#videoPlayerModal{position:fixed;inset:0;background:#000;z-index:9998;display:none;flex-direction:column;}
+#videoPlayerModal{position:fixed;inset:0;background:#000;z-index:9998;display:none;flex-direction:column;align-items:stretch;}
 #videoPlayerModal.open{display:flex;}
-#playerVideo{flex:1;width:100%;object-fit:contain;background:#000;}
+#playerVideo{flex:1;width:100%;min-height:0;object-fit:contain;background:#000;}
 .player-topbar{position:absolute;top:0;left:0;right:0;padding:14px 16px;display:flex;align-items:center;gap:12px;background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);z-index:2;}
 .player-info{position:absolute;bottom:0;left:0;right:0;padding:20px 16px 40px;background:linear-gradient(to top,rgba(0,0,0,.9),transparent);z-index:2;}
 
@@ -620,18 +620,34 @@ onAuthStateChanged(auth,async user=>{
         if(s) s.textContent=user.displayName+' · '+user.email;
         if(sBtn){ sBtn.textContent='Sign Out'; sBtn.style.background='#333'; sBtn.onclick=signOutAndRefresh; }
         document.getElementById('sidebarProfileLabel').textContent=(user.displayName||'Profile').split(' ')[0];
-        // Persist user record to Firebase (don't overwrite photoURL if it was customised)
-        await set(ref(db,'users/'+user.uid),{
-            displayName:user.displayName||'',
-            email:user.email||'',
-            photoURL:user.photoURL||''
-        });
+        // Only write to DB if this user record doesn't already exist, so we
+        // don't overwrite a custom photoURL the user set via Edit Profile.
+        const userSnap=await get(ref(db,'users/'+user.uid));
+        if(!userSnap.exists()){
+            await set(ref(db,'users/'+user.uid),{
+                displayName:user.displayName||'',
+                email:user.email||'',
+                photoURL:user.photoURL||''
+            });
+        } else {
+            // Always keep displayName and email current, but preserve stored photoURL
+            const existing=userSnap.val();
+            await set(ref(db,'users/'+user.uid),{
+                displayName:user.displayName||existing.displayName||'',
+                email:user.email||existing.email||'',
+                photoURL:existing.photoURL||user.photoURL||''
+            });
+        }
     } else {
         if(s) s.textContent='Not signed in';
         if(sBtn){ sBtn.textContent='Sign In'; sBtn.style.background='#fe2c55'; sBtn.onclick=handleAuth; }
         document.getElementById('sidebarProfileLabel').textContent='Profile';
     }
-    if(activeViewId==='profileView') renderProfile(viewingUserId);
+    // Re-render the profile only when viewing own profile (no specific userId set)
+    if(activeViewId==='profileView'){
+        const isViewingOwn=!viewingUserId||(user&&viewingUserId===user.uid);
+        if(isViewingOwn) renderProfile(viewingUserId);
+    }
 });
 
 // ══════════════════════════
@@ -697,18 +713,26 @@ window.jumpToVideo=(videoId)=>{
 };
 
 // Open a video in the dedicated player (used from profile grid)
-window.openVideoPlayer=(videoId)=>{
-    const v=allVideos.find(x=>x.id===videoId);
-    if(!v) return;
+window.openVideoPlayer=async (videoId)=>{
+    // Try in-memory first, fall back to a direct Firebase fetch
+    let v=allVideos.find(x=>x.id===videoId);
+    if(!v){
+        try{
+            const snap=await get(ref(db,'videos/'+videoId));
+            if(snap.exists()) v={id:snap.key,...snap.val()};
+        }catch(e){ console.error('openVideoPlayer fetch failed',e); }
+    }
+    if(!v){ showToast('error','Not found','Could not load video.',3000); return; }
     const modal=document.getElementById('videoPlayerModal');
     const vid=document.getElementById('playerVideo');
     const titleEl=document.getElementById('playerTitle');
     const nameEl=document.getElementById('playerUploaderName');
     const descEl=document.getElementById('playerDesc');
-    modal.classList.add('open');
     vid.src=v.videoUrl||'';
     vid.muted=false;
-    vid.play().catch(()=>{});
+    modal.classList.add('open');
+    vid.load();
+    vid.play().catch(()=>{ vid.muted=true; vid.play().catch(()=>{}); });
     if(titleEl) titleEl.textContent=v.title||'';
     if(nameEl) nameEl.textContent=v.uploaderName||'Creator';
     if(descEl) descEl.textContent=v.description||'';
@@ -725,17 +749,16 @@ window.closeVideoPlayer=()=>{
 // ══════════════════════════
 function initFeed(){
     buildCategoryBar();
-    if(!feedDataListenerUnsub){
-        const videosRef=ref(db,'videos');
-        feedDataListenerUnsub=onValue(videosRef,snapshot=>{
-            allVideos=[];
-            if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
-            allVideos.reverse();
-            renderFeed();
-        });
-    } else {
+    // Always detach any existing listener and re-attach so newly uploaded
+    // videos are guaranteed to appear when returning to the feed.
+    if(feedDataListenerUnsub){ feedDataListenerUnsub(); feedDataListenerUnsub=null; }
+    const videosRef=ref(db,'videos');
+    feedDataListenerUnsub=onValue(videosRef,snapshot=>{
+        allVideos=[];
+        if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
+        allVideos.reverse();
         renderFeed();
-    }
+    });
 }
 
 function renderFeed(){
@@ -1238,7 +1261,10 @@ function renderProfileVideos(){
         return;
     }
 
-    get(ref(db,'videos')).then(snap=>{
+    // Use a live listener so newly uploaded videos appear without a page refresh
+    onValue(ref(db,'videos'),snap=>{
+        // Only update if we're still on the profile view to avoid ghost renders
+        if(activeViewId!=='profileView') return;
         grid.innerHTML='';
         let videos=[];
         if(snap.exists()){
@@ -1256,6 +1282,7 @@ function renderProfileVideos(){
         }
 
         videos.forEach(v=>{
+            const vId=v.id; // capture in closure
             const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
             const div=document.createElement('div');
             div.style.cssText='position:relative;cursor:pointer;aspect-ratio:9/16;overflow:hidden;background:#111;';
@@ -1269,14 +1296,14 @@ function renderProfileVideos(){
                     <div style="font-size:10px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.title}</div>
                     <div style="font-size:9px;color:#aaa;margin-top:1px;display:flex;align-items:center;gap:3px;">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fe2c55" style="width:9px;height:9px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        ${fmtN(videoLikeCounts[v.id]||0)}
+                        ${fmtN(videoLikeCounts[vId]||0)}
                     </div>
                 </div>`;
-            // Tap → open full-screen video player
-            div.onclick=()=>openVideoPlayer(v.id);
+            // Use addEventListener so the click handler correctly closes over vId
+            div.addEventListener('click',()=>{ openVideoPlayer(vId); });
             grid.appendChild(div);
         });
-    });
+    },{onlyOnce:false});
 }
 
 // ══════════════════════════
