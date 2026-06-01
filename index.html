@@ -620,18 +620,18 @@ onAuthStateChanged(auth,async user=>{
         if(s) s.textContent=user.displayName+' · '+user.email;
         if(sBtn){ sBtn.textContent='Sign Out'; sBtn.style.background='#333'; sBtn.onclick=signOutAndRefresh; }
         document.getElementById('sidebarProfileLabel').textContent=(user.displayName||'Profile').split(' ')[0];
-        // Only write to DB if this user record doesn't already exist, so we
-        // don't overwrite a custom photoURL the user set via Edit Profile.
-        const userSnap=await get(ref(db,'users/'+user.uid));
-        if(!userSnap.exists()){
+        // Preserve any custom photoURL the user set via Edit Profile.
+        // Only write the Google photoURL on first sign-in (when the record doesn't exist yet).
+        const existingSnap=await get(ref(db,'users/'+user.uid));
+        if(!existingSnap.exists()){
             await set(ref(db,'users/'+user.uid),{
                 displayName:user.displayName||'',
                 email:user.email||'',
                 photoURL:user.photoURL||''
             });
         } else {
-            // Always keep displayName and email current, but preserve stored photoURL
-            const existing=userSnap.val();
+            // Keep stored photoURL; just refresh name & email
+            const existing=existingSnap.val();
             await set(ref(db,'users/'+user.uid),{
                 displayName:user.displayName||existing.displayName||'',
                 email:user.email||existing.email||'',
@@ -643,10 +643,10 @@ onAuthStateChanged(auth,async user=>{
         if(sBtn){ sBtn.textContent='Sign In'; sBtn.style.background='#fe2c55'; sBtn.onclick=handleAuth; }
         document.getElementById('sidebarProfileLabel').textContent='Profile';
     }
-    // Re-render the profile only when viewing own profile (no specific userId set)
+    // Only re-render profile when viewing own profile, not someone else's
     if(activeViewId==='profileView'){
-        const isViewingOwn=!viewingUserId||(user&&viewingUserId===user.uid);
-        if(isViewingOwn) renderProfile(viewingUserId);
+        const viewingOwn=!viewingUserId||(user&&viewingUserId===user.uid);
+        if(viewingOwn) renderProfile(viewingUserId);
     }
 });
 
@@ -714,7 +714,6 @@ window.jumpToVideo=(videoId)=>{
 
 // Open a video in the dedicated player (used from profile grid)
 window.openVideoPlayer=async (videoId)=>{
-    // Try in-memory first, fall back to a direct Firebase fetch
     let v=allVideos.find(x=>x.id===videoId);
     if(!v){
         try{
@@ -747,16 +746,25 @@ window.closeVideoPlayer=()=>{
 // ══════════════════════════
 // FEED
 // ══════════════════════════
+function shuffle(arr){
+    // Fisher-Yates in-place shuffle
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+}
+
 function initFeed(){
     buildCategoryBar();
-    // Always detach any existing listener and re-attach so newly uploaded
-    // videos are guaranteed to appear when returning to the feed.
+    // Always detach and re-attach so newly uploaded videos are always fetched fresh.
     if(feedDataListenerUnsub){ feedDataListenerUnsub(); feedDataListenerUnsub=null; }
     const videosRef=ref(db,'videos');
     feedDataListenerUnsub=onValue(videosRef,snapshot=>{
         allVideos=[];
         if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
-        allVideos.reverse();
+        // Shuffle so users see random videos each visit rather than chronological order
+        shuffle(allVideos);
         renderFeed();
     });
 }
@@ -781,9 +789,12 @@ function renderFeed(){
         return;
     }
 
-    filtered.forEach(v=>feed.appendChild(makeSlide(v)));
+    // Build an initial deck: shuffle a copy and show it
+    const deck=[...shuffle([...filtered])];
+    deck.forEach(v=>feed.appendChild(makeSlide(v)));
 
     // Intersection observer — play the most visible slide, pause others
+    // and append more slides when user nears the end (infinite scroll)
     feedObserver=new IntersectionObserver(entries=>{
         entries.forEach(entry=>{
             const id=entry.target.dataset.videoId;
@@ -805,6 +816,19 @@ function renderFeed(){
                     if(p) p.catch(()=>{ vid.muted=true; isMuted=true; vid.play().catch(()=>{}); });
                     const vdata=allVideos.find(v=>v.id===id);
                     if(vdata) addToHistory(vdata);
+                }
+
+                // Infinite scroll: when the user hits the second-to-last slide,
+                // append another reshuffled batch so the feed never ends
+                const slides=Array.from(feed.querySelectorAll('.video-slide'));
+                const currentIndex=slides.findIndex(s=>s.dataset.videoId===id);
+                if(currentIndex>=slides.length-2 && filtered.length>0){
+                    const moreDeck=shuffle([...filtered]);
+                    moreDeck.forEach(v=>{
+                        const newSlide=makeSlide(v);
+                        feed.appendChild(newSlide);
+                        feedObserver.observe(newSlide);
+                    });
                 }
             } else {
                 if(!vid.paused) vid.pause();
@@ -1261,9 +1285,8 @@ function renderProfileVideos(){
         return;
     }
 
-    // Use a live listener so newly uploaded videos appear without a page refresh
+    // Live listener so newly uploaded clips appear without navigating away
     onValue(ref(db,'videos'),snap=>{
-        // Only update if we're still on the profile view to avoid ghost renders
         if(activeViewId!=='profileView') return;
         grid.innerHTML='';
         let videos=[];
@@ -1282,7 +1305,7 @@ function renderProfileVideos(){
         }
 
         videos.forEach(v=>{
-            const vId=v.id; // capture in closure
+            const vId=v.id; // capture for closure
             const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
             const div=document.createElement('div');
             div.style.cssText='position:relative;cursor:pointer;aspect-ratio:9/16;overflow:hidden;background:#111;';
@@ -1299,8 +1322,7 @@ function renderProfileVideos(){
                         ${fmtN(videoLikeCounts[vId]||0)}
                     </div>
                 </div>`;
-            // Use addEventListener so the click handler correctly closes over vId
-            div.addEventListener('click',()=>{ openVideoPlayer(vId); });
+            div.addEventListener('click',()=>openVideoPlayer(vId));
             grid.appendChild(div);
         });
     },{onlyOnce:false});
