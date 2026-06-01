@@ -1,241 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VISION</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: { extend: { colors: { ttPink:'#fe2c55', ttCyan:'#25f4ee' }, fontFamily:{ sans:['DM Sans','sans-serif'] } } }
-        }
-    </script>
-    <style>
-        *{box-sizing:border-box;}
-        html,body{height:100%;margin:0;padding:0;background:#000;color:#fff;font-family:'DM Sans',sans-serif;overflow:hidden;}
-        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:#111;} ::-webkit-scrollbar-thumb{background:#333;border-radius:10px;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VISION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;padding:0;background:#000;color:#fff;font-family:'DM Sans',sans-serif;overflow:hidden;}
+::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:#111;} ::-webkit-scrollbar-thumb{background:#333;border-radius:10px;}
 
-        /* ── APP SHELL ── */
-        #appShell{display:flex;height:100dvh;width:100%;position:relative;}
+/* ── APP SHELL ── */
+#appShell{display:flex;height:100dvh;width:100%;position:relative;}
 
-        /* ── SIDEBAR (desktop) ── */
-        #sidebar{width:240px;flex-shrink:0;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;height:100dvh;z-index:10;}
-        @media(max-width:1023px){#sidebar{display:none;}}
-        .sidebar-logo{padding:20px 24px 16px;font-size:22px;font-weight:900;letter-spacing:-0.04em;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1a1a1a;}
-        .logo-v{background:linear-gradient(135deg,#fe2c55,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-        .sidebar-nav{flex:1;padding:12px;overflow-y:auto;}
-        .snav{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;font-size:14px;font-weight:600;color:#aaa;cursor:pointer;transition:all 0.18s;white-space:nowrap;border:none;background:none;width:100%;text-align:left;}
-        .snav:hover{background:#1a1a1a;color:#fff;} .snav.active{background:#1a1a1a;color:#fff;} .snav svg{width:20px;height:20px;flex-shrink:0;} .snav.active svg{color:#fe2c55;}
-        .sdiv{height:1px;background:#1a1a1a;margin:8px 0;}
-        .slabel{padding:8px 14px 4px;font-size:10px;font-weight:700;color:#555;letter-spacing:.1em;text-transform:uppercase;}
-        .sup-btn{margin:12px;padding:12px;background:linear-gradient(135deg,#fe2c55,#ff6b35);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .15s;font-family:'DM Sans',sans-serif;}
-        .sup-btn:hover{opacity:.88;transform:translateY(-1px);} .sup-btn:active{transform:scale(.97);} .sup-btn svg{width:18px;height:18px;}
+/* ── SIDEBAR (desktop) ── */
+#sidebar{width:240px;flex-shrink:0;background:#000;border-right:1px solid #1a1a1a;display:flex;flex-direction:column;height:100dvh;z-index:10;}
+@media(max-width:1023px){#sidebar{display:none;}}
+.sidebar-logo{padding:20px 24px 16px;font-size:22px;font-weight:900;letter-spacing:-0.04em;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1a1a1a;}
+.logo-v{background:linear-gradient(135deg,#fe2c55,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sidebar-nav{flex:1;padding:12px;overflow-y:auto;}
+.snav{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;font-size:14px;font-weight:600;color:#aaa;cursor:pointer;transition:all 0.18s;white-space:nowrap;border:none;background:none;width:100%;text-align:left;}
+.snav:hover{background:#1a1a1a;color:#fff;} .snav.active{background:#1a1a1a;color:#fff;} .snav svg{width:20px;height:20px;flex-shrink:0;} .snav.active svg{color:#fe2c55;}
+.sdiv{height:1px;background:#1a1a1a;margin:8px 0;}
+.slabel{padding:8px 14px 4px;font-size:10px;font-weight:700;color:#555;letter-spacing:.1em;text-transform:uppercase;}
+.sup-btn{margin:12px;padding:12px;background:linear-gradient(135deg,#fe2c55,#ff6b35);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .15s;font-family:'DM Sans',sans-serif;}
+.sup-btn:hover{opacity:.88;transform:translateY(-1px);} .sup-btn:active{transform:scale(.97);} .sup-btn svg{width:18px;height:18px;}
 
-        /* ── MAIN AREA ── */
-        #mainArea{flex:1;display:flex;flex-direction:column;height:100dvh;overflow-x:hidden;overflow-y:visible;position:relative;}
+/* ── MAIN AREA ── */
+#mainArea{flex:1;display:flex;flex-direction:column;height:100dvh;overflow:hidden;position:relative;}
 
-        /* ── TOP NAV ── */
-        #topNav{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;background:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,transparent 100%);pointer-events:none;}
-        #topNav>*{pointer-events:all;}
-        .top-tab{font-size:14px;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;padding-bottom:4px;border:none;border-bottom:2px solid transparent;background:none;transition:all .2s;}
-        .top-tab.active{color:#fff;border-bottom-color:#fff;}
-        .top-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);cursor:pointer;border:none;color:#fff;transition:background .2s;}
-        .top-icon:hover{background:rgba(255,255,255,.1);}
+/* ── TOP NAV ── */
+#topNav{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;background:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,transparent 100%);pointer-events:none;}
+#topNav>*{pointer-events:all;}
+.top-tab{font-size:14px;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;padding-bottom:4px;border:none;border-bottom:2px solid transparent;background:none;transition:all .2s;}
+.top-tab.active{color:#fff;border-bottom-color:#fff;}
+.top-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);cursor:pointer;border:none;color:#fff;transition:background .2s;}
+.top-icon:hover{background:rgba(255,255,255,.1);}
 
-        /* ── VIEW CONTAINER ── */
-        #viewContainer{flex:1;position:relative;height:100dvh;overflow:visible;}
-        .app-view{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .25s ease;overflow-y:hidden;overflow-x:hidden;}
-        .app-view.view-active{opacity:1;pointer-events:all;overflow-y:auto;}
+/* ── VIEW CONTAINER ── */
+#viewContainer{flex:1;position:relative;height:100dvh;overflow:hidden;}
+.app-view{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .25s ease;overflow:hidden;}
+.app-view.view-active{opacity:1;pointer-events:all;}
 
-        /* ── FEED (TikTok scroll) ── */
-        #feedView{
-            scroll-snap-type:y mandatory;
-            overflow-y:scroll !important;
-            -webkit-overflow-scrolling:touch;
-            height:100dvh;
-            background:#000;
-            scrollbar-width:none;
-        }
-        #feedView::-webkit-scrollbar{display:none;}
-        .video-slide{height:100dvh;width:100%;scroll-snap-align:start;scroll-snap-stop:always;position:relative;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-        .slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(20px) brightness(.3) saturate(1.5);transform:scale(1.1);}
-        .slide-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;}
-        .slide-gradient{position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.3) 60%,transparent 100%);z-index:2;pointer-events:none;}
-        .slide-info{position:absolute;bottom:80px;left:0;right:90px;z-index:3;padding:0 16px;}
-        @media(min-width:1024px){.slide-info{bottom:24px;right:100px;}}
-        .slide-username{font-size:15px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:6px;cursor:pointer;}
-        .slide-username:hover{text-decoration:underline;}
-        .slide-title{font-size:13px;font-weight:500;color:rgba(255,255,255,.85);line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-        .slide-cat{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#25f4ee;letter-spacing:.04em;}
-        .slide-music{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.7);margin-top:6px;}
-        .music-ticker{overflow:hidden;white-space:nowrap;max-width:200px;}
-        .music-inner{animation:ticker 8s linear infinite;display:inline-block;}
-        @keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-        .slide-actions{position:absolute;right:10px;bottom:80px;z-index:3;display:flex;flex-direction:column;align-items:center;gap:18px;}
-        @media(min-width:1024px){.slide-actions{bottom:24px;right:16px;}}
-        .sab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;background:none;border:none;color:#fff;font-size:10px;font-weight:700;}
-        .sai{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;}
-        .sab:hover .sai{background:rgba(255,255,255,.2);transform:scale(1.1);}
-        .sai svg{width:22px;height:22px;}
-        .sab.liked .sai{background:rgba(254,44,85,.25);}
-        .sab.liked svg{color:#fe2c55;fill:#fe2c55;}
-        .sab.saved .sai{background:rgba(37,244,238,.15);}
-        .sab.saved svg{color:#25f4ee;}
-        .sac{font-size:10px;color:rgba(255,255,255,.8);}
-        .slide-av-wrap{position:relative;cursor:pointer;}
-        .slide-av{width:46px;height:46px;border-radius:50%;border:2px solid #fff;background:linear-gradient(135deg,#fe2c55,#ff6b35);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;overflow:hidden;}
-        .slide-follow-dot{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:#fe2c55;border:2px solid #000;display:flex;align-items:center;justify-content:center;}
-        .slide-follow-dot svg{width:10px;height:10px;color:#fff;}
-        .pause-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;opacity:0;transition:opacity .2s;}
-        .pause-icon.visible{opacity:1;}
-        @keyframes heartBeat{0%{transform:scale(1);}20%{transform:scale(1.35);}50%{transform:scale(.9);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
-        .like-pop{animation:heartBeat .5s ease forwards;}
-        @keyframes floatHeart{0%{opacity:1;transform:scale(.5) translateY(0);}50%{opacity:1;transform:scale(1.4) translateY(-40px);}100%{opacity:0;transform:scale(1) translateY(-100px);}}
-        .float-heart{position:absolute;z-index:10;pointer-events:none;animation:floatHeart .9s ease forwards;}
+/* ── FEED ── */
+#feedView{background:#000;}
+#feedView.view-active{
+    overflow-y:scroll !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:y mandatory;
+    scrollbar-width:none;
+}
+#feedView.view-active::-webkit-scrollbar{display:none;}
 
-        /* ── SCROLLABLE VIEWS ── */
-        .scrollable-view{padding:72px 16px 80px;min-height:100dvh;background:#121212;}
-        @media(min-width:1024px){.scrollable-view{padding:24px 24px 32px;}}
-        .view-hdr{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
-        .view-hdr-icon{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#fe2c55,#ff6b35);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .view-hdr-icon svg{width:20px;height:20px;color:#fff;}
-        .view-hdr h2{font-size:22px;font-weight:900;letter-spacing:-.03em;}
-        .view-hdr p{font-size:12px;color:#666;margin-top:1px;}
-        .grid-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s;}
-        .grid-card:hover{transform:translateY(-2px);border-color:#3a3a3a;}
-        .grid-card-thumb{aspect-ratio:9/16;width:100%;object-fit:cover;display:block;background:#111;}
-        .grid-card-info{padding:8px 10px 10px;}
-        .gc-title{font-size:12px;font-weight:700;line-height:1.3;color:#fff;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-        .gc-meta{font-size:10px;color:#666;display:flex;align-items:center;gap:4px;}
-        .hcard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;display:flex;align-items:center;gap:12px;padding:10px;cursor:pointer;transition:background .2s,transform .2s;}
-        .hcard:hover{background:#222;transform:translateY(-1px);}
-        .hcard-thumb{width:72px;aspect-ratio:9/16;border-radius:10px;object-fit:cover;flex-shrink:0;background:#111;}
-        .pill{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;border:1.5px solid #2a2a2a;background:#1a1a1a;color:#888;cursor:pointer;transition:all .18s;white-space:nowrap;user-select:none;}
-        .pill:hover{border-color:#444;color:#ddd;background:#222;} .pill.active{background:#fe2c55;border-color:#fe2c55;color:#fff;} .pill svg{width:12px;height:12px;}
-        #categoryBar{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:16px;}
-        #categoryBar::-webkit-scrollbar{display:none;}
+/* ── VIDEO SLIDE ── */
+.video-slide{height:100dvh;width:100%;scroll-snap-align:start;scroll-snap-stop:always;position:relative;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(20px) brightness(.3) saturate(1.5);transform:scale(1.1);}
+.slide-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;}
+.slide-gradient{position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.3) 60%,transparent 100%);z-index:2;pointer-events:none;}
+.slide-info{position:absolute;bottom:80px;left:0;right:90px;z-index:3;padding:0 16px;}
+@media(min-width:1024px){.slide-info{bottom:24px;right:100px;}}
+.slide-username{font-size:15px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:6px;cursor:pointer;}
+.slide-username:hover{text-decoration:underline;}
+.slide-title{font-size:13px;font-weight:500;color:rgba(255,255,255,.85);line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.slide-cat{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#25f4ee;letter-spacing:.04em;}
+.slide-music{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.7);margin-top:6px;}
+.music-ticker{overflow:hidden;white-space:nowrap;max-width:200px;}
+.music-inner{animation:ticker 8s linear infinite;display:inline-block;}
+@keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.slide-actions{position:absolute;right:10px;bottom:80px;z-index:3;display:flex;flex-direction:column;align-items:center;gap:18px;}
+@media(min-width:1024px){.slide-actions{bottom:24px;right:16px;}}
+.sab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;background:none;border:none;color:#fff;font-size:10px;font-weight:700;}
+.sai{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s;}
+.sab:hover .sai{background:rgba(255,255,255,.2);transform:scale(1.1);}
+.sai svg{width:22px;height:22px;}
+.sab.liked .sai{background:rgba(254,44,85,.25);}
+.sab.liked svg{color:#fe2c55;fill:#fe2c55;}
+.sab.saved .sai{background:rgba(37,244,238,.15);}
+.sab.saved svg{color:#25f4ee;}
+.sac{font-size:10px;color:rgba(255,255,255,.8);}
+.slide-av-wrap{position:relative;cursor:pointer;}
+.slide-av{width:46px;height:46px;border-radius:50%;border:2px solid #fff;background:linear-gradient(135deg,#fe2c55,#ff6b35);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;overflow:hidden;}
+.slide-follow-dot{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:#fe2c55;border:2px solid #000;display:flex;align-items:center;justify-content:center;}
+.slide-follow-dot svg{width:10px;height:10px;color:#fff;}
+.pause-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;opacity:0;transition:opacity .2s;}
+.pause-icon.visible{opacity:1;}
+/* Mute indicator */
+.mute-badge{position:absolute;bottom:88px;left:16px;z-index:10;background:rgba(0,0,0,.6);border-radius:20px;padding:4px 10px;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#fff;backdrop-filter:blur(6px);cursor:pointer;border:none;}
+@keyframes heartBeat{0%{transform:scale(1);}20%{transform:scale(1.35);}50%{transform:scale(.9);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+.like-pop{animation:heartBeat .5s ease forwards;}
+@keyframes floatHeart{0%{opacity:1;transform:scale(.5) translateY(0);}50%{opacity:1;transform:scale(1.4) translateY(-40px);}100%{opacity:0;transform:scale(1) translateY(-100px);}}
+.float-heart{position:absolute;z-index:10;pointer-events:none;animation:floatHeart .9s ease forwards;}
 
-        /* ── UPLOAD ── */
-        .ucard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:24px;max-width:500px;margin:0 auto;}
-        .ui{width:100%;background:#111;border:1px solid #2a2a2a;border-radius:12px;padding:12px 14px;font-size:13px;color:#fff;font-family:'DM Sans',sans-serif;transition:border-color .2s;outline:none;}
-        .ui:focus{border-color:#fe2c55;} .ui::placeholder{color:#555;}
-        .ulabel{font-size:10px;font-weight:700;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block;}
-        .udrop{border:2px dashed #2a2a2a;border-radius:16px;padding:32px 20px;text-align:center;position:relative;transition:border-color .2s,background .2s;cursor:pointer;}
-        .udrop:hover{border-color:#fe2c55;background:rgba(254,44,85,.05);}
-        .ubtn{width:100%;padding:14px;background:linear-gradient(135deg,#fe2c55,#ff6b35);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .15s;font-family:'DM Sans',sans-serif;}
-        .ubtn:hover{opacity:.88;transform:translateY(-1px);} .ubtn:active{transform:scale(.97);} .ubtn:disabled{opacity:.5;cursor:not-allowed;} .ubtn svg{width:16px;height:16px;}
-        #uploadProgressWrap{display:none;margin-top:12px;}
-        #upbg{height:6px;background:#2a2a2a;border-radius:999px;overflow:hidden;}
-        #upbar{height:6px;background:linear-gradient(90deg,#fe2c55,#ff6b35);border-radius:999px;width:0%;transition:width .3s ease;}
+/* ── SCROLLABLE VIEWS ── */
+.scrollable-view{padding:72px 16px 80px;min-height:100%;background:#121212;overflow-y:auto;height:100%;}
+@media(min-width:1024px){.scrollable-view{padding:24px 24px 32px;}}
+.view-hdr{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.view-hdr-icon{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#fe2c55,#ff6b35);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.view-hdr-icon svg{width:20px;height:20px;color:#fff;}
+.view-hdr h2{font-size:22px;font-weight:900;letter-spacing:-.03em;}
+.view-hdr p{font-size:12px;color:#666;margin-top:1px;}
+.grid-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s;}
+.grid-card:hover{transform:translateY(-2px);border-color:#3a3a3a;}
+.grid-card-thumb{aspect-ratio:9/16;width:100%;object-fit:cover;display:block;background:#111;}
+.grid-card-info{padding:8px 10px 10px;}
+.gc-title{font-size:12px;font-weight:700;line-height:1.3;color:#fff;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.gc-meta{font-size:10px;color:#666;display:flex;align-items:center;gap:4px;}
+.hcard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;display:flex;align-items:center;gap:12px;padding:10px;cursor:pointer;transition:background .2s,transform .2s;}
+.hcard:hover{background:#222;transform:translateY(-1px);}
+.hcard-thumb{width:72px;aspect-ratio:9/16;border-radius:10px;object-fit:cover;flex-shrink:0;background:#111;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;border:1.5px solid #2a2a2a;background:#1a1a1a;color:#888;cursor:pointer;transition:all .18s;white-space:nowrap;user-select:none;}
+.pill:hover{border-color:#444;color:#ddd;background:#222;} .pill.active{background:#fe2c55;border-color:#fe2c55;color:#fff;} .pill svg{width:12px;height:12px;}
+#categoryBar{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:16px;}
+#categoryBar::-webkit-scrollbar{display:none;}
 
-        /* ── SETTINGS / HELP ── */
-        .scard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:16px;margin-bottom:12px;}
-        .slbl{font-size:10px;font-weight:700;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
-        .srow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1e1e1e;gap:12px;}
-        .srow:last-child{border-bottom:none;padding-bottom:0;}
-        .srt{font-size:13px;font-weight:600;color:#ddd;} .srs{font-size:11px;color:#555;margin-top:2px;}
-        .toggle{width:42px;height:24px;border-radius:999px;background:#333;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
-        .toggle.on{background:#fe2c55;}
-        .toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.4);}
-        .toggle.on::after{transform:translateX(18px);}
-        .tab-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:16px;transition:border-color .2s;}
-        .tab-card:hover{border-color:#3a3a3a;}
-        .faq-item{border-bottom:1px solid #1e1e1e;} .faq-item:last-child{border-bottom:none;}
-        .faq-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-size:13px;font-weight:600;color:#ccc;background:none;border:none;text-align:left;gap:12px;cursor:pointer;}
-        .faq-answer{display:none;font-size:12px;color:#777;padding-bottom:12px;line-height:1.6;} .faq-answer.open{display:block;}
-        .empty-state{text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;}
-        .empty-icon{width:64px;height:64px;background:#1a1a1a;border-radius:18px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
-        .rank-badge{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
-        .rank-1{background:linear-gradient(135deg,#fe2c55,#ff6b35);color:#fff;} .rank-2{background:#2a2a2a;color:#aaa;} .rank-3{background:#222;color:#888;} .rank-n{background:#1a1a1a;color:#555;}
+/* ── UPLOAD ── */
+.ucard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:24px;max-width:500px;margin:0 auto;}
+.ui{width:100%;background:#111;border:1px solid #2a2a2a;border-radius:12px;padding:12px 14px;font-size:13px;color:#fff;font-family:'DM Sans',sans-serif;transition:border-color .2s;outline:none;}
+.ui:focus{border-color:#fe2c55;} .ui::placeholder{color:#555;}
+.ulabel{font-size:10px;font-weight:700;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block;}
+.udrop{border:2px dashed #2a2a2a;border-radius:16px;padding:32px 20px;text-align:center;position:relative;transition:border-color .2s,background .2s;cursor:pointer;}
+.udrop:hover{border-color:#fe2c55;background:rgba(254,44,85,.05);}
+.ubtn{width:100%;padding:14px;background:linear-gradient(135deg,#fe2c55,#ff6b35);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .15s;font-family:'DM Sans',sans-serif;}
+.ubtn:hover{opacity:.88;transform:translateY(-1px);} .ubtn:active{transform:scale(.97);} .ubtn:disabled{opacity:.5;cursor:not-allowed;} .ubtn svg{width:16px;height:16px;}
+#uploadProgressWrap{display:none;margin-top:12px;}
+#upbg{height:6px;background:#2a2a2a;border-radius:999px;overflow:hidden;}
+#upbar{height:6px;background:linear-gradient(90deg,#fe2c55,#ff6b35);border-radius:999px;width:0%;transition:width .3s ease;}
 
-        /* ── PROFILE VIEW ── */
-        #profileView{background:#000;}
-        .profile-header-bg{height:180px;background:linear-gradient(135deg,#fe2c55 0%,#ff6b35 50%,#25f4ee 100%);position:relative;}
-        .profile-back-btn{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:#fff;}
-        .profile-av{width:88px;height:88px;border-radius:50%;border:4px solid #000;background:linear-gradient(135deg,#fe2c55,#ff6b35);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#fff;position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);overflow:hidden;}
-        .profile-body{padding:56px 16px 80px;background:#000;}
-        .profile-name{text-align:center;font-size:20px;font-weight:900;letter-spacing:-.02em;margin-bottom:2px;}
-        .profile-handle{text-align:center;font-size:13px;color:#666;margin-bottom:16px;}
-        .profile-stats{display:flex;justify-content:center;gap:32px;margin-bottom:16px;}
-        .profile-stat{text-align:center;}
-        .profile-stat-n{font-size:18px;font-weight:900;}
-        .profile-stat-l{font-size:11px;color:#666;}
-        .profile-follow-btn{display:block;margin:0 auto 20px;padding:10px 40px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif;}
-        .profile-follow-btn.following{background:#1a1a1a;color:#aaa;border:1px solid #2a2a2a;}
-        .profile-follow-btn.not-following{background:linear-gradient(135deg,#fe2c55,#ff6b35);color:#fff;}
-        .profile-tabs{display:flex;border-bottom:1px solid #1a1a1a;margin-bottom:12px;}
-        .profile-tab{flex:1;text-align:center;padding:10px;font-size:13px;font-weight:700;color:#555;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;}
-        .profile-tab.active{color:#fff;border-bottom-color:#fe2c55;}
-        .profile-videos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
-        .profile-vid-thumb{aspect-ratio:9/16;object-fit:cover;width:100%;cursor:pointer;background:#111;}
-        .profile-vid-thumb:hover{opacity:.8;}
+/* ── SETTINGS / HELP ── */
+.scard{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:16px;margin-bottom:12px;}
+.slbl{font-size:10px;font-weight:700;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1e1e1e;gap:12px;}
+.srow:last-child{border-bottom:none;padding-bottom:0;}
+.srt{font-size:13px;font-weight:600;color:#ddd;} .srs{font-size:11px;color:#555;margin-top:2px;}
+.toggle{width:42px;height:24px;border-radius:999px;background:#333;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:#fe2c55;}
+.toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.toggle.on::after{transform:translateX(18px);}
+.tab-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:16px;transition:border-color .2s;}
+.tab-card:hover{border-color:#3a3a3a;}
+.faq-item{border-bottom:1px solid #1e1e1e;} .faq-item:last-child{border-bottom:none;}
+.faq-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-size:13px;font-weight:600;color:#ccc;background:none;border:none;text-align:left;gap:12px;cursor:pointer;}
+.faq-answer{display:none;font-size:12px;color:#777;padding-bottom:12px;line-height:1.6;} .faq-answer.open{display:block;}
+.empty-state{text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.empty-icon{width:64px;height:64px;background:#1a1a1a;border-radius:18px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
+.rank-badge{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+.rank-1{background:linear-gradient(135deg,#fe2c55,#ff6b35);color:#fff;} .rank-2{background:#2a2a2a;color:#aaa;} .rank-3{background:#222;color:#888;} .rank-n{background:#1a1a1a;color:#555;}
 
-        /* ── MOBILE BOTTOM NAV ── */
-        #mobileNav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.95);backdrop-filter:blur(16px);border-top:1px solid #1a1a1a;padding:6px 0 env(safe-area-inset-bottom,6px);z-index:50;}
-        @media(max-width:1023px){#mobileNav{display:flex;} body{padding-bottom:56px;}}
-        .mob-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;cursor:pointer;color:#555;transition:color .2s;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:none;border:none;}
-        .mob-btn.active{color:#fff;} .mob-btn svg{width:22px;height:22px;}
+/* ── PROFILE VIEW ── */
+#profileView{background:#000;}
+#profileView.view-active{overflow-y:scroll !important;overflow-x:hidden;}
+#profileView.view-active::-webkit-scrollbar{display:none;}
+.profile-header-bg{height:180px;background:linear-gradient(135deg,#fe2c55 0%,#ff6b35 50%,#25f4ee 100%);position:relative;flex-shrink:0;}
+.profile-back-btn{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:#fff;}
+.profile-av{width:88px;height:88px;border-radius:50%;border:4px solid #000;background:linear-gradient(135deg,#fe2c55,#ff6b35);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#fff;position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);overflow:hidden;cursor:pointer;}
+.profile-av:hover{opacity:.9;}
+.profile-body{padding:56px 16px 100px;background:#000;}
+.profile-name{text-align:center;font-size:20px;font-weight:900;letter-spacing:-.02em;margin-bottom:2px;}
+.profile-handle{text-align:center;font-size:13px;color:#666;margin-bottom:16px;}
+.profile-stats{display:flex;justify-content:center;gap:32px;margin-bottom:16px;}
+.profile-stat{text-align:center;}
+.profile-stat-n{font-size:18px;font-weight:900;}
+.profile-stat-l{font-size:11px;color:#666;}
+.profile-follow-btn{display:block;margin:0 auto 12px;padding:10px 40px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;border:1px solid #2a2a2a;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.profile-follow-btn.following{background:#1a1a1a;color:#aaa;}
+.profile-follow-btn.not-following{background:linear-gradient(135deg,#fe2c55,#ff6b35);color:#fff;border-color:transparent;}
+.profile-action-row{display:flex;justify-content:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.profile-action-btn{padding:9px 22px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;border:1px solid #2a2a2a;background:#1a1a1a;color:#aaa;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.profile-action-btn:hover{background:#222;color:#ddd;}
+.profile-action-btn.danger{color:#fe2c55;border-color:rgba(254,44,85,.3);}
+.profile-action-btn.danger:hover{background:rgba(254,44,85,.1);}
+.profile-tabs{display:flex;border-bottom:1px solid #1a1a1a;margin-bottom:12px;}
+.profile-tab{flex:1;text-align:center;padding:10px;font-size:13px;font-weight:700;color:#555;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;}
+.profile-tab.active{color:#fff;border-bottom-color:#fe2c55;}
+.profile-videos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
 
-        /* ── TOAST ── */
-        #toastContainer{position:fixed;top:80px;right:12px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:calc(100vw - 24px);}
-        .toast{display:flex;align-items:flex-start;gap:10px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:12px 14px;box-shadow:0 8px 32px rgba(0,0,0,.6);min-width:260px;max-width:340px;pointer-events:all;animation:toastIn .35s cubic-bezier(.34,1.56,.64,1) both;position:relative;overflow:hidden;}
-        .toast.toast-out{animation:toastOut .3s ease forwards;}
-        .toast-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .toast-icon.success{background:#fe2c55;} .toast-icon.info{background:#25f4ee;} .toast-icon.warning{background:#f59e0b;} .toast-icon.error{background:#ef4444;}
-        .toast-icon svg{width:16px;height:16px;color:#fff;}
-        .toast-body{flex:1;min-width:0;}
-        .toast-title{font-size:12px;font-weight:800;color:#fff;margin-bottom:1px;} .toast-msg{font-size:11px;color:#666;line-height:1.4;}
-        .toast-close{width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:5px;flex-shrink:0;color:#444;transition:background .15s;}
-        .toast-close:hover{background:#2a2a2a;color:#aaa;}
-        .toast-progress{position:absolute;bottom:0;left:0;height:2px;background:#fe2c55;animation:toastProg linear forwards;}
-        @keyframes toastIn{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
-        @keyframes toastOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(120%);opacity:0;}}
-        @keyframes toastProg{from{width:100%;}to{width:0%;}}
+/* ── MOBILE BOTTOM NAV ── */
+#mobileNav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.95);backdrop-filter:blur(16px);border-top:1px solid #1a1a1a;padding:6px 0 env(safe-area-inset-bottom,6px);z-index:50;}
+@media(max-width:1023px){#mobileNav{display:flex;}}
+.mob-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;cursor:pointer;color:#555;transition:color .2s;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:none;border:none;}
+.mob-btn.active{color:#fff;} .mob-btn svg{width:22px;height:22px;}
 
-        /* ── MODALS ── */
-        #successModal, #editProfileModal {position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:9999;}
-        #successModal.open, #editProfileModal.open {display:flex;}
-        .modal-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:36px 28px;text-align:center;max-width:340px;width:90%;animation:scaleIn .3s cubic-bezier(.34,1.56,.64,1);}
-        .modal-check{width:60px;height:60px;background:linear-gradient(135deg,#fe2c55,#ff6b35);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
-        @keyframes scaleIn{from{transform:scale(.88);opacity:0;}to{transform:scale(1);opacity:1;}}
+/* ── TOAST ── */
+#toastContainer{position:fixed;top:80px;right:12px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:calc(100vw - 24px);}
+.toast{display:flex;align-items:flex-start;gap:10px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:12px 14px;box-shadow:0 8px 32px rgba(0,0,0,.6);min-width:260px;max-width:340px;pointer-events:all;animation:toastIn .35s cubic-bezier(.34,1.56,.64,1) both;position:relative;overflow:hidden;}
+.toast.toast-out{animation:toastOut .3s ease forwards;}
+.toast-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.toast-icon.success{background:#fe2c55;} .toast-icon.info{background:#25f4ee;} .toast-icon.warning{background:#f59e0b;} .toast-icon.error{background:#ef4444;}
+.toast-icon svg{width:16px;height:16px;color:#fff;}
+.toast-body{flex:1;min-width:0;}
+.toast-title{font-size:12px;font-weight:800;color:#fff;margin-bottom:1px;} .toast-msg{font-size:11px;color:#666;line-height:1.4;}
+.toast-close{width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:5px;flex-shrink:0;color:#444;transition:background .15s;}
+.toast-close:hover{background:#2a2a2a;color:#aaa;}
+.toast-progress{position:absolute;bottom:0;left:0;height:2px;background:#fe2c55;animation:toastProg linear forwards;}
+@keyframes toastIn{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes toastOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(120%);opacity:0;}}
+@keyframes toastProg{from{width:100%;}to{width:0%;}}
 
-        /* ── BOTTOM SHEET ── */
-        #bottomSheet{position:fixed;inset:0;z-index:9000;display:none;}
-        #bottomSheet.open{display:block;}
-        #bsOverlay{position:absolute;inset:0;background:rgba(0,0,0,.6);}
-        #bsPanel{position:absolute;bottom:0;left:0;right:0;background:#1a1a1a;border-radius:22px 22px 0 0;padding:14px 16px 32px;animation:slideUp .3s cubic-bezier(.4,0,.2,1);max-height:85vh;overflow-y:auto;}
-        .bs-handle{width:36px;height:4px;background:#333;border-radius:999px;margin:0 auto 14px;}
-        .sheet-action{display:flex;align-items:center;gap:14px;padding:13px 8px;border-radius:12px;cursor:pointer;font-weight:600;font-size:14px;color:#ccc;transition:background .15s;}
-        .sheet-action:hover{background:#222;} .sheet-action svg{width:20px;height:20px;color:#777;}
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:9999;}
+.modal-overlay.open{display:flex;}
+.modal-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:36px 28px;text-align:center;max-width:340px;width:90%;animation:scaleIn .3s cubic-bezier(.34,1.56,.64,1);}
+.modal-check{width:60px;height:60px;background:linear-gradient(135deg,#fe2c55,#ff6b35);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+@keyframes scaleIn{from{transform:scale(.88);opacity:0;}to{transform:scale(1);opacity:1;}}
+/* Edit profile modal card */
+.ep-modal-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:24px;padding:28px;max-width:420px;width:92%;animation:scaleIn .3s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto;}
 
-        /* ── MOBILE SEARCH OVERLAY ── */
-        #mobileSearchOverlay{position:fixed;inset:0;z-index:9999;background:#121212;padding:16px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
-        .msearch{flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:10px 16px;font-size:14px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;}
-        .msearch:focus{border-color:#fe2c55;} .msearch::placeholder{color:#555;}
+/* ── BOTTOM SHEET ── */
+#bottomSheet{position:fixed;inset:0;z-index:9000;display:none;}
+#bottomSheet.open{display:block;}
+#bsOverlay{position:absolute;inset:0;background:rgba(0,0,0,.6);}
+#bsPanel{position:absolute;bottom:0;left:0;right:0;background:#1a1a1a;border-radius:22px 22px 0 0;padding:14px 16px 32px;animation:slideUp .3s cubic-bezier(.4,0,.2,1);max-height:85vh;overflow-y:auto;}
+.bs-handle{width:36px;height:4px;background:#333;border-radius:999px;margin:0 auto 14px;}
+.sheet-action{display:flex;align-items:center;gap:14px;padding:13px 8px;border-radius:12px;cursor:pointer;font-weight:600;font-size:14px;color:#ccc;transition:background .15s;}
+.sheet-action:hover{background:#222;} .sheet-action svg{width:20px;height:20px;color:#777;}
 
-        @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-        @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-        select{color-scheme:dark;}
+/* ── MOBILE SEARCH OVERLAY ── */
+#mobileSearchOverlay{position:fixed;inset:0;z-index:9999;background:#121212;padding:16px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.msearch{flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:10px 16px;font-size:14px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;}
+.msearch:focus{border-color:#fe2c55;} .msearch::placeholder{color:#555;}
 
-        /* ── FEED SCROLL FIX ── */
-        #feedView.view-active {
-            position: absolute;
-            inset: 0;
-            overflow-y: scroll !important;
-            overflow-x: hidden !important;
-            -webkit-overflow-scrolling: touch;
-            scroll-snap-type: y mandatory;
-            height: 100% !important;
-            max-height: 100dvh !important;
-        }
-        /* Ensure profile view scrolls properly */
-        #profileView.view-active {
-            overflow-y: scroll !important;
-        }
-    </style>
+/* ── VIDEO PLAYER MODAL ── */
+#videoPlayerModal{position:fixed;inset:0;background:#000;z-index:9998;display:none;flex-direction:column;}
+#videoPlayerModal.open{display:flex;}
+#playerVideo{flex:1;width:100%;object-fit:contain;background:#000;}
+.player-topbar{position:absolute;top:0;left:0;right:0;padding:14px 16px;display:flex;align-items:center;gap:12px;background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);z-index:2;}
+.player-info{position:absolute;bottom:0;left:0;right:0;padding:20px 16px 40px;background:linear-gradient(to top,rgba(0,0,0,.9),transparent);z-index:2;}
+
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+select{color-scheme:dark;}
+
+/* profile pic preview */
+#epPicPreview{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #2a2a2a;display:none;margin:8px auto 0;}
+</style>
 </head>
 <body>
 
@@ -246,18 +246,28 @@
     <aside id="sidebar">
         <div class="sidebar-logo"><span class="logo-v">V</span>ISION</div>
         <div class="sidebar-nav">
-            <button onclick="showView('feedView')" id="nav-feedView" class="snav active"><i data-lucide="home"></i> For You</button>
-            <button onclick="showView('exploreView')" id="nav-exploreView" class="snav"><i data-lucide="compass"></i> Explore</button>
-            <button onclick="showView('trendingView')" id="nav-trendingView" class="snav"><i data-lucide="trending-up"></i> Trending</button>
+            <button onclick="showView('feedView')" id="nav-feedView" class="snav active">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> For You</button>
+            <button onclick="showView('exploreView')" id="nav-exploreView" class="snav">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Explore</button>
+            <button onclick="showView('trendingView')" id="nav-trendingView" class="snav">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> Trending</button>
             <div class="sdiv"></div><div class="slabel">Library</div>
-            <button onclick="showView('savedView')" id="nav-savedView" class="snav"><i data-lucide="bookmark"></i> Saved</button>
-            <button onclick="showView('historyView')" id="nav-historyView" class="snav"><i data-lucide="history"></i> Watch History</button>
+            <button onclick="showView('savedView')" id="nav-savedView" class="snav">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Saved</button>
+            <button onclick="showView('historyView')" id="nav-historyView" class="snav">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Watch History</button>
             <div class="sdiv"></div><div class="slabel">Account</div>
-            <button onclick="showView('profileView')" id="nav-profileView" class="snav"><i data-lucide="user"></i> <span id="sidebarProfileLabel">Profile</span></button>
-            <button onclick="showView('settingsView')" id="nav-settingsView" class="snav"><i data-lucide="settings"></i> Settings</button>
-            <button onclick="showView('helpView')" id="nav-helpView" class="snav"><i data-lucide="help-circle"></i> Help & Feedback</button>
+            <button onclick="showView('profileView')" id="nav-profileView" class="snav">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span id="sidebarProfileLabel">Profile</span></button>
+            <button onclick="showView('settingsView')" id="nav-settingsView" class="snav">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</button>
+            <button onclick="showView('helpView')" id="nav-helpView" class="snav">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Help &amp; Feedback</button>
         </div>
-        <button onclick="showView('uploadView')" class="sup-btn"><i data-lucide="plus"></i> Upload</button>
+        <button onclick="showView('uploadView')" class="sup-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Upload
+        </button>
     </aside>
 
     <div id="mainArea">
@@ -269,18 +279,24 @@
                 <button class="top-tab active" onclick="setFeedTab('foryou',this)">For You</button>
             </div>
             <div style="display:flex;gap:8px;">
-                <button class="top-icon" onclick="openMobileSearch()"><i data-lucide="search" style="width:18px;height:18px;"></i></button>
-                <button class="top-icon" style="background:rgba(254,44,85,.25);" onclick="showView('profileView')"><i data-lucide="user" style="width:18px;height:18px;"></i></button>
+                <button class="top-icon" onclick="openMobileSearch()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+                <button class="top-icon" style="background:rgba(254,44,85,.25);" onclick="showView('profileView')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
             </div>
         </div>
 
         <div id="viewContainer">
 
+            <!-- FEED -->
             <div id="feedView" class="app-view view-active"></div>
 
+            <!-- UPLOAD -->
             <div id="uploadView" class="app-view scrollable-view">
                 <div class="view-hdr">
-                    <div class="view-hdr-icon"><i data-lucide="upload-cloud"></i></div>
+                    <div class="view-hdr-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div>
                     <div><h2>Upload Video</h2><p>Share your content with the world</p></div>
                 </div>
                 <div class="ucard">
@@ -297,7 +313,7 @@
                         <div><label class="ulabel">Description</label><textarea id="videoDesc" rows="3" placeholder="Describe your video..." class="ui" style="resize:none;"></textarea></div>
                         <div class="udrop" id="dropZone">
                             <input type="file" id="videoFile" accept="video/*" required style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;">
-                            <i data-lucide="film" style="width:36px;height:36px;color:#444;margin:0 auto 10px;display:block;"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:36px;height:36px;color:#444;margin:0 auto 10px;display:block;"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                             <p id="fileNameDisplay" style="font-size:13px;font-weight:600;color:#666;">Drop video here or click to browse</p>
                             <p style="font-size:11px;color:#444;margin-top:4px;">MP4, MOV, AVI up to 500MB</p>
                         </div>
@@ -305,44 +321,55 @@
                             <div style="display:flex;justify-content:space-between;font-size:11px;color:#666;margin-bottom:6px;"><span>Uploading...</span><span id="uploadPct">0%</span></div>
                             <div id="upbg"><div id="upbar"></div></div>
                         </div>
-                        <button type="submit" id="uploadBtn" class="ubtn"><i data-lucide="rocket"></i> Post Video</button>
+                        <button type="submit" id="uploadBtn" class="ubtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> Post Video
+                        </button>
                     </form>
                 </div>
             </div>
 
+            <!-- EXPLORE -->
             <div id="exploreView" class="app-view scrollable-view">
-                <div class="view-hdr"><div class="view-hdr-icon"><i data-lucide="compass"></i></div><div><h2>Explore</h2><p>Discover videos across all categories</p></div></div>
+                <div class="view-hdr"><div class="view-hdr-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></div><div><h2>Explore</h2><p>Discover videos across all categories</p></div></div>
                 <div style="position:relative;margin-bottom:16px;">
                     <input type="text" id="exploreSearch" placeholder="Search videos..." class="ui" style="padding-left:40px;" oninput="filterExplore(this.value)">
-                    <i data-lucide="search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#555;pointer-events:none;"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#555;pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </div>
                 <div id="categoryBar"></div>
                 <div id="exploreGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
             </div>
 
+            <!-- SAVED -->
             <div id="savedView" class="app-view scrollable-view">
-                <div class="view-hdr"><div class="view-hdr-icon"><i data-lucide="bookmark"></i></div><div><h2>Saved</h2><p>Your bookmarked videos</p></div></div>
+                <div class="view-hdr"><div class="view-hdr-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><div><h2>Saved</h2><p>Your bookmarked videos</p></div></div>
                 <div id="savedGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
             </div>
 
+            <!-- HISTORY -->
             <div id="historyView" class="app-view scrollable-view">
-                <div class="view-hdr"><div class="view-hdr-icon"><i data-lucide="history"></i></div><div><h2>Watch History</h2><p>Videos you've recently watched</p></div></div>
+                <div class="view-hdr"><div class="view-hdr-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h2>Watch History</h2><p>Videos you've recently watched</p></div></div>
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
                     <span id="historyCount" style="font-size:12px;color:#555;"></span>
-                    <button onclick="clearHistory()" style="font-size:11px;font-weight:700;color:#555;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;" onmouseover="this.style.color='#fe2c55'" onmouseout="this.style.color='#555'"><i data-lucide="trash-2" style="width:12px;height:12px;"></i> Clear All</button>
+                    <button onclick="clearHistory()" style="font-size:11px;font-weight:700;color:#555;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;" onmouseover="this.style.color='#fe2c55'" onmouseout="this.style.color='#555'">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Clear All
+                    </button>
                 </div>
                 <div id="historyList" style="display:flex;flex-direction:column;gap:8px;"></div>
             </div>
 
+            <!-- TRENDING -->
             <div id="trendingView" class="app-view scrollable-view">
-                <div class="view-hdr"><div class="view-hdr-icon"><i data-lucide="trending-up"></i></div><div><h2>Trending</h2><p>Most loved videos on VISION</p></div></div>
+                <div class="view-hdr"><div class="view-hdr-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><div><h2>Trending</h2><p>Most loved videos on VISION</p></div></div>
                 <div id="trendingList" style="display:flex;flex-direction:column;gap:8px;"></div>
             </div>
 
+            <!-- PROFILE -->
             <div id="profileView" class="app-view">
                 <div class="profile-header-bg">
-                    <button class="profile-back-btn" id="profileBackBtn" onclick="showView('feedView')"><i data-lucide="arrow-left" style="width:18px;height:18px;"></i></button>
-                    <div class="profile-av" id="profileAv">?</div>
+                    <button class="profile-back-btn" id="profileBackBtn" onclick="showView('feedView')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <div class="profile-av" id="profileAv" onclick="onProfileAvClick()">?</div>
                 </div>
                 <div class="profile-body">
                     <div class="profile-name" id="profileName">—</div>
@@ -352,24 +379,27 @@
                         <div class="profile-stat"><div class="profile-stat-n" id="profileFollowerCount">0</div><div class="profile-stat-l">Followers</div></div>
                         <div class="profile-stat"><div class="profile-stat-n" id="profileLikeCount">0</div><div class="profile-stat-l">Likes</div></div>
                     </div>
-                    
-                    <div id="profileActions" style="display:flex; justify-content:center; gap:12px; margin-bottom:20px;"></div>
                     <button id="profileFollowBtn" class="profile-follow-btn not-following" style="display:none;" onclick="toggleFollowProfile()">Follow</button>
+                    <div id="profileActionRow" class="profile-action-row"></div>
                     <div id="profileEmail" style="text-align:center;font-size:12px;color:#555;margin-bottom:16px;display:none;"></div>
-                    
                     <div class="profile-tabs">
-                        <button class="profile-tab active" onclick="switchProfileTab('videos',this)"><i data-lucide="grid-2x2" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Videos</button>
-                        <button class="profile-tab" onclick="switchProfileTab('liked',this)"><i data-lucide="heart" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Liked</button>
+                        <button class="profile-tab active" id="ptab-videos" onclick="switchProfileTab('videos',this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Videos
+                        </button>
+                        <button class="profile-tab" id="ptab-liked" onclick="switchProfileTab('liked',this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Liked
+                        </button>
                     </div>
                     <div id="profileVideosGrid" class="profile-videos-grid"></div>
                 </div>
             </div>
 
+            <!-- SETTINGS -->
             <div id="settingsView" class="app-view scrollable-view" style="max-width:560px;margin:0 auto;">
-                <div class="view-hdr"><div class="view-hdr-icon"><i data-lucide="settings"></i></div><div><h2>Settings</h2><p>Manage your preferences</p></div></div>
+                <div class="view-hdr"><div class="view-hdr-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><div><h2>Settings</h2><p>Manage your preferences</p></div></div>
                 <div class="scard"><div class="slbl">Notifications</div>
                     <div class="srow"><div><div class="srt">New uploads from subscriptions</div><div class="srs">Get notified when channels you follow post</div></div><div class="toggle on" onclick="toggleSetting(this,'New upload notifications')"></div></div>
-                    <div class="srow"><div><div class="srt">Comments & replies</div><div class="srs">When someone replies to your comment</div></div><div class="toggle on" onclick="toggleSetting(this,'Comment notifications')"></div></div>
+                    <div class="srow"><div><div class="srt">Comments &amp; replies</div><div class="srs">When someone replies to your comment</div></div><div class="toggle on" onclick="toggleSetting(this,'Comment notifications')"></div></div>
                     <div class="srow"><div><div class="srt">Trending alerts</div><div class="srs">Weekly digest of trending content</div></div><div class="toggle" onclick="toggleSetting(this,'Trending alerts')"></div></div>
                 </div>
                 <div class="scard"><div class="slbl">Playback</div>
@@ -379,87 +409,131 @@
                 </div>
                 <div class="scard"><div class="slbl">Account</div>
                     <div class="srow"><div><div class="srt">Account status</div><div class="srs" id="settingsAccountStatus">Not signed in</div></div><button id="settingsAuthBtn" onclick="handleAuth()" style="font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;background:#fe2c55;color:#fff;border:none;cursor:pointer;">Sign In</button></div>
-                    <div class="srow"><div><div class="srt">Data & Privacy</div><div class="srs">Manage your data preferences</div></div><button onclick="showToast('info','Privacy','Your data is encrypted and secure.',4000)" style="font-size:12px;font-weight:600;color:#555;background:none;border:none;cursor:pointer;">View →</button></div>
+                    <div class="srow"><div><div class="srt">Data &amp; Privacy</div><div class="srs">Manage your data preferences</div></div><button onclick="showToast('info','Privacy','Your data is encrypted and secure.',4000)" style="font-size:12px;font-weight:600;color:#555;background:none;border:none;cursor:pointer;">View →</button></div>
                 </div>
                 <div class="scard"><div class="slbl">About</div>
-                    <div class="srow"><div class="srt">VISION Platform</div><span style="font-size:11px;font-weight:700;color:#555;background:#111;padding:3px 10px;border-radius:8px;">v2.5.0</span></div>
+                    <div class="srow"><div class="srt">VISION Platform</div><span style="font-size:11px;font-weight:700;color:#555;background:#111;padding:3px 10px;border-radius:8px;">v2.6.0</span></div>
                     <div class="srow"><div class="srt">Terms of Service</div><button style="font-size:12px;font-weight:600;color:#555;background:none;border:none;cursor:pointer;">View →</button></div>
                 </div>
             </div>
 
+            <!-- HELP -->
             <div id="helpView" class="app-view scrollable-view" style="max-width:560px;margin:0 auto;">
-                <div class="view-hdr"><div class="view-hdr-icon"><i data-lucide="help-circle"></i></div><div><h2>Help & Feedback</h2><p>Get support or share your thoughts</p></div></div>
+                <div class="view-hdr"><div class="view-hdr-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div><h2>Help &amp; Feedback</h2><p>Get support or share your thoughts</p></div></div>
                 <div class="scard" style="margin-bottom:12px;"><div class="slbl">FAQ</div>
                     <div id="faqList">
-                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">How do I upload a video? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"></i></button><div class="faq-answer">Tap Upload in the sidebar or bottom nav, fill in your details and pick a video file, then hit Post Video.</div></div>
-                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Can I watch without signing in? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"></i></button><div class="faq-answer">Yes! Signing in with Google lets you like, comment, follow, and upload.</div></div>
-                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">What formats are supported? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"></i></button><div class="faq-answer">MP4, MOV, AVI up to 500MB. H.264 MP4 recommended.</div></div>
-                        <div class="faq-item" style="border-bottom:none;"><button class="faq-btn" onclick="toggleFaq(this)">How do follows work? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"></i></button><div class="faq-answer">Tap the + on any video's avatar or visit a creator's profile. Their videos will appear in your Following feed.</div></div>
+                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">How do I upload a video? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer">Tap Upload in the sidebar or bottom nav, fill in your details and pick a video file, then hit Post Video.</div></div>
+                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Can I watch without signing in? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer">Yes! Signing in with Google lets you like, comment, follow, and upload.</div></div>
+                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">What formats are supported? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer">MP4, MOV, AVI up to 500MB. H.264 MP4 recommended.</div></div>
+                        <div class="faq-item" style="border-bottom:none;"><button class="faq-btn" onclick="toggleFaq(this)">How do follows work? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer">Tap the + on any video's avatar or visit a creator's profile. Their videos will appear in your Following feed.</div></div>
                     </div>
                 </div>
                 <div class="scard"><div class="slbl">Send Feedback</div>
                     <div style="display:flex;flex-direction:column;gap:10px;">
                         <select id="feedbackType" class="ui" style="cursor:pointer;"><option>General Feedback</option><option>Bug Report</option><option>Feature Request</option><option>Account Issue</option></select>
                         <textarea id="feedbackMsg" rows="4" placeholder="Tell us what's on your mind..." class="ui" style="resize:none;"></textarea>
-                        <button onclick="submitFeedback()" class="ubtn"><i data-lucide="send"></i> Submit Feedback</button>
+                        <button onclick="submitFeedback()" class="ubtn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Feedback</button>
                     </div>
                 </div>
             </div>
 
-        </div><nav id="mobileNav">
-            <button class="mob-btn active" id="mob-feedView" onclick="showView('feedView')"><i data-lucide="home"></i>Home</button>
-            <button class="mob-btn" onclick="openMobileSearch()"><i data-lucide="search"></i>Search</button>
+        </div><!-- /viewContainer -->
+
+        <!-- MOBILE BOTTOM NAV -->
+        <nav id="mobileNav">
+            <button class="mob-btn active" id="mob-feedView" onclick="showView('feedView')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+            </button>
+            <button class="mob-btn" onclick="openMobileSearch()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search
+            </button>
             <button class="mob-btn" id="mob-uploadView" onclick="showView('uploadView')" style="flex:.8;">
                 <div style="position:relative;width:44px;height:28px;margin-bottom:2px;">
                     <div style="position:absolute;inset:0;background:linear-gradient(90deg,#25f4ee,#fe2c55);border-radius:9px;"></div>
-                    <div style="position:absolute;top:2px;left:2px;right:2px;bottom:2px;background:#000;border-radius:7px;display:flex;align-items:center;justify-content:center;"><i data-lucide="plus" style="width:16px;height:16px;color:#fff;"></i></div>
+                    <div style="position:absolute;top:2px;left:2px;right:2px;bottom:2px;background:#000;border-radius:7px;display:flex;align-items:center;justify-content:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;color:#fff;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </div>
                 </div>
             </button>
-            <button class="mob-btn" id="mob-trendingView" onclick="showView('trendingView')"><i data-lucide="trending-up"></i>Trending</button>
-            <button class="mob-btn" id="mob-profileView" onclick="showView('profileView')"><i data-lucide="user"></i>Profile</button>
+            <button class="mob-btn" id="mob-trendingView" onclick="showView('trendingView')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Trending
+            </button>
+            <button class="mob-btn" id="mob-profileView" onclick="showView('profileView')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile
+            </button>
         </nav>
 
-    </div>
-</div>
+    </div><!-- /mainArea -->
+</div><!-- /appShell -->
 
+<!-- BOTTOM SHEET -->
 <div id="bottomSheet">
     <div id="bsOverlay" onclick="closeBottomSheet()"></div>
     <div id="bsPanel"><div class="bs-handle"></div><div id="bsContent"></div></div>
 </div>
 
-<div id="successModal">
+<!-- SUCCESS MODAL -->
+<div id="successModal" class="modal-overlay">
     <div class="modal-card">
-        <div class="modal-check"><i data-lucide="check" style="width:26px;height:26px;color:#fff;"></i></div>
+        <div class="modal-check">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="width:26px;height:26px;"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
         <h3 style="font-size:20px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px;">Video Published!</h3>
         <p style="font-size:13px;color:#666;margin-bottom:24px;">Your content is now live on VISION.</p>
         <button onclick="closeSuccessModal()" class="ubtn">View Feed</button>
     </div>
 </div>
 
-<div id="editProfileModal">
-    <div class="modal-card" style="text-align:left; max-width:400px; padding:28px;">
-        <h3 style="font-size:20px;font-weight:900;margin-bottom:16px;color:#fff;">Edit Profile</h3>
+<!-- EDIT PROFILE MODAL -->
+<div id="editProfileModal" class="modal-overlay">
+    <div class="ep-modal-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <h3 style="font-size:20px;font-weight:900;color:#fff;margin:0;">Edit Profile</h3>
+            <button onclick="closeEditProfile()" style="background:none;border:none;color:#555;cursor:pointer;padding:4px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
         <form id="editProfileForm" style="display:flex;flex-direction:column;gap:16px;">
-            <div>
-                <label class="ulabel">Profile Picture</label>
-                <input type="file" id="editProfilePic" accept="image/*" class="ui" style="padding:8px;">
-                <div id="epProgress" style="font-size:11px;color:#fe2c55;margin-top:6px;display:none;">Uploading image...</div>
+            <!-- Profile pic preview + upload -->
+            <div style="text-align:center;">
+                <div id="epAvPreview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#fe2c55,#ff6b35);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;margin:0 auto 10px;overflow:hidden;cursor:pointer;border:3px solid #2a2a2a;" onclick="document.getElementById('editProfilePic').click()">?</div>
+                <p style="font-size:11px;color:#555;margin:0 0 8px;">Tap avatar to change photo</p>
+                <input type="file" id="editProfilePic" accept="image/*" style="display:none;">
+                <div id="epProgress" style="font-size:11px;color:#fe2c55;display:none;margin-top:4px;">Uploading image...</div>
             </div>
             <div>
                 <label class="ulabel">Display Name</label>
                 <input type="text" id="editProfileName" class="ui" required placeholder="Your name...">
             </div>
-            <div style="display:flex;gap:12px;margin-top:8px;">
-                <button type="button" onclick="closeEditProfile()" class="ubtn" style="background:#333;">Cancel</button>
-                <button type="submit" id="saveProfileBtn" class="ubtn">Save Changes</button>
+            <div style="display:flex;gap:12px;margin-top:4px;">
+                <button type="button" onclick="closeEditProfile()" class="ubtn" style="background:#333;flex:1;">Cancel</button>
+                <button type="submit" id="saveProfileBtn" class="ubtn" style="flex:1;">Save Changes</button>
             </div>
         </form>
     </div>
 </div>
 
+<!-- VIDEO PLAYER MODAL (for profile video taps) -->
+<div id="videoPlayerModal">
+    <div class="player-topbar">
+        <button onclick="closeVideoPlayer()" style="background:rgba(0,0,0,.5);border:none;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div id="playerTitle" style="font-size:15px;font-weight:700;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+    </div>
+    <video id="playerVideo" controls playsinline style="flex:1;width:100%;object-fit:contain;background:#000;"></video>
+    <div class="player-info">
+        <div id="playerUploaderName" style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;"></div>
+        <div id="playerDesc" style="font-size:12px;color:#aaa;"></div>
+    </div>
+</div>
+
+<!-- MOBILE SEARCH OVERLAY -->
 <div id="mobileSearchOverlay">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-top:8px;">
-        <button onclick="closeMobileSearch()" style="background:none;border:none;color:#fff;cursor:pointer;padding:6px;"><i data-lucide="arrow-left" style="width:20px;height:20px;"></i></button>
+        <button onclick="closeMobileSearch()" style="background:none;border:none;color:#fff;cursor:pointer;padding:6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
         <input type="text" id="mobileSearchInput" placeholder="Search videos..." class="msearch" oninput="filterExplore(this.value)">
     </div>
     <div style="font-size:10px;font-weight:700;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">Categories</div>
@@ -488,11 +562,9 @@ let currentUser=null, activeViewId='feedView', allVideos=[], activeCategory='All
 let subscribedChannels=new Set(), likedVideos=new Set(), savedVideos=new Set();
 let watchHistory=[], videoLikeCounts={}, exploreSearchQuery='';
 let feedObserver=null, feedDataListenerUnsub=null;
-let slideVisibility = new Map();
-let isMuted = true; // Global state for tracking manual unmuting
-
-// Profile state
-let viewingUserId=null; 
+let slideVisibility=new Map();
+let isMuted=true;
+let viewingUserId=null;
 let currentProfileTab='videos';
 
 const ALL_VIEWS=['feedView','uploadView','exploreView','savedView','historyView','trendingView','profileView','settingsView','helpView'];
@@ -503,8 +575,7 @@ const CATEGORIES=[
     {label:'Comedy',icon:'laugh'},{label:'News',icon:'newspaper'}
 ];
 
-function ri(){ if(window.lucide) window.lucide.createIcons(); }
-setTimeout(ri,50);
+function fmtN(n){ if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1000) return (n/1000).toFixed(1)+'K'; return String(n||0); }
 
 // ══════════════════════════
 // TOAST
@@ -513,19 +584,27 @@ let tcnt=0;
 window.showToast=(type='success',title='',message='',duration=4000)=>{
     const c=document.getElementById('toastContainer'), id='toast-'+(++tcnt);
     const icons={success:'check-circle',info:'info',warning:'alert-triangle',error:'x-circle'};
+    const svgs={
+        'check-circle':'<polyline points="20 6 9 17 4 12"/>',
+        'info':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+        'alert-triangle':'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+        'x-circle':'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'
+    };
+    const icoKey=icons[type]||'check-circle';
+    const icoSvg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">${svgs[icoKey]||''}</svg>`;
     const t=document.createElement('div'); t.id=id; t.className='toast';
-    t.innerHTML=`<div class="toast-icon ${type}"><i data-lucide="${icons[type]||'check-circle'}"></i></div>
+    t.innerHTML=`<div class="toast-icon ${type}">${icoSvg}</div>
         <div class="toast-body"><div class="toast-title">${title}</div>${message?`<div class="toast-msg">${message}</div>`:''}</div>
-        <div class="toast-close" onclick="dismissToast('${id}')"><i data-lucide="x"></i></div>
+        <div class="toast-close" onclick="dismissToast('${id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
         <div class="toast-progress" style="animation-duration:${duration}ms;"></div>`;
-    c.appendChild(t); ri(); setTimeout(()=>dismissToast(id),duration);
+    c.appendChild(t); setTimeout(()=>dismissToast(id),duration);
 };
 window.dismissToast=(id)=>{ const t=document.getElementById(id); if(!t)return; t.classList.add('toast-out'); setTimeout(()=>t.remove(),300); };
 
 // ══════════════════════════
 // AUTH
 // ══════════════════════════
-window.handleAuth=()=>{ signInWithPopup(auth,new GoogleAuthProvider()); };
+window.handleAuth=()=>{ signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>showToast('error','Sign In Failed',e.message,4000)); };
 window.signOutAndRefresh=()=>{
     signOut(auth).then(()=>{
         showToast('info','Signed Out','You have been signed out.',3000);
@@ -533,41 +612,42 @@ window.signOutAndRefresh=()=>{
     });
 };
 
-onAuthStateChanged(auth,user=>{
+onAuthStateChanged(auth,async user=>{
     currentUser=user;
     const s=document.getElementById('settingsAccountStatus');
     const sBtn=document.getElementById('settingsAuthBtn');
-    
     if(user){
         if(s) s.textContent=user.displayName+' · '+user.email;
-        if(sBtn) { sBtn.textContent='Sign Out'; sBtn.style.background='#333'; sBtn.onclick=signOutAndRefresh; }
+        if(sBtn){ sBtn.textContent='Sign Out'; sBtn.style.background='#333'; sBtn.onclick=signOutAndRefresh; }
         document.getElementById('sidebarProfileLabel').textContent=(user.displayName||'Profile').split(' ')[0];
-        // Merge into database ensuring updates take place
-        set(ref(db,'users/'+user.uid),{displayName:user.displayName, email:user.email, photoURL:user.photoURL||''});
+        // Persist user record to Firebase (don't overwrite photoURL if it was customised)
+        await set(ref(db,'users/'+user.uid),{
+            displayName:user.displayName||'',
+            email:user.email||'',
+            photoURL:user.photoURL||''
+        });
     } else {
         if(s) s.textContent='Not signed in';
-        if(sBtn) { sBtn.textContent='Sign In'; sBtn.style.background='#fe2c55'; sBtn.onclick=handleAuth; }
+        if(sBtn){ sBtn.textContent='Sign In'; sBtn.style.background='#fe2c55'; sBtn.onclick=handleAuth; }
         document.getElementById('sidebarProfileLabel').textContent='Profile';
     }
     if(activeViewId==='profileView') renderProfile(viewingUserId);
-    ri();
 });
 
 // ══════════════════════════
 // VIEW ROUTER
 // ══════════════════════════
-window.showView=(viewId, opts={})=>{
+window.showView=(viewId,opts={})=>{
+    // Pause all feed videos when leaving feed
     if(activeViewId==='feedView'){
-        document.querySelectorAll('.slide-video').forEach(v=>{ try{ v.pause(); v.currentTime=0; }catch(e){} });
+        document.querySelectorAll('.slide-video').forEach(v=>{ try{ v.pause(); }catch(e){} });
         if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
         slideVisibility.clear();
     }
-
     ALL_VIEWS.forEach(id=>{
         const el=document.getElementById(id);
         if(!el) return;
-        if(id===viewId){el.classList.add('view-active');}
-        else{el.classList.remove('view-active');}
+        el.classList.toggle('view-active', id===viewId);
     });
     activeViewId=viewId;
 
@@ -576,119 +656,138 @@ window.showView=(viewId, opts={})=>{
     document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('active'));
     const mb=document.getElementById('mob-'+viewId); if(mb) mb.classList.add('active');
 
-    if(viewId==='feedView'){
-        document.getElementById('topNav').style.display='';
-        initFeed();
-    } else {
-        document.getElementById('topNav').style.display='none';
-    }
+    document.getElementById('topNav').style.display=(viewId==='feedView')?'':'none';
+
+    if(viewId==='feedView') initFeed();
     if(viewId==='exploreView') renderExplore();
     if(viewId==='savedView') renderSaved();
     if(viewId==='historyView') renderHistory();
     if(viewId==='trendingView') renderTrending();
     if(viewId==='profileView'){
-        viewingUserId = opts.userId || null;
+        viewingUserId=opts.userId||null;
+        currentProfileTab='videos';
+        document.querySelectorAll('.profile-tab').forEach(t=>t.classList.remove('active'));
+        const vt=document.getElementById('ptab-videos'); if(vt) vt.classList.add('active');
         renderProfile(viewingUserId);
     }
-    ri();
 };
 
-window.setFeedTab=(tab,el)=>{ document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); };
+window.setFeedTab=(tab,el)=>{
+    document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+};
 
+// Jump to a video in the feed (called from profile grid, history, saved, etc.)
 window.jumpToVideo=(videoId)=>{
     showView('feedView');
     setTimeout(()=>{
         const slide=document.querySelector(`.video-slide[data-video-id="${videoId}"]`);
-        if(slide) {
+        if(slide){
             slide.scrollIntoView({behavior:'auto'});
             setTimeout(()=>{
-                const vid = slide.querySelector('.slide-video');
-                if(vid) {
-                    isMuted = false;
-                    vid.muted = false;
-                    vid.play().catch(()=>{});
+                const vid=slide.querySelector('.slide-video');
+                if(vid){
+                    isMuted=false;
+                    vid.muted=false;
+                    vid.play().catch(()=>{ vid.muted=true; isMuted=true; vid.play().catch(()=>{}); });
                 }
-            }, 300);
+            },200);
         }
-    }, 100);
+    },150);
+};
+
+// Open a video in the dedicated player (used from profile grid)
+window.openVideoPlayer=(videoId)=>{
+    const v=allVideos.find(x=>x.id===videoId);
+    if(!v) return;
+    const modal=document.getElementById('videoPlayerModal');
+    const vid=document.getElementById('playerVideo');
+    const titleEl=document.getElementById('playerTitle');
+    const nameEl=document.getElementById('playerUploaderName');
+    const descEl=document.getElementById('playerDesc');
+    modal.classList.add('open');
+    vid.src=v.videoUrl||'';
+    vid.muted=false;
+    vid.play().catch(()=>{});
+    if(titleEl) titleEl.textContent=v.title||'';
+    if(nameEl) nameEl.textContent=v.uploaderName||'Creator';
+    if(descEl) descEl.textContent=v.description||'';
+};
+window.closeVideoPlayer=()=>{
+    const modal=document.getElementById('videoPlayerModal');
+    const vid=document.getElementById('playerVideo');
+    modal.classList.remove('open');
+    vid.pause(); vid.src='';
 };
 
 // ══════════════════════════
-// FEED — TikTok Vertical
+// FEED
 // ══════════════════════════
 function initFeed(){
     buildCategoryBar();
     if(!feedDataListenerUnsub){
         const videosRef=ref(db,'videos');
-        feedDataListenerUnsub = onValue(videosRef,snapshot=>{
+        feedDataListenerUnsub=onValue(videosRef,snapshot=>{
             allVideos=[];
             if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
-            allVideos.reverse(); // Newest first
-            renderFeed(true);
+            allVideos.reverse();
+            renderFeed();
         });
     } else {
-        renderFeed(false);
+        renderFeed();
     }
 }
 
-function renderFeed(dataChanged=false){
+function renderFeed(){
     const feed=document.getElementById('feedView');
+    if(!feed) return;
+
     const filtered=allVideos.filter(v=>activeCategory==='All'||(v.category||'All')===activeCategory);
 
+    // Rebuild slides
     if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
     slideVisibility.clear();
+    feed.innerHTML='';
 
-    const existingIds = Array.from(feed.querySelectorAll('.video-slide')).map(s=>s.dataset.videoId).join(',');
-    const newIds = filtered.map(v=>v.id).join(',');
-
-    if(dataChanged || existingIds !== newIds || feed.querySelectorAll('.video-slide').length === 0){
-        feed.innerHTML='';
-
-        if(filtered.length===0){
-            feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;">
-                <div style="font-size:48px;margin-bottom:12px;">📭</div>
-                <p style="font-weight:700;font-size:15px;">No videos yet</p>
-                <p style="font-size:12px;margin-top:4px;">Be the first to post!</p>
-            </div>`;
-            return;
-        }
-
-        filtered.forEach(v=>feed.appendChild(makeSlide(v)));
-        ri();
+    if(filtered.length===0){
+        feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;">
+            <div style="font-size:48px;margin-bottom:12px;">📭</div>
+            <p style="font-weight:700;font-size:15px;">No videos yet</p>
+            <p style="font-size:12px;margin-top:4px;">Be the first to post!</p>
+        </div>`;
+        return;
     }
 
-    feedObserver = new IntersectionObserver((entries)=>{
+    filtered.forEach(v=>feed.appendChild(makeSlide(v)));
+
+    // Intersection observer — play the most visible slide, pause others
+    feedObserver=new IntersectionObserver(entries=>{
         entries.forEach(entry=>{
-            const id = entry.target.dataset.videoId;
-            if(entry.isIntersecting) slideVisibility.set(id, entry.intersectionRatio);
+            const id=entry.target.dataset.videoId;
+            if(entry.isIntersecting) slideVisibility.set(id,entry.intersectionRatio);
             else slideVisibility.delete(id);
         });
 
-        let bestId = null, bestRatio = 0;
-        slideVisibility.forEach((ratio, id)=>{
-            if(ratio > bestRatio){ bestRatio = ratio; bestId = id; }
-        });
+        let bestId=null, bestRatio=0;
+        slideVisibility.forEach((ratio,id)=>{ if(ratio>bestRatio){ bestRatio=ratio; bestId=id; } });
 
         feed.querySelectorAll('.video-slide').forEach(slide=>{
-            const vid = slide.querySelector('.slide-video');
-            const id = slide.dataset.videoId;
-            if(id === bestId && bestRatio > 0.5){
-                if(vid && vid.paused){
-                    vid.muted = isMuted; // Use global mute state for autoplay
-                    const p = vid.play();
-                    if(p) p.catch(()=>{
-                        vid.muted = true;
-                        isMuted = true;
-                        vid.play().catch(()=>{});
-                    });
-                    const vdata = allVideos.find(v=>v.id === id);
+            const vid=slide.querySelector('.slide-video');
+            const id=slide.dataset.videoId;
+            if(!vid) return;
+            if(id===bestId && bestRatio>0.4){
+                if(vid.paused){
+                    vid.muted=isMuted;
+                    const p=vid.play();
+                    if(p) p.catch(()=>{ vid.muted=true; isMuted=true; vid.play().catch(()=>{}); });
+                    const vdata=allVideos.find(v=>v.id===id);
                     if(vdata) addToHistory(vdata);
                 }
             } else {
-                if(vid && !vid.paused){ vid.pause(); }
+                if(!vid.paused) vid.pause();
             }
         });
-    }, {threshold:[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0], root:feed});
+    },{threshold:[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0],root:feed});
 
     feed.querySelectorAll('.video-slide').forEach(s=>feedObserver.observe(s));
 }
@@ -703,68 +802,80 @@ function makeSlide(v){
     const likes=videoLikeCounts[v.id]||0;
     const musicText=`${v.uploaderName||'original sound'} — ${v.title}`;
     const handle='@'+(v.uploaderName||'creator').toLowerCase().replace(/\s+/g,'_');
-    const avContent = v.uploaderPhoto ? `<img src="${v.uploaderPhoto}" style="width:100%;height:100%;object-fit:cover;">` : (v.uploaderName||'V')[0].toUpperCase();
+    const avContent=v.uploaderPhoto?`<img src="${v.uploaderPhoto}" style="width:100%;height:100%;object-fit:cover;">`:(v.uploaderName||'V')[0].toUpperCase();
+
+    const svgHeart=(fill,stroke)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+    const svgBookmark=(fill,stroke)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
+    const svgComment=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+    const svgShare=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+    const svgDots=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>`;
+    const svgVolOff=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:13px;height:13px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
+    const svgVolOn=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:13px;height:13px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+
+    const safeUploaderName=(v.uploaderName||'Creator').replace(/'/g,"\\'");
 
     slide.innerHTML=`
         <div class="slide-bg" style="background-image:url('${thumb}');"></div>
         <video class="slide-video" loop playsinline preload="metadata" src="${v.videoUrl||''}" poster="${thumb}"></video>
         <div class="slide-gradient"></div>
-        <div class="pause-icon" id="pause-${v.id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)" style="width:60px;height:60px;"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="pause-icon" id="pause-${v.id}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)" style="width:60px;height:60px;"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <button class="mute-badge" id="mute-${v.id}" onclick="toggleMute('${v.id}')">
+            ${isMuted?svgVolOff:svgVolOn} ${isMuted?'Tap for sound':'Sound on'}
+        </button>
         <div class="slide-info">
-            <div class="slide-username" onclick="openUserProfile('${v.uploaderId}','${(v.uploaderName||'Creator').replace(/'/g,"\\'")}')">
-                ${handle}
-            </div>
+            <div class="slide-username" onclick="openUserProfile('${v.uploaderId}','${safeUploaderName}')">${handle}</div>
             <div class="slide-title">${v.title}</div>
             ${v.category&&v.category!=='All'?`<div class="slide-cat"># ${v.category}</div>`:''}
             <div class="slide-music">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#25f4ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex-shrink:0;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#25f4ee" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                 <div class="music-ticker"><span class="music-inner">${musicText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${musicText}</span></div>
             </div>
         </div>
         <div class="slide-actions">
-            <div class="slide-av-wrap" onclick="openUserProfile('${v.uploaderId}','${(v.uploaderName||'Creator').replace(/'/g,"\\'")}')">
+            <div class="slide-av-wrap" onclick="openUserProfile('${v.uploaderId}','${safeUploaderName}')">
                 <div class="slide-av">${avContent}</div>
                 <div class="slide-follow-dot" id="fdot-${v.id}" style="${isSub?'background:#aaa;':''}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;">
                         ${isSub?'<polyline points="20 6 9 17 4 12"/>':`<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>`}
                     </svg>
                 </div>
             </div>
             <button class="sab ${isLiked?'liked':''}" id="lb-${v.id}" onclick="handleLike('${v.id}')">
-                <div class="sai"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isLiked?'#fe2c55':'none'}" stroke="${isLiked?'#fe2c55':'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                <div class="sai">${svgHeart(isLiked?'#fe2c55':'none',isLiked?'#fe2c55':'currentColor')}</div>
                 <span class="sac" id="lc-${v.id}">${fmtN(likes)}</span>
             </button>
             <button class="sab" onclick="openComments('${v.id}','${v.title.replace(/'/g,"\\'")}')">
-                <div class="sai"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <div class="sai">${svgComment}</div>
                 <span class="sac" id="cc-${v.id}">0</span>
             </button>
             <button class="sab ${isSaved?'saved':''}" id="sb-${v.id}" onclick="handleSave('${v.id}')">
-                <div class="sai"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isSaved?'#25f4ee':'none'}" stroke="${isSaved?'#25f4ee':'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+                <div class="sai">${svgBookmark(isSaved?'#25f4ee':'none',isSaved?'#25f4ee':'currentColor')}</div>
                 <span class="sac">${isSaved?'Saved':'Save'}</span>
             </button>
             <button class="sab" onclick="openBottomSheet('share')">
-                <div class="sai"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+                <div class="sai">${svgShare}</div>
                 <span class="sac">Share</span>
             </button>
             <button class="sab" onclick="openBottomSheet('videoActions')">
-                <div class="sai"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+                <div class="sai">${svgDots}</div>
             </button>
         </div>`;
 
+    // Click to toggle mute / pause
     slide.addEventListener('click',e=>{
-        if(e.target.closest('.slide-actions')||e.target.closest('.slide-username')||e.target.closest('.slide-av-wrap')) return;
+        if(e.target.closest('.slide-actions')||e.target.closest('.slide-username')||e.target.closest('.slide-av-wrap')||e.target.closest('.mute-badge')) return;
         const vid=slide.querySelector('.slide-video');
         const icon=document.getElementById('pause-'+v.id);
-        
         if(vid.paused){
-            isMuted = false;
-            vid.muted = false;
+            isMuted=false; vid.muted=false;
             vid.play().catch(()=>{});
             if(icon) icon.classList.remove('visible');
         } else {
-            if(vid.muted) {
-                isMuted = false;
-                vid.muted = false;
+            if(vid.muted){
+                isMuted=false; vid.muted=false;
+                updateMuteBadge(v.id,false);
             } else {
                 vid.pause();
                 if(icon){ icon.classList.add('visible'); setTimeout(()=>icon.classList.remove('visible'),800); }
@@ -772,14 +883,16 @@ function makeSlide(v){
         }
     });
 
+    // Double-tap like
     let lastTap=0;
     slide.addEventListener('touchend',e=>{
-        if(e.target.closest('.slide-actions')) return;
+        if(e.target.closest('.slide-actions')||e.target.closest('.mute-badge')) return;
         const now=Date.now();
-        if(now-lastTap < 300){ handleLike(v.id); spawnHeart(e,slide); }
+        if(now-lastTap<300){ handleLike(v.id); spawnHeart(e,slide); }
         lastTap=now;
     });
 
+    // Live like count & state
     onValue(ref(db,`likes/${v.id}`),snap=>{
         const count=snap.exists()?snap.size:0;
         videoLikeCounts[v.id]=count;
@@ -790,6 +903,7 @@ function makeSlide(v){
         }
     });
 
+    // Live comment count
     onValue(ref(db,`comments/${v.id}`),snap=>{
         const count=snap.exists()?Object.keys(snap.val()).length:0;
         const el=document.getElementById('cc-'+v.id); if(el) el.textContent=fmtN(count);
@@ -797,6 +911,23 @@ function makeSlide(v){
 
     return slide;
 }
+
+function updateMuteBadge(videoId, muted){
+    const badge=document.getElementById('mute-'+videoId);
+    if(!badge) return;
+    const svgOff=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:13px;height:13px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
+    const svgOn=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:13px;height:13px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+    badge.innerHTML=(muted?svgOff:svgOn)+(muted?' Tap for sound':' Sound on');
+}
+
+window.toggleMute=(videoId)=>{
+    isMuted=!isMuted;
+    document.querySelectorAll('.slide-video').forEach(vid=>{ vid.muted=isMuted; });
+    document.querySelectorAll('[id^="mute-"]').forEach(badge=>{
+        const id=badge.id.replace('mute-','');
+        updateMuteBadge(id,isMuted);
+    });
+};
 
 function spawnHeart(e,parent){
     const h=document.createElement('div'); h.className='float-heart';
@@ -808,28 +939,42 @@ function spawnHeart(e,parent){
     parent.appendChild(h); setTimeout(()=>h.remove(),950);
 }
 
-function fmtN(n){ if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1000) return (n/1000).toFixed(1)+'K'; return String(n); }
-
 function buildCategoryBar(){
     ['categoryBar','mobileSearchPills'].forEach(bid=>{
         const bar=document.getElementById(bid); if(!bar) return; bar.innerHTML='';
+        const catIcons={
+            'All':'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
+            'Music':'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+            'Gaming':'<line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>',
+            'Tech':'<rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
+            'Education':'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+            'Sports':'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>',
+            'Travel':'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+            'Food':'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+            'Lifestyle':'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+            'Comedy':'<circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+            'News':'<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>'
+        };
         CATEGORIES.forEach(cat=>{
             const p=document.createElement('button');
             p.className='pill'+(cat.label===activeCategory?' active':'');
             p.dataset.category=cat.label;
-            p.innerHTML=`<i data-lucide="${cat.icon}" style="width:12px;height:12px;"></i>${cat.label}`;
+            const ico=catIcons[cat.label]||'';
+            p.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;">${ico}</svg>${cat.label}`;
             p.onclick=()=>{
                 activeCategory=cat.label;
                 document.querySelectorAll('.pill').forEach(x=>x.classList.toggle('active',x.dataset.category===cat.label));
-                if(activeViewId==='feedView') renderFeed(false);
+                if(activeViewId==='feedView') renderFeed();
                 else if(activeViewId==='exploreView') renderExplore();
             };
             bar.appendChild(p);
         });
     });
-    ri();
 }
 
+// ══════════════════════════
+// LIKE / SAVE / FOLLOW
+// ══════════════════════════
 window.handleLike=(videoId)=>{
     if(!currentUser){ showToast('warning','Sign In Required','Sign in to like videos.',3500); return; }
     const likeRef=ref(db,`likes/${videoId}/${currentUser.uid}`);
@@ -869,12 +1014,12 @@ window.handleSubscribe=(videoId,uploaderId,uploaderName)=>{
         if(dot){ dot.style.background='#aaa'; dot.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" style="width:10px;height:10px;"><polyline points="20 6 9 17 4 12"/></svg>`; }
         showToast('success','✅ Following!',`You're now following ${uploaderName}`,3000);
     }
-    if(currentUser){
-        const followRef=ref(db,`follows/${currentUser.uid}/${uploaderId}`);
-        set(followRef, subscribedChannels.has(uploaderId)?true:null);
-    }
+    set(ref(db,`follows/${currentUser.uid}/${uploaderId}`),subscribedChannels.has(uploaderId)?true:null);
 };
 
+// ══════════════════════════
+// COMMENTS BOTTOM SHEET
+// ══════════════════════════
 window.openComments=(videoId,title)=>{
     const content=document.getElementById('bsContent');
     content.innerHTML=`
@@ -886,21 +1031,18 @@ window.openComments=(videoId,title)=>{
         <form id="commForm" style="display:flex;gap:8px;padding-top:10px;border-top:1px solid #2a2a2a;">
             <input type="text" id="commInput" placeholder="Add a comment..." style="flex:1;background:#111;border:1px solid #2a2a2a;border-radius:22px;padding:8px 14px;font-size:13px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;" required>
             <button type="submit" style="width:36px;height:36px;border-radius:50%;background:#fe2c55;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="width:15px;height:15px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
         </form>`;
     document.getElementById('bottomSheet').classList.add('open');
 
-    let unsub=null;
-    const commentsRef=ref(db,`comments/${videoId}`);
-    unsub=onValue(commentsRef,snap=>{
+    let unsub=onValue(ref(db,`comments/${videoId}`),snap=>{
         const list=document.getElementById('commList');
         const lbl=document.getElementById('bsCommentCountLabel');
         if(!list) return;
         list.innerHTML='';
         if(snap.exists()){
-            const entries=[];
-            snap.forEach(c=>entries.push({key:c.key,...c.val()}));
+            const entries=[]; snap.forEach(c=>entries.push({key:c.key,...c.val()}));
             if(lbl) lbl.textContent=fmtN(entries.length);
             const fc=document.getElementById('cc-'+videoId); if(fc) fc.textContent=fmtN(entries.length);
             entries.forEach(c=>{
@@ -921,8 +1063,7 @@ window.openComments=(videoId,title)=>{
     });
 
     const overlay=document.getElementById('bsOverlay');
-    const origClose=overlay.onclick;
-    overlay.onclick=()=>{ if(unsub) unsub(); closeBottomSheet(); overlay.onclick=origClose; };
+    overlay.onclick=()=>{ unsub(); closeBottomSheet(); overlay.onclick=()=>closeBottomSheet(); };
 
     document.getElementById('commForm').addEventListener('submit',async e=>{
         e.preventDefault();
@@ -939,11 +1080,17 @@ window.openComments=(videoId,title)=>{
 // ══════════════════════════
 window.openUserProfile=(uid,name)=>{
     if(!uid||uid==='undefined'||uid==='null') return;
-    showView('profileView',{userId: uid});
+    showView('profileView',{userId:uid});
+};
+
+// When own profile avatar is tapped → open edit if own, nothing if other
+window.onProfileAvClick=()=>{
+    const isOwn=!viewingUserId||(currentUser&&viewingUserId===currentUser.uid);
+    if(isOwn && currentUser) openEditProfile();
 };
 
 window.toggleFollowProfile=()=>{
-    if(!currentUser){ showToast('warning','Sign In Required','Sign in to follow creators.',3500); return; }
+    if(!currentUser){ showToast('warning','Sign In Required','Sign in to follow.',3500); return; }
     if(!viewingUserId) return;
     const btn=document.getElementById('profileFollowBtn');
     const isSub=subscribedChannels.has(viewingUserId);
@@ -951,17 +1098,16 @@ window.toggleFollowProfile=()=>{
         subscribedChannels.delete(viewingUserId);
         if(btn){ btn.textContent='Follow'; btn.className='profile-follow-btn not-following'; }
         const fc=document.getElementById('profileFollowerCount');
-        if(fc){ const n=parseInt(fc.textContent.replace(/[KM]/,''))||0; fc.textContent=fmtN(Math.max(0,n-1)); }
-        showToast('info','Unfollowed','You unfollowed this creator',3000);
+        if(fc){ const n=parseInt(fc.textContent.replace(/[KkMm]/,''))||0; fc.textContent=fmtN(Math.max(0,n-1)); }
+        showToast('info','Unfollowed','',2500);
     } else {
         subscribedChannels.add(viewingUserId);
         if(btn){ btn.textContent='Following'; btn.className='profile-follow-btn following'; }
         const fc=document.getElementById('profileFollowerCount');
-        if(fc){ const n=parseInt(fc.textContent.replace(/[KM]/,''))||0; fc.textContent=fmtN(n+1); }
-        showToast('success','✅ Following!','You are now following this creator',3000);
+        if(fc){ const n=parseInt(fc.textContent.replace(/[KkMm]/,''))||0; fc.textContent=fmtN(n+1); }
+        showToast('success','✅ Following!','',2500);
     }
-    const followRef=ref(db,`follows/${currentUser.uid}/${viewingUserId}`);
-    set(followRef, subscribedChannels.has(viewingUserId)?true:null);
+    set(ref(db,`follows/${currentUser.uid}/${viewingUserId}`),subscribedChannels.has(viewingUserId)?true:null);
 };
 
 window.switchProfileTab=(tab,el)=>{
@@ -972,8 +1118,8 @@ window.switchProfileTab=(tab,el)=>{
 };
 
 function renderProfile(userId){
-    const isOwnProfile = !userId || (currentUser && userId===currentUser.uid);
-    const targetUid = isOwnProfile ? (currentUser?.uid||null) : userId;
+    const isOwnProfile=!userId||(currentUser&&userId===currentUser.uid);
+    const targetUid=isOwnProfile?(currentUser?.uid||null):userId;
 
     const av=document.getElementById('profileAv');
     const nameEl=document.getElementById('profileName');
@@ -984,58 +1130,48 @@ function renderProfile(userId){
     const videoCountEl=document.getElementById('profileVideoCount');
     const followerCountEl=document.getElementById('profileFollowerCount');
     const likeCountEl=document.getElementById('profileLikeCount');
-    const grid=document.getElementById('profileVideosGrid');
-    const actionsContainer=document.getElementById('profileActions');
+    const actionRow=document.getElementById('profileActionRow');
 
-    if(backBtn){
-        backBtn.onclick=()=>showView('feedView');
-        backBtn.style.display = isOwnProfile ? 'none' : '';
-    }
+    if(backBtn) backBtn.style.display=isOwnProfile?'none':'';
 
-    if(!isOwnProfile && !targetUid){
-        if(nameEl) nameEl.textContent='Unknown User';
-        if(handleEl) handleEl.textContent='';
-        if(grid) grid.innerHTML='<div class="empty-state"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:#555;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><p style="font-weight:700;font-size:14px;">User not found</p></div>';
-        return;
-    }
-
-    actionsContainer.innerHTML = '';
+    actionRow.innerHTML='';
 
     if(isOwnProfile){
         if(followBtn) followBtn.style.display='none';
         if(emailEl) emailEl.style.display='none';
 
         if(!currentUser){
-            if(av) av.textContent='?';
+            if(av){ av.innerHTML='?'; av.style.cursor='default'; }
             if(nameEl) nameEl.textContent='Guest';
             if(handleEl) handleEl.textContent='Sign in to see your profile';
             if(videoCountEl) videoCountEl.textContent='0';
             if(followerCountEl) followerCountEl.textContent='0';
             if(likeCountEl) likeCountEl.textContent='0';
-            actionsContainer.innerHTML = `<button onclick="handleAuth()" class="ubtn" style="max-width:200px;margin:0 auto;">Sign In with Google</button>`;
-            if(grid) grid.innerHTML='';
+            actionRow.innerHTML=`<button onclick="handleAuth()" class="profile-follow-btn not-following" style="margin:0;">Sign In with Google</button>`;
+            document.getElementById('profileVideosGrid').innerHTML='';
             return;
         }
 
-        if(av) {
-            if(currentUser.photoURL) av.innerHTML = `<img src="${currentUser.photoURL}" style="width:100%;height:100%;object-fit:cover;">`;
-            else av.textContent=(currentUser.displayName||'U')[0].toUpperCase();
+        // Own profile with logged-in user
+        if(av){
+            av.style.cursor='pointer';
+            if(currentUser.photoURL) av.innerHTML=`<img src="${currentUser.photoURL}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='${(currentUser.displayName||'U')[0].toUpperCase()}'">`;
+            else{ av.innerHTML=''; av.textContent=(currentUser.displayName||'U')[0].toUpperCase(); }
         }
         if(nameEl) nameEl.textContent=currentUser.displayName||'User';
         if(handleEl) handleEl.textContent='@'+(currentUser.displayName||'user').toLowerCase().replace(/\s+/g,'_');
         if(emailEl){ emailEl.textContent=currentUser.email; emailEl.style.display='block'; }
 
-        actionsContainer.innerHTML = `
-            <button onclick="openEditProfile()" class="profile-follow-btn following" style="margin:0; padding:8px 24px;">Edit Profile</button>
-            <button onclick="signOutAndRefresh()" class="profile-follow-btn following" style="margin:0; padding:8px 24px; color:#fe2c55; border-color:#fe2c55;">Sign Out</button>
-        `;
+        actionRow.innerHTML=`
+            <button onclick="openEditProfile()" class="profile-action-btn">✏️ Edit Profile</button>
+            <button onclick="signOutAndRefresh()" class="profile-action-btn danger">Sign Out</button>`;
 
-        loadProfileStats(currentUser.uid, videoCountEl, followerCountEl, likeCountEl);
+        loadProfileStats(currentUser.uid,videoCountEl,followerCountEl,likeCountEl);
         renderProfileVideos();
 
     } else {
+        // Other user's profile
         if(emailEl) emailEl.style.display='none';
-
         if(followBtn){
             followBtn.style.display='block';
             const isSub=subscribedChannels.has(targetUid);
@@ -1043,12 +1179,13 @@ function renderProfile(userId){
             followBtn.className='profile-follow-btn '+(isSub?'following':'not-following');
         }
 
+        // Load from Firebase
         get(ref(db,'users/'+targetUid)).then(snap=>{
             if(snap.exists()){
                 const u=snap.val();
-                if(av) {
-                    if(u.photoURL) av.innerHTML = `<img src="${u.photoURL}" style="width:100%;height:100%;object-fit:cover;">`;
-                    else { av.innerHTML=''; av.textContent=(u.displayName||'U')[0].toUpperCase(); }
+                if(av){
+                    if(u.photoURL) av.innerHTML=`<img src="${u.photoURL}" style="width:100%;height:100%;object-fit:cover;">`;
+                    else{ av.innerHTML=''; av.textContent=(u.displayName||'U')[0].toUpperCase(); }
                 }
                 if(nameEl) nameEl.textContent=u.displayName||'Creator';
                 if(handleEl) handleEl.textContent='@'+(u.displayName||'creator').toLowerCase().replace(/\s+/g,'_');
@@ -1059,30 +1196,24 @@ function renderProfile(userId){
             }
         });
 
-        loadProfileStats(targetUid, videoCountEl, followerCountEl, likeCountEl);
+        loadProfileStats(targetUid,videoCountEl,followerCountEl,likeCountEl);
         renderProfileVideos();
     }
-    ri();
 }
 
-function loadProfileStats(uid, videoCountEl, followerCountEl, likeCountEl){
+function loadProfileStats(uid,videoCountEl,followerCountEl,likeCountEl){
     if(!uid) return;
     get(ref(db,'videos')).then(snap=>{
         let vcount=0, lcount=0;
-        if(snap.exists()){
-            snap.forEach(child=>{
-                const v=child.val();
-                if(v.uploaderId===uid) vcount++;
-            });
-        }
+        const videoSnap=snap;
+        if(snap.exists()) snap.forEach(child=>{ if(child.val().uploaderId===uid) vcount++; });
         if(videoCountEl) videoCountEl.textContent=fmtN(vcount);
         get(ref(db,'likes')).then(lsnap=>{
-            if(lsnap.exists()){
-                snap && snap.forEach(child=>{
-                    const v=child.val();
-                    if(v.uploaderId===uid){
-                        const ldata=lsnap.child(child.key);
-                        if(ldata.exists()) lcount+=Object.keys(ldata.val()).length;
+            if(lsnap.exists()&&videoSnap.exists()){
+                videoSnap.forEach(child=>{
+                    if(child.val().uploaderId===uid){
+                        const ld=lsnap.child(child.key);
+                        if(ld.exists()) lcount+=Object.keys(ld.val()).length;
                     }
                 });
             }
@@ -1091,9 +1222,7 @@ function loadProfileStats(uid, videoCountEl, followerCountEl, likeCountEl){
     });
     get(ref(db,'follows')).then(snap=>{
         let followers=0;
-        if(snap.exists()){
-            snap.forEach(child=>{ if(child.hasChild(uid)) followers++; });
-        }
+        if(snap.exists()) snap.forEach(child=>{ if(child.hasChild(uid)) followers++; });
         if(followerCountEl) followerCountEl.textContent=fmtN(followers);
     });
 }
@@ -1101,11 +1230,11 @@ function loadProfileStats(uid, videoCountEl, followerCountEl, likeCountEl){
 function renderProfileVideos(){
     const grid=document.getElementById('profileVideosGrid');
     if(!grid) return;
-    grid.innerHTML='<div style="text-align:center;padding:32px;color:#555;font-size:13px;">Loading...</div>';
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:#555;font-size:13px;">Loading...</div>`;
 
-    const targetUid = viewingUserId || (currentUser?.uid||null);
+    const targetUid=viewingUserId||(currentUser?.uid||null);
     if(!targetUid){
-        grid.innerHTML='<div class="empty-state"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:#555;"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.87v6.26a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg></div><p style="font-weight:700;font-size:14px;color:#555;">Sign in to see your videos</p></div>';
+        grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:#555;"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.87v6.26a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg></div><p style="font-weight:700;font-size:14px;color:#555;">Sign in to see your videos</p></div>`;
         return;
     }
 
@@ -1115,11 +1244,8 @@ function renderProfileVideos(){
         if(snap.exists()){
             snap.forEach(child=>{
                 const v={id:child.key,...child.val()};
-                if(currentProfileTab==='liked'){
-                    if(likedVideos.has(v.id)) videos.push(v);
-                } else {
-                    if(v.uploaderId===targetUid) videos.push(v);
-                }
+                if(currentProfileTab==='liked'){ if(likedVideos.has(v.id)) videos.push(v); }
+                else { if(v.uploaderId===targetUid) videos.push(v); }
             });
         }
         videos.reverse();
@@ -1134,8 +1260,11 @@ function renderProfileVideos(){
             const div=document.createElement('div');
             div.style.cssText='position:relative;cursor:pointer;aspect-ratio:9/16;overflow:hidden;background:#111;';
             div.innerHTML=`
-                <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.src='https://placehold.co/400x700/111/333?text=Video'">
-                <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 60%);"></div>
+                <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://placehold.co/400x700/111/333?text=Video'">
+                <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 55%);"></div>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)" style="width:16px;height:16px;"><path d="M8 5v14l11-7z"/></svg>
+                </div>
                 <div style="position:absolute;bottom:0;left:0;right:0;padding:6px 6px 4px;">
                     <div style="font-size:10px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.title}</div>
                     <div style="font-size:9px;color:#aaa;margin-top:1px;display:flex;align-items:center;gap:3px;">
@@ -1143,18 +1272,27 @@ function renderProfileVideos(){
                         ${fmtN(videoLikeCounts[v.id]||0)}
                     </div>
                 </div>`;
-            div.onclick=()=>jumpToVideo(v.id);
+            // Tap → open full-screen video player
+            div.onclick=()=>openVideoPlayer(v.id);
             grid.appendChild(div);
         });
     });
 }
 
 // ══════════════════════════
-// EDIT PROFILE
+// EDIT PROFILE (save to Firebase + Firebase Auth)
 // ══════════════════════════
 window.openEditProfile=()=>{
     if(!currentUser) return;
-    document.getElementById('editProfileName').value = currentUser.displayName || '';
+    const nameInput=document.getElementById('editProfileName');
+    if(nameInput) nameInput.value=currentUser.displayName||'';
+    // Show current avatar in preview
+    const prev=document.getElementById('epAvPreview');
+    if(prev){
+        if(currentUser.photoURL) prev.innerHTML=`<img src="${currentUser.photoURL}" style="width:100%;height:100%;object-fit:cover;">`;
+        else{ prev.innerHTML=''; prev.textContent=(currentUser.displayName||'U')[0].toUpperCase(); }
+    }
+    document.getElementById('editProfilePic').value='';
     document.getElementById('editProfileModal').classList.add('open');
 };
 window.closeEditProfile=()=>{
@@ -1162,48 +1300,79 @@ window.closeEditProfile=()=>{
     document.getElementById('epProgress').style.display='none';
 };
 
-document.getElementById('editProfileForm').addEventListener('submit', async (e)=>{
+// Preview pic when selected
+document.getElementById('editProfilePic')?.addEventListener('change',function(){
+    const file=this.files[0]; if(!file) return;
+    const prev=document.getElementById('epAvPreview');
+    if(prev){
+        const reader=new FileReader();
+        reader.onload=e=>{ prev.innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`; };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('editProfileForm')?.addEventListener('submit',async e=>{
     e.preventDefault();
-    const btn = document.getElementById('saveProfileBtn');
-    const name = document.getElementById('editProfileName').value.trim();
-    const file = document.getElementById('editProfilePic').files[0];
-    btn.disabled = true;
+    const btn=document.getElementById('saveProfileBtn');
+    const nameVal=document.getElementById('editProfileName').value.trim();
+    const file=document.getElementById('editProfilePic').files[0];
+    if(!nameVal){ showToast('warning','Name required','Display name cannot be empty.',3000); return; }
+    btn.disabled=true; btn.textContent='Saving...';
 
-    let photoURL = currentUser.photoURL;
+    let photoURL=currentUser.photoURL||'';
 
-    if (file) {
+    if(file){
         document.getElementById('epProgress').style.display='block';
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', CLOUDINARY_PRESET);
-        try {
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: 'POST', body: formData });
-            const data = await res.json();
-            if(data.secure_url) photoURL = data.secure_url;
-        } catch(err) {
-            showToast('error', 'Image Upload Failed');
-        }
+        const formData=new FormData();
+        formData.append('file',file);
+        formData.append('upload_preset',CLOUDINARY_PRESET);
+        try{
+            const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,{method:'POST',body:formData});
+            const data=await res.json();
+            if(data.secure_url) photoURL=data.secure_url;
+            else showToast('warning','Photo upload issue','Using existing photo.',3000);
+        }catch(err){ showToast('error','Photo Upload Failed',err.message,4000); }
+        document.getElementById('epProgress').style.display='none';
     }
 
-    try {
-        await updateProfile(currentUser, { displayName: name, photoURL: photoURL });
-        await set(ref(db, 'users/' + currentUser.uid), { displayName: name, photoURL: photoURL, email: currentUser.email });
-        showToast('success', 'Profile Updated');
+    try{
+        // Update Firebase Auth profile
+        await updateProfile(currentUser,{displayName:nameVal,photoURL});
+        // Persist to Realtime Database so other users see the updated name/photo
+        await set(ref(db,'users/'+currentUser.uid),{
+            displayName:nameVal,
+            photoURL,
+            email:currentUser.email||''
+        });
+        // Update all this user's video records with new name/photo
+        const vsSnap=await get(ref(db,'videos'));
+        if(vsSnap.exists()){
+            const updates={};
+            vsSnap.forEach(child=>{
+                if(child.val().uploaderId===currentUser.uid){
+                    updates[`videos/${child.key}/uploaderName`]=nameVal;
+                    updates[`videos/${child.key}/uploaderPhoto`]=photoURL;
+                }
+            });
+            // Apply updates using set on individual refs
+            await Promise.all(Object.entries(updates).map(([path,val])=>set(ref(db,path),val)));
+        }
+        showToast('success','Profile Updated!','Your changes have been saved.',3000);
+        document.getElementById('sidebarProfileLabel').textContent=nameVal.split(' ')[0];
         renderProfile(null);
         closeEditProfile();
-    } catch (err) {
-        showToast('error', 'Update Failed', err.message);
+    }catch(err){
+        showToast('error','Update Failed',err.message,4000);
     }
-    btn.disabled = false;
+    btn.disabled=false; btn.textContent='Save Changes';
 });
 
 // ══════════════════════════
-// EXPLORE / RENDER
+// EXPLORE
 // ══════════════════════════
 function renderExplore(){
     buildCategoryBar();
-    const grid=document.getElementById('exploreGrid');
-    if(!grid) return;
+    const grid=document.getElementById('exploreGrid'); if(!grid) return;
     const q=exploreSearchQuery.toLowerCase();
     const filtered=allVideos.filter(v=>{
         const matchCat=activeCategory==='All'||(v.category||'All')===activeCategory;
@@ -1217,8 +1386,7 @@ function renderExplore(){
     }
     filtered.forEach(v=>{
         const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
-        const card=document.createElement('div');
-        card.className='grid-card';
+        const card=document.createElement('div'); card.className='grid-card';
         card.innerHTML=`
             <img class="grid-card-thumb" src="${thumb}" onerror="this.src='https://placehold.co/400x700/111/333?text=Video'" loading="lazy">
             <div class="grid-card-info">
@@ -1229,24 +1397,27 @@ function renderExplore(){
         grid.appendChild(card);
     });
 }
-window.filterExplore=(q)=>{ exploreSearchQuery=q; renderExplore(); const mi=document.getElementById('mobileSearchInput'); if(mi&&mi.value!==q) mi.value=q; const ei=document.getElementById('exploreSearch'); if(ei&&ei.value!==q) ei.value=q; };
+window.filterExplore=(q)=>{
+    exploreSearchQuery=q;
+    renderExplore();
+    const mi=document.getElementById('mobileSearchInput'); if(mi&&mi.value!==q) mi.value=q;
+    const ei=document.getElementById('exploreSearch'); if(ei&&ei.value!==q) ei.value=q;
+};
 
 // ══════════════════════════
 // SAVED
 // ══════════════════════════
 function renderSaved(){
-    const grid=document.getElementById('savedGrid');
-    if(!grid) return;
+    const grid=document.getElementById('savedGrid'); if(!grid) return;
     const saved=allVideos.filter(v=>savedVideos.has(v.id));
     grid.innerHTML='';
     if(saved.length===0){
-        grid.innerHTML='<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:#555;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><p style="font-weight:700;font-size:14px;color:#555;">No saved videos</p><p style="font-size:12px;color:#444;">Tap the bookmark icon on any video to save it</p></div>';
+        grid.innerHTML='<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:#555;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><p style="font-weight:700;font-size:14px;color:#555;">No saved videos</p><p style="font-size:12px;color:#444;">Tap the bookmark icon on any video</p></div>';
         return;
     }
     saved.forEach(v=>{
         const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
-        const card=document.createElement('div');
-        card.className='grid-card';
+        const card=document.createElement('div'); card.className='grid-card';
         card.innerHTML=`
             <img class="grid-card-thumb" src="${thumb}" onerror="this.src='https://placehold.co/400x700/111/333?text=Video'" loading="lazy">
             <div class="grid-card-info">
@@ -1267,14 +1438,13 @@ function renderHistory(){
     if(!list) return;
     if(cnt) cnt.textContent=watchHistory.length+' video'+(watchHistory.length===1?'':'s');
     if(watchHistory.length===0){
-        list.innerHTML='<div class="empty-state"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:#555;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p style="font-weight:700;font-size:14px;color:#555;">No watch history</p><p style="font-size:12px;color:#444;">Videos you watch will appear here</p></div>';
+        list.innerHTML='<div class="empty-state"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:#555;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p style="font-weight:700;font-size:14px;color:#555;">No watch history</p></div>';
         return;
     }
     list.innerHTML='';
     [...watchHistory].reverse().forEach(v=>{
         const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
-        const card=document.createElement('div');
-        card.className='hcard';
+        const card=document.createElement('div'); card.className='hcard';
         card.innerHTML=`
             <img class="hcard-thumb" src="${thumb}" onerror="this.src='https://placehold.co/400x700/111/333?text=Video'" loading="lazy">
             <div style="flex:1;min-width:0;">
@@ -1292,8 +1462,7 @@ window.clearHistory=()=>{ watchHistory=[]; renderHistory(); showToast('info','Cl
 // TRENDING
 // ══════════════════════════
 function renderTrending(){
-    const list=document.getElementById('trendingList');
-    if(!list) return;
+    const list=document.getElementById('trendingList'); if(!list) return;
     const sorted=[...allVideos].sort((a,b)=>(videoLikeCounts[b.id]||0)-(videoLikeCounts[a.id]||0));
     list.innerHTML='';
     if(sorted.length===0){
@@ -1302,16 +1471,14 @@ function renderTrending(){
     }
     sorted.forEach((v,i)=>{
         const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
-        const rank = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-n';
-        const card=document.createElement('div');
-        card.className='hcard';
-        card.style.cursor='pointer';
+        const rank=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
+        const card=document.createElement('div'); card.className='hcard'; card.style.cursor='pointer';
         card.innerHTML=`
             <div class="rank-badge ${rank}">${i+1}</div>
             <img class="hcard-thumb" src="${thumb}" onerror="this.src='https://placehold.co/400x700/111/333?text=Video'" loading="lazy">
             <div style="flex:1;min-width:0;">
                 <div style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.title}</div>
-                <div style="font-size:11px;color:#555;display:flex;align-items:center;gap:6px;">${v.uploaderName||'Creator'} · <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fe2c55" style="width:10px;height:10px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> ${fmtN(videoLikeCounts[v.id]||0)}</div>
+                <div style="font-size:11px;color:#555;">${v.uploaderName||'Creator'} · ${fmtN(videoLikeCounts[v.id]||0)} likes</div>
             </div>`;
         card.onclick=()=>jumpToVideo(v.id);
         list.appendChild(card);
@@ -1319,39 +1486,33 @@ function renderTrending(){
 }
 
 // ══════════════════════════
-// BOTTOM SHEET (generic)
+// BOTTOM SHEET (share / options)
 // ══════════════════════════
 window.openBottomSheet=(type)=>{
     const content=document.getElementById('bsContent');
     if(type==='share'){
         content.innerHTML=`
             <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:14px;">Share Video</div>
-            <div class="sheet-action" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{ showToast('success','Copied!','Link copied to clipboard',2000); closeBottomSheet(); })">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                Copy Link
+            <div class="sheet-action" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{ showToast('success','Copied!','Link copied',2000); closeBottomSheet(); })">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy Link
             </div>
             <div class="sheet-action" onclick="closeBottomSheet()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                Cancel
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Cancel
             </div>`;
     } else if(type==='videoActions'){
         content.innerHTML=`
             <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:14px;">Options</div>
             <div class="sheet-action" onclick="showToast('info','Reported','Video reported for review',3000);closeBottomSheet()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                Report
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Report
             </div>
-            <div class="sheet-action" onclick="showToast('info','Hidden','Video hidden from your feed',3000);closeBottomSheet()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                Not Interested
+            <div class="sheet-action" onclick="showToast('info','Hidden','Not interested',3000);closeBottomSheet()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Not Interested
             </div>
             <div class="sheet-action" onclick="closeBottomSheet()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                Cancel
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Cancel
             </div>`;
     }
     document.getElementById('bottomSheet').classList.add('open');
-    ri();
 };
 window.closeBottomSheet=()=>{ document.getElementById('bottomSheet').classList.remove('open'); };
 
@@ -1361,6 +1522,7 @@ window.closeBottomSheet=()=>{ document.getElementById('bottomSheet').classList.r
 window.openMobileSearch=()=>{
     const o=document.getElementById('mobileSearchOverlay');
     if(o){ o.style.transform='translateY(0)'; setTimeout(()=>document.getElementById('mobileSearchInput')?.focus(),200); }
+    buildCategoryBar();
 };
 window.closeMobileSearch=()=>{
     const o=document.getElementById('mobileSearchOverlay');
@@ -1398,50 +1560,56 @@ document.getElementById('uploadForm')?.addEventListener('submit',async e=>{
     const category=document.getElementById('videoCategory').value;
     const desc=document.getElementById('videoDesc').value.trim();
     const file=document.getElementById('videoFile').files[0];
-    if(!title||!file){ showToast('error','Missing Fields','Please fill in title and select a video.',4000); return; }
-    if(file.size>500*1024*1024){ showToast('error','File Too Large','Max file size is 500MB.',4000); return; }
+    if(!title||!file){ showToast('error','Missing Fields','Fill in title and select a video.',4000); return; }
+    if(file.size>500*1024*1024){ showToast('error','File Too Large','Max 500MB.',4000); return; }
 
     const btn=document.getElementById('uploadBtn');
-    btn.disabled=true; btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading...';
+    btn.disabled=true; btn.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading...`;
 
     const progressWrap=document.getElementById('uploadProgressWrap');
     const upbar=document.getElementById('upbar');
     const upPct=document.getElementById('uploadPct');
     progressWrap.style.display='block';
 
-    try {
+    try{
         const formData=new FormData();
         formData.append('file',file);
         formData.append('upload_preset',CLOUDINARY_PRESET);
-        formData.append('resource_type','video');
 
         const xhr=new XMLHttpRequest();
         xhr.upload.onprogress=ev=>{ if(ev.lengthComputable){ const p=Math.round(ev.loaded/ev.total*100); upbar.style.width=p+'%'; if(upPct) upPct.textContent=p+'%'; } };
-        await new Promise((res,rej)=>{
+
+        const data=await new Promise((res,rej)=>{
             xhr.onload=()=>res(JSON.parse(xhr.responseText));
             xhr.onerror=rej;
             xhr.open('POST',`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
             xhr.send(formData);
-        }).then(async data=>{
-            if(!data.secure_url) throw new Error('Upload failed');
-            const videoUrl=data.secure_url;
-            const thumbnailUrl=data.secure_url.replace('/upload/','/upload/so_0,h_700,w_400,c_fill/').replace(/\.[^.]+$/,'.jpg');
-
-            const videoData={title,category,description:desc,videoUrl,thumbnailUrl,uploaderId:currentUser.uid,uploaderName:currentUser.displayName,uploaderPhoto:currentUser.photoURL||'',timestamp:serverTimestamp()};
-            await set(push(ref(db,'videos')),videoData);
-
-            btn.disabled=false; btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> Post Video';
-            progressWrap.style.display='none'; upbar.style.width='0';
-            document.getElementById('uploadForm').reset();
-            document.getElementById('fileNameDisplay').textContent='Drop video here or click to browse';
-            document.getElementById('fileNameDisplay').style.color='';
-            document.getElementById('successModal').classList.add('open');
         });
-    } catch(err){
+
+        if(!data.secure_url) throw new Error('Upload failed: no URL returned');
+        const videoUrl=data.secure_url;
+        const thumbnailUrl=data.secure_url.replace('/upload/','/upload/so_0,h_700,w_400,c_fill/').replace(/\.[^.]+$/,'.jpg');
+
+        await set(push(ref(db,'videos')),{
+            title,category,description:desc,videoUrl,thumbnailUrl,
+            uploaderId:currentUser.uid,
+            uploaderName:currentUser.displayName||'User',
+            uploaderPhoto:currentUser.photoURL||'',
+            timestamp:serverTimestamp()
+        });
+
+        btn.disabled=false; btn.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> Post Video`;
+        progressWrap.style.display='none'; upbar.style.width='0';
+        document.getElementById('uploadForm').reset();
+        document.getElementById('fileNameDisplay').textContent='Drop video here or click to browse';
+        document.getElementById('fileNameDisplay').style.color='';
+        document.getElementById('successModal').classList.add('open');
+
+    }catch(err){
         console.error(err);
-        btn.disabled=false; btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> Post Video';
+        btn.disabled=false; btn.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> Post Video`;
         progressWrap.style.display='none';
-        showToast('error','Upload Failed','Please try again.',4000);
+        showToast('error','Upload Failed',err.message,4000);
     }
 });
 
@@ -1453,22 +1621,21 @@ window.closeSuccessModal=()=>{ document.getElementById('successModal').classList
 window.toggleSetting=(el,label)=>{ el.classList.toggle('on'); showToast('info',label,el.classList.contains('on')?'Enabled':'Disabled',2000); };
 window.toggleFaq=(btn)=>{
     const answer=btn.nextElementSibling;
-    const icon=btn.querySelector('[data-lucide="chevron-down"]');
+    const icon=btn.querySelector('svg:last-child');
     answer.classList.toggle('open');
-    if(icon) icon.style.transform=answer.classList.contains('open')?'rotate(180deg)':'';
+    if(icon) icon.style.transform=answer.classList.contains('open')?'rotate(180deg)':'rotate(0deg)';
 };
 window.submitFeedback=()=>{
     const msg=document.getElementById('feedbackMsg').value.trim();
-    if(!msg){ showToast('warning','Empty','Please write some feedback first.',3000); return; }
+    if(!msg){ showToast('warning','Empty','Please write some feedback.',3000); return; }
     document.getElementById('feedbackMsg').value='';
-    showToast('success','Thank you!','Your feedback has been submitted.',4000);
+    showToast('success','Thank you!','Feedback submitted.',4000);
 };
 
 // ══════════════════════════
 // INIT
 // ══════════════════════════
 initFeed();
-ri();
 
 </script>
 </body>
