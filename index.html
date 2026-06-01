@@ -35,7 +35,7 @@
         .sup-btn:hover{opacity:.88;transform:translateY(-1px);} .sup-btn:active{transform:scale(.97);} .sup-btn svg{width:18px;height:18px;}
 
         /* ── MAIN AREA ── */
-        #mainArea{flex:1;display:flex;flex-direction:column;height:100dvh;overflow:hidden;position:relative;}
+        #mainArea{flex:1;display:flex;flex-direction:column;height:100dvh;overflow-x:hidden;overflow-y:visible;position:relative;}
 
         /* ── TOP NAV ── */
         #topNav{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;background:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,transparent 100%);pointer-events:none;}
@@ -46,9 +46,9 @@
         .top-icon:hover{background:rgba(255,255,255,.1);}
 
         /* ── VIEW CONTAINER ── */
-        #viewContainer{flex:1;position:relative;height:100dvh;overflow:hidden;}
-        .app-view{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .25s ease;overflow-y:auto;overflow-x:hidden;}
-        .app-view.view-active{opacity:1;pointer-events:all;}
+        #viewContainer{flex:1;position:relative;height:100dvh;overflow:visible;}
+        .app-view{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .25s ease;overflow-y:hidden;overflow-x:hidden;}
+        .app-view.view-active{opacity:1;pointer-events:all;overflow-y:auto;}
 
         /* ── FEED (TikTok scroll) ── */
         #feedView{
@@ -228,7 +228,8 @@
             overflow-x: hidden !important;
             -webkit-overflow-scrolling: touch;
             scroll-snap-type: y mandatory;
-            height: 100dvh !important;
+            height: 100% !important;
+            max-height: 100dvh !important;
         }
         /* Ensure profile view scrolls properly */
         #profileView.view-active {
@@ -584,8 +585,11 @@ window.setFeedTab=(tab,el)=>{ document.querySelectorAll('.top-tab').forEach(t=>t
 // ══════════════════════════
 // FEED — TikTok Vertical
 // ══════════════════════════
+let feedLoaded=false;
 function loadFeed(){
     buildCategoryBar();
+    if(feedLoaded){ renderFeed(); return; }
+    feedLoaded=true;
     const videosRef=ref(db,'videos');
     onValue(videosRef,snapshot=>{
         allVideos=[];
@@ -597,13 +601,19 @@ function loadFeed(){
 
 function renderFeed(){
     const feed=document.getElementById('feedView');
+    const filtered=allVideos.filter(v=>activeCategory==='All'||(v.category||'All')===activeCategory);
+
+    // Check if we need to rebuild (new videos or category change)
+    const existingIds = Array.from(feed.querySelectorAll('.video-slide')).map(s=>s.dataset.videoId).join(',');
+    const newIds = filtered.map(v=>v.id).join(',');
+    if(existingIds === newIds && feed.querySelector('.video-slide')) {
+        return; // No change, don't rebuild
+    }
 
     // Disconnect old observer
     if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
 
     feed.innerHTML='';
-
-    const filtered=allVideos.filter(v=>activeCategory==='All'||(v.category||'All')===activeCategory);
 
     if(filtered.length===0){
         feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;">
