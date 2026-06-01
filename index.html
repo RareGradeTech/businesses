@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VISION - Premium Video Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VISION</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -13,16 +13,15 @@
             theme: {
                 extend: {
                     colors: {
-                        premiumWhite: '#ffffff',
-                        premiumBlack: '#000000',
-                        premiumGray: '#f8f9fa',
-                        premiumBorder: '#e5e7eb'
-                    },
-                    boxShadow: {
-                        'premium': '0 4px 30px rgba(0, 0, 0, 0.03)',
-                        'hover-card': '0 20px 40px rgba(0, 0, 0, 0.08)',
-                        'pill-shadow': '0 2px 10px rgba(0, 0, 0, 0.05)',
-                        'sheet': '0 -8px 40px rgba(0,0,0,0.12)'
+                        ttBlack: '#000000',
+                        ttDark: '#121212',
+                        ttCard: '#1a1a1a',
+                        ttBorder: '#2a2a2a',
+                        ttGray: '#262626',
+                        ttMuted: '#8a8a8a',
+                        ttWhite: '#ffffff',
+                        ttPink: '#fe2c55',
+                        ttCyan: '#25f4ee',
                     },
                     fontFamily: { sans: ['DM Sans', 'sans-serif'] }
                 }
@@ -30,849 +29,930 @@
         }
     </script>
     <style>
-        /* ── Scrollbar ── */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #ffffff; }
-        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; padding: 0; background: #000; color: #fff; font-family: 'DM Sans', sans-serif; overflow: hidden; }
 
-        /* ── View transitions ── */
-        .view-container { position: relative; width: 100%; overflow: hidden; }
-        .app-view { transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease; width: 100%; }
-        .view-hidden-left  { transform: translateX(-100%); opacity: 0; position: absolute; pointer-events: none; top: 0; left: 0; }
-        .view-hidden-right { transform: translateX(100%);  opacity: 0; position: absolute; pointer-events: none; top: 0; left: 0; }
-        .view-active       { transform: translateX(0);     opacity: 1; position: relative; }
+        /* ── Scrollbar (dark) ── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        /* ── Shimmer skeleton ── */
+        /* ══════════════════════════════
+           APP SHELL
+        ══════════════════════════════ */
+        #appShell {
+            display: flex;
+            height: 100dvh;
+            width: 100%;
+            position: relative;
+        }
+
+        /* ══════════════════════════════
+           LEFT SIDEBAR (desktop only)
+        ══════════════════════════════ */
+        #sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background: #000;
+            border-right: 1px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            height: 100dvh;
+            z-index: 10;
+        }
+        @media (max-width: 1023px) { #sidebar { display: none; } }
+
+        .sidebar-logo {
+            padding: 20px 24px 16px;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .logo-v {
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-nav { flex: 1; padding: 12px 12px; overflow-y: auto; }
+        .sidebar-nav-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 14px; border-radius: 12px;
+            font-size: 14px; font-weight: 600; color: #aaa;
+            cursor: pointer; transition: all 0.18s; white-space: nowrap;
+            border: none; background: none; width: 100%; text-align: left;
+        }
+        .sidebar-nav-item:hover { background: #1a1a1a; color: #fff; }
+        .sidebar-nav-item.active { background: #1a1a1a; color: #fff; }
+        .sidebar-nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+        .sidebar-nav-item.active svg { color: #fe2c55; }
+
+        .sidebar-divider { height: 1px; background: #1a1a1a; margin: 8px 0; }
+        .sidebar-section-label { padding: 8px 14px 4px; font-size: 10px; font-weight: 700; color: #555; letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .sidebar-upload-btn {
+            margin: 12px; padding: 12px;
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            border: none; border-radius: 12px; color: #fff;
+            font-weight: 700; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .sidebar-upload-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .sidebar-upload-btn:active { transform: scale(0.97); }
+        .sidebar-upload-btn svg { width: 18px; height: 18px; }
+
+        /* ══════════════════════════════
+           MAIN CONTENT AREA
+        ══════════════════════════════ */
+        #mainArea {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ══════════════════════════════
+           TOP NAV (mobile)
+        ══════════════════════════════ */
+        #topNav {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px 8px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        #topNav > * { pointer-events: all; }
+        .top-nav-logo {
+            font-size: 18px; font-weight: 900; letter-spacing: -0.03em;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .top-nav-tabs {
+            display: flex; gap: 20px; align-items: center;
+        }
+        .top-nav-tab {
+            font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.5);
+            cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid transparent;
+            transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none;
+        }
+        .top-nav-tab.active { color: #fff; border-bottom-color: #fff; }
+        .top-nav-actions { display: flex; gap: 8px; align-items: center; }
+        .top-nav-icon {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(8px);
+            cursor: pointer; transition: background 0.2s; border: none; color: #fff;
+        }
+        .top-nav-icon:hover { background: rgba(255,255,255,0.1); }
+        .top-nav-icon svg { width: 18px; height: 18px; }
+        .notif-dot {
+            position: absolute; top: 6px; right: 6px;
+            width: 8px; height: 8px; background: #fe2c55;
+            border-radius: 50%; border: 1.5px solid #000;
+        }
+
+        /* ══════════════════════════════
+           VIEW SYSTEM
+        ══════════════════════════════ */
+        #viewContainer {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: 100dvh;
+        }
+        .app-view {
+            position: absolute; inset: 0;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease;
+            overflow-y: auto; overflow-x: hidden;
+        }
+        .app-view.view-active { opacity: 1; pointer-events: all; }
+
+        /* ══════════════════════════════
+           TIKTOK FEED VIEW
+        ══════════════════════════════ */
+        #feedView {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100dvh;
+            background: #000;
+            scrollbar-width: none;
+        }
+        #feedView::-webkit-scrollbar { display: none; }
+
+        .video-slide {
+            height: 100dvh;
+            width: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Background blur poster */
+        .slide-bg {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            filter: blur(20px) brightness(0.3) saturate(1.5);
+            transform: scale(1.1);
+        }
+
+        .slide-video {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        /* bottom gradient overlay */
+        .slide-gradient {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* ── Slide info (bottom-left) ── */
+        .slide-info {
+            position: absolute; bottom: 80px; left: 0; right: 90px;
+            z-index: 3; padding: 0 16px;
+        }
+        @media (min-width: 1024px) { .slide-info { bottom: 24px; right: 100px; } }
+        .slide-username {
+            font-size: 15px; font-weight: 800; margin-bottom: 4px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .slide-title {
+            font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.85);
+            line-height: 1.4; margin-bottom: 8px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .slide-category-tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 700; color: #25f4ee;
+            letter-spacing: 0.04em;
+        }
+        .slide-category-tag svg { width: 10px; height: 10px; }
+
+        /* ── Slide actions (right column) ── */
+        .slide-actions {
+            position: absolute; right: 10px; bottom: 80px;
+            z-index: 3;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+        @media (min-width: 1024px) { .slide-actions { bottom: 24px; right: 16px; } }
+        .slide-action-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            cursor: pointer; background: none; border: none; color: #fff;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.02em;
+        }
+        .slide-action-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .slide-action-btn:hover .slide-action-icon { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+        .slide-action-icon svg { width: 22px; height: 22px; }
+        .slide-action-btn.liked .slide-action-icon { background: rgba(254,44,85,0.25); }
+        .slide-action-btn.liked svg { color: #fe2c55; fill: #fe2c55; }
+        .slide-action-count { font-size: 10px; color: rgba(255,255,255,0.8); }
+
+        /* Avatar in actions */
+        .slide-avatar-wrap {
+            position: relative; cursor: pointer;
+        }
+        .slide-avatar {
+            width: 46px; height: 46px; border-radius: 50%;
+            border: 2px solid #fff;
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 900; color: #fff;
+        }
+        .slide-follow-dot {
+            position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #fe2c55; border: 2px solid #000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .slide-follow-dot svg { width: 10px; height: 10px; color: #fff; }
+
+        /* ── Music ticker ── */
+        .slide-music {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11px; color: rgba(255,255,255,0.7);
+            margin-top: 6px;
+        }
+        .slide-music svg { width: 11px; height: 11px; color: #25f4ee; flex-shrink: 0; }
+        .music-ticker { overflow: hidden; white-space: nowrap; max-width: 200px; }
+        .music-ticker-inner { animation: ticker 8s linear infinite; display: inline-block; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* ── Like pop ── */
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.35); }
+            50% { transform: scale(0.9); }
+            70% { transform: scale(1.12); }
+            100% { transform: scale(1); }
+        }
+        .like-pop { animation: heartBeat 0.5s ease forwards; }
+
+        /* ── Double-tap heart ── */
+        @keyframes floatHeart {
+            0% { opacity: 1; transform: scale(0.5) translateY(0); }
+            50% { opacity: 1; transform: scale(1.4) translateY(-40px); }
+            100% { opacity: 0; transform: scale(1) translateY(-100px); }
+        }
+        .float-heart {
+            position: absolute; z-index: 10; pointer-events: none;
+            animation: floatHeart 0.9s ease forwards;
+        }
+        .float-heart svg { width: 70px; height: 70px; color: #fe2c55; fill: #fe2c55; }
+
+        /* ══════════════════════════════
+           SCROLLABLE VIEWS (explore, saved, etc.)
+        ══════════════════════════════ */
+        .scrollable-view {
+            padding: 72px 16px 80px;
+            min-height: 100dvh;
+            background: #121212;
+        }
+        @media (min-width: 1024px) { .scrollable-view { padding: 24px 24px 32px; } }
+
+        .view-header {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 24px;
+        }
+        .view-header-icon {
+            width: 42px; height: 42px; border-radius: 14px;
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .view-header-icon svg { width: 20px; height: 20px; color: #fff; }
+        .view-header h2 { font-size: 22px; font-weight: 900; letter-spacing: -0.03em; }
+        .view-header p { font-size: 12px; color: #666; margin-top: 1px; }
+
+        /* ── Grid cards ── */
+        .grid-card {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 14px;
+            overflow: hidden; cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .grid-card:hover { transform: translateY(-2px); border-color: #3a3a3a; }
+        .grid-card-thumb {
+            aspect-ratio: 9/16; width: 100%; object-fit: cover;
+            display: block; background: #111;
+        }
+        .grid-card-info { padding: 8px 10px 10px; }
+        .grid-card-title { font-size: 12px; font-weight: 700; line-height: 1.3; color: #fff; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .grid-card-meta { font-size: 10px; color: #666; display: flex; align-items: center; gap: 4px; }
+        .grid-card-meta svg { width: 10px; height: 10px; }
+
+        /* Horizontal card (history/trending) */
+        .hcard {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 14px;
+            display: flex; align-items: center; gap: 12px; padding: 10px;
+            cursor: pointer; transition: background 0.2s, transform 0.2s;
+        }
+        .hcard:hover { background: #222; transform: translateY(-1px); }
+        .hcard-thumb {
+            width: 80px; aspect-ratio: 9/16; border-radius: 10px;
+            object-fit: cover; flex-shrink: 0; background: #111;
+        }
+
+        /* ── Category pills (dark) ── */
+        .pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+            border: 1.5px solid #2a2a2a; background: #1a1a1a; color: #888;
+            cursor: pointer; transition: all 0.18s; white-space: nowrap; user-select: none;
+        }
+        .pill:hover { border-color: #444; color: #ddd; background: #222; }
+        .pill.active { background: #fe2c55; border-color: #fe2c55; color: #fff; }
+        .pill svg { width: 12px; height: 12px; }
+
+        #categoryBar {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+            scrollbar-width: none; margin-bottom: 16px;
+        }
+        #categoryBar::-webkit-scrollbar { display: none; }
+
+        /* ══════════════════════════════
+           UPLOAD VIEW
+        ══════════════════════════════ */
+        .upload-card {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px;
+            padding: 24px; max-width: 500px; margin: 0 auto;
+        }
+        .upload-input {
+            width: 100%; background: #111; border: 1px solid #2a2a2a;
+            border-radius: 12px; padding: 12px 14px; font-size: 13px;
+            color: #fff; font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.2s; outline: none;
+        }
+        .upload-input:focus { border-color: #fe2c55; }
+        .upload-input::placeholder { color: #555; }
+        .upload-label { font-size: 10px; font-weight: 700; color: #555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+        .upload-drop {
+            border: 2px dashed #2a2a2a; border-radius: 16px;
+            padding: 32px 20px; text-align: center; position: relative;
+            transition: border-color 0.2s, background 0.2s; cursor: pointer;
+        }
+        .upload-drop:hover { border-color: #fe2c55; background: rgba(254,44,85,0.05); }
+        .upload-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            border: none; border-radius: 12px; color: #fff;
+            font-weight: 700; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: opacity 0.2s, transform 0.15s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .upload-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .upload-btn:active { transform: scale(0.97); }
+        .upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .upload-btn svg { width: 16px; height: 16px; }
+
+        #uploadProgressWrap { display: none; margin-top: 12px; }
+        #uploadProgressBg {
+            height: 6px; background: #2a2a2a; border-radius: 999px;
+            overflow: hidden;
+        }
+        #uploadProgressBar { height: 6px; background: linear-gradient(90deg, #fe2c55, #ff6b35); border-radius: 999px; width: 0%; transition: width 0.3s ease; }
+
+        /* ══════════════════════════════
+           SETTINGS / HELP VIEWS
+        ══════════════════════════════ */
+        .setting-card {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 16px;
+            padding: 16px; margin-bottom: 12px;
+        }
+        .setting-section-label { font-size: 10px; font-weight: 700; color: #555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+        .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e1e1e; gap: 12px; }
+        .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .setting-row-title { font-size: 13px; font-weight: 600; color: #ddd; }
+        .setting-row-sub { font-size: 11px; color: #555; margin-top: 2px; }
+        .toggle {
+            width: 42px; height: 24px; border-radius: 999px; background: #333;
+            position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+        }
+        .toggle.on { background: #fe2c55; }
+        .toggle::after {
+            content: ''; width: 18px; height: 18px; border-radius: 50%;
+            background: #fff; position: absolute; top: 3px; left: 3px;
+            transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+        .toggle.on::after { transform: translateX(18px); }
+
+        .tab-card {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 16px;
+            padding: 16px; transition: border-color 0.2s;
+        }
+        .tab-card:hover { border-color: #3a3a3a; }
+
+        /* FAQ */
+        .faq-item { border-bottom: 1px solid #1e1e1e; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 0; font-size: 13px; font-weight: 600; color: #ccc; background: none; border: none; text-align: left; gap: 12px; cursor: pointer; }
+        .faq-answer { display: none; font-size: 12px; color: #777; padding-bottom: 12px; line-height: 1.6; }
+        .faq-answer.open { display: block; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .empty-icon { width: 64px; height: 64px; background: #1a1a1a; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+        .empty-icon svg { width: 28px; height: 28px; color: #444; }
+
+        /* ── Rank badge ── */
+        .rank-badge { width: 30px; height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; flex-shrink: 0; }
+        .rank-1 { background: linear-gradient(135deg, #fe2c55, #ff6b35); color: #fff; }
+        .rank-2 { background: #2a2a2a; color: #aaa; }
+        .rank-3 { background: #222; color: #888; }
+        .rank-n { background: #1a1a1a; color: #555; }
+
+        /* ══════════════════════════════
+           MOBILE BOTTOM NAV
+        ══════════════════════════════ */
+        #mobileNav {
+            display: none;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(16px);
+            border-top: 1px solid #1a1a1a;
+            padding: 6px 0 env(safe-area-inset-bottom, 6px);
+            z-index: 50;
+        }
+        @media (max-width: 1023px) { #mobileNav { display: flex; } }
+        .mob-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 2px; padding: 6px; cursor: pointer; color: #555; transition: color 0.2s;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+            background: none; border: none;
+        }
+        .mob-btn.active { color: #fff; }
+        .mob-btn svg { width: 22px; height: 22px; }
+        .mob-btn-plus {
+            width: 40px; height: 28px; background: linear-gradient(90deg, #25f4ee 0%, #fe2c55 100%);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 2px;
+        }
+        .mob-btn-plus::before { content: ''; width: 36px; height: 24px; background: #000; border-radius: 6px; position: absolute; }
+        .mob-btn-plus-icon { position: relative; z-index: 1; }
+        @media (max-width: 1023px) { body { padding-bottom: 56px; } }
+
+        /* ══════════════════════════════
+           TOAST
+        ══════════════════════════════ */
+        #toastContainer {
+            position: fixed; top: 80px; right: 12px; z-index: 99999;
+            display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+            max-width: calc(100vw - 24px);
+        }
+        .toast {
+            display: flex; align-items: flex-start; gap: 10px;
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 14px;
+            padding: 12px 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            min-width: 260px; max-width: 340px;
+            pointer-events: all;
+            animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+            position: relative; overflow: hidden;
+        }
+        .toast.toast-out { animation: toastOut 0.3s ease forwards; }
+        .toast-icon { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .toast-icon.success { background: #fe2c55; }
+        .toast-icon.info    { background: #25f4ee; }
+        .toast-icon.warning { background: #f59e0b; }
+        .toast-icon.error   { background: #ef4444; }
+        .toast-icon svg { width: 16px; height: 16px; color: #fff; }
+        .toast-body { flex: 1; min-width: 0; }
+        .toast-title { font-size: 12px; font-weight: 800; color: #fff; margin-bottom: 1px; }
+        .toast-msg   { font-size: 11px; color: #666; line-height: 1.4; }
+        .toast-close { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 5px; flex-shrink: 0; color: #444; transition: background 0.15s; }
+        .toast-close:hover { background: #2a2a2a; color: #aaa; }
+        .toast-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: #fe2c55; animation: toastProgress linear forwards; }
+        @keyframes toastIn    { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut   { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
+        @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+
+        /* ══════════════════════════════
+           SUCCESS MODAL
+        ══════════════════════════════ */
+        #successModal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        #successModal.open { display: flex; }
+        .modal-card {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 24px;
+            padding: 36px 28px; text-align: center; max-width: 340px; width: 90%;
+            animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .modal-check {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 18px;
+        }
+        @keyframes scaleIn  { from { transform: scale(0.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* ══════════════════════════════
+           BOTTOM SHEET
+        ══════════════════════════════ */
+        #bottomSheet { position: fixed; inset: 0; z-index: 9000; display: none; }
+        #bottomSheet.open { display: block; }
+        #bottomSheetOverlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
+        #bottomSheetPanel {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: #1a1a1a; border-radius: 22px 22px 0 0;
+            padding: 14px 16px 32px;
+            animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+            max-height: 80vh; overflow-y: auto;
+        }
+        .sheet-handle { width: 36px; height: 4px; background: #333; border-radius: 999px; margin: 0 auto 14px; }
+        .sheet-action {
+            display: flex; align-items: center; gap: 14px; padding: 13px 8px;
+            border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px;
+            color: #ccc; transition: background 0.15s;
+        }
+        .sheet-action:hover { background: #222; }
+        .sheet-action svg { width: 20px; height: 20px; color: #777; }
+
+        /* ══════════════════════════════
+           MOBILE SEARCH OVERLAY
+        ══════════════════════════════ */
+        #mobileSearchOverlay {
+            position: fixed; inset: 0; z-index: 9999; background: #121212;
+            padding: 16px; transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        .mobile-search-input {
+            flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a;
+            border-radius: 12px; padding: 10px 16px; font-size: 14px;
+            color: #fff; outline: none; font-family: 'DM Sans', sans-serif;
+        }
+        .mobile-search-input:focus { border-color: #fe2c55; }
+        .mobile-search-input::placeholder { color: #555; }
+
+        @keyframes slideUp  { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ── Shimmer ── */
         @keyframes shimmer {
             0%   { background-position: -800px 0; }
             100% { background-position: 800px 0; }
         }
         .shimmer {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
             background-size: 800px 100%;
-            animation: shimmer 1.6s infinite linear;
-            border-radius: 8px;
-        }
-        .skeleton-card { display: flex; flex-direction: column; gap: 10px; }
-        .skeleton-thumb { width: 100%; aspect-ratio: 16/9; border-radius: 16px; }
-        .skeleton-row   { height: 13px; border-radius: 6px; }
-        .skeleton-row.w-3-4 { width: 75%; }
-        .skeleton-row.w-1-2 { width: 50%; }
-
-        /* ── Category pills ── */
-        .pill {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
-            border: 1.5px solid #e5e7eb; background: #fff; color: #555;
-            cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
-            user-select: none;
-        }
-        .pill:hover { background: #f8f9fa; border-color: #d1d5db; color: #111; transform: translateY(-1px); }
-        .pill.active { background: #000; border-color: #000; color: #fff; }
-        .pill svg { width: 14px; height: 14px; }
-
-        /* ── Upload progress bar ── FIXED ── */
-        #uploadProgressWrap {
-            display: none;
-            margin-top: 12px;
-            background: #f0f0f0;
-            border-radius: 999px;
-            overflow: hidden;
-            height: 8px;
-            width: 100%;
-            position: relative;
-        }
-        #uploadProgressBar {
-            height: 8px;
-            background: #000;
-            border-radius: 999px;
-            width: 0%;
-            transition: width 0.3s ease;
-            display: block;
+            animation: shimmer 1.6s infinite linear; border-radius: 8px;
         }
 
-        /* ── Toast Notifications ── */
-        #toastContainer {
-            position: fixed;
-            top: 76px;
-            right: 16px;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-            max-width: calc(100vw - 32px);
-        }
-        .toast {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 14px 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            min-width: 280px;
-            max-width: 360px;
-            pointer-events: all;
-            animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
-            position: relative;
-            overflow: hidden;
-        }
-        .toast.toast-out { animation: toastOut 0.3s ease forwards; }
-        .toast-icon {
-            width: 36px; height: 36px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .toast-icon.success { background: #000; }
-        .toast-icon.info    { background: #3b82f6; }
-        .toast-icon.warning { background: #f59e0b; }
-        .toast-icon.error   { background: #ef4444; }
-        .toast-icon svg { width: 18px; height: 18px; color: #fff; }
-        .toast-body { flex: 1; min-width: 0; }
-        .toast-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 2px; }
-        .toast-msg   { font-size: 12px; color: #6b7280; line-height: 1.4; }
-        .toast-close {
-            width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border-radius: 6px; flex-shrink: 0;
-            color: #9ca3af; transition: background 0.15s, color 0.15s;
-        }
-        .toast-close:hover { background: #f3f4f6; color: #111; }
-        .toast-progress {
-            position: absolute; bottom: 0; left: 0;
-            height: 3px; background: #000; border-radius: 0 0 0 16px;
-            animation: toastProgress linear forwards;
-        }
-        @keyframes toastIn    { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes toastOut   { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
-        @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
-
-        /* ── Success Modal ── */
-        #successModal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
-            display: none; align-items: center; justify-content: center; z-index: 9999;
-            animation: fadeIn 0.25s ease;
-        }
-        #successModal.open { display: flex; }
-        .modal-card {
-            background: #fff; border-radius: 24px; padding: 40px 36px;
-            text-align: center; max-width: 360px; width: 90%;
-            animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
-        }
-        .modal-check {
-            width: 64px; height: 64px; background: #000; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 20px; animation: popIn 0.4s 0.15s cubic-bezier(0.34,1.56,0.64,1) both;
-        }
-
-        /* ── Bottom Sheet (mobile) ── */
-        #bottomSheet { position: fixed; inset: 0; z-index: 9000; display: none; }
-        #bottomSheet.open { display: block; }
-        #bottomSheetOverlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); animation: fadeIn 0.2s ease; }
-        #bottomSheetPanel {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: #fff; border-radius: 24px 24px 0 0;
-            padding: 16px 20px 32px;
-            box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
-            animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1);
-            max-height: 90vh; overflow-y: auto;
-        }
-        .sheet-handle { width: 40px; height: 4px; background: #e5e7eb; border-radius: 999px; margin: 0 auto 16px; }
-        .sheet-action {
-            display: flex; align-items: center; gap: 14px;
-            padding: 14px 8px; border-radius: 14px; cursor: pointer;
-            font-weight: 600; font-size: 14px; transition: background 0.15s;
-        }
-        .sheet-action:hover { background: #f8f9fa; }
-        .sheet-action svg { width: 20px; height: 20px; color: #555; }
-
-        /* ── Video player ── */
-        #mainPlayer { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; }
-        .player-wrapper { position: relative; background: #000; border-radius: 18px; overflow: hidden; width: 100%; aspect-ratio: 16/9; }
-
-        /* ── Feed card ── */
-        .video-card { display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s ease, opacity 0.2s ease; }
-        .video-card:hover { transform: translateY(-3px); }
-        .video-card:hover .card-thumb { box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .card-thumb {
-            width: 100%; aspect-ratio: 16/9; overflow: hidden;
-            background: #f0f0f0; border-radius: 16px;
-            border: 1px solid #e5e7eb; margin-bottom: 10px;
-            transition: box-shadow 0.3s ease;
-        }
-        .card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
-        .video-card:hover .card-thumb img { transform: scale(1.04); }
-
-        /* ── Animations ── */
-        @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes scaleIn  { from { transform: scale(0.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes popIn    { from { transform: scale(0); } to { transform: scale(1); } }
-        @keyframes slideUp  { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes slideIn  { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .stagger-in { animation: slideIn 0.4s ease both; }
+        /* Stagger-in */
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .stagger-in { animation: slideIn 0.35s ease both; }
         .stagger-in:nth-child(1) { animation-delay: 0s; }
-        .stagger-in:nth-child(2) { animation-delay: 0.06s; }
-        .stagger-in:nth-child(3) { animation-delay: 0.12s; }
-        .stagger-in:nth-child(4) { animation-delay: 0.18s; }
-        .stagger-in:nth-child(5) { animation-delay: 0.24s; }
-        .stagger-in:nth-child(6) { animation-delay: 0.30s; }
-        .stagger-in:nth-child(7) { animation-delay: 0.36s; }
-        .stagger-in:nth-child(8) { animation-delay: 0.42s; }
+        .stagger-in:nth-child(2) { animation-delay: 0.05s; }
+        .stagger-in:nth-child(3) { animation-delay: 0.1s; }
+        .stagger-in:nth-child(4) { animation-delay: 0.15s; }
+        .stagger-in:nth-child(5) { animation-delay: 0.2s; }
+        .stagger-in:nth-child(6) { animation-delay: 0.25s; }
 
-        /* ── Sidebar nav active ── */
-        .nav-btn.active { background: #f3f4f6; font-weight: 700; color: #000; }
-        .nav-btn { transition: background 0.15s; }
+        /* select dark */
+        select { color-scheme: dark; }
 
-        /* ── Mobile bottom nav ── */
-        #mobileNav {
-            display: none;
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
-            border-top: 1px solid #e5e7eb; padding: 8px 0 env(safe-area-inset-bottom, 8px);
-            z-index: 50;
+        /* ── Pause indicator ── */
+        .pause-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            z-index: 5; pointer-events: none; opacity: 0; transition: opacity 0.2s;
         }
-        @media (max-width: 1023px) {
-            #mobileNav { display: flex; }
-            body { padding-bottom: 64px; }
-        }
-        .mob-nav-btn {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 3px; padding: 6px; cursor: pointer; color: #999; transition: color 0.2s;
-            font-size: 10px; font-weight: 600; letter-spacing: 0.02em;
-            background: none; border: none;
-        }
-        .mob-nav-btn.active { color: #000; }
-        .mob-nav-btn svg { width: 22px; height: 22px; }
-
-        /* ── Category bar ── */
-        #categoryBar {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
-            scrollbar-width: none; -ms-overflow-style: none;
-            margin-bottom: 20px;
-        }
-        #categoryBar::-webkit-scrollbar { display: none; }
-
-        /* ── Comment card ── */
-        .comment-item { animation: slideIn 0.3s ease both; }
-
-        /* ── Like btn animation ── */
-        #likeBtn.liked { background: #000; color: #fff; border-color: #000; }
-        #likeBtn.liked svg { fill: #fff; }
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            30% { transform: scale(1.25); }
-            60% { transform: scale(0.95); }
-            100% { transform: scale(1); }
-        }
-        .like-pop { animation: heartBeat 0.4s ease; }
-
-        /* ── Subscribe btn ── */
-        #subscribeBtn { transition: all 0.2s ease; }
-        #subscribeBtn.subscribed { background: #f3f4f6; color: #555; border-color: #e5e7eb; }
-
-        /* Search input focus ring */
-        .search-wrap input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,0.08); }
-
-        /* ── Tab views ── */
-        .tab-header {
-            display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
-            padding-bottom: 20px; border-bottom: 1px solid #e5e7eb;
-        }
-        .tab-header-icon {
-            width: 44px; height: 44px; border-radius: 14px; background: #000;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .tab-header-icon svg { width: 22px; height: 22px; color: #fff; }
-        .tab-card {
-            background: #fff; border: 1px solid #e5e7eb; border-radius: 20px;
-            padding: 20px; transition: box-shadow 0.2s ease, transform 0.2s ease;
-        }
-        .tab-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); }
-
-        /* ── Trending rank badge ── */
-        .rank-badge {
-            width: 32px; height: 32px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 900; flex-shrink: 0;
-        }
-        .rank-1 { background: #000; color: #fff; }
-        .rank-2 { background: #374151; color: #fff; }
-        .rank-3 { background: #6b7280; color: #fff; }
-        .rank-n { background: #f3f4f6; color: #6b7280; }
-
-        /* ── Settings ── */
-        .setting-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 0; border-bottom: 1px solid #f3f4f6; gap: 16px;
-        }
-        .setting-row:last-child { border-bottom: none; }
-        .toggle {
-            width: 44px; height: 24px; border-radius: 999px; background: #e5e7eb;
-            position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
-        }
-        .toggle.on { background: #000; }
-        .toggle::after {
-            content: ''; width: 18px; height: 18px; border-radius: 50%;
-            background: #fff; position: absolute; top: 3px; left: 3px;
-            transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-        }
-        .toggle.on::after { transform: translateX(20px); }
-
-        /* ── Saved / History empty state ── */
-        .empty-state {
-            text-align: center; padding: 60px 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-        }
-        .empty-state-icon {
-            width: 72px; height: 72px; border-radius: 20px; background: #f3f4f6;
-            display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
-        }
-        .empty-state-icon svg { width: 32px; height: 32px; color: #9ca3af; }
-
-        /* ── Responsive tweaks ── */
-        @media (max-width: 640px) {
-            .tab-card { padding: 14px; border-radius: 16px; }
-            .tab-header { margin-bottom: 20px; padding-bottom: 16px; }
-            .toast { min-width: 240px; max-width: calc(100vw - 32px); }
-            #toastContainer { right: 12px; left: 12px; top: 72px; }
-            .modal-card { padding: 28px 20px; }
-        }
-        @media (min-width: 641px) and (max-width: 1023px) {
-            /* Tablet */
-            .player-wrapper { border-radius: 14px; }
-        }
+        .pause-icon.visible { opacity: 1; }
+        .pause-icon svg { width: 60px; height: 60px; color: rgba(255,255,255,0.7); }
     </style>
 </head>
-<body class="bg-premiumWhite text-premiumBlack min-h-screen font-sans overflow-x-hidden antialiased">
+<body>
 
-<!-- ══════════════════════ TOAST CONTAINER ══════════════════════ -->
 <div id="toastContainer"></div>
 
-<!-- ══════════════════════ NAVBAR ══════════════════════ -->
-<nav class="fixed top-0 left-0 right-0 h-16 bg-white/85 backdrop-blur-md border-b border-premiumBorder flex items-center justify-between px-4 md:px-6 z-50">
-    <div class="flex items-center gap-3">
-        <button class="p-2 hover:bg-premiumGray rounded-full transition-colors lg:hidden" onclick="toggleSidebar()">
-            <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
-        <div class="text-xl font-black tracking-tighter cursor-pointer flex items-center gap-1" onclick="showView('feedView')">
-            <span class="bg-premiumBlack text-white px-2.5 py-0.5 rounded-lg text-base font-black">V</span>
-            VISION
-        </div>
-    </div>
+<div id="appShell">
 
-    <div class="hidden md:flex w-1/3 max-w-xl search-wrap">
-        <div class="relative w-full flex items-center">
-            <input type="text" id="searchInput" placeholder="Search videos..." class="w-full bg-premiumGray border border-premiumBorder rounded-full pl-5 pr-12 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:bg-white focus:border-premiumBlack transition-all duration-300" oninput="filterFeed(this.value)">
-            <button class="absolute right-1 p-1.5 bg-premiumBlack text-white rounded-full hover:bg-gray-800 transition-colors">
-                <i data-lucide="search" class="w-4 h-4"></i>
+    <!-- ════════════ SIDEBAR (desktop) ════════════ -->
+    <aside id="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-v">V</span>ISION
+        </div>
+
+        <div class="sidebar-nav">
+            <button onclick="showView('feedView')" id="nav-feedView" class="sidebar-nav-item active">
+                <i data-lucide="home"></i> For You
+            </button>
+            <button onclick="showView('exploreView')" id="nav-exploreView" class="sidebar-nav-item">
+                <i data-lucide="compass"></i> Explore
+            </button>
+            <button onclick="showView('trendingView')" id="nav-trendingView" class="sidebar-nav-item">
+                <i data-lucide="trending-up"></i> Trending
+            </button>
+
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Library</div>
+
+            <button onclick="showView('savedView')" id="nav-savedView" class="sidebar-nav-item">
+                <i data-lucide="bookmark"></i> Saved
+            </button>
+            <button onclick="showView('historyView')" id="nav-historyView" class="sidebar-nav-item">
+                <i data-lucide="history"></i> Watch History
+            </button>
+
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Account</div>
+
+            <button onclick="showView('settingsView')" id="nav-settingsView" class="sidebar-nav-item">
+                <i data-lucide="settings"></i> Settings
+            </button>
+            <button onclick="showView('helpView')" id="nav-helpView" class="sidebar-nav-item">
+                <i data-lucide="help-circle"></i> Help & Feedback
+            </button>
+
+            <div class="sidebar-divider"></div>
+
+            <!-- Auth btn desktop -->
+            <button id="authBtnDesktop" onclick="document.getElementById('authBtnMobile').click()"
+                class="sidebar-nav-item">
+                <i data-lucide="user"></i>
+                <span id="authBtnDesktopText">Sign In</span>
             </button>
         </div>
-    </div>
 
-    <div class="flex items-center gap-2">
-        <button onclick="showView('uploadView')" class="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full border border-premiumBorder text-sm font-semibold hover:bg-premiumGray transition-all hover:scale-105 active:scale-95">
-            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-            Upload
+        <button onclick="showView('uploadView')" class="sidebar-upload-btn">
+            <i data-lucide="plus"></i> Upload
         </button>
-        <button id="notifBtn" class="relative p-2 hover:bg-premiumGray rounded-full transition-colors" onclick="showNotifDemo()">
-            <i data-lucide="bell" class="w-5 h-5"></i>
-            <span id="notifDot" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
-        <button id="authBtn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-premiumBlack text-white text-sm font-semibold hover:bg-gray-800 transition-all hover:shadow-pill-shadow hover:scale-105 active:scale-95">
-            <i data-lucide="user" class="w-4 h-4"></i>
-            <span id="authBtnText">Sign In</span>
-        </button>
-    </div>
-</nav>
+    </aside>
 
-<!-- ══════════════════════ SIDEBAR ══════════════════════ -->
-<aside id="sidebar" class="fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-premiumBorder p-4 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 overflow-y-auto">
-    <div class="space-y-1">
-        <button onclick="showView('feedView')" id="nav-feedView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="home" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Home Feed
-        </button>
-        <button onclick="showView('uploadView')" id="nav-uploadView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="upload-cloud" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Upload Video
-        </button>
-        <button onclick="showView('exploreView')" id="nav-exploreView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="compass" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Explore
-        </button>
-        <button onclick="showView('savedView')" id="nav-savedView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="bookmark" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Saved
-        </button>
-        <button onclick="showView('historyView')" id="nav-historyView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="history" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Watch History
-        </button>
-        <button onclick="showView('trendingView')" id="nav-trendingView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="trending-up" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Trending
-        </button>
-    </div>
+    <!-- ════════════ MAIN AREA ════════════ -->
+    <div id="mainArea">
 
-    <hr class="my-4 border-premiumBorder">
-    <div class="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Subscriptions</div>
-    <div id="sidebarSubs" class="text-sm text-gray-400 italic px-4">Sign in to view subscriptions</div>
-
-    <hr class="my-4 border-premiumBorder">
-    <div class="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Explore More</div>
-    <div class="space-y-1">
-        <button onclick="showView('settingsView')" id="nav-settingsView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="settings" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Settings
-        </button>
-        <button onclick="showView('helpView')" id="nav-helpView" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
-            <i data-lucide="help-circle" class="w-5 h-5 text-gray-400 group-hover:text-black transition-colors"></i>
-            Help & Feedback
-        </button>
-    </div>
-</aside>
-
-<!-- ══════════════════════ MAIN ══════════════════════ -->
-<main class="flex-1 lg:pl-64 min-h-screen bg-premiumWhite transition-all duration-300 pt-16">
-    <div class="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto view-container">
-
-        <!-- ── FEED VIEW ── -->
-        <div id="feedView" class="app-view view-active">
-            <div id="categoryBar"></div>
-            <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8"></div>
-        </div>
-
-        <!-- ── UPLOAD VIEW ── -->
-        <div id="uploadView" class="app-view view-hidden-right max-w-xl mx-auto">
-            <div class="bg-white border border-premiumBorder rounded-3xl p-6 md:p-8 shadow-premium">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-2xl bg-premiumBlack flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="upload-cloud" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-black tracking-tight">Upload Content</h2>
-                        <p class="text-sm text-gray-400">Publish pristine video to the platform.</p>
-                    </div>
-                </div>
-
-                <form id="uploadForm" class="space-y-5">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Video Title *</label>
-                        <input type="text" id="videoTitle" required placeholder="Enter a captivating title..." class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Category</label>
-                        <select id="videoCategory" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack transition-all">
-                            <option value="All">All</option>
-                            <option value="Music">Music</option>
-                            <option value="Gaming">Gaming</option>
-                            <option value="Tech">Tech</option>
-                            <option value="Education">Education</option>
-                            <option value="Sports">Sports</option>
-                            <option value="Travel">Travel</option>
-                            <option value="Food">Food</option>
-                            <option value="Lifestyle">Lifestyle</option>
-                            <option value="Comedy">Comedy</option>
-                            <option value="News">News</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Description</label>
-                        <textarea id="videoDesc" rows="3" placeholder="What's this video about?" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all resize-none"></textarea>
-                    </div>
-                    <div class="relative border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:bg-premiumGray hover:border-gray-300 transition-all group cursor-pointer" id="dropZone">
-                        <input type="file" id="videoFile" accept="video/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <i data-lucide="film" class="w-10 h-10 mx-auto mb-3 text-gray-300 group-hover:text-premiumBlack transition-colors"></i>
-                        <p id="fileNameDisplay" class="text-sm font-semibold text-gray-500 group-hover:text-premiumBlack transition-colors">Drop your video here or click to browse</p>
-                        <p class="text-xs text-gray-400 mt-1">MP4, MOV, AVI up to 500MB</p>
-                    </div>
-
-                    <!-- Upload Progress — FIXED -->
-                    <div id="uploadProgressWrap">
-                        <div class="flex justify-between text-xs font-semibold text-gray-500 mb-2">
-                            <span>Uploading to cloud...</span>
-                            <span id="uploadPct">0%</span>
-                        </div>
-                        <div style="height:8px;background:#f0f0f0;border-radius:999px;overflow:hidden;width:100%;">
-                            <div id="uploadProgressBar" style="height:8px;background:#000;border-radius:999px;width:0%;transition:width 0.3s ease;"></div>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="uploadBtn" class="w-full py-3.5 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-900 transition-all active:scale-95 shadow-pill-shadow flex items-center justify-center gap-2">
-                        <i data-lucide="rocket" class="w-4 h-4"></i>
-                        Deploy to Network
-                    </button>
-                </form>
+        <!-- Top nav (mobile) -->
+        <div id="topNav">
+            <div class="top-nav-logo">
+                <span class="logo-v" style="font-size:20px;font-weight:900;">V</span>
+            </div>
+            <div class="top-nav-tabs">
+                <button class="top-nav-tab" onclick="setFeedTab('following')">Following</button>
+                <button class="top-nav-tab active" onclick="setFeedTab('foryou')">For You</button>
+            </div>
+            <div class="top-nav-actions" style="position:relative;">
+                <button class="top-nav-icon" onclick="window.openMobileSearch()">
+                    <i data-lucide="search" style="width:18px;height:18px;"></i>
+                </button>
+                <button id="authBtnMobile" class="top-nav-icon" style="background:rgba(254,44,85,0.25);" onclick="handleAuth()">
+                    <i data-lucide="user" style="width:18px;height:18px;"></i>
+                </button>
             </div>
         </div>
 
-        <!-- ── PLAYER VIEW ── -->
-        <div id="playerView" class="app-view view-hidden-right">
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-                <div class="xl:col-span-2 space-y-5">
-                    <div class="player-wrapper">
-                        <video id="mainPlayer" controls playsinline preload="metadata"></video>
-                    </div>
+        <!-- VIEW CONTAINER -->
+        <div id="viewContainer">
 
-                    <div>
-                        <h1 id="playerTitle" class="text-xl md:text-2xl lg:text-3xl font-black tracking-tight mb-3">Video Title</h1>
-                        <div class="flex flex-wrap justify-between items-center gap-3 border-b border-premiumBorder pb-4 mb-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-premiumBlack flex items-center justify-center text-white font-bold text-sm flex-shrink-0">V</div>
-                                <div>
-                                    <div id="playerUploader" class="font-bold text-sm">Uploader</div>
-                                    <div class="text-xs text-gray-400">Verified Publisher</div>
-                                </div>
-                                <button id="subscribeBtn" onclick="toggleSubscribe()" class="ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95">
-                                    Subscribe
-                                </button>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button id="likeBtn" onclick="handleLike()" class="px-5 py-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all flex items-center gap-2 font-semibold text-sm active:scale-95">
-                                    <i data-lucide="thumbs-up" class="w-4 h-4"></i>
-                                    <span id="likeCount">0</span>
-                                </button>
-                                <button onclick="handleShare()" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95">
-                                    <i data-lucide="share-2" class="w-4 h-4"></i>
-                                </button>
-                                <button onclick="handleSave()" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95">
-                                    <i data-lucide="bookmark" class="w-4 h-4"></i>
-                                </button>
-                                <button onclick="openBottomSheet('videoActions')" class="p-2 rounded-full border border-premiumBorder hover:bg-premiumGray transition-all active:scale-95 lg:hidden">
-                                    <i data-lucide="more-horizontal" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </div>
+            <!-- ════════ FEED VIEW ════════ -->
+            <div id="feedView" class="app-view view-active" style="overflow-y:scroll;scrollbar-width:none;scroll-snap-type:y mandatory;height:100dvh;">
+                <!-- slides injected here -->
+            </div>
 
-                        <div class="bg-premiumGray p-4 rounded-2xl border border-premiumBorder">
-                            <div class="flex items-center gap-2 mb-2">
-                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-gray-400"></i>
-                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Description</span>
-                            </div>
-                            <p id="playerDesc" class="text-sm text-gray-700 leading-relaxed">No description provided.</p>
-                        </div>
-                    </div>
+            <!-- ════════ UPLOAD VIEW ════════ -->
+            <div id="uploadView" class="app-view scrollable-view">
+                <div class="view-header">
+                    <div class="view-header-icon"><i data-lucide="upload-cloud"></i></div>
+                    <div><h2>Upload Video</h2><p>Share your content with the world</p></div>
                 </div>
-
-                <!-- Comments panel -->
-                <div class="bg-white border border-premiumBorder rounded-2xl p-5 flex flex-col shadow-premium" style="height: calc(100vh - 10rem); min-height: 500px;">
-                    <h3 class="text-base font-black tracking-tight mb-4 flex items-center gap-2">
-                        <i data-lucide="message-square" class="w-4 h-4"></i>
-                        Comments
-                        <span id="commentCount" class="ml-auto text-xs font-semibold text-gray-400 bg-premiumGray px-2.5 py-1 rounded-full">0</span>
-                    </h3>
-                    <div id="commentsList" class="flex-1 overflow-y-auto space-y-3 mb-4 pr-1"></div>
-                    <form id="commentForm" class="mt-auto flex gap-2 pt-3 border-t border-premiumBorder">
-                        <input type="text" id="commentInput" placeholder="Add a comment..." required class="flex-1 bg-premiumGray border border-premiumBorder rounded-full px-4 py-2.5 text-sm placeholder-gray-400 focus:outline-none focus:border-premiumBlack focus:bg-white transition-all">
-                        <button type="submit" class="p-2.5 rounded-full bg-premiumBlack text-white hover:bg-gray-800 transition-colors">
-                            <i data-lucide="send" class="w-4 h-4"></i>
+                <div class="upload-card">
+                    <form id="uploadForm" style="display:flex;flex-direction:column;gap:16px;">
+                        <div>
+                            <label class="upload-label">Video Title *</label>
+                            <input type="text" id="videoTitle" required placeholder="Give your video a great title..." class="upload-input">
+                        </div>
+                        <div>
+                            <label class="upload-label">Category</label>
+                            <select id="videoCategory" class="upload-input" style="cursor:pointer;">
+                                <option value="All">All</option>
+                                <option value="Music">Music</option>
+                                <option value="Gaming">Gaming</option>
+                                <option value="Tech">Tech</option>
+                                <option value="Education">Education</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Food">Food</option>
+                                <option value="Lifestyle">Lifestyle</option>
+                                <option value="Comedy">Comedy</option>
+                                <option value="News">News</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="upload-label">Description</label>
+                            <textarea id="videoDesc" rows="3" placeholder="Describe your video..." class="upload-input" style="resize:none;"></textarea>
+                        </div>
+                        <div class="upload-drop" id="dropZone">
+                            <input type="file" id="videoFile" accept="video/*" required style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                            <i data-lucide="film" style="width:36px;height:36px;color:#444;margin:0 auto 10px;display:block;"></i>
+                            <p id="fileNameDisplay" style="font-size:13px;font-weight:600;color:#666;">Drop video here or click to browse</p>
+                            <p style="font-size:11px;color:#444;margin-top:4px;">MP4, MOV, AVI up to 500MB</p>
+                        </div>
+                        <div id="uploadProgressWrap">
+                            <div style="display:flex;justify-content:space-between;font-size:11px;color:#666;margin-bottom:6px;">
+                                <span>Uploading...</span><span id="uploadPct">0%</span>
+                            </div>
+                            <div id="uploadProgressBg"><div id="uploadProgressBar"></div></div>
+                        </div>
+                        <button type="submit" id="uploadBtn" class="upload-btn">
+                            <i data-lucide="rocket" style="width:16px;height:16px;"></i>
+                            Post Video
                         </button>
                     </form>
                 </div>
             </div>
-        </div>
 
-        <!-- ── EXPLORE VIEW ── -->
-        <div id="exploreView" class="app-view view-hidden-right">
-            <div class="tab-header">
-                <div class="tab-header-icon"><i data-lucide="compass" class="w-5 h-5 text-white"></i></div>
-                <div>
-                    <h2 class="text-2xl font-black tracking-tight">Explore</h2>
-                    <p class="text-sm text-gray-400">Discover content across all categories</p>
+            <!-- ════════ EXPLORE VIEW ════════ -->
+            <div id="exploreView" class="app-view scrollable-view">
+                <div class="view-header">
+                    <div class="view-header-icon"><i data-lucide="compass"></i></div>
+                    <div><h2>Explore</h2><p>Discover videos across all categories</p></div>
                 </div>
+                <!-- Search bar -->
+                <div style="position:relative;margin-bottom:16px;">
+                    <input type="text" id="exploreSearch" placeholder="Search videos..." class="upload-input" style="padding-left:40px;" oninput="filterExplore(this.value)">
+                    <i data-lucide="search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#555;pointer-events:none;"></i>
+                </div>
+                <div id="categoryBar" style="margin-bottom:16px;"></div>
+                <div id="exploreGrid" class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px;"></div>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-8" id="exploreCategoryGrid"></div>
-            <h3 class="text-lg font-black mb-4">All Videos</h3>
-            <div id="exploreGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8"></div>
-        </div>
 
-        <!-- ── SAVED VIEW ── -->
-        <div id="savedView" class="app-view view-hidden-right">
-            <div class="tab-header">
-                <div class="tab-header-icon"><i data-lucide="bookmark" class="w-5 h-5 text-white"></i></div>
-                <div>
-                    <h2 class="text-2xl font-black tracking-tight">Saved</h2>
-                    <p class="text-sm text-gray-400">Your bookmarked videos</p>
+            <!-- ════════ SAVED VIEW ════════ -->
+            <div id="savedView" class="app-view scrollable-view">
+                <div class="view-header">
+                    <div class="view-header-icon"><i data-lucide="bookmark"></i></div>
+                    <div><h2>Saved</h2><p>Your bookmarked videos</p></div>
                 </div>
+                <div id="savedGrid" class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px;"></div>
             </div>
-            <div id="savedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-8"></div>
-        </div>
 
-        <!-- ── HISTORY VIEW ── -->
-        <div id="historyView" class="app-view view-hidden-right">
-            <div class="tab-header">
-                <div class="tab-header-icon"><i data-lucide="history" class="w-5 h-5 text-white"></i></div>
-                <div>
-                    <h2 class="text-2xl font-black tracking-tight">Watch History</h2>
-                    <p class="text-sm text-gray-400">Videos you've recently watched</p>
+            <!-- ════════ HISTORY VIEW ════════ -->
+            <div id="historyView" class="app-view scrollable-view">
+                <div class="view-header">
+                    <div class="view-header-icon"><i data-lucide="history"></i></div>
+                    <div><h2>Watch History</h2><p>Videos you've recently watched</p></div>
                 </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                    <span id="historyCount" style="font-size:12px;color:#555;"></span>
+                    <button onclick="clearHistory()" style="font-size:11px;font-weight:700;color:#555;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;transition:color 0.2s;" onmouseover="this.style.color='#fe2c55'" onmouseout="this.style.color='#555'">
+                        <i data-lucide="trash-2" style="width:12px;height:12px;"></i> Clear All
+                    </button>
+                </div>
+                <div id="historyList" style="display:flex;flex-direction:column;gap:8px;"></div>
             </div>
-            <div class="flex justify-between items-center mb-5">
-                <span id="historyCount" class="text-sm text-gray-400 font-medium"></span>
-                <button onclick="clearHistory()" class="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-50">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear All
-                </button>
-            </div>
-            <div id="historyList" class="space-y-3"></div>
-        </div>
 
-        <!-- ── TRENDING VIEW ── -->
-        <div id="trendingView" class="app-view view-hidden-right">
-            <div class="tab-header">
-                <div class="tab-header-icon"><i data-lucide="trending-up" class="w-5 h-5 text-white"></i></div>
-                <div>
-                    <h2 class="text-2xl font-black tracking-tight">Trending</h2>
-                    <p class="text-sm text-gray-400">Most liked videos on the platform</p>
+            <!-- ════════ TRENDING VIEW ════════ -->
+            <div id="trendingView" class="app-view scrollable-view">
+                <div class="view-header">
+                    <div class="view-header-icon"><i data-lucide="trending-up"></i></div>
+                    <div><h2>Trending</h2><p>Most loved videos on VISION</p></div>
                 </div>
+                <div id="trendingList" style="display:flex;flex-direction:column;gap:8px;"></div>
             </div>
-            <div id="trendingList" class="space-y-3"></div>
-        </div>
 
-        <!-- ── SETTINGS VIEW ── -->
-        <div id="settingsView" class="app-view view-hidden-right max-w-2xl mx-auto">
-            <div class="tab-header">
-                <div class="tab-header-icon"><i data-lucide="settings" class="w-5 h-5 text-white"></i></div>
-                <div>
-                    <h2 class="text-2xl font-black tracking-tight">Settings</h2>
-                    <p class="text-sm text-gray-400">Manage your preferences</p>
+            <!-- ════════ SETTINGS VIEW ════════ -->
+            <div id="settingsView" class="app-view scrollable-view" style="max-width:560px;margin:0 auto;">
+                <div class="view-header">
+                    <div class="view-header-icon"><i data-lucide="settings"></i></div>
+                    <div><h2>Settings</h2><p>Manage your preferences</p></div>
                 </div>
-            </div>
-            <div class="space-y-4">
-                <!-- Notifications -->
-                <div class="tab-card">
-                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Notifications</div>
+                <div class="setting-card">
+                    <div class="setting-section-label">Notifications</div>
                     <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">New uploads from subscriptions</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Get notified when channels you follow post</div>
-                        </div>
-                        <div class="toggle on" id="toggle-newUploads" onclick="toggleSetting(this, 'New upload notifications enabled')"></div>
+                        <div><div class="setting-row-title">New uploads from subscriptions</div><div class="setting-row-sub">Get notified when channels you follow post</div></div>
+                        <div class="toggle on" onclick="toggleSetting(this,'New upload notifications')"></div>
                     </div>
                     <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">Comments & replies</div>
-                            <div class="text-xs text-gray-400 mt-0.5">When someone replies to your comment</div>
-                        </div>
-                        <div class="toggle on" id="toggle-comments" onclick="toggleSetting(this, 'Comment notifications enabled')"></div>
+                        <div><div class="setting-row-title">Comments & replies</div><div class="setting-row-sub">When someone replies to your comment</div></div>
+                        <div class="toggle on" onclick="toggleSetting(this,'Comment notifications')"></div>
                     </div>
                     <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">Trending alerts</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Weekly digest of trending content</div>
-                        </div>
-                        <div class="toggle" id="toggle-trending" onclick="toggleSetting(this, 'Trending alerts updated')"></div>
+                        <div><div class="setting-row-title">Trending alerts</div><div class="setting-row-sub">Weekly digest of trending content</div></div>
+                        <div class="toggle" onclick="toggleSetting(this,'Trending alerts')"></div>
                     </div>
                 </div>
-
-                <!-- Playback -->
-                <div class="tab-card">
-                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Playback</div>
+                <div class="setting-card">
+                    <div class="setting-section-label">Playback</div>
                     <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">Autoplay next video</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Automatically play the next video</div>
-                        </div>
-                        <div class="toggle on" id="toggle-autoplay" onclick="toggleSetting(this, 'Autoplay setting updated')"></div>
+                        <div><div class="setting-row-title">Autoplay</div><div class="setting-row-sub">Auto-advance to next video</div></div>
+                        <div class="toggle on" onclick="toggleSetting(this,'Autoplay')"></div>
                     </div>
                     <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">Default quality</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Auto-select best quality</div>
-                        </div>
-                        <select class="text-xs font-semibold bg-premiumGray border border-premiumBorder rounded-lg px-3 py-2 focus:outline-none">
-                            <option>Auto</option><option>1080p</option><option>720p</option><option>480p</option>
+                        <div><div class="setting-row-title">Save watch history</div><div class="setting-row-sub">Track videos you've watched</div></div>
+                        <div class="toggle on" onclick="toggleSetting(this,'Watch history')"></div>
+                    </div>
+                    <div class="setting-row">
+                        <div><div class="setting-row-title">Default quality</div><div class="setting-row-sub">Auto-select best quality</div></div>
+                        <select class="upload-input" style="width:auto;padding:6px 10px;font-size:12px;"><option>Auto</option><option>1080p</option><option>720p</option><option>480p</option></select>
+                    </div>
+                </div>
+                <div class="setting-card">
+                    <div class="setting-section-label">Account</div>
+                    <div class="setting-row">
+                        <div><div class="setting-row-title">Account status</div><div class="setting-row-sub" id="settingsAccountStatus">Not signed in</div></div>
+                        <button onclick="handleAuth()" style="font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;background:#fe2c55;color:#fff;border:none;cursor:pointer;">Sign In</button>
+                    </div>
+                    <div class="setting-row">
+                        <div><div class="setting-row-title">Data & Privacy</div><div class="setting-row-sub">Manage your data preferences</div></div>
+                        <button onclick="showToast('info','Privacy','Your data is encrypted and secure.',4000)" style="font-size:12px;font-weight:600;color:#555;background:none;border:none;cursor:pointer;">View →</button>
+                    </div>
+                </div>
+                <div class="setting-card">
+                    <div class="setting-section-label">About</div>
+                    <div class="setting-row">
+                        <div class="setting-row-title">VISION Platform</div>
+                        <span style="font-size:11px;font-weight:700;color:#555;background:#111;padding:3px 10px;border-radius:8px;">v2.4.1</span>
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-row-title">Terms of Service</div>
+                        <button style="font-size:12px;font-weight:600;color:#555;background:none;border:none;cursor:pointer;">View →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════ HELP VIEW ════════ -->
+            <div id="helpView" class="app-view scrollable-view" style="max-width:560px;margin:0 auto;">
+                <div class="view-header">
+                    <div class="view-header-icon"><i data-lucide="help-circle"></i></div>
+                    <div><h2>Help & Feedback</h2><p>Get support or share your thoughts</p></div>
+                </div>
+                <div class="setting-card" style="margin-bottom:12px;">
+                    <div class="setting-section-label">Frequently Asked Questions</div>
+                    <div id="faqList">
+                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">How do I upload a video? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform 0.2s;"></i></button><div class="faq-answer">Tap the Upload button in the sidebar or bottom nav. Fill in your title, select a category, add a description, then pick your video file. Hit "Post Video" to go live.</div></div>
+                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Can I watch without signing in? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform 0.2s;"></i></button><div class="faq-answer">Yes! You can browse and watch all public videos without an account. Signing in with Google lets you like, comment, subscribe, and upload.</div></div>
+                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">What video formats are supported? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform 0.2s;"></i></button><div class="faq-answer">We support MP4, MOV, AVI, and most common video formats up to 500MB per upload. For best quality, we recommend H.264 encoded MP4.</div></div>
+                        <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">How do subscriptions work? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform 0.2s;"></i></button><div class="faq-answer">Tap the creator avatar's + button on any video to follow. Their content will appear in your Following feed.</div></div>
+                        <div class="faq-item" style="border-bottom:none;"><button class="faq-btn" onclick="toggleFaq(this)">How do I delete my account? <i data-lucide="chevron-down" style="width:14px;height:14px;color:#555;flex-shrink:0;transition:transform 0.2s;"></i></button><div class="faq-answer">Account deletion can be requested via the feedback form below. We'll process your request within 48 hours.</div></div>
+                    </div>
+                </div>
+                <div class="setting-card">
+                    <div class="setting-section-label">Send Feedback</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <select id="feedbackType" class="upload-input" style="cursor:pointer;">
+                            <option>General Feedback</option><option>Bug Report</option><option>Feature Request</option><option>Account Issue</option>
                         </select>
-                    </div>
-                    <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">Save watch history</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Track videos you've watched</div>
-                        </div>
-                        <div class="toggle on" id="toggle-history" onclick="toggleSetting(this, 'Watch history setting updated')"></div>
-                    </div>
-                </div>
-
-                <!-- Account -->
-                <div class="tab-card">
-                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Account</div>
-                    <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">Account status</div>
-                            <div class="text-xs text-gray-400 mt-0.5" id="settingsAccountStatus">Not signed in</div>
-                        </div>
-                        <button onclick="document.getElementById('authBtn').click()" class="text-xs font-bold px-4 py-2 rounded-full bg-premiumBlack text-white hover:bg-gray-800 transition-all">
-                            Sign In
-                        </button>
-                    </div>
-                    <div class="setting-row">
-                        <div>
-                            <div class="text-sm font-bold">Data & Privacy</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Manage your data preferences</div>
-                        </div>
-                        <button onclick="showToast('info','Privacy','Your data is encrypted and secure.',4000)" class="text-xs font-semibold text-gray-400 hover:text-black transition-colors">View →</button>
-                    </div>
-                </div>
-
-                <!-- About -->
-                <div class="tab-card">
-                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">About</div>
-                    <div class="setting-row">
-                        <div class="text-sm font-bold">VISION Platform</div>
-                        <span class="text-xs font-semibold text-gray-400 bg-premiumGray px-3 py-1 rounded-full">v2.4.1</span>
-                    </div>
-                    <div class="setting-row">
-                        <div class="text-sm font-bold">Terms of Service</div>
-                        <button class="text-xs font-semibold text-gray-400 hover:text-black transition-colors">View →</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── HELP VIEW ── -->
-        <div id="helpView" class="app-view view-hidden-right max-w-2xl mx-auto">
-            <div class="tab-header">
-                <div class="tab-header-icon"><i data-lucide="help-circle" class="w-5 h-5 text-white"></i></div>
-                <div>
-                    <h2 class="text-2xl font-black tracking-tight">Help & Feedback</h2>
-                    <p class="text-sm text-gray-400">Get support or share your thoughts</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <!-- FAQ -->
-                <div class="tab-card">
-                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Frequently Asked Questions</div>
-                    <div class="space-y-1" id="faqList">
-                        <div class="faq-item border-b border-premiumBorder last:border-0">
-                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
-                                How do I upload a video?
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
-                            </button>
-                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
-                                Tap the Upload button in the navbar or sidebar. Fill in your title, select a category, add a description, then pick your video file. Hit "Deploy to Network" to publish.
-                            </div>
-                        </div>
-                        <div class="faq-item border-b border-premiumBorder last:border-0">
-                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
-                                Can I watch videos without signing in?
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
-                            </button>
-                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
-                                Yes! You can browse and watch all public videos without an account. Signing in with Google lets you like, comment, subscribe, and upload.
-                            </div>
-                        </div>
-                        <div class="faq-item border-b border-premiumBorder last:border-0">
-                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
-                                What video formats are supported?
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
-                            </button>
-                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
-                                We support MP4, MOV, AVI, and most common video formats up to 500MB per upload. For best quality, we recommend H.264 encoded MP4.
-                            </div>
-                        </div>
-                        <div class="faq-item border-b border-premiumBorder last:border-0">
-                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
-                                How do subscriptions work?
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
-                            </button>
-                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
-                                Click "Subscribe" on any video player to follow that creator. You'll be notified of new uploads and their content will appear in your feed.
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between py-3.5 text-sm font-semibold text-left gap-3">
-                                How do I delete my account?
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform flex-shrink-0"></i>
-                            </button>
-                            <div class="faq-answer hidden text-sm text-gray-500 pb-3 leading-relaxed">
-                                Account deletion can be requested via the feedback form below. We'll process your request within 48 hours and remove all associated data.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick links -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <button onclick="showToast('info','Docs','Opening documentation...', 3000)" class="tab-card text-left hover:border-gray-400 transition-colors">
-                        <div class="w-9 h-9 rounded-xl bg-premiumGray flex items-center justify-center mb-3">
-                            <i data-lucide="book-open" class="w-5 h-5 text-gray-500"></i>
-                        </div>
-                        <div class="text-sm font-bold mb-1">Documentation</div>
-                        <div class="text-xs text-gray-400">Guides and references</div>
-                    </button>
-                    <button onclick="showToast('info','Community','Opening community forum...', 3000)" class="tab-card text-left hover:border-gray-400 transition-colors">
-                        <div class="w-9 h-9 rounded-xl bg-premiumGray flex items-center justify-center mb-3">
-                            <i data-lucide="users" class="w-5 h-5 text-gray-500"></i>
-                        </div>
-                        <div class="text-sm font-bold mb-1">Community</div>
-                        <div class="text-xs text-gray-400">Forum and discussions</div>
-                    </button>
-                    <button onclick="showToast('success','Report','Thank you for your report!', 3000)" class="tab-card text-left hover:border-gray-400 transition-colors">
-                        <div class="w-9 h-9 rounded-xl bg-premiumGray flex items-center justify-center mb-3">
-                            <i data-lucide="flag" class="w-5 h-5 text-gray-500"></i>
-                        </div>
-                        <div class="text-sm font-bold mb-1">Report Issue</div>
-                        <div class="text-xs text-gray-400">Bug reports</div>
-                    </button>
-                </div>
-
-                <!-- Feedback form -->
-                <div class="tab-card">
-                    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Send Feedback</div>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-wider">Type</label>
-                            <select id="feedbackType" class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack transition-all">
-                                <option>General Feedback</option>
-                                <option>Bug Report</option>
-                                <option>Feature Request</option>
-                                <option>Account Issue</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-wider">Message</label>
-                            <textarea id="feedbackMsg" rows="4" placeholder="Tell us what's on your mind..." class="w-full bg-premiumGray border border-premiumBorder rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-premiumBlack focus:bg-white transition-all resize-none"></textarea>
-                        </div>
-                        <button onclick="submitFeedback()" class="w-full py-3 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-900 transition-all active:scale-95 flex items-center justify-center gap-2">
-                            <i data-lucide="send" class="w-4 h-4"></i>
-                            Submit Feedback
+                        <textarea id="feedbackMsg" rows="4" placeholder="Tell us what's on your mind..." class="upload-input" style="resize:none;"></textarea>
+                        <button onclick="submitFeedback()" class="upload-btn">
+                            <i data-lucide="send" style="width:15px;height:15px;"></i> Submit Feedback
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div><!-- end view-container -->
-</main>
+        </div><!-- end viewContainer -->
 
-<!-- ══════════════════════ MOBILE BOTTOM NAV ══════════════════════ -->
-<nav id="mobileNav">
-    <button class="mob-nav-btn active" id="mob-feedView" onclick="showView('feedView')">
-        <i data-lucide="home" class="w-5 h-5"></i>
-        Home
-    </button>
-    <button class="mob-nav-btn" onclick="window.openMobileSearch()">
-        <i data-lucide="search" class="w-5 h-5"></i>
-        Search
-    </button>
-    <button class="mob-nav-btn" id="mob-uploadView" onclick="showView('uploadView')">
-        <div class="w-9 h-9 bg-premiumBlack rounded-full flex items-center justify-center -mt-3">
-            <i data-lucide="plus" class="w-5 h-5 text-white"></i>
-        </div>
-    </button>
-    <button class="mob-nav-btn" id="mob-savedView" onclick="showView('savedView')">
-        <i data-lucide="bookmark" class="w-5 h-5"></i>
-        Saved
-    </button>
-    <button class="mob-nav-btn" id="mob-authBtn" onclick="document.getElementById('authBtn').click()">
-        <i data-lucide="user" class="w-5 h-5"></i>
-        Profile
-    </button>
-</nav>
+        <!-- ════════ MOBILE BOTTOM NAV ════════ -->
+        <nav id="mobileNav">
+            <button class="mob-btn active" id="mob-feedView" onclick="showView('feedView')">
+                <i data-lucide="home"></i> Home
+            </button>
+            <button class="mob-btn" onclick="window.openMobileSearch()">
+                <i data-lucide="search"></i> Search
+            </button>
+            <button class="mob-btn" id="mob-uploadView" onclick="showView('uploadView')" style="flex:0.8;">
+                <div style="position:relative;width:44px;height:28px;margin-bottom:2px;">
+                    <div style="position:absolute;inset:0;background:linear-gradient(90deg,#25f4ee,#fe2c55);border-radius:9px;"></div>
+                    <div style="position:absolute;top:2px;left:2px;right:2px;bottom:2px;background:#000;border-radius:7px;display:flex;align-items:center;justify-content:center;">
+                        <i data-lucide="plus" style="width:16px;height:16px;color:#fff;"></i>
+                    </div>
+                </div>
+            </button>
+            <button class="mob-btn" id="mob-trendingView" onclick="showView('trendingView')">
+                <i data-lucide="trending-up"></i> Trending
+            </button>
+            <button class="mob-btn" id="mob-authBtn" onclick="handleAuth()">
+                <i data-lucide="user"></i> Profile
+            </button>
+        </nav>
 
-<!-- ══════════════════════ BOTTOM SHEET ══════════════════════ -->
+    </div><!-- end mainArea -->
+</div>
+
+<!-- ════════ BOTTOM SHEET ════════ -->
 <div id="bottomSheet">
     <div id="bottomSheetOverlay" onclick="closeBottomSheet()"></div>
     <div id="bottomSheetPanel">
@@ -881,32 +961,33 @@
     </div>
 </div>
 
-<!-- ══════════════════════ SUCCESS MODAL ══════════════════════ -->
+<!-- ════════ SUCCESS MODAL ════════ -->
 <div id="successModal">
     <div class="modal-card">
         <div class="modal-check">
-            <i data-lucide="check" class="w-7 h-7 text-white"></i>
+            <i data-lucide="check" style="width:26px;height:26px;color:#fff;"></i>
         </div>
-        <h3 class="text-xl font-black tracking-tight mb-2">Video Published!</h3>
-        <p class="text-sm text-gray-500 mb-6">Your content is now live on the VISION network and visible to all viewers.</p>
-        <button onclick="closeSuccessModal()" class="w-full py-3 rounded-full bg-premiumBlack text-white font-bold text-sm hover:bg-gray-800 transition-all active:scale-95">
-            View Feed
-        </button>
+        <h3 style="font-size:20px;font-weight:900;letter-spacing:-0.03em;margin-bottom:8px;">Video Published!</h3>
+        <p style="font-size:13px;color:#666;margin-bottom:24px;">Your content is now live on VISION and visible to all viewers.</p>
+        <button onclick="closeSuccessModal()" class="upload-btn">View Feed</button>
     </div>
 </div>
 
-<!-- ══════════════════════ MOBILE SEARCH OVERLAY ══════════════════════ -->
-<div id="mobileSearchOverlay" class="fixed inset-0 z-[9999] bg-white p-5 transform translate-y-full transition-transform duration-300 ease-in-out" style="top:0">
-    <div class="flex items-center gap-3 mb-5 pt-2">
-        <button onclick="closeMobileSearch()" class="p-2">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+<!-- ════════ MOBILE SEARCH OVERLAY ════════ -->
+<div id="mobileSearchOverlay">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-top:8px;">
+        <button onclick="closeMobileSearch()" style="background:none;border:none;color:#fff;cursor:pointer;padding:6px;">
+            <i data-lucide="arrow-left" style="width:20px;height:20px;"></i>
         </button>
-        <input type="text" id="mobileSearchInput" placeholder="Search videos..." class="flex-1 bg-premiumGray rounded-full px-5 py-2.5 text-sm focus:outline-none" oninput="filterFeed(this.value)">
+        <input type="text" id="mobileSearchInput" placeholder="Search videos..." class="mobile-search-input" oninput="filterExplore(this.value)">
     </div>
-    <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Categories</div>
-    <div id="mobileSearchPills" class="flex flex-wrap gap-2"></div>
+    <div style="font-size:10px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Categories</div>
+    <div id="mobileSearchPills" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
 </div>
 
+<!-- ════════════════════════════════
+     FIREBASE + APP LOGIC
+════════════════════════════════ -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -929,8 +1010,8 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
+    // ── State ──
     let currentUser = null;
-    let currentPlayingVideoId = null;
     let activeViewId = 'feedView';
     let allVideos = [];
     let activeCategory = 'All';
@@ -939,8 +1020,10 @@
     let savedVideos = new Set();
     let watchHistory = [];
     let videoLikeCounts = {};
+    let exploreSearchQuery = '';
+    let currentSlideVideoId = null;
 
-    const ALL_VIEWS = ['feedView','uploadView','playerView','exploreView','savedView','historyView','trendingView','settingsView','helpView'];
+    const ALL_VIEWS = ['feedView','uploadView','exploreView','savedView','historyView','trendingView','settingsView','helpView'];
 
     const CATEGORIES = [
         { label: 'All', icon: 'layout-grid' },
@@ -956,712 +1039,668 @@
         { label: 'News', icon: 'newspaper' },
     ];
 
-    // ── Init icons ──
-    function refreshIcons() { if (window.lucide) window.lucide.createIcons(); }
-    setTimeout(refreshIcons, 50);
+    function ri() { if (window.lucide) window.lucide.createIcons(); }
+    setTimeout(ri, 50);
 
-    // ════════════════════════════════════
-    // TOAST NOTIFICATIONS
-    // ════════════════════════════════════
+    // ══════════════════════════════
+    // TOAST
+    // ══════════════════════════════
     let toastCounter = 0;
     window.showToast = (type = 'success', title = '', message = '', duration = 4000) => {
         const container = document.getElementById('toastContainer');
         const id = 'toast-' + (++toastCounter);
         const icons = { success: 'check-circle', info: 'info', warning: 'alert-triangle', error: 'x-circle' };
-        const iconName = icons[type] || 'check-circle';
-
         const toast = document.createElement('div');
-        toast.id = id;
-        toast.className = 'toast';
+        toast.id = id; toast.className = 'toast';
         toast.innerHTML = `
-            <div class="toast-icon ${type}">
-                <i data-lucide="${iconName}"></i>
-            </div>
+            <div class="toast-icon ${type}"><i data-lucide="${icons[type]||'check-circle'}"></i></div>
             <div class="toast-body">
                 <div class="toast-title">${title}</div>
                 ${message ? `<div class="toast-msg">${message}</div>` : ''}
             </div>
-            <div class="toast-close" onclick="dismissToast('${id}')">
-                <i data-lucide="x"></i>
-            </div>
-            <div class="toast-progress" style="animation-duration: ${duration}ms;"></div>
-        `;
-        container.appendChild(toast);
-        refreshIcons();
-
-        // Hide notification dot after first view
-        document.getElementById('notifDot')?.style && (document.getElementById('notifDot').style.display = 'none');
-
-        const timer = setTimeout(() => dismissToast(id), duration);
-        toast._timer = timer;
+            <div class="toast-close" onclick="dismissToast('${id}')"><i data-lucide="x"></i></div>
+            <div class="toast-progress" style="animation-duration:${duration}ms;"></div>`;
+        container.appendChild(toast); ri();
+        setTimeout(() => dismissToast(id), duration);
     };
-
     window.dismissToast = (id) => {
-        const toast = document.getElementById(id);
-        if (!toast) return;
-        clearTimeout(toast._timer);
-        toast.classList.add('toast-out');
-        setTimeout(() => toast.remove(), 300);
+        const t = document.getElementById(id); if (!t) return;
+        t.classList.add('toast-out');
+        setTimeout(() => t.remove(), 300);
     };
 
-    // Show notifications panel on bell click
-    window.showNotifDemo = () => {
-        showToast('info', 'Notifications', 'You have no new notifications right now.', 3500);
+    // ══════════════════════════════
+    // AUTH
+    // ══════════════════════════════
+    window.handleAuth = () => {
+        currentUser ? signOut(auth) : signInWithPopup(auth, new GoogleAuthProvider());
+    };
+    onAuthStateChanged(auth, user => {
+        currentUser = user;
+        const dt = document.getElementById('authBtnDesktopText');
+        const statusEl = document.getElementById('settingsAccountStatus');
+        if (user) {
+            if (dt) dt.textContent = user.displayName || 'Sign Out';
+            if (statusEl) statusEl.textContent = user.displayName + ' · ' + user.email;
+            set(ref(db, 'users/' + user.uid), { displayName: user.displayName, email: user.email });
+            showToast('success', 'Welcome back!', `Signed in as ${user.displayName}`, 4000);
+            listenForNewVideos();
+        } else {
+            if (dt) dt.textContent = 'Sign In';
+            if (statusEl) statusEl.textContent = 'Not signed in';
+        }
+        ri();
+    });
+
+    // ══════════════════════════════
+    // VIEW ROUTER
+    // ══════════════════════════════
+    window.showView = (viewId) => {
+        if (viewId === activeViewId) return;
+
+        // pause any playing feed video
+        document.querySelectorAll('.slide-video').forEach(v => { try { v.pause(); } catch(e){} });
+
+        ALL_VIEWS.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (id === viewId) { el.classList.add('view-active'); }
+            else { el.classList.remove('view-active'); }
+        });
+        activeViewId = viewId;
+
+        // desktop sidebar
+        document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+        const navBtn = document.getElementById('nav-' + viewId);
+        if (navBtn) navBtn.classList.add('active');
+
+        // mobile bottom nav
+        document.querySelectorAll('.mob-btn').forEach(b => b.classList.remove('active'));
+        const mobBtn = document.getElementById('mob-' + viewId);
+        if (mobBtn) mobBtn.classList.add('active');
+
+        if (viewId === 'feedView') {
+            loadFeed();
+            // show top nav
+            document.getElementById('topNav').style.display = '';
+        } else {
+            document.getElementById('topNav').style.display = 'none';
+        }
+        if (viewId === 'exploreView') renderExplore();
+        if (viewId === 'savedView') renderSaved();
+        if (viewId === 'historyView') renderHistory();
+        if (viewId === 'trendingView') renderTrending();
+
+        ri();
     };
 
-    // Real-time: listen for new videos and notify if signed in
-    function listenForNewVideos() {
-        let initialLoad = true;
-        onValue(ref(db, 'videos'), snapshot => {
-            if (initialLoad) { initialLoad = false; return; }
-            // A new video was added
-            const videos = [];
-            snapshot.forEach(c => videos.push({ id: c.key, ...c.val() }));
-            const newest = videos[videos.length - 1];
-            if (newest && newest.uploaderName) {
-                showToast('info', 'New Video', `${newest.uploaderName} just uploaded "${newest.title}"`, 5000);
-            }
-        });
-    }
+    // Feed tabs (cosmetic)
+    window.setFeedTab = (tab) => {
+        document.querySelectorAll('.top-nav-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    };
 
-    // ── Build category pills ──
-    function buildCategoryBar() {
-        const bar = document.getElementById('categoryBar');
-        const mBar = document.getElementById('mobileSearchPills');
-        if (!bar) return;
-        bar.innerHTML = '';
-        if (mBar) mBar.innerHTML = '';
-
-        CATEGORIES.forEach(cat => {
-            const pill = document.createElement('button');
-            pill.className = 'pill' + (cat.label === activeCategory ? ' active' : '');
-            pill.dataset.category = cat.label;
-            pill.innerHTML = `<i data-lucide="${cat.icon}"></i>${cat.label}`;
-            pill.onclick = () => setCategory(cat.label);
-            bar.appendChild(pill);
-
-            if (mBar) {
-                const p2 = pill.cloneNode(true);
-                p2.onclick = () => { setCategory(cat.label); closeMobileSearch(); };
-                mBar.appendChild(p2);
-            }
-        });
-        refreshIcons();
-    }
-
-    function setCategory(cat) {
-        activeCategory = cat;
-        document.querySelectorAll('.pill').forEach(p => {
-            p.classList.toggle('active', p.dataset.category === cat);
-        });
-        renderFeed(document.getElementById('searchInput')?.value || '');
-    }
-
-    // ── Render feed ──
-    function renderFeed(searchQuery = '') {
-        const grid = document.getElementById('feedGrid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        const q = searchQuery.toLowerCase().trim();
-        let filtered = allVideos.filter(v => {
-            const matchCat = activeCategory === 'All' || (v.category || 'All') === activeCategory;
-            const matchSearch = !q || v.title.toLowerCase().includes(q) || (v.uploaderName || '').toLowerCase().includes(q);
-            return matchCat && matchSearch;
-        });
-
-        if (filtered.length === 0) {
-            grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-20">
-                <div class="text-5xl mb-3">📭</div>
-                <p class="font-semibold">No videos found</p>
-                <p class="text-sm mt-1">Try a different category or search term</p>
-            </div>`;
-            return;
-        }
-
-        filtered.forEach((v, i) => {
-            grid.appendChild(makeVideoCard(v, i, () => window.playVideo(v.id, v)));
-        });
-        refreshIcons();
-    }
-
-    // ── Make video card (reusable) ──
-    function makeVideoCard(v, i, clickFn) {
-        const card = document.createElement('div');
-        card.className = 'video-card stagger-in';
-        card.style.animationDelay = `${Math.min(i, 7) * 0.06}s`;
-        card.onclick = clickFn;
-        card.innerHTML = `
-            <div class="card-thumb">
-                <img src="${v.thumbnailUrl || 'https://placehold.co/640x360/f0f0f0/999?text=Video'}" alt="${v.title}" loading="lazy" onerror="this.src='https://placehold.co/640x360/f0f0f0/999?text=Video'">
-            </div>
-            <div class="flex gap-3 px-0.5">
-                <div class="w-9 h-9 rounded-full bg-premiumBlack flex-shrink-0 flex items-center justify-center text-white text-xs font-black mt-0.5">${(v.uploaderName||'V')[0].toUpperCase()}</div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-bold text-sm tracking-tight leading-snug line-clamp-2 mb-0.5">${v.title}</h3>
-                    <p class="text-xs text-gray-400 font-medium">${v.uploaderName || 'Verified User'}</p>
-                    ${v.category && v.category !== 'All' ? `<span class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-premiumGray text-gray-500">${v.category}</span>` : ''}
-                </div>
-            </div>`;
-        return card;
-    }
-
-    // ── Skeleton loader ──
-    function showSkeletons(count = 8) {
-        const grid = document.getElementById('feedGrid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-            const sk = document.createElement('div');
-            sk.className = 'skeleton-card';
-            sk.innerHTML = `
-                <div class="skeleton-thumb shimmer"></div>
-                <div class="flex gap-3 mt-2">
-                    <div class="shimmer rounded-full flex-shrink-0" style="width:36px;height:36px;border-radius:50%"></div>
-                    <div class="flex-1 space-y-2 mt-1">
-                        <div class="shimmer skeleton-row"></div>
-                        <div class="shimmer skeleton-row w-3-4"></div>
-                        <div class="shimmer skeleton-row w-1-2"></div>
-                    </div>
-                </div>`;
-            grid.appendChild(sk);
-        }
-    }
-
-    // ── Load feed from Firebase ──
+    // ══════════════════════════════
+    // FEED — TikTok Vertical Slides
+    // ══════════════════════════════
     function loadFeed() {
-        showSkeletons(8);
         buildCategoryBar();
         const videosRef = ref(db, 'videos');
         onValue(videosRef, snapshot => {
             allVideos = [];
             if (snapshot.exists()) {
-                snapshot.forEach(child => { allVideos.push({ id: child.key, ...child.val() }); });
+                snapshot.forEach(child => allVideos.push({ id: child.key, ...child.val() }));
                 allVideos.reverse();
             }
             renderFeed();
         });
     }
 
-    window.filterFeed = (q) => renderFeed(q);
+    function renderFeed() {
+        const feed = document.getElementById('feedView');
+        feed.innerHTML = '';
 
-    // ── View router ──
-    window.showView = (viewId) => {
-        if (viewId === activeViewId) return;
-        const targetIndex = ALL_VIEWS.indexOf(viewId);
-        const currentIndex = ALL_VIEWS.indexOf(activeViewId);
-        ALL_VIEWS.forEach(id => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            if (id === viewId) {
-                el.className = 'app-view view-active';
+        let filtered = allVideos.filter(v => {
+            return activeCategory === 'All' || (v.category || 'All') === activeCategory;
+        });
+
+        if (filtered.length === 0) {
+            feed.innerHTML = `<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;">
+                <div style="font-size:48px;margin-bottom:12px;">📭</div>
+                <p style="font-weight:700;font-size:15px;">No videos yet</p>
+                <p style="font-size:12px;margin-top:4px;">Be the first to post!</p>
+            </div>`;
+            return;
+        }
+
+        filtered.forEach(v => {
+            const slide = makeSlide(v);
+            feed.appendChild(slide);
+        });
+        ri();
+
+        // Intersection Observer for autoplay
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('.slide-video');
+                if (!video) return;
+                if (entry.isIntersecting) {
+                    video.play().catch(() => {});
+                    currentSlideVideoId = entry.target.dataset.videoId;
+                    // add to watch history
+                    const vdata = allVideos.find(v => v.id === entry.target.dataset.videoId);
+                    if (vdata) addToHistory(vdata);
+                } else {
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.6 });
+
+        feed.querySelectorAll('.video-slide').forEach(s => observer.observe(s));
+    }
+
+    function makeSlide(v) {
+        const slide = document.createElement('div');
+        slide.className = 'video-slide';
+        slide.dataset.videoId = v.id;
+
+        const thumb = v.thumbnailUrl || 'https://placehold.co/400x700/111/333?text=Video';
+        const musicText = `${v.uploaderName || 'original sound'} — ${v.title}`;
+        const isLiked = likedVideos.has(v.id);
+        const isSaved = savedVideos.has(v.id);
+        const isSubscribed = subscribedChannels.has(v.uploaderId);
+        const likes = videoLikeCounts[v.id] || 0;
+
+        slide.innerHTML = `
+            <!-- blurred bg -->
+            <div class="slide-bg" style="background-image:url('${thumb}');"></div>
+
+            <!-- video -->
+            <video class="slide-video" loop playsinline preload="metadata"
+                src="${v.videoUrl || ''}"
+                poster="${thumb}"></video>
+
+            <!-- gradient -->
+            <div class="slide-gradient"></div>
+
+            <!-- pause indicator -->
+            <div class="pause-icon" id="pause-${v.id}">
+                <i data-lucide="play" style="width:60px;height:60px;color:rgba(255,255,255,0.7);fill:rgba(255,255,255,0.7);"></i>
+            </div>
+
+            <!-- bottom info -->
+            <div class="slide-info">
+                <div class="slide-username">@${(v.uploaderName || 'creator').toLowerCase().replace(/\s+/g,'_')}</div>
+                <div class="slide-title">${v.title}</div>
+                ${v.category && v.category !== 'All' ? `<div class="slide-category-tag"><i data-lucide="hash" style="width:10px;height:10px;"></i>${v.category}</div>` : ''}
+                <div class="slide-music">
+                    <i data-lucide="music" style="width:11px;height:11px;color:#25f4ee;flex-shrink:0;"></i>
+                    <div class="music-ticker">
+                        <span class="music-ticker-inner">${musicText}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${musicText}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- right actions -->
+            <div class="slide-actions">
+                <!-- Avatar -->
+                <div class="slide-avatar-wrap" onclick="handleSubscribe('${v.id}','${v.uploaderId}','${v.uploaderName||'creator'}')">
+                    <div class="slide-avatar">${(v.uploaderName || 'V')[0].toUpperCase()}</div>
+                    <div class="slide-follow-dot" id="follow-dot-${v.id}" style="${isSubscribed ? 'background:#aaa;' : ''}">
+                        <i data-lucide="${isSubscribed ? 'check' : 'plus'}" style="width:10px;height:10px;color:#fff;"></i>
+                    </div>
+                </div>
+
+                <!-- Like -->
+                <button class="slide-action-btn ${isLiked ? 'liked' : ''}" id="like-btn-${v.id}" onclick="handleLike('${v.id}', '${v.uploaderId}')">
+                    <div class="slide-action-icon">
+                        <i data-lucide="heart" style="width:22px;height:22px;"></i>
+                    </div>
+                    <span class="slide-action-count" id="like-count-${v.id}">${formatCount(likes)}</span>
+                </button>
+
+                <!-- Comment -->
+                <button class="slide-action-btn" onclick="openComments('${v.id}','${v.title}')">
+                    <div class="slide-action-icon">
+                        <i data-lucide="message-circle" style="width:22px;height:22px;"></i>
+                    </div>
+                    <span class="slide-action-count" id="comment-count-${v.id}">0</span>
+                </button>
+
+                <!-- Save -->
+                <button class="slide-action-btn ${isSaved ? 'liked' : ''}" id="save-btn-${v.id}" onclick="handleSave('${v.id}')">
+                    <div class="slide-action-icon">
+                        <i data-lucide="bookmark" style="width:22px;height:22px;"></i>
+                    </div>
+                    <span class="slide-action-count">${isSaved ? 'Saved' : 'Save'}</span>
+                </button>
+
+                <!-- Share -->
+                <button class="slide-action-btn" onclick="openBottomSheet('share')">
+                    <div class="slide-action-icon">
+                        <i data-lucide="share-2" style="width:20px;height:20px;"></i>
+                    </div>
+                    <span class="slide-action-count">Share</span>
+                </button>
+
+                <!-- More -->
+                <button class="slide-action-btn" onclick="openBottomSheet('videoActions')">
+                    <div class="slide-action-icon">
+                        <i data-lucide="more-vertical" style="width:20px;height:20px;"></i>
+                    </div>
+                </button>
+            </div>`;
+
+        // Click to pause/play
+        slide.addEventListener('click', (e) => {
+            if (e.target.closest('.slide-actions') || e.target.closest('.slide-info button')) return;
+            const vid = slide.querySelector('.slide-video');
+            const icon = document.getElementById('pause-' + v.id);
+            if (vid.paused) {
+                vid.play().catch(()=>{});
+                if (icon) icon.classList.remove('visible');
             } else {
-                el.className = 'app-view ' + (ALL_VIEWS.indexOf(id) < targetIndex ? 'view-hidden-left' : 'view-hidden-right');
+                vid.pause();
+                if (icon) { icon.classList.add('visible'); setTimeout(() => icon.classList.remove('visible'), 800); }
             }
         });
-        activeViewId = viewId;
 
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        const navBtn = document.getElementById('nav-' + viewId);
-        if (navBtn) navBtn.classList.add('active');
-
-        document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
-        const mobBtn = document.getElementById('mob-' + viewId);
-        if (mobBtn) mobBtn.classList.add('active');
-
-        if (viewId === 'feedView') loadFeed();
-        if (viewId === 'exploreView') renderExplore();
-        if (viewId === 'savedView') renderSaved();
-        if (viewId === 'historyView') renderHistory();
-        if (viewId === 'trendingView') renderTrending();
-        if (viewId === 'settingsView') renderSettings();
-
-        if (viewId !== 'playerView') {
-            const p = document.getElementById('mainPlayer');
-            if (p) { p.pause(); p.src = ''; }
-        }
-        if (window.innerWidth < 1024) {
-            document.getElementById('sidebar').classList.add('-translate-x-full');
-        }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(refreshIcons, 100);
-    };
-
-    window.toggleSidebar = () => {
-        document.getElementById('sidebar').classList.toggle('-translate-x-full');
-    };
-
-    // ════════════════════════════════════
-    // EXPLORE VIEW
-    // ════════════════════════════════════
-    function renderExplore() {
-        // Category grid
-        const cgrid = document.getElementById('exploreCategoryGrid');
-        if (cgrid) {
-            cgrid.innerHTML = '';
-            CATEGORIES.filter(c => c.label !== 'All').forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'tab-card text-center flex flex-col items-center gap-2 py-4 cursor-pointer hover:bg-premiumGray transition-colors';
-                btn.innerHTML = `<i data-lucide="${cat.icon}" class="w-6 h-6 text-gray-500"></i><span class="text-xs font-bold text-gray-700">${cat.label}</span>`;
-                btn.onclick = () => {
-                    showView('feedView');
-                    setTimeout(() => setCategory(cat.label), 100);
-                };
-                cgrid.appendChild(btn);
-            });
-        }
-        // All videos grid
-        const egrid = document.getElementById('exploreGrid');
-        if (egrid) {
-            egrid.innerHTML = '';
-            if (allVideos.length === 0) {
-                egrid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12"><div class="text-4xl mb-2">🎬</div><p class="font-semibold">No videos yet</p></div>`;
-            } else {
-                allVideos.forEach((v, i) => egrid.appendChild(makeVideoCard(v, i, () => window.playVideo(v.id, v))));
+        // Double-tap to like
+        let lastTap = 0;
+        slide.addEventListener('touchend', (e) => {
+            if (e.target.closest('.slide-actions')) return;
+            const now = Date.now();
+            if (now - lastTap < 300) {
+                handleLike(v.id, v.uploaderId);
+                spawnHeart(e, slide);
             }
-        }
-        refreshIcons();
+            lastTap = now;
+        });
+
+        // Listen to likes
+        onValue(ref(db, `likes/${v.id}`), snapshot => {
+            const count = snapshot.exists() ? snapshot.size : 0;
+            videoLikeCounts[v.id] = count;
+            const countEl = document.getElementById('like-count-' + v.id);
+            if (countEl) countEl.textContent = formatCount(count);
+            const btn = document.getElementById('like-btn-' + v.id);
+            if (btn && currentUser && snapshot.exists() && snapshot.hasChild(currentUser.uid)) {
+                btn.classList.add('liked'); likedVideos.add(v.id);
+            }
+        });
+
+        // Listen to comments count
+        onValue(ref(db, `comments/${v.id}`), snapshot => {
+            const el = document.getElementById('comment-count-' + v.id);
+            if (el) el.textContent = snapshot.exists() ? snapshot.size : 0;
+        });
+
+        return slide;
     }
 
-    // ════════════════════════════════════
-    // SAVED VIEW
-    // ════════════════════════════════════
-    function renderSaved() {
-        const grid = document.getElementById('savedGrid');
+    function spawnHeart(e, parent) {
+        const heart = document.createElement('div');
+        heart.className = 'float-heart';
+        const rect = parent.getBoundingClientRect();
+        const x = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX) - rect.left - 35;
+        const y = (e.changedTouches ? e.changedTouches[0].clientY : e.clientY) - rect.top - 35;
+        heart.style.left = x + 'px'; heart.style.top = y + 'px';
+        heart.innerHTML = `<i data-lucide="heart" style="width:70px;height:70px;color:#fe2c55;fill:#fe2c55;"></i>`;
+        parent.appendChild(heart); ri();
+        setTimeout(() => heart.remove(), 950);
+    }
+
+    function formatCount(n) {
+        if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+        if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+        return n.toString();
+    }
+
+    // ── Category bar ──
+    function buildCategoryBar() {
+        ['categoryBar', 'mobileSearchPills'].forEach(barId => {
+            const bar = document.getElementById(barId);
+            if (!bar) return;
+            bar.innerHTML = '';
+            CATEGORIES.forEach(cat => {
+                const pill = document.createElement('button');
+                pill.className = 'pill' + (cat.label === activeCategory ? ' active' : '');
+                pill.dataset.category = cat.label;
+                pill.innerHTML = `<i data-lucide="${cat.icon}" style="width:12px;height:12px;"></i>${cat.label}`;
+                pill.onclick = () => {
+                    activeCategory = cat.label;
+                    document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.category === cat.label));
+                    if (activeViewId === 'feedView') renderFeed();
+                    else if (activeViewId === 'exploreView') renderExplore();
+                };
+                bar.appendChild(pill);
+            });
+        });
+        ri();
+    }
+
+    // ══════════════════════════════
+    // LIKE
+    // ══════════════════════════════
+    window.handleLike = (videoId, uploaderId) => {
+        if (!currentUser) { showToast('warning', 'Sign In Required', 'Sign in to like videos.', 3500); return; }
+        const likeRef = ref(db, `likes/${videoId}/${currentUser.uid}`);
+        const btn = document.getElementById('like-btn-' + videoId);
+        if (likedVideos.has(videoId)) {
+            likedVideos.delete(videoId);
+            set(likeRef, null);
+            if (btn) btn.classList.remove('liked');
+        } else {
+            likedVideos.add(videoId);
+            set(likeRef, true);
+            if (btn) { btn.classList.add('liked'); btn.classList.add('like-pop'); setTimeout(() => btn.classList.remove('like-pop'), 500); }
+            showToast('success', '❤️ Liked!', '', 1500);
+        }
+    };
+
+    // ══════════════════════════════
+    // SAVE
+    // ══════════════════════════════
+    window.handleSave = (videoId) => {
+        const btn = document.getElementById('save-btn-' + videoId);
+        const countEl = btn?.querySelector('.slide-action-count');
+        if (savedVideos.has(videoId)) {
+            savedVideos.delete(videoId);
+            if (btn) btn.classList.remove('liked');
+            if (countEl) countEl.textContent = 'Save';
+            showToast('info', 'Removed', 'Video removed from saved', 2500);
+        } else {
+            savedVideos.add(videoId);
+            if (btn) btn.classList.add('liked');
+            if (countEl) countEl.textContent = 'Saved';
+            showToast('success', '🔖 Saved!', 'Video added to your saved list', 2500);
+        }
+    };
+
+    // ══════════════════════════════
+    // SUBSCRIBE
+    // ══════════════════════════════
+    window.handleSubscribe = (videoId, uploaderId, uploaderName) => {
+        if (!currentUser) { showToast('warning', 'Sign In Required', 'Sign in to follow creators.', 3500); return; }
+        const dot = document.getElementById('follow-dot-' + videoId);
+        if (subscribedChannels.has(uploaderId)) {
+            subscribedChannels.delete(uploaderId);
+            if (dot) { dot.style.background = '#fe2c55'; dot.innerHTML = '<i data-lucide="plus" style="width:10px;height:10px;color:#fff;"></i>'; }
+            showToast('info', 'Unfollowed', `You unfollowed ${uploaderName}`, 3000);
+        } else {
+            subscribedChannels.add(uploaderId);
+            if (dot) { dot.style.background = '#aaa'; dot.innerHTML = '<i data-lucide="check" style="width:10px;height:10px;color:#fff;"></i>'; }
+            showToast('success', '✅ Following!', `You're now following ${uploaderName}`, 3000);
+        }
+        ri();
+    };
+
+    // ══════════════════════════════
+    // COMMENTS
+    // ══════════════════════════════
+    window.openComments = (videoId, title) => {
+        const content = document.getElementById('bottomSheetContent');
+        content.innerHTML = `
+            <div style="font-size:13px;font-weight:800;color:#aaa;margin-bottom:12px;">${title}</div>
+            <div id="commentsListSheet" style="max-height:45vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+            <form id="commentFormSheet" style="display:flex;gap:8px;padding-top:10px;border-top:1px solid #2a2a2a;">
+                <input type="text" id="commentInputSheet" placeholder="Add a comment..." style="flex:1;background:#111;border:1px solid #2a2a2a;border-radius:22px;padding:8px 14px;font-size:13px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;" required>
+                <button type="submit" style="width:36px;height:36px;border-radius:50%;background:#fe2c55;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+                    <i data-lucide="send" style="width:15px;height:15px;color:#fff;"></i>
+                </button>
+            </form>`;
+        document.getElementById('bottomSheet').classList.add('open');
+        ri();
+
+        // Load comments
+        onValue(ref(db, `comments/${videoId}`), snapshot => {
+            const list = document.getElementById('commentsListSheet');
+            if (!list) return;
+            list.innerHTML = '';
+            if (snapshot.exists()) {
+                snapshot.forEach(child => {
+                    const c = child.val();
+                    const el = document.createElement('div');
+                    el.style.cssText = 'display:flex;gap:8px;padding:8px;border-radius:10px;background:#111;';
+                    el.innerHTML = `<div style="width:28px;height:28px;border-radius:50%;background:#fe2c55;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">${(c.userName||'U')[0]}</div>
+                        <div><div style="font-size:12px;font-weight:700;color:#ccc;margin-bottom:2px;">${c.userName||'User'}</div><div style="font-size:12px;color:#888;">${c.text}</div></div>`;
+                    list.appendChild(el);
+                });
+                list.scrollTop = list.scrollHeight;
+            } else {
+                list.innerHTML = '<p style="text-align:center;font-size:12px;color:#444;padding:20px;">No comments yet. Be the first!</p>';
+            }
+        });
+
+        document.getElementById('commentFormSheet').addEventListener('submit', async e => {
+            e.preventDefault();
+            if (!currentUser) { showToast('warning','Sign In Required','Sign in to comment.',3000); return; }
+            const input = document.getElementById('commentInputSheet');
+            const text = input.value.trim(); if (!text) return;
+            input.value = '';
+            const newRef = push(ref(db, `comments/${videoId}`));
+            await set(newRef, { text, userId: currentUser.uid, userName: currentUser.displayName, timestamp: serverTimestamp() });
+            showToast('success', 'Comment posted!', '', 2000);
+        });
+    };
+
+    // ══════════════════════════════
+    // WATCH HISTORY
+    // ══════════════════════════════
+    function addToHistory(vdata) {
+        watchHistory = watchHistory.filter(v => v.id !== vdata.id);
+        watchHistory.push({ ...vdata });
+        if (watchHistory.length > 50) watchHistory.shift();
+    }
+
+    // ══════════════════════════════
+    // EXPLORE VIEW
+    // ══════════════════════════════
+    window.filterExplore = (q) => {
+        exploreSearchQuery = q.toLowerCase();
+        renderExplore();
+        // sync mobile pills
+        if (document.getElementById('mobileSearchPills')) buildCategoryBar();
+    };
+
+    function renderExplore() {
+        buildCategoryBar();
+        const grid = document.getElementById('exploreGrid');
         if (!grid) return;
         grid.innerHTML = '';
-        const saved = allVideos.filter(v => savedVideos.has(v.id));
-        if (saved.length === 0) {
-            grid.innerHTML = `<div class="col-span-full empty-state">
-                <div class="empty-state-icon"><i data-lucide="bookmark" class="w-8 h-8 text-gray-400"></i></div>
-                <div class="text-base font-black">No saved videos</div>
-                <p class="text-sm text-gray-400">Bookmark videos while watching to find them here</p>
-            </div>`;
-        } else {
-            saved.forEach((v, i) => grid.appendChild(makeVideoCard(v, i, () => window.playVideo(v.id, v))));
+
+        let filtered = allVideos.filter(v => {
+            const matchCat = activeCategory === 'All' || (v.category || 'All') === activeCategory;
+            const matchQ = !exploreSearchQuery || v.title.toLowerCase().includes(exploreSearchQuery) || (v.uploaderName||'').toLowerCase().includes(exploreSearchQuery);
+            return matchCat && matchQ;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:#555;"><div style="font-size:40px;margin-bottom:10px;">📭</div><p style="font-weight:700;">No videos found</p></div>`;
+            return;
         }
-        refreshIcons();
+
+        filtered.forEach((v, i) => {
+            const card = document.createElement('div');
+            card.className = 'grid-card stagger-in';
+            card.style.animationDelay = (Math.min(i,5)*0.06)+'s';
+            card.onclick = () => jumpToSlide(v.id);
+            card.innerHTML = `
+                <img class="grid-card-thumb" src="${v.thumbnailUrl||'https://placehold.co/300x533/111/333?text=Video'}" alt="${v.title}" loading="lazy" onerror="this.src='https://placehold.co/300x533/111/333?text=Video'">
+                <div class="grid-card-info">
+                    <div class="grid-card-title">${v.title}</div>
+                    <div class="grid-card-meta"><i data-lucide="user" style="width:10px;height:10px;color:#555;"></i>${v.uploaderName||'Creator'}</div>
+                </div>`;
+            grid.appendChild(card);
+        });
+        ri();
     }
 
-    // ════════════════════════════════════
+    function jumpToSlide(videoId) {
+        showView('feedView');
+        setTimeout(() => {
+            const slide = document.querySelector(`.video-slide[data-video-id="${videoId}"]`);
+            if (slide) slide.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+    }
+
+    // ══════════════════════════════
+    // SAVED VIEW
+    // ══════════════════════════════
+    function renderSaved() {
+        const grid = document.getElementById('savedGrid');
+        if (!grid) return; grid.innerHTML = '';
+        const saved = allVideos.filter(v => savedVideos.has(v.id));
+        if (saved.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;" class="empty-state"><div class="empty-icon"><i data-lucide="bookmark" style="width:28px;height:28px;color:#444;"></i></div><div style="font-size:14px;font-weight:800;color:#ccc;">No saved videos</div><p style="font-size:12px;color:#555;">Save videos while watching to find them here</p></div>`;
+            ri(); return;
+        }
+        saved.forEach((v, i) => {
+            const card = document.createElement('div');
+            card.className = 'grid-card stagger-in';
+            card.style.animationDelay = (i*0.06)+'s';
+            card.onclick = () => jumpToSlide(v.id);
+            card.innerHTML = `<img class="grid-card-thumb" src="${v.thumbnailUrl||'https://placehold.co/300x533/111/333?text=Video'}" alt="${v.title}" loading="lazy"><div class="grid-card-info"><div class="grid-card-title">${v.title}</div><div class="grid-card-meta"><i data-lucide="user" style="width:10px;height:10px;color:#555;"></i>${v.uploaderName||'Creator'}</div></div>`;
+            grid.appendChild(card);
+        });
+        ri();
+    }
+
+    // ══════════════════════════════
     // HISTORY VIEW
-    // ════════════════════════════════════
+    // ══════════════════════════════
     function renderHistory() {
         const list = document.getElementById('historyList');
         const countEl = document.getElementById('historyCount');
-        if (!list) return;
-        list.innerHTML = '';
+        if (!list) return; list.innerHTML = '';
         if (watchHistory.length === 0) {
             countEl.textContent = '';
-            list.innerHTML = `<div class="empty-state">
-                <div class="empty-state-icon"><i data-lucide="history" class="w-8 h-8 text-gray-400"></i></div>
-                <div class="text-base font-black">No watch history</div>
-                <p class="text-sm text-gray-400">Videos you watch will appear here</p>
-            </div>`;
-        } else {
-            countEl.textContent = `${watchHistory.length} video${watchHistory.length !== 1 ? 's' : ''} watched`;
-            watchHistory.slice().reverse().forEach((v, i) => {
-                const row = document.createElement('div');
-                row.className = 'tab-card flex items-center gap-4 cursor-pointer stagger-in';
-                row.style.animationDelay = `${i * 0.05}s`;
-                row.onclick = () => window.playVideo(v.id, v);
-                row.innerHTML = `
-                    <div class="w-28 sm:w-36 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-premiumGray border border-premiumBorder">
-                        <img src="${v.thumbnailUrl || 'https://placehold.co/320x180/f0f0f0/999?text=Video'}" alt="${v.title}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-sm leading-snug line-clamp-2 mb-1">${v.title}</h3>
-                        <p class="text-xs text-gray-400">${v.uploaderName || 'Verified User'}</p>
-                        ${v.category && v.category !== 'All' ? `<span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-premiumGray text-gray-500">${v.category}</span>` : ''}
-                    </div>
-                    <button onclick="event.stopPropagation(); removeFromHistory('${v.id}')" class="p-2 rounded-full hover:bg-premiumGray text-gray-400 hover:text-red-500 transition-colors flex-shrink-0">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>`;
-                list.appendChild(row);
-            });
+            list.innerHTML = `<div class="empty-state"><div class="empty-icon"><i data-lucide="history" style="width:28px;height:28px;color:#444;"></i></div><div style="font-size:14px;font-weight:800;color:#ccc;">No watch history</div><p style="font-size:12px;color:#555;">Videos you watch will appear here</p></div>`; ri(); return;
         }
-        refreshIcons();
+        countEl.textContent = `${watchHistory.length} video${watchHistory.length!==1?'s':''} watched`;
+        watchHistory.slice().reverse().forEach((v, i) => {
+            const row = document.createElement('div');
+            row.className = 'hcard stagger-in'; row.style.animationDelay = (i*0.05)+'s';
+            row.onclick = () => jumpToSlide(v.id);
+            row.innerHTML = `
+                <img class="hcard-thumb" src="${v.thumbnailUrl||'https://placehold.co/80x142/111/333?text=Video'}" alt="${v.title}" loading="lazy">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:700;color:#ddd;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:3px;">${v.title}</div>
+                    <div style="font-size:11px;color:#555;">${v.uploaderName||'Creator'}</div>
+                    ${v.category&&v.category!=='All'?`<span style="display:inline-block;margin-top:4px;font-size:10px;font-weight:700;color:#fe2c55;">${v.category}</span>`:''}
+                </div>
+                <button onclick="event.stopPropagation();removeFromHistory('${v.id}')" style="width:30px;height:30px;border-radius:50%;background:#222;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+                    <i data-lucide="x" style="width:13px;height:13px;color:#666;"></i>
+                </button>`;
+            list.appendChild(row);
+        });
+        ri();
     }
+    window.removeFromHistory = (id) => { watchHistory = watchHistory.filter(v => v.id !== id); renderHistory(); showToast('success','Removed','Video removed from history',2500); };
+    window.clearHistory = () => { if (!watchHistory.length) return; watchHistory = []; renderHistory(); showToast('success','Cleared','Watch history cleared',2500); };
 
-    window.removeFromHistory = (id) => {
-        watchHistory = watchHistory.filter(v => v.id !== id);
-        renderHistory();
-        showToast('success', 'Removed', 'Video removed from history', 2500);
-    };
-
-    window.clearHistory = () => {
-        if (watchHistory.length === 0) return;
-        watchHistory = [];
-        renderHistory();
-        showToast('success', 'Cleared', 'Watch history cleared', 2500);
-    };
-
-    // ════════════════════════════════════
+    // ══════════════════════════════
     // TRENDING VIEW
-    // ════════════════════════════════════
+    // ══════════════════════════════
     function renderTrending() {
         const list = document.getElementById('trendingList');
-        if (!list) return;
-        list.innerHTML = '';
-
-        // Sort by like count
-        const sorted = [...allVideos].sort((a, b) => (videoLikeCounts[b.id] || 0) - (videoLikeCounts[a.id] || 0));
-
+        if (!list) return; list.innerHTML = '';
+        const sorted = [...allVideos].sort((a,b) => (videoLikeCounts[b.id]||0)-(videoLikeCounts[a.id]||0));
         if (sorted.length === 0) {
-            list.innerHTML = `<div class="empty-state">
-                <div class="empty-state-icon"><i data-lucide="trending-up" class="w-8 h-8 text-gray-400"></i></div>
-                <div class="text-base font-black">No trending videos yet</div>
-                <p class="text-sm text-gray-400">Come back later as more content is published</p>
-            </div>`;
-            refreshIcons(); return;
+            list.innerHTML = `<div class="empty-state"><div class="empty-icon"><i data-lucide="trending-up" style="width:28px;height:28px;color:#444;"></i></div><div style="font-size:14px;font-weight:800;color:#ccc;">No trending videos yet</div></div>`; ri(); return;
         }
-
         sorted.forEach((v, i) => {
             const row = document.createElement('div');
-            row.className = 'tab-card flex items-center gap-4 cursor-pointer stagger-in';
-            row.style.animationDelay = `${i * 0.05}s`;
-            row.onclick = () => window.playVideo(v.id, v);
-            const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-n';
-            const likes = videoLikeCounts[v.id] || 0;
+            row.className = 'hcard stagger-in'; row.style.animationDelay = (i*0.05)+'s';
+            row.onclick = () => jumpToSlide(v.id);
+            const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
+            const likes = videoLikeCounts[v.id]||0;
             row.innerHTML = `
-                <div class="rank-badge ${rankClass}">${i + 1}</div>
-                <div class="w-28 sm:w-36 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-premiumGray border border-premiumBorder">
-                    <img src="${v.thumbnailUrl || 'https://placehold.co/320x180/f0f0f0/999?text=Video'}" alt="${v.title}" class="w-full h-full object-cover">
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-bold text-sm leading-snug line-clamp-2 mb-1">${v.title}</h3>
-                    <p class="text-xs text-gray-400 mb-1">${v.uploaderName || 'Verified User'}</p>
-                    <div class="flex items-center gap-1 text-xs font-semibold text-gray-500">
-                        <i data-lucide="thumbs-up" class="w-3 h-3"></i> ${likes} like${likes !== 1 ? 's' : ''}
+                <div class="rank-badge ${rankClass}">${i+1}</div>
+                <img class="hcard-thumb" src="${v.thumbnailUrl||'https://placehold.co/80x142/111/333?text=Video'}" alt="${v.title}" loading="lazy">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:700;color:#ddd;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px;">${v.title}</div>
+                    <div style="font-size:11px;color:#555;margin-bottom:4px;">${v.uploaderName||'Creator'}</div>
+                    <div style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#fe2c55;">
+                        <i data-lucide="heart" style="width:11px;height:11px;fill:#fe2c55;"></i> ${formatCount(likes)}
                     </div>
                 </div>`;
             list.appendChild(row);
         });
-        refreshIcons();
+        ri();
     }
 
-    // ════════════════════════════════════
-    // SETTINGS VIEW
-    // ════════════════════════════════════
-    function renderSettings() {
-        const statusEl = document.getElementById('settingsAccountStatus');
-        if (statusEl && currentUser) {
-            statusEl.textContent = currentUser.displayName + ' · ' + currentUser.email;
-        }
+    // ══════════════════════════════
+    // NEW VIDEO NOTIFICATIONS
+    // ══════════════════════════════
+    function listenForNewVideos() {
+        let initialLoad = true;
+        onValue(ref(db, 'videos'), snapshot => {
+            if (initialLoad) { initialLoad = false; return; }
+            const videos = [];
+            snapshot.forEach(c => videos.push({ id: c.key, ...c.val() }));
+            const newest = videos[videos.length - 1];
+            if (newest?.uploaderName) showToast('info','New Video',`${newest.uploaderName} just uploaded "${newest.title}"`,5000);
+        });
     }
 
+    // ══════════════════════════════
+    // SETTINGS
+    // ══════════════════════════════
     window.toggleSetting = (el, label) => {
         el.classList.toggle('on');
         const state = el.classList.contains('on') ? 'enabled' : 'disabled';
-        showToast('success', 'Settings', `${label} ${state}`, 2500);
+        showToast('success','Settings',`${label} ${state}`,2500);
     };
 
-    // ════════════════════════════════════
-    // HELP VIEW
-    // ════════════════════════════════════
+    // ══════════════════════════════
+    // HELP
+    // ══════════════════════════════
     window.toggleFaq = (btn) => {
         const answer = btn.nextElementSibling;
         const icon = btn.querySelector('[data-lucide="chevron-down"]');
-        const isOpen = !answer.classList.contains('hidden');
-        answer.classList.toggle('hidden', isOpen);
+        const isOpen = answer.classList.contains('open');
+        answer.classList.toggle('open', !isOpen);
         if (icon) icon.style.transform = isOpen ? '' : 'rotate(180deg)';
     };
-
     window.submitFeedback = () => {
         const msg = document.getElementById('feedbackMsg')?.value?.trim();
-        if (!msg) { showToast('warning', 'Empty', 'Please write a message first.', 3000); return; }
+        if (!msg) { showToast('warning','Empty','Please write a message first.',3000); return; }
         document.getElementById('feedbackMsg').value = '';
-        showToast('success', 'Feedback Sent!', 'Thank you! We\'ll review your message.', 4000);
+        showToast('success','Feedback Sent!','Thank you! We\'ll review your message.',4000);
     };
 
-    // ── Auth ──
-    const authBtn = document.getElementById('authBtn');
-    authBtn.addEventListener('click', () => {
-        currentUser ? signOut(auth) : signInWithPopup(auth, new GoogleAuthProvider());
-    });
-    onAuthStateChanged(auth, user => {
-        currentUser = user;
-        const btnText = document.getElementById('authBtnText');
-        if (user) {
-            btnText.textContent = 'Sign Out';
-            set(ref(db, 'users/' + user.uid), { displayName: user.displayName, email: user.email, photoURL: user.photoURL });
-            document.getElementById('sidebarSubs').innerHTML = `<div class="text-sm font-semibold text-premiumBlack flex items-center gap-2"><span class="w-7 h-7 rounded-full bg-premiumBlack text-white flex items-center justify-center text-xs font-black">${user.displayName[0]}</span>${user.displayName}</div>`;
-            showToast('success', 'Welcome back!', `Signed in as ${user.displayName}`, 4000);
-            listenForNewVideos();
-        } else {
-            btnText.textContent = 'Sign In';
-            document.getElementById('sidebarSubs').textContent = 'Sign in to view subscriptions';
-        }
-        setTimeout(refreshIcons, 50);
-    });
-
-    // ── File picker ──
-    document.getElementById('videoFile').addEventListener('change', e => {
-        if (e.target.files.length > 0) {
-            document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
-        }
-    });
-
-    // ── Upload with progress ──
-    document.getElementById('uploadForm').addEventListener('submit', async e => {
-        e.preventDefault();
-        if (!currentUser) { showToast('warning', 'Sign In Required', 'Please sign in to upload.', 4000); return; }
-
-        const file = document.getElementById('videoFile').files[0];
-        const title = document.getElementById('videoTitle').value;
-        const desc = document.getElementById('videoDesc').value;
-        const category = document.getElementById('videoCategory').value;
-
-        const submitBtn = document.getElementById('uploadBtn');
-        const progressWrap = document.getElementById('uploadProgressWrap');
-        const progressBar = document.getElementById('uploadProgressBar');
-        const pct = document.getElementById('uploadPct');
-
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i> Uploading...';
-        progressWrap.style.display = 'block';
-        progressBar.style.width = '0%';
-        pct.textContent = '0%';
-        refreshIcons();
-
-        showToast('info', 'Upload Started', `Uploading "${title}"...`, 5000);
-
-        try {
-            const cloudData = await new Promise((resolve, reject) => {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', CLOUDINARY_PRESET);
-                formData.append('resource_type', 'video');
-
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
-                xhr.upload.addEventListener('progress', ev => {
-                    if (ev.lengthComputable) {
-                        const p = Math.round((ev.loaded / ev.total) * 100);
-                        progressBar.style.width = p + '%';
-                        pct.textContent = p + '%';
-                    }
-                });
-                xhr.onload = () => {
-                    if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
-                    else reject(new Error('Upload failed'));
-                };
-                xhr.onerror = () => reject(new Error('Network error'));
-                xhr.send(formData);
-            });
-
-            if (cloudData.secure_url) {
-                const thumbUrl = cloudData.secure_url.replace(/\.[^/.]+$/, '.jpg');
-                const newRef = push(ref(db, 'videos'));
-                await set(newRef, {
-                    title, description: desc, category,
-                    videoUrl: cloudData.secure_url,
-                    thumbnailUrl: thumbUrl,
-                    uploaderId: currentUser.uid,
-                    uploaderName: currentUser.displayName,
-                    timestamp: serverTimestamp()
-                });
-
-                document.getElementById('uploadForm').reset();
-                document.getElementById('fileNameDisplay').textContent = 'Drop your video here or click to browse';
-                progressWrap.style.display = 'none';
-                progressBar.style.width = '0%';
-                pct.textContent = '0%';
-                openSuccessModal();
-                showToast('success', 'Published!', `"${title}" is now live on VISION`, 5000);
-            }
-        } catch (err) {
-            console.error(err);
-            showToast('error', 'Upload Failed', err.message, 5000);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i data-lucide="rocket" class="w-4 h-4"></i> Deploy to Network';
-            refreshIcons();
-        }
-    });
-
-    // ── Play video ──
-    window.playVideo = (videoId, data) => {
-        currentPlayingVideoId = videoId;
-        const player = document.getElementById('mainPlayer');
-        player.src = data.videoUrl;
-        player.load();
-        player.play().catch(() => {});
-
-        document.getElementById('playerTitle').textContent = data.title;
-        document.getElementById('playerUploader').textContent = data.uploaderName || 'Verified User';
-        document.getElementById('playerDesc').textContent = data.description || 'No description provided.';
-
-        const subBtn = document.getElementById('subscribeBtn');
-        subBtn.textContent = subscribedChannels.has(data.uploaderId) ? 'Subscribed' : 'Subscribe';
-        subBtn.className = subscribedChannels.has(data.uploaderId)
-            ? 'ml-1 px-4 py-1.5 rounded-full bg-premiumGray text-gray-600 text-xs font-bold border border-premiumBorder transition-all active:scale-95 subscribed'
-            : 'ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95';
-
-        // Track watch history
-        watchHistory = watchHistory.filter(v => v.id !== videoId);
-        watchHistory.push({ id: videoId, ...data });
-        if (watchHistory.length > 50) watchHistory.shift();
-
-        window.showView('playerView');
-        listenToComments(videoId);
-        listenToLikes(videoId);
-        setTimeout(refreshIcons, 100);
-    };
-
-    // ── Subscribe ──
-    window.toggleSubscribe = () => {
-        if (!currentUser) { showToast('warning', 'Sign In Required', 'Please sign in to subscribe.', 3500); return; }
-        const subBtn = document.getElementById('subscribeBtn');
-        const video = allVideos.find(v => v.id === currentPlayingVideoId);
-        if (!video) return;
-        if (subscribedChannels.has(video.uploaderId)) {
-            subscribedChannels.delete(video.uploaderId);
-            subBtn.textContent = 'Subscribe';
-            subBtn.className = 'ml-1 px-4 py-1.5 rounded-full bg-premiumBlack text-white text-xs font-bold hover:bg-gray-800 transition-all active:scale-95';
-            showToast('info', 'Unsubscribed', `You unsubscribed from ${video.uploaderName}`, 3000);
-        } else {
-            subscribedChannels.add(video.uploaderId);
-            subBtn.textContent = 'Subscribed';
-            subBtn.className = 'ml-1 px-4 py-1.5 rounded-full bg-premiumGray text-gray-600 text-xs font-bold border border-premiumBorder transition-all active:scale-95 subscribed';
-            showToast('success', 'Subscribed!', `You're now following ${video.uploaderName}`, 3000);
-        }
-    };
-
-    // ── Share ──
-    window.handleShare = () => {
-        if (navigator.share) {
-            navigator.share({ title: document.getElementById('playerTitle').textContent, url: window.location.href });
-        } else {
-            openBottomSheet('share');
-        }
-    };
-
-    // ── Save ──
-    window.handleSave = (e) => {
-        const videoId = currentPlayingVideoId;
-        if (!videoId) return;
-        if (savedVideos.has(videoId)) {
-            savedVideos.delete(videoId);
-            showToast('info', 'Removed', 'Video removed from saved', 2500);
-        } else {
-            savedVideos.add(videoId);
-            showToast('success', 'Saved!', 'Video added to your saved list', 2500);
-        }
-    };
-
-    // ── Comments ──
-    document.getElementById('commentForm').addEventListener('submit', async e => {
-        e.preventDefault();
-        if (!currentUser) { showToast('warning', 'Sign In Required', 'Sign in to comment.', 3500); return; }
-        const input = document.getElementById('commentInput');
-        const text = input.value.trim();
-        if (!text) return;
-        input.value = '';
-        const newRef = push(ref(db, `comments/${currentPlayingVideoId}`));
-        await set(newRef, { text, userId: currentUser.uid, userName: currentUser.displayName, timestamp: serverTimestamp() });
-        showToast('success', 'Comment Posted', '', 2000);
-    });
-
-    function listenToComments(videoId) {
-        const list = document.getElementById('commentsList');
-        const countEl = document.getElementById('commentCount');
-        onValue(ref(db, `comments/${videoId}`), snapshot => {
-            list.innerHTML = '';
-            if (snapshot.exists()) {
-                let count = 0;
-                snapshot.forEach(child => {
-                    count++;
-                    const c = child.val();
-                    const el = document.createElement('div');
-                    el.className = 'comment-item bg-premiumGray border border-premiumBorder p-3.5 rounded-2xl hover:bg-white hover:border-gray-300 transition-all';
-                    el.innerHTML = `
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <div class="w-6 h-6 rounded-full bg-premiumBlack text-white text-[10px] font-black flex items-center justify-center">${(c.userName||'U')[0]}</div>
-                            <span class="font-bold text-xs">${c.userName || 'User'}</span>
-                        </div>
-                        <p class="text-xs text-gray-700 leading-normal pl-8">${c.text}</p>`;
-                    list.appendChild(el);
-                });
-                countEl.textContent = count;
-                list.scrollTop = list.scrollHeight;
-            } else {
-                countEl.textContent = '0';
-                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-6 font-medium">Be the first to comment.</p>';
-            }
-        });
-    }
-
-    // ── Likes ──
-    window.handleLike = () => {
-        if (!currentUser) { showToast('warning', 'Sign In Required', 'Sign in to like videos.', 3500); return; }
-        const likeRef = ref(db, `likes/${currentPlayingVideoId}/${currentUser.uid}`);
-        const btn = document.getElementById('likeBtn');
-        if (likedVideos.has(currentPlayingVideoId)) {
-            likedVideos.delete(currentPlayingVideoId);
-            set(likeRef, null);
-            btn.classList.remove('liked');
-        } else {
-            likedVideos.add(currentPlayingVideoId);
-            set(likeRef, true);
-            btn.classList.add('liked', 'like-pop');
-            setTimeout(() => btn.classList.remove('like-pop'), 400);
-            showToast('success', 'Liked!', '', 1800);
-        }
-    };
-
-    function listenToLikes(videoId) {
-        onValue(ref(db, `likes/${videoId}`), snapshot => {
-            const count = snapshot.exists() ? snapshot.size : 0;
-            document.getElementById('likeCount').textContent = count;
-            videoLikeCounts[videoId] = count;
-            const btn = document.getElementById('likeBtn');
-            if (currentUser && snapshot.exists() && snapshot.hasChild(currentUser.uid)) {
-                btn.classList.add('liked');
-                likedVideos.add(videoId);
-            } else {
-                btn.classList.remove('liked');
-            }
-        });
-    }
-
-    // ── Bottom Sheet ──
+    // ══════════════════════════════
+    // BOTTOM SHEET
+    // ══════════════════════════════
     window.openBottomSheet = (type) => {
         const content = document.getElementById('bottomSheetContent');
         if (type === 'videoActions') {
             content.innerHTML = `
-                <div class="text-sm font-black mb-4 text-gray-400 uppercase tracking-wider px-2">Video Options</div>
-                <div class="sheet-action" onclick="handleShare(); closeBottomSheet()">
-                    <i data-lucide="share-2"></i> Share Video
-                </div>
-                <div class="sheet-action" onclick="closeBottomSheet(); showToast('success','Reported','Thank you for reporting.',3000)">
-                    <i data-lucide="flag"></i> Report
-                </div>
-                <div class="sheet-action" onclick="closeBottomSheet(); showToast('info','Noted','We\'ll show you fewer like this.',3000)">
-                    <i data-lucide="ban"></i> Not Interested
-                </div>`;
+                <div style="font-size:10px;font-weight:800;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;padding:0 6px;">Options</div>
+                <div class="sheet-action" onclick="openBottomSheet('share');"><i data-lucide="share-2"></i> Share Video</div>
+                <div class="sheet-action" onclick="closeBottomSheet();showToast('success','Reported','Thank you for reporting.',3000)"><i data-lucide="flag"></i> Report</div>
+                <div class="sheet-action" onclick="closeBottomSheet();showToast('info','Noted','We\'ll show you fewer like this.',3000)"><i data-lucide="ban"></i> Not Interested</div>`;
         } else if (type === 'share') {
             content.innerHTML = `
-                <div class="text-sm font-black mb-4 text-gray-400 uppercase tracking-wider px-2">Share via</div>
-                <div class="sheet-action" onclick="navigator.clipboard&&navigator.clipboard.writeText(window.location.href); closeBottomSheet(); showToast('success','Copied','Link copied to clipboard',2500)"><i data-lucide="copy"></i> Copy Link</div>
+                <div style="font-size:10px;font-weight:800;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;padding:0 6px;">Share via</div>
+                <div class="sheet-action" onclick="navigator.clipboard&&navigator.clipboard.writeText(window.location.href);closeBottomSheet();showToast('success','Copied','Link copied to clipboard',2500)"><i data-lucide="copy"></i> Copy Link</div>
                 <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="mail"></i> Send via Email</div>
                 <div class="sheet-action" onclick="closeBottomSheet()"><i data-lucide="message-circle"></i> Send Message</div>`;
         }
-        document.getElementById('bottomSheet').classList.add('open');
-        refreshIcons();
+        document.getElementById('bottomSheet').classList.add('open'); ri();
     };
-    window.closeBottomSheet = () => { document.getElementById('bottomSheet').classList.remove('open'); };
+    window.closeBottomSheet = () => document.getElementById('bottomSheet').classList.remove('open');
 
-    // ── Success Modal ──
-    function openSuccessModal() {
-        document.getElementById('successModal').classList.add('open');
-        refreshIcons();
-    }
-    window.closeSuccessModal = () => {
-        document.getElementById('successModal').classList.remove('open');
-        window.showView('feedView');
-    };
+    // ══════════════════════════════
+    // SUCCESS MODAL
+    // ══════════════════════════════
+    function openSuccessModal() { document.getElementById('successModal').classList.add('open'); ri(); }
+    window.closeSuccessModal = () => { document.getElementById('successModal').classList.remove('open'); showView('feedView'); };
 
-    // ── Mobile search ──
+    // ══════════════════════════════
+    // MOBILE SEARCH
+    // ══════════════════════════════
     window.openMobileSearch = () => {
         const overlay = document.getElementById('mobileSearchOverlay');
         overlay.style.transform = 'translateY(0)';
@@ -1672,11 +1711,80 @@
         document.getElementById('mobileSearchOverlay').style.transform = 'translateY(100%)';
     };
 
-    // ── Init ──
+    // ══════════════════════════════
+    // UPLOAD
+    // ══════════════════════════════
+    document.getElementById('videoFile').addEventListener('change', e => {
+        if (e.target.files.length > 0) document.getElementById('fileNameDisplay').textContent = e.target.files[0].name;
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        if (!currentUser) { showToast('warning','Sign In Required','Please sign in to upload.',4000); return; }
+        const file = document.getElementById('videoFile').files[0];
+        const title = document.getElementById('videoTitle').value;
+        const desc = document.getElementById('videoDesc').value;
+        const category = document.getElementById('videoCategory').value;
+        const submitBtn = document.getElementById('uploadBtn');
+        const progressWrap = document.getElementById('uploadProgressWrap');
+        const progressBar = document.getElementById('uploadProgressBar');
+        const pct = document.getElementById('uploadPct');
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i data-lucide="loader-circle" style="width:16px;height:16px;animation:spin 1s linear infinite;"></i> Uploading...';
+        progressWrap.style.display = 'block';
+        progressBar.style.width = '0%'; pct.textContent = '0%';
+        ri(); showToast('info','Upload Started',`Uploading "${title}"...`,5000);
+
+        try {
+            const cloudData = await new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_PRESET);
+                formData.append('resource_type', 'video');
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`);
+                xhr.upload.addEventListener('progress', ev => {
+                    if (ev.lengthComputable) {
+                        const p = Math.round((ev.loaded / ev.total) * 100);
+                        progressBar.style.width = p + '%'; pct.textContent = p + '%';
+                    }
+                });
+                xhr.onload = () => xhr.status === 200 ? resolve(JSON.parse(xhr.responseText)) : reject(new Error('Upload failed'));
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.send(formData);
+            });
+
+            if (cloudData.secure_url) {
+                const thumbUrl = cloudData.secure_url.replace(/\.[^/.]+$/, '.jpg');
+                const newRef = push(ref(db, 'videos'));
+                await set(newRef, { title, description: desc, category, videoUrl: cloudData.secure_url, thumbnailUrl: thumbUrl, uploaderId: currentUser.uid, uploaderName: currentUser.displayName, timestamp: serverTimestamp() });
+                document.getElementById('uploadForm').reset();
+                document.getElementById('fileNameDisplay').textContent = 'Drop video here or click to browse';
+                progressWrap.style.display = 'none';
+                openSuccessModal();
+                showToast('success','Published!',`"${title}" is now live on VISION`,5000);
+            }
+        } catch (err) {
+            console.error(err); showToast('error','Upload Failed',err.message,5000);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i data-lucide="rocket" style="width:16px;height:16px;"></i> Post Video';
+            ri();
+        }
+    });
+
+    // ══════════════════════════════
+    // INIT
+    // ══════════════════════════════
     window.onload = () => {
         loadFeed();
-        refreshIcons();
+        ri();
     };
 </script>
+
+<style>
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
 </body>
 </html>
