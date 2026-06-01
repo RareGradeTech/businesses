@@ -488,7 +488,7 @@ const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getDatabase(app);
 let currentUser=null, activeViewId='feedView', allVideos=[], activeCategory='All';
 let subscribedChannels=new Set(), likedVideos=new Set(), savedVideos=new Set();
 let watchHistory=[], videoLikeCounts={}, exploreSearchQuery='';
-let feedObserver=null;
+let feedObserver=null, feedDataListenerUnsub=null;
 // Profile state
 let viewingUserId=null; // null = own profile, else other user's uid
 let currentProfileTab='videos';
@@ -532,7 +532,6 @@ onAuthStateChanged(auth,user=>{
         document.getElementById('sidebarProfileLabel').textContent=user.displayName.split(' ')[0];
         set(ref(db,'users/'+user.uid),{displayName:user.displayName,email:user.email,photoURL:user.photoURL||''});
         showToast('success','Welcome back!',`Signed in as ${user.displayName}`,4000);
-        listenForNewVideos();
     } else {
         if(s) s.textContent='Not signed in';
         document.getElementById('sidebarProfileLabel').textContent='Profile';
@@ -547,7 +546,12 @@ onAuthStateChanged(auth,user=>{
 // ══════════════════════════
 window.showView=(viewId, opts={})=>{
     // pause videos when leaving feed
-    if(activeViewId==='feedView') document.querySelectorAll('.slide-video').forEach(v=>{ try{v.pause();}catch(e){} });
+    if(activeViewId==='feedView'){
+        document.querySelectorAll('.slide-video').forEach(v=>{
+            try{ v.pause(); v.currentTime=0; }catch(e){}
+        });
+        if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
+    }
 
     ALL_VIEWS.forEach(id=>{
         const el=document.getElementById(id);
@@ -564,7 +568,7 @@ window.showView=(viewId, opts={})=>{
 
     if(viewId==='feedView'){
         document.getElementById('topNav').style.display='';
-        loadFeed();
+        initFeed();
     } else {
         document.getElementById('topNav').style.display='none';
     }
@@ -585,62 +589,71 @@ window.setFeedTab=(tab,el)=>{ document.querySelectorAll('.top-tab').forEach(t=>t
 // ══════════════════════════
 // FEED — TikTok Vertical
 // ══════════════════════════
-let feedLoaded=false;
-function loadFeed(){
+function initFeed(){
     buildCategoryBar();
-    if(feedLoaded){ renderFeed(); return; }
-    feedLoaded=true;
-    const videosRef=ref(db,'videos');
-    onValue(videosRef,snapshot=>{
-        allVideos=[];
-        if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
-        allVideos.reverse();
-        renderFeed();
-    });
+    // Always re-attach observer even if data hasn't changed
+    if(!feedDataListenerUnsub){
+        feedLoaded=true;
+        const videosRef=ref(db,'videos');
+        feedDataListenerUnsub = onValue(videosRef,snapshot=>{
+            allVideos=[];
+            if(snapshot.exists()) snapshot.forEach(child=>allVideos.push({id:child.key,...child.val()}));
+            allVideos.reverse();
+            renderFeed(true); // true = data changed, rebuild DOM
+        });
+    } else {
+        // Data already loaded, just ensure DOM and observers are fresh
+        renderFeed(false);
+    }
 }
 
-function renderFeed(){
+function renderFeed(dataChanged=false){
     const feed=document.getElementById('feedView');
     const filtered=allVideos.filter(v=>activeCategory==='All'||(v.category||'All')===activeCategory);
 
-    // Check if we need to rebuild (new videos or category change)
+    // Only rebuild DOM if data actually changed or first render
     const existingIds = Array.from(feed.querySelectorAll('.video-slide')).map(s=>s.dataset.videoId).join(',');
     const newIds = filtered.map(v=>v.id).join(',');
-    if(existingIds === newIds && feed.querySelector('.video-slide')) {
-        return; // No change, don't rebuild
+
+    if(dataChanged || existingIds !== newIds || feed.querySelectorAll('.video-slide').length === 0){
+        // Disconnect old observer before clearing
+        if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
+        feed.innerHTML='';
+
+        if(filtered.length===0){
+            feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;">
+                <div style="font-size:48px;margin-bottom:12px;">📭</div>
+                <p style="font-weight:700;font-size:15px;">No videos yet</p>
+                <p style="font-size:12px;margin-top:4px;">Be the first to post!</p>
+            </div>`;
+            return;
+        }
+
+        filtered.forEach(v=>feed.appendChild(makeSlide(v)));
+        ri();
+    } else {
+        // DOM is same, just ensure observers are fresh
+        if(feedObserver){ feedObserver.disconnect(); }
     }
 
-    // Disconnect old observer
-    if(feedObserver){ feedObserver.disconnect(); feedObserver=null; }
-
-    feed.innerHTML='';
-
-    if(filtered.length===0){
-        feed.innerHTML=`<div style="height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;">
-            <div style="font-size:48px;margin-bottom:12px;">📭</div>
-            <p style="font-weight:700;font-size:15px;">No videos yet</p>
-            <p style="font-size:12px;margin-top:4px;">Be the first to post!</p>
-        </div>`;
-        return;
-    }
-
-    filtered.forEach(v=>feed.appendChild(makeSlide(v)));
-    ri();
-
-    // New observer after render
+    // Always (re)create observer so it works after view switches
     feedObserver=new IntersectionObserver(entries=>{
         entries.forEach(entry=>{
             const vid=entry.target.querySelector('.slide-video');
             if(!vid) return;
-            if(entry.isIntersecting){
-                vid.play().catch(()=>{});
+            if(entry.isIntersecting && entry.intersectionRatio >= 0.5){
+                vid.muted = true; // required for autoplay
+                const playPromise = vid.play();
+                if(playPromise) playPromise.catch(()=>{});
                 const vdata=allVideos.find(v=>v.id===entry.target.dataset.videoId);
                 if(vdata) addToHistory(vdata);
             } else {
                 vid.pause();
+                // Reset to start so next view starts fresh
+                try{ vid.currentTime = 0; }catch(e){}
             }
         });
-    },{threshold:0.65,root:feed});
+    },{threshold:[0,0.25,0.5,0.75,1.0],root:feed});
 
     feed.querySelectorAll('.video-slide').forEach(s=>feedObserver.observe(s));
 }
@@ -658,7 +671,7 @@ function makeSlide(v){
 
     slide.innerHTML=`
         <div class="slide-bg" style="background-image:url('${thumb}');"></div>
-        <video class="slide-video" loop playsinline preload="metadata" src="${v.videoUrl||''}" poster="${thumb}"></video>
+        <video class="slide-video" loop playsinline muted autoplay preload="metadata" src="${v.videoUrl||''}" poster="${thumb}"></video>
         <div class="slide-gradient"></div>
         <div class="pause-icon" id="pause-${v.id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.7)" style="width:60px;height:60px;"><path d="M8 5v14l11-7z"/></svg></div>
         <div class="slide-info">
@@ -707,8 +720,15 @@ function makeSlide(v){
         if(e.target.closest('.slide-actions')||e.target.closest('.slide-username')||e.target.closest('.slide-av-wrap')) return;
         const vid=slide.querySelector('.slide-video');
         const icon=document.getElementById('pause-'+v.id);
-        if(vid.paused){ vid.play().catch(()=>{}); if(icon) icon.classList.remove('visible'); }
-        else{ vid.pause(); if(icon){ icon.classList.add('visible'); setTimeout(()=>icon.classList.remove('visible'),800); } }
+        if(vid.paused){ 
+            vid.muted = true;
+            vid.play().catch(()=>{}); 
+            if(icon) icon.classList.remove('visible'); 
+        }
+        else{ 
+            vid.pause(); 
+            if(icon){ icon.classList.add('visible'); setTimeout(()=>icon.classList.remove('visible'),800); } 
+        }
     });
 
     // Double-tap to like
@@ -716,7 +736,7 @@ function makeSlide(v){
     slide.addEventListener('touchend',e=>{
         if(e.target.closest('.slide-actions')) return;
         const now=Date.now();
-        if(now-lastTap<300){ handleLike(v.id); spawnHeart(e,slide); }
+        if(now-lastTap<<300){ handleLike(v.id); spawnHeart(e,slide); }
         lastTap=now;
     });
 
@@ -764,7 +784,7 @@ function buildCategoryBar(){
             p.onclick=()=>{
                 activeCategory=cat.label;
                 document.querySelectorAll('.pill').forEach(x=>x.classList.toggle('active',x.dataset.category===cat.label));
-                if(activeViewId==='feedView') renderFeed();
+                if(activeViewId==='feedView') renderFeed(false);
                 else if(activeViewId==='exploreView') renderExplore();
             };
             bar.appendChild(p);
@@ -1247,7 +1267,7 @@ function renderTrending(){
     }
     sorted.forEach((v,i)=>{
         const thumb=v.thumbnailUrl||'https://placehold.co/400x700/111/333?text=Video';
-        const rank=i<1?'rank-1':i<2?'rank-2':i<3?'rank-3':'rank-n';
+        const rank=i<<1?'rank-1':i<<2?'rank-2':i<<3?'rank-3':'rank-n';
         const card=document.createElement('div');
         card.className='hcard';
         card.style.cursor='pointer';
@@ -1321,10 +1341,6 @@ window.closeMobileSearch=()=>{
 // ══════════════════════════
 // UPLOAD
 // ══════════════════════════
-function listenForNewVideos(){
-    // Already handled by loadFeed's onValue listener
-}
-
 document.getElementById('videoFile')?.addEventListener('change',function(){
     const f=this.files[0];
     const d=document.getElementById('fileNameDisplay');
@@ -1422,7 +1438,7 @@ window.submitFeedback=()=>{
 // ══════════════════════════
 // INIT
 // ══════════════════════════
-loadFeed();
+initFeed();
 ri();
 
 </script>
