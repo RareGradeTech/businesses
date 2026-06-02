@@ -88,9 +88,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .reels-follow-btn { padding: 4px 14px; border-radius: 6px; border: 1.5px solid white; background: transparent; color: white; font-size: 13px; font-weight: 600; cursor: pointer; backdrop-filter: blur(4px); transition: var(--transition); }
 .reels-follow-btn.following { background: rgba(255,255,255,0.25); border-color: transparent; }
 
-/* Enhanced action button styles */
-.reels-action.saved svg { fill: #10B981; color: #10B981; }
-.reels-action.reshared svg { stroke: #10B981; color: #10B981; }
+/* Enhanced action button styles for Save and Reshare */
+.reels-action.save-btn.saved svg { fill: var(--primary); color: var(--primary); stroke: var(--primary); }
+.reels-action.reshare-btn.reshared svg { stroke: var(--primary); color: var(--primary); }
 
 .heart-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); color: var(--like-color); pointer-events: none; z-index: 10; opacity: 0; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s; }
 .heart-overlay.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -685,107 +685,133 @@ card.innerHTML=`
             <span>Reshare</span>
         </div>
         <div class="reels-action" onclick="sharePost('${post.id}')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="16"></line></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
             <span>Share</span>
         </div>
     </div>
 </div>`;
 
-// Video interaction logic
+const wrapper = card.querySelector('.reels-video-wrapper');
+
+// Unified interaction logic for tap (mute/unmute), double-tap (like), and hold (pause)
 if (isVideo) {
     const video = card.querySelector('.feed-video');
-    const wrapper = card.querySelector('.reels-video-wrapper');
-    
-    // Ensure video plays immediately when visible
-    video.addEventListener('loadedmetadata', () => {
-        if (wrapper.getBoundingClientRect().top < window.innerHeight) {
-            video.play().catch(() => {});
-        }
-    });
-
     let isMuted = true;
     let pressTimer;
+    let isHolding = false;
+    let lastTapTime = 0;
 
-    // Tap to toggle mute
-    wrapper.addEventListener('click', (e) => {
-        // Ignore if it's a hold gesture
-        if (e.detail === 0 || pressTimer) return;
-        
-        isMuted = !isMuted;
-        video.muted = isMuted;
-        
-        if (!isMuted) {
-            showToast('🔊 Sound on');
-        } else {
-            showToast('🔇 Sound off');
+    // Play immediately if it's the first video loaded and currently visible
+    video.addEventListener('loadeddata', () => {
+        const rect = wrapper.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top < window.innerHeight) {
+            video.play().catch(e => console.log('Autoplay blocked:', e));
         }
     });
 
-    // Hold to pause
+    const handleDown = () => {
+        isHolding = false;
+        pressTimer = setTimeout(() => {
+            isHolding = true;
+            video.pause();
+        }, 250); // Hold threshold
+    };
+
+    const handleUp = () => {
+        clearTimeout(pressTimer);
+        if (isHolding) {
+            // User was holding to pause, now release to resume
+            video.play();
+            isHolding = false;
+            return true; // Indicates we handled a hold event
+        }
+        return false; // Not a hold, just a tap
+    };
+
+    // Mouse events (Desktop)
     wrapper.addEventListener('mousedown', (e) => {
         if (e.button !== 0) return;
-        pressTimer = setTimeout(() => {
-            video.pause();
-            showToast('⏸️ Paused');
-        }, 400);
+        handleDown();
     });
 
-    wrapper.addEventListener('mouseup', () => {
-        if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
-            if (!video.paused) video.play();
+    wrapper.addEventListener('mouseup', (e) => {
+        if (e.button !== 0) return;
+        const wasHold = handleUp();
+        if (!wasHold) {
+            processTap();
         }
     });
 
     wrapper.addEventListener('mouseleave', () => {
-        if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
+        clearTimeout(pressTimer);
+        if (isHolding) {
+            video.play();
+            isHolding = false;
         }
     });
 
-    // Touch support
-    let touchStartTime = 0;
+    // Touch events (Mobile)
     wrapper.addEventListener('touchstart', (e) => {
-        touchStartTime = Date.now();
-        pressTimer = setTimeout(() => {
-            video.pause();
-            showToast('⏸️ Paused');
-        }, 400);
-    });
+        handleDown();
+    }, {passive: true});
 
     wrapper.addEventListener('touchend', (e) => {
-        const touchDuration = Date.now() - touchStartTime;
-        if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
-        }
-        if (touchDuration < 400) {
-            // Short tap - toggle mute
-            isMuted = !isMuted;
-            video.muted = isMuted;
-            if (!isMuted) showToast('🔊 Sound on');
-            else showToast('🔇 Sound off');
+        const wasHold = handleUp();
+        if (wasHold) {
+            e.preventDefault(); // Stop click from firing if we held
+        } else {
+            processTap();
+            e.preventDefault(); // Stop double firing of click on mobile
         }
     });
-}
 
-// Double Tap Logic (Like)
-const wrapper = card.querySelector('.reels-video-wrapper');
-let lastTap = 0;
-wrapper.addEventListener('touchstart', (e) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
-    if (tapLength < 300 && tapLength > 0) {
-        toggleLike(post.id, wrapper);
-        e.preventDefault();
+    wrapper.addEventListener('touchcancel', () => {
+        clearTimeout(pressTimer);
+        if (isHolding) {
+            video.play();
+            isHolding = false;
+        }
+    });
+
+    // Tap processor handles single (mute) vs double tap (like)
+    function processTap() {
+        if (isHolding) return; 
+        
+        const currentTime = Date.now();
+        const tapGap = currentTime - lastTapTime;
+        
+        if (tapGap < 300 && tapGap > 0) {
+            // Double Tap
+            toggleLike(post.id, wrapper);
+            lastTapTime = 0; // Reset
+        } else {
+            // Single Tap -> toggle mute
+            isMuted = !isMuted;
+            video.muted = isMuted;
+            showToast(isMuted ? '🔇 Muted' : '🔊 Sound on');
+            lastTapTime = currentTime;
+        }
     }
-    lastTap = currentTime;
-});
-wrapper.addEventListener('dblclick', (e) => {
-    toggleLike(post.id, wrapper);
-});
+} else {
+    // Logic for Images (Double tap to like only)
+    let lastTapTime = 0;
+    
+    function processImageTap() {
+        const currentTime = Date.now();
+        if (currentTime - lastTapTime < 300 && currentTime - lastTapTime > 0) {
+            toggleLike(post.id, wrapper);
+            lastTapTime = 0;
+        } else {
+            lastTapTime = currentTime;
+        }
+    }
+    
+    wrapper.addEventListener('mouseup', processImageTap);
+    wrapper.addEventListener('touchend', (e) => {
+        processImageTap();
+        e.preventDefault();
+    });
+}
 
 // Init Follow status
 if(currentUser && post.authorId !== currentUser.uid) {
@@ -800,7 +826,7 @@ if(currentUser && post.authorId !== currentUser.uid) {
     });
 }
 
-// Check saved/reshared status
+// Init Saved and Reshared status
 if (currentUser) {
     db.ref('users/'+currentUser.uid+'/saved/'+post.id).once('value').then(snap => {
         if (snap.exists()) {
@@ -853,25 +879,41 @@ const btn=wrapper.parentElement.querySelector('.like-btn');
 if(btn&&!btn.classList.contains('active')){likePost(postId,btn)}
 }
 
-function savePost(postId, btnElement){
+function savePost(postId, btnElement) {
 if(!currentUser)return;
-db.ref('users/'+currentUser.uid+'/saved/'+postId).set(true).then(()=>{
-    showToast('Saved to collection');
-    if (btnElement) btnElement.classList.add('saved');
+const ref = db.ref('users/'+currentUser.uid+'/saved/'+postId);
+ref.once('value').then(snap => {
+    if(snap.exists()) {
+        ref.remove();
+        if(btnElement) btnElement.classList.remove('saved');
+    } else {
+        ref.set(true).then(() => {
+            showToast('Saved to collection');
+            if(btnElement) btnElement.classList.add('saved');
+        });
+    }
 });
 }
 
-function resharePost(postId, btnElement){
+function resharePost(postId, btnElement) {
 if(!currentUser)return;
-db.ref('users/'+currentUser.uid+'/reshared/'+postId).set(true).then(()=>{
-    showToast('Reshared to your profile');
-    if (btnElement) btnElement.classList.add('reshared');
+const ref = db.ref('users/'+currentUser.uid+'/reshared/'+postId);
+ref.once('value').then(snap => {
+    if(snap.exists()) {
+        ref.remove();
+        if(btnElement) btnElement.classList.remove('reshared');
+    } else {
+        ref.set(true).then(() => {
+            showToast('Reshared to your profile');
+            if(btnElement) btnElement.classList.add('reshared');
+        });
+    }
 });
 }
 
-function sharePost(postId){
+function sharePost(postId) {
 showToast('Link copied to clipboard! 📋');
-navigator.clipboard.writeText(window.location.origin + '?post=' + postId);
+navigator.clipboard.writeText(window.location.origin + '?post=' + postId).catch(()=>{});
 }
 
 function deletePost(postId) {
