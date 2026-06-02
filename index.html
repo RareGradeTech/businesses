@@ -92,6 +92,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .heart-overlay.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 .heart-overlay svg { width: 120px; height: 120px; fill: var(--like-color); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
 
+.pause-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 8; }
+.pause-overlay.show { opacity: 1; }
+.pause-overlay svg { width: 64px; height: 64px; color: white; }
+.reels-action.save-btn svg { fill: transparent; transition: fill 0.2s; }
+.reels-action.active.save-btn svg { fill: var(--primary); color: var(--primary); }
+.reels-action.active.reshare-btn svg { color: var(--primary); }
+.reels-action.active.share-btn svg { color: var(--primary); }
+
 /* Legacy Page Header for non-home pages */
 .page:not(#homePage) .page-header{position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:50;padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .page:not(#homePage) .page-header h1{font-size:22px;font-weight:800;letter-spacing:-0.5px}
@@ -251,6 +259,9 @@ input[type="file"]{display:none}
 .action-btn:hover{transform:scale(1.1)}
 .action-btn svg{width:24px;height:24px;color:var(--text-secondary);transition:var(--transition)}
 .action-btn.active svg{color:var(--like-color);fill:var(--like-color)}
+.action-btn.active.save-btn svg{fill:var(--primary);color:var(--primary)}
+.action-btn.active.reshare-btn svg{color:var(--primary)}
+.action-btn.active.share-btn svg{color:var(--primary)}
 .action-btn.active{animation:heartPop 0.4s ease}
 .action-btn span{font-size:14px;font-weight:600;color:var(--text-secondary)}
 .action-btn.active span{color:var(--like-color)}
@@ -278,7 +289,7 @@ input[type="file"]{display:none}
 <div id="app">
 <div class="loading-screen" id="loadingScreen">
 <div class="loading-logo">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
 </div>
 <div class="loading-text">Pulse</div>
 <div class="loading-sub">Feel the beat</div>
@@ -286,17 +297,17 @@ input[type="file"]{display:none}
 
 <div class="auth-screen" id="authScreen">
 <div class="auth-logo">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
 </div>
 <h1 class="auth-title">Welcome to Pulse</h1>
 <p class="auth-subtitle">Share your moments, connect with creators, and feel the pulse of the world.</p>
 <button class="auth-btn auth-btn-google" onclick="signInWithGoogle()">
-<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+<<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
 Continue with Google
 </button>
 <div class="auth-divider">or</div>
 <button class="auth-btn auth-btn-guest" onclick="continueAsGuest()">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+<<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
 Continue as Guest
 </button>
 </div>
@@ -307,23 +318,23 @@ Continue as Guest
 <div class="page-header">
 <h1>Pulse</h1>
 <button class="header-btn" onclick="openMessages()">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
 </button>
 </div>
 <div class="pull-refresh" id="pullRefresh" onclick="refreshFeed()">
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
 Pull to refresh
 </div>
 <div class="reels-container" id="feedContainer"></div>
 <div id="feedLoading" style="padding:20px;text-align:center;color:var(--text-muted);display:none;position:absolute;bottom:80px;width:100%">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v4"></path></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v4"></path></svg>
 </div>
 </div>
 
 <div class="page" id="explorePage">
 <div class="explore-search">
 <div class="search-bar">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
 <input type="text" placeholder="Search creators, clips, tags..." id="exploreSearchInput" oninput="handleExploreSearch()">
 </div>
 </div>
@@ -341,13 +352,13 @@ Pull to refresh
 <div class="page-header">
 <h1>Create</h1>
 <button class="header-btn" onclick="clearAddPage()">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 </button>
 </div>
 <div class="add-page">
 <h2 class="add-title">Share your moment</h2>
 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
 <h3>Tap to upload</h3>
 <p>Photos or videos up to 50MB</p>
 </div>
@@ -355,13 +366,13 @@ Pull to refresh
 <div class="preview-container" id="previewContainer" style="display:none">
 <div id="previewContent"></div>
 <button class="remove-preview" onclick="clearPreview()">
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 </button>
 </div>
 <div class="upload-progress" id="uploadProgress">
 <div class="upload-progress-bar" id="uploadProgressBar"></div>
 </div>
-<textarea class="caption-input" id="captionInput" placeholder="Write a caption..." rows="3"></textarea>
+<<textarea class="caption-input" id="captionInput" placeholder="Write a caption..." rows="3"></textarea>
 <button class="post-btn" id="postBtn" onclick="createPost()">Post</button>
 </div>
 </div>
@@ -372,7 +383,7 @@ Pull to refresh
 </div>
 <div class="explore-search">
 <div class="search-bar">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
 <input type="text" placeholder="Search users and content..." id="searchInput" oninput="handleSearch()">
 </div>
 </div>
@@ -383,14 +394,14 @@ Pull to refresh
 <div class="page-header">
 <h1>Profile</h1>
 <button class="header-btn" onclick="logout()">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
 </button>
 </div>
 <div class="profile-header" id="profileHeader">
 <div class="profile-avatar-wrapper">
 <img class="avatar-lg" id="profileAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=guest" alt="Profile">
 <button class="edit-avatar-btn" onclick="document.getElementById('avatarInput').click()">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
 </button>
 <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)">
 </div>
@@ -412,11 +423,11 @@ Pull to refresh
 </div>
 <div class="profile-actions">
 <button class="profile-btn" onclick="openEditProfile()">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
 Edit Profile
 </button>
 <button class="profile-btn primary" onclick="openMessages()">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
 Messages
 </button>
 </div>
@@ -432,7 +443,7 @@ Messages
 <div class="page" id="messagesPage">
 <div class="page-header">
 <button class="header-btn" onclick="showPage('home')">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
 </button>
 <h1>Messages</h1>
 <div style="width:40px"></div>
@@ -443,7 +454,7 @@ Messages
 <div class="page" id="chatPage">
 <div class="chat-header">
 <button class="back-btn" onclick="openMessages()">
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
 </button>
 <img class="avatar" id="chatAvatar" src="" alt="">
 <div style="flex:1">
@@ -455,7 +466,7 @@ Messages
 <div class="chat-input-area">
 <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMessage()">
 <button class="send-btn" onclick="sendMessage()">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
 </button>
 </div>
 </div>
@@ -463,7 +474,7 @@ Messages
 <div class="page" id="userProfilePage">
 <div class="page-header">
 <button class="header-btn" onclick="showPage('home')">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
 </button>
 <h1 id="userProfileTitle">Profile</h1>
 <div style="width:40px"></div>
@@ -482,7 +493,7 @@ Messages
 <div class="modal-header">
 <h2>Edit Profile</h2>
 <button class="modal-close" onclick="closeEditProfile()">
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 </button>
 </div>
 <div class="form-group">
@@ -506,31 +517,31 @@ Messages
 <div class="modal-header">
 <h2>Post</h2>
 <button class="modal-close" onclick="closePostDetail()">
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 </button>
 </div>
 <div class="post-detail-content" id="postDetailContent"></div>
 </div>
 </div>
 
-<nav class="bottom-nav" id="bottomNav">
+<<nav class="bottom-nav" id="bottomNav">
 <div class="nav-item active" onclick="showPage('home')">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
 <span>Home</span>
 </div>
 <div class="nav-item" onclick="showPage('explore')">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
 <span>Explore</span>
 </div>
 <div class="nav-item nav-add" onclick="showPage('add')">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
 </div>
 <div class="nav-item" onclick="showPage('search')">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
 <span>Search</span>
 </div>
 <div class="nav-item" onclick="showPage('profile')">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
 <span>Profile</span>
 </div>
 </nav>
@@ -648,7 +659,10 @@ const commentCount=post.comments?Object.keys(post.comments).length:0;
 
 card.innerHTML=`
 <div class="reels-video-wrapper" style="width:100%; height:100%; position:absolute; inset:0;">
-    ${isVideo?`<video class="feed-video reels-video" src="${post.mediaUrl}" loop muted playsinline preload="metadata"></video>`:`<img class="reels-video" src="${post.mediaUrl}" alt="" loading="lazy">`}
+    ${isVideo?`<video class="feed-video reels-video" src="${post.mediaUrl}" loop playsinline preload="metadata" muted></video>`:`<<img class="reels-video" src="${post.mediaUrl}" alt="" loading="lazy">`}
+    <div class="pause-overlay" id="pause-${post.id}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+    </div>
     <div class="heart-overlay" id="heart-${post.id}">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     </div>
@@ -671,32 +685,103 @@ card.innerHTML=`
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
             <span>${commentCount}</span>
         </div>
-        <div class="reels-action" onclick="savePost('${post.id}')">
+        <div class="reels-action save-btn" id="save-btn-${post.id}" onclick="savePost('${post.id}')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             <span>Save</span>
         </div>
-        <div class="reels-action" onclick="resharePost('${post.id}')">
+        <div class="reels-action reshare-btn" id="reshare-btn-${post.id}" onclick="resharePost('${post.id}')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+            <span>Share</span>
+        </div>
+        <div class="reels-action share-btn" onclick="sharePost('${post.id}')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             <span>Share</span>
         </div>
     </div>
 </div>`;
 
-// Double Tap Logic
+// Video interaction: tap to toggle mute, double-tap to like, hold to pause
 const wrapper = card.querySelector('.reels-video-wrapper');
-let lastTap = 0;
-wrapper.addEventListener('touchstart', (e) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
-    if (tapLength < 300 && tapLength > 0) {
-        toggleLike(post.id, wrapper);
-        e.preventDefault();
-    }
-    lastTap = currentTime;
-});
-wrapper.addEventListener('dblclick', (e) => {
-    toggleLike(post.id, wrapper);
-});
+const video = card.querySelector('.feed-video');
+const pauseOverlay = card.querySelector(`#pause-${post.id}`);
+
+if(video && isVideo) {
+    let tapCount = 0;
+    let tapTimer = null;
+    let holdTimer = null;
+    let isHolding = false;
+    let touchMoved = false;
+
+    const startHold = (e) => {
+        if(e.type === 'mousedown' && e.button !== 0) return;
+        isHolding = false;
+        touchMoved = false;
+        holdTimer = setTimeout(() => {
+            isHolding = true;
+            video.pause();
+            if(pauseOverlay) pauseOverlay.classList.add('show');
+        }, 300);
+    };
+
+    const endHold = (e) => {
+        clearTimeout(holdTimer);
+        if(isHolding) {
+            isHolding = false;
+            video.play().catch(()=>{});
+            if(pauseOverlay) pauseOverlay.classList.remove('show');
+            return;
+        }
+        if(touchMoved) return;
+        tapCount++;
+        if(tapCount === 1) {
+            tapTimer = setTimeout(() => {
+                if(tapCount === 1) {
+                    video.muted = !video.muted;
+                    showToast(video.muted ? 'Muted' : 'Sound on');
+                }
+                tapCount = 0;
+            }, 250);
+        } else if(tapCount === 2) {
+            clearTimeout(tapTimer);
+            tapCount = 0;
+            toggleLike(post.id, wrapper);
+        }
+    };
+
+    const cancelHold = () => {
+        clearTimeout(holdTimer);
+        if(isHolding) {
+            isHolding = false;
+            video.play().catch(()=>{});
+            if(pauseOverlay) pauseOverlay.classList.remove('show');
+        }
+    };
+
+    wrapper.addEventListener('touchstart', startHold, {passive: true});
+    wrapper.addEventListener('touchmove', () => { touchMoved = true; cancelHold(); }, {passive: true});
+    wrapper.addEventListener('touchend', endHold);
+    wrapper.addEventListener('touchcancel', cancelHold);
+    wrapper.addEventListener('mousedown', startHold);
+    wrapper.addEventListener('mouseup', endHold);
+    wrapper.addEventListener('mouseleave', cancelHold);
+}
+
+// Init saved/reshared status
+if(currentUser) {
+    db.ref('users/'+currentUser.uid+'/saved/'+post.id).once('value').then(snap => {
+        const btn = card.querySelector(`#save-btn-${post.id}`);
+        if(snap.exists() && btn) {
+            btn.classList.add('active');
+            btn.querySelector('svg').setAttribute('fill', 'var(--primary)');
+        }
+    });
+    db.ref('users/'+currentUser.uid+'/reshared/'+post.id).once('value').then(snap => {
+        const btn = card.querySelector(`#reshare-btn-${post.id}`);
+        if(snap.exists() && btn) {
+            btn.classList.add('active');
+        }
+    });
+}
 
 // Init Follow status
 if(currentUser && post.authorId !== currentUser.uid) {
@@ -749,12 +834,71 @@ if(btn&&!btn.classList.contains('active')){likePost(postId,btn)}
 
 function savePost(postId){
 if(!currentUser)return;
-db.ref('users/'+currentUser.uid+'/saved/'+postId).set(true).then(()=>{showToast('Saved to collection')});
+const saveRef = db.ref('users/'+currentUser.uid+'/saved/'+postId);
+saveRef.once('value').then(snap => {
+    const btn = document.getElementById('save-btn-'+postId);
+    const detailBtn = document.getElementById('detail-save-'+postId);
+    if(snap.exists()) {
+        saveRef.remove().then(()=>{
+            showToast('Removed from saved');
+            if(btn) {
+                btn.classList.remove('active');
+                btn.querySelector('svg').setAttribute('fill', 'none');
+            }
+            if(detailBtn) {
+                detailBtn.classList.remove('active');
+                detailBtn.querySelector('svg').setAttribute('fill', 'none');
+            }
+        });
+    } else {
+        saveRef.set(true).then(()=>{
+            showToast('Saved to collection');
+            if(btn) {
+                btn.classList.add('active');
+                btn.querySelector('svg').setAttribute('fill', 'var(--primary)');
+            }
+            if(detailBtn) {
+                detailBtn.classList.add('active');
+                detailBtn.querySelector('svg').setAttribute('fill', 'var(--primary)');
+            }
+        });
+    }
+});
 }
 
 function resharePost(postId){
 if(!currentUser)return;
-db.ref('users/'+currentUser.uid+'/reshared/'+postId).set(true).then(()=>{showToast('Reshared to your profile')});
+const reshareRef = db.ref('users/'+currentUser.uid+'/reshared/'+postId);
+reshareRef.once('value').then(snap => {
+    const btn = document.getElementById('reshare-btn-'+postId);
+    const detailBtn = document.getElementById('detail-reshare-'+postId);
+    if(snap.exists()) {
+        reshareRef.remove().then(()=>{
+            showToast('Removed from reshared');
+            if(btn) btn.classList.remove('active');
+            if(detailBtn) detailBtn.classList.remove('active');
+        });
+    } else {
+        reshareRef.set(true).then(()=>{
+            showToast('Reshared to your profile');
+            if(btn) btn.classList.add('active');
+            if(detailBtn) detailBtn.classList.add('active');
+        });
+    }
+});
+}
+
+function sharePost(postId){
+const shareData = {
+    title: 'Pulse',
+    text: 'Check out this post on Pulse!',
+    url: window.location.href.split('?')[0] + '?post=' + postId
+};
+if(navigator.share) {
+    navigator.share(shareData).catch(()=>{});
+} else {
+    navigator.clipboard.writeText(shareData.url).then(()=>showToast('Link copied to clipboard'));
+}
 }
 
 function deletePost(postId) {
@@ -823,7 +967,7 @@ function createGridItem(post){
 const item=document.createElement('div');
 item.className='grid-item';
 const isVideo=post.mediaUrl&&(post.mediaUrl.endsWith('.mp4')||post.mediaUrl.includes('video'));
-item.innerHTML=`${isVideo?`<video src="${post.mediaUrl}" muted preload="metadata"></video>`:`<img src="${post.mediaUrl}" alt="" loading="lazy">`}<div class="grid-item-overlay">${isVideo?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>':'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>'}</div>`;
+item.innerHTML=`${isVideo?`<video src="${post.mediaUrl}" muted preload="metadata"></video>`:`<<img src="${post.mediaUrl}" alt="" loading="lazy">`}<div class="grid-item-overlay">${isVideo?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>':'<<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>'}</div>`;
 item.onclick=()=>openPostDetail(post.id);
 return item;
 }
@@ -952,7 +1096,7 @@ function createProfileGridItem(post){
 const item=document.createElement('div');
 item.className='profile-grid-item';
 const isVideo=post.mediaUrl&&(post.mediaUrl.endsWith('.mp4')||post.mediaUrl.includes('video'));
-item.innerHTML=isVideo?`<video src="${post.mediaUrl}" muted preload="metadata"></video>`:`<img src="${post.mediaUrl}" alt="" loading="lazy">`;
+item.innerHTML=isVideo?`<video src="${post.mediaUrl}" muted preload="metadata"></video>`:`<<img src="${post.mediaUrl}" alt="" loading="lazy">`;
 item.onclick=()=>openPostDetail(post.id);
 return item;
 }
@@ -1175,9 +1319,19 @@ const likeCount=post.likes?Object.keys(post.likes).length:0;
 const commentCount=post.comments?Object.keys(post.comments).length:0;
 const isAuthor=currentUser&&post.authorId===currentUser.uid;
 
-document.getElementById('postDetailContent').innerHTML=`${isVideo?`<video src="${post.mediaUrl}" controls autoplay style="width:100%;max-height:50vh;object-fit:cover;display:block"></video>`:`<img src="${post.mediaUrl}" alt="" style="width:100%;max-height:50vh;object-fit:cover;display:block">`}<div class="post-detail-info"><div class="post-detail-user"><img class="avatar" src="${post.authorAvatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+post.authorId}" alt="" onclick="viewUserProfile('${post.authorId}')"><div><h3 style="font-size:16px;font-weight:700;cursor:pointer" onclick="viewUserProfile('${post.authorId}')">${post.authorName||'Unknown'}</h3><p style="font-size:13px;color:var(--text-secondary)">${timeAgo(post.timestamp)}</p></div></div><p class="post-detail-caption">${post.caption||''}</p><div class="post-detail-actions"><div class="action-btn ${isLiked?'active':''}" onclick="likePost('${postId}',this)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isLiked?'#ef4444':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span id="detail-likes-${postId}">${likeCount}</span></div><div class="action-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg><span>${commentCount}</span></div><div class="action-btn" onclick="savePost('${postId}');closePostDetail()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><span>Save</span></div>${isAuthor?`<div class="action-btn delete-btn" onclick="deletePost('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg><span>Delete</span></div>`:''}</div></div><div class="comments-section"><h4>Comments</h4><div id="commentsList"></div><div class="comment-input-area"><input type="text" class="chat-input" id="commentInput" placeholder="Add a comment..." style="flex:1" onkeypress="if(event.key==='Enter')addComment('${postId}')"><button class="send-btn" onclick="addComment('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button></div></div>`;
+document.getElementById('postDetailContent').innerHTML=`${isVideo?`<video src="${post.mediaUrl}" controls autoplay style="width:100%;max-height:50vh;object-fit:cover;display:block"></video>`:`<<img src="${post.mediaUrl}" alt="" style="width:100%;max-height:50vh;object-fit:cover;display:block">`}<div class="post-detail-info"><div class="post-detail-user"><img class="avatar" src="${post.authorAvatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+post.authorId}" alt="" onclick="viewUserProfile('${post.authorId}')"><div><h3 style="font-size:16px;font-weight:700;cursor:pointer" onclick="viewUserProfile('${post.authorId}')">${post.authorName||'Unknown'}</h3><p style="font-size:13px;color:var(--text-secondary)">${timeAgo(post.timestamp)}</p></div></div><p class="post-detail-caption">${post.caption||''}</p><div class="post-detail-actions"><div class="action-btn ${isLiked?'active':''}" onclick="likePost('${postId}',this)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isLiked?'#ef4444':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span id="detail-likes-${postId}">${likeCount}</span></div><div class="action-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg><span>${commentCount}</span></div><div class="action-btn" id="detail-save-${postId}" onclick="savePost('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><span>Save</span></div><div class="action-btn" id="detail-reshare-${postId}" onclick="resharePost('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg><span>Share</span></div><div class="action-btn" onclick="sharePost('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></div>${isAuthor?`<div class="action-btn delete-btn" onclick="deletePost('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg><span>Delete</span></div>`:''}</div></div><div class="comments-section"><h4>Comments</h4><div id="commentsList"></div><div class="comment-input-area"><input type="text" class="chat-input" id="commentInput" placeholder="Add a comment..." style="flex:1" onkeypress="if(event.key==='Enter')addComment('${postId}')"><button class="send-btn" onclick="addComment('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button></div></div>`;
 loadComments(postId);
 document.getElementById('postDetailModal').classList.add('active');
+if(currentUser) {
+    db.ref('users/'+currentUser.uid+'/saved/'+postId).once('value').then(snap => {
+        const btn = document.getElementById('detail-save-'+postId);
+        if(snap.exists() && btn) { btn.classList.add('active'); btn.querySelector('svg').setAttribute('fill','var(--primary)'); }
+    });
+    db.ref('users/'+currentUser.uid+'/reshared/'+postId).once('value').then(snap => {
+        const btn = document.getElementById('detail-reshare-'+postId);
+        if(snap.exists() && btn) btn.classList.add('active');
+    });
+}
 });
 }
 
@@ -1214,17 +1368,17 @@ timestamp:Date.now()
 
 function timeAgo(timestamp){
 const seconds=Math.floor((Date.now()-timestamp)/1000);
-if(seconds<60)return'Just now';
+if(seconds<<60)return'Just now';
 const minutes=Math.floor(seconds/60);
-if(minutes<60)return minutes+'m ago';
+if(minutes<<60)return minutes+'m ago';
 const hours=Math.floor(minutes/60);
-if(hours<24)return hours+'h ago';
+if(hours<<24)return hours+'h ago';
 const days=Math.floor(hours/24);
-if(days<7)return days+'d ago';
+if(days<<7)return days+'d ago';
 const weeks=Math.floor(days/7);
-if(weeks<4)return weeks+'w ago';
+if(weeks<<4)return weeks+'w ago';
 const months=Math.floor(days/30);
-if(months<12)return months+'mo ago';
+if(months<<12)return months+'mo ago';
 return Math.floor(days/365)+'y ago';
 }
 
