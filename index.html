@@ -10,7 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
-:root{--primary:#10B981;--primary-dark:#059669;--primary-light:#D1FAE5;--bg:#FFFFFF;--surface:#F9FAFB;--surface-elevated:#FFFFFF;--text:#111827;--text-secondary:#6B7280;--text-muted:#9CA3AF;--border:#E5E7EB;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow:0 4px 20px rgba(0,0,0,0.06);--shadow-lg:0 10px 40px rgba(0,0,0,0.08);--radius:24px;--radius-sm:16px;--radius-xs:12px;--transition:all 0.35s cubic-bezier(0.4,0,0.2,1)}
+:root{--primary:#10B981;--primary-dark:#059669;--primary-light:#D1FAE5;--bg:#FFFFFF;--surface:#F9FAFB;--surface-elevated:#FFFFFF;--text:#111827;--text-secondary:#6B7280;--text-muted:#9CA3AF;--border:#E5E7EB;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow:0 4px 20px rgba(0,0,0,0.06);--shadow-lg:0 10px 40px rgba(0,0,0,0.08);--radius:24px;--radius-sm:16px;--radius-xs:12px;--transition:all 0.35s cubic-bezier(0.4,0,0.2,1);--like-color:#ef4444}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -62,38 +62,48 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .nav-add:hover{transform:scale(1.1)}
 .page{display:none;min-height:100vh;padding-bottom:100px;animation:fadeInUp 0.4s ease-out}
 .page.active{display:block}
-.page-header{position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:50;padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.page-header h1{font-size:22px;font-weight:800;letter-spacing:-0.5px}
-.header-btn{width:40px;height:40px;border-radius:50%;border:none;background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition)}
-.header-btn:hover{background:var(--primary-light)}
-.header-btn svg{width:20px;height:20px;color:var(--text)}
-.feed-container{padding:8px 0}
-.video-card{background:var(--surface-elevated);border-radius:var(--radius-sm);margin:12px 16px;overflow:hidden;box-shadow:var(--shadow-sm);transition:var(--transition);animation:fadeInUp 0.5s ease-out}
-.video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.video-card-header{display:flex;align-items:center;padding:12px 16px;gap:12px}
+
+/* Reels Style Modifications */
+#homePage { padding-bottom: 0; }
+#homePage .page-header { position: fixed; top: 0; left: 0; width: 100%; max-width: 480px; margin: 0 auto; right: 0; background: transparent; border: none; backdrop-filter: none; -webkit-backdrop-filter: none; z-index: 50; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.5); pointer-events: none; }
+#homePage .page-header h1 { pointer-events: auto; }
+#homePage .header-btn { background: rgba(0,0,0,0.3); color: white; pointer-events: auto; backdrop-filter: blur(8px); }
+#homePage .header-btn svg { color: white; }
+
+.reels-container { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; -ms-overflow-style: none; }
+.reels-container::-webkit-scrollbar { display: none; }
+.reels-card { height: 100vh; width: 100%; position: relative; scroll-snap-align: start; background: #000; }
+.reels-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.reels-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 90px 16px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); display: flex; justify-content: space-between; align-items: flex-end; pointer-events: none; color: white; z-index: 5; }
+.reels-left { flex: 1; pointer-events: auto; padding-right: 20px; }
+.reels-right { display: flex; flex-direction: column; gap: 20px; pointer-events: auto; align-items: center; margin-bottom: 10px; }
+.reels-author { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.reels-author h3 { font-size: 16px; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); cursor: pointer; }
+.reels-caption { font-size: 14px; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,0,0,0.5); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.reels-action { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.2s; }
+.reels-action:hover { transform: scale(1.1); }
+.reels-action svg { width: 34px; height: 34px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); color: white; transition: var(--transition); }
+.reels-action span { font-size: 13px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.reels-action.active.like-btn svg { color: var(--like-color); fill: var(--like-color); animation: heartPop 0.4s ease; }
+.reels-follow-btn { padding: 4px 14px; border-radius: 6px; border: 1.5px solid white; background: transparent; color: white; font-size: 13px; font-weight: 600; cursor: pointer; backdrop-filter: blur(4px); transition: var(--transition); }
+.reels-follow-btn.following { background: rgba(255,255,255,0.25); border-color: transparent; }
+
+.heart-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); color: var(--like-color); pointer-events: none; z-index: 10; opacity: 0; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s; }
+.heart-overlay.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.heart-overlay svg { width: 120px; height: 120px; fill: var(--like-color); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+
+/* Legacy Page Header for non-home pages */
+.page:not(#homePage) .page-header{position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:50;padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.page:not(#homePage) .page-header h1{font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.page:not(#homePage) .header-btn{width:40px;height:40px;border-radius:50%;border:none;background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition)}
+.page:not(#homePage) .header-btn:hover{background:var(--primary-light)}
+.page:not(#homePage) .header-btn svg{width:20px;height:20px;color:var(--text)}
+
 .avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--primary-light);cursor:pointer;transition:var(--transition)}
 .avatar:hover{transform:scale(1.1);border-color:var(--primary)}
 .avatar-lg{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--primary-light)}
-.video-card-info{flex:1}
-.video-card-info h3{font-size:15px;font-weight:700;cursor:pointer;transition:var(--transition)}
-.video-card-info h3:hover{color:var(--primary)}
-.video-card-info p{font-size:13px;color:var(--text-secondary);margin-top:2px}
-.follow-btn{padding:8px 20px;border-radius:50px;border:2px solid var(--primary);background:transparent;color:var(--primary);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:var(--transition)}
-.follow-btn:hover{background:var(--primary);color:white}
-.follow-btn.following{background:var(--primary);color:white}
-.video-wrapper{position:relative;width:100%;background:#000;border-radius:0;overflow:hidden}
-.video-wrapper video,.video-wrapper img{width:100%;display:block;object-fit:cover;max-height:70vh}
-.video-overlay{position:absolute;bottom:0;left:0;right:0;padding:60px 16px 16px;background:linear-gradient(transparent,rgba(0,0,0,0.6));color:white}
-.video-overlay p{font-size:14px;line-height:1.5}
-.video-actions{display:flex;align-items:center;padding:12px 16px;gap:24px}
-.action-btn{display:flex;align-items:center;gap:6px;cursor:pointer;transition:var(--transition);user-select:none}
-.action-btn:hover{transform:scale(1.1)}
-.action-btn svg{width:24px;height:24px;color:var(--text-secondary);transition:var(--transition)}
-.action-btn.active svg{color:var(--primary);fill:var(--primary)}
-.action-btn.active{animation:heartPop 0.4s ease}
-.action-btn span{font-size:14px;font-weight:600;color:var(--text-secondary)}
-.action-btn.active span{color:var(--primary)}
-.pull-refresh{text-align:center;padding:20px;color:var(--text-muted);font-size:14px;transition:var(--transition)}
+.pull-refresh{position:fixed;top:60px;left:0;right:0;text-align:center;padding:20px;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.5);font-size:14px;transition:var(--transition);z-index:60;pointer-events:none;opacity:0}
+.pull-refresh.spinning{opacity:1}
 .pull-refresh.spinning svg{animation:spin 1s linear infinite}
 .explore-search{padding:12px 16px;position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);z-index:50}
 .search-bar{display:flex;align-items:center;background:var(--surface);border-radius:50px;padding:12px 20px;gap:12px;border:2px solid var(--border);transition:var(--transition)}
@@ -212,7 +222,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .suggestion-card .avatar{width:56px;height:56px;margin:0 auto 12px}
 .suggestion-card h4{font-size:14px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .suggestion-card p{font-size:12px;color:var(--text-secondary);margin-bottom:12px}
-.suggestion-card .follow-btn{width:100%;padding:8px;font-size:13px}
+.suggestion-card .follow-btn{width:100%;padding:8px;font-size:13px;border-radius:50px;border:2px solid var(--primary);background:transparent;color:var(--primary);font-weight:600;cursor:pointer;transition:var(--transition)}
+.suggestion-card .follow-btn:hover{background:var(--primary);color:white}
+.suggestion-card .follow-btn.following{background:var(--primary);color:white}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--text);color:white;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:600;z-index:10000;transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);box-shadow:var(--shadow-lg);white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--border) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-xs)}
@@ -235,6 +247,13 @@ input[type="file"]{display:none}
 .post-detail-user{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .post-detail-caption{font-size:15px;line-height:1.6;margin-bottom:16px}
 .post-detail-actions{display:flex;gap:24px;padding-top:16px;border-top:1px solid var(--border)}
+.action-btn{display:flex;align-items:center;gap:6px;cursor:pointer;transition:var(--transition);user-select:none}
+.action-btn:hover{transform:scale(1.1)}
+.action-btn svg{width:24px;height:24px;color:var(--text-secondary);transition:var(--transition)}
+.action-btn.active svg{color:var(--like-color);fill:var(--like-color)}
+.action-btn.active{animation:heartPop 0.4s ease}
+.action-btn span{font-size:14px;font-weight:600;color:var(--text-secondary)}
+.action-btn.active span{color:var(--like-color)}
 .comments-section{padding:16px 20px;border-top:1px solid var(--border)}
 .comments-section h4{font-size:16px;font-weight:700;margin-bottom:16px}
 .comment-item{display:flex;gap:12px;margin-bottom:16px;animation:fadeInUp 0.3s ease-out}
@@ -250,9 +269,6 @@ input[type="file"]{display:none}
 .search-user-info p{font-size:13px;color:var(--text-secondary)}
 .story-ring{padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-dark))}
 .story-ring .avatar{border:2px solid white;margin:0}
-.heart-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);color:var(--primary);pointer-events:none;z-index:10;transition:transform 0.3s ease,opacity 0.3s ease;opacity:0}
-.heart-overlay.show{transform:translate(-50%,-50%) scale(1);opacity:1}
-.heart-overlay svg{width:80px;height:80px;fill:var(--primary)}
 .delete-btn { color: #DC2626 !important; }
 .delete-btn svg { stroke: #DC2626 !important; }
 </style>
@@ -294,19 +310,12 @@ Continue as Guest
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
 </button>
 </div>
-<div class="suggestions-section" id="suggestionsSection" style="display:none">
-<div class="suggestions-header">
-<h3>Suggested for you</h3>
-<a href="#" onclick="showPage('explore')">See All</a>
-</div>
-<div class="suggestions-scroll" id="suggestionsScroll"></div>
-</div>
 <div class="pull-refresh" id="pullRefresh" onclick="refreshFeed()">
 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
 Pull to refresh
 </div>
-<div class="feed-container" id="feedContainer"></div>
-<div id="feedLoading" style="padding:20px;text-align:center;color:var(--text-muted);display:none">
+<div class="reels-container" id="feedContainer"></div>
+<div id="feedLoading" style="padding:20px;text-align:center;color:var(--text-muted);display:none;position:absolute;bottom:80px;width:100%">
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v4"></path></svg>
 </div>
 </div>
@@ -388,15 +397,15 @@ Pull to refresh
 <div class="profile-name" id="profileName">Guest User</div>
 <div class="profile-handle" id="profileHandle">@guest</div>
 <div class="profile-stats">
-<div class="stat-item" onclick="showFollowers()">
+<div class="stat-item">
 <h4 id="statPosts">0</h4>
 <p>Posts</p>
 </div>
-<div class="stat-item" onclick="showFollowers()">
+<div class="stat-item">
 <h4 id="statFollowers">0</h4>
 <p>Followers</p>
 </div>
-<div class="stat-item" onclick="showFollowing()">
+<div class="stat-item">
 <h4 id="statFollowing">0</h4>
 <p>Following</p>
 </div>
@@ -533,7 +542,7 @@ firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.database(),googleProvider=new firebase.auth.GoogleAuthProvider();
 let currentUser=null,isGuest=false,allPosts=[],currentFilter='all',currentProfileTab='posts',currentUserProfileTab='posts',selectedFile=null,currentChatId=null,currentChatUser=null,feedOffset=0,feedLimit=5,isLoadingFeed=false,viewedUserId=null,chatListeners=[];
 
-// Video Intersection Observer for Autoplay/Pause
+// Video Intersection Observer for Autoplay/Pause (Updated for Full Screen Reels)
 const videoObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if(entry.isIntersecting) {
@@ -542,7 +551,7 @@ const videoObserver = new IntersectionObserver((entries) => {
       entry.target.pause();
     }
   });
-}, { threshold: 0.5 });
+}, { threshold: 0.6 });
 
 document.addEventListener('DOMContentLoaded',()=>{
 setTimeout(()=>{document.getElementById('loadingScreen').classList.add('hidden')},1500);
@@ -550,7 +559,6 @@ auth.onAuthStateChanged((user)=>{
 if(user){currentUser=user;isGuest=false;initializeUser(user)}
 else{const guestId=localStorage.getItem('pulseGuestId');if(guestId){isGuest=true;currentUser={uid:guestId,displayName:'Guest User',photoURL:'https://api.dicebear.com/7.x/avataaars/svg?seed=guest',email:''};initializeUser(currentUser)}else{document.getElementById('authScreen').classList.remove('hidden');document.getElementById('bottomNav').classList.add('hidden')}}
 });
-window.addEventListener('scroll',handleScroll);
 });
 
 function signInWithGoogle(){auth.signInWithPopup(googleProvider).then((result)=>{currentUser=result.user;isGuest=false;initializeUser(currentUser)}).catch((error)=>{showToast('Sign in failed: '+error.message)})}
@@ -565,7 +573,15 @@ userRef.once('value').then((snapshot)=>{
 if(!snapshot.exists()){
 userRef.set({uid:user.uid,name:user.displayName||'Guest User',username:'@'+(user.displayName?user.displayName.toLowerCase().replace(/\s+/g,''):'guest'),avatar:user.photoURL||'https://api.dicebear.com/7.x/avataaars/svg?seed=guest',bio:'',followers:0,following:0,posts:0,createdAt:Date.now()});
 }
-updateProfileUI();loadFeed();loadSuggestions();loadMessages();
+updateProfileUI();loadFeed();loadMessages();
+});
+
+// Load more on snap scroll end
+const feedContainer = document.getElementById('feedContainer');
+feedContainer.addEventListener('scroll', () => {
+    if(feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 500) {
+        loadMoreFeed();
+    }
 });
 }
 
@@ -576,7 +592,7 @@ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
 const navMap={home:0,explore:1,add:2,search:3,profile:4};
 if(navMap[page]!==undefined){document.querySelectorAll('.nav-item')[navMap[page]].classList.add('active')}
 document.getElementById('bottomNav').classList.remove('hidden');
-if(page==='home'){loadFeed();loadSuggestions()}
+if(page==='home'){if(document.getElementById('feedContainer').children.length === 0) loadFeed();}
 else if(page==='explore'){loadExplore()}
 else if(page==='profile'){updateProfileUI();loadProfileContent()}
 else if(page==='messages'){loadMessages();document.getElementById('bottomNav').classList.add('hidden')}
@@ -588,7 +604,6 @@ window.scrollTo({top:0,behavior:'smooth'});
 
 function loadFeed(){
 const container=document.getElementById('feedContainer');
-// cleanup observers before clearing
 container.querySelectorAll('.feed-video').forEach(v => videoObserver.unobserve(v));
 container.innerHTML='';
 feedOffset=0;
@@ -604,7 +619,6 @@ const posts=[];
 snapshot.forEach((child)=>{posts.push({id:child.key,...child.val()})});
 posts.reverse();
 allPosts=posts;
-// Removed smartShuffle for chronological feed & performance
 const toShow=posts.slice(feedOffset,feedOffset+feedLimit);
 toShow.forEach((post)=>{
   const card = createVideoCard(post);
@@ -621,40 +635,115 @@ document.getElementById('feedLoading').style.display='none';
 function refreshFeed(){
 const refresh=document.getElementById('pullRefresh');
 refresh.classList.add('spinning');
-refresh.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v4"></path></svg> Refreshing...';
-setTimeout(()=>{loadFeed();refresh.classList.remove('spinning');refresh.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Pull to refresh';showToast('Feed refreshed')},1000);
+setTimeout(()=>{loadFeed();refresh.classList.remove('spinning');showToast('Feed refreshed')},1000);
 }
 
 function createVideoCard(post){
 const card=document.createElement('div');
-card.className='video-card';
-card.style.animationDelay=Math.random()*0.3+'s';
+card.className='reels-card';
 const isVideo=post.mediaUrl&&(post.mediaUrl.endsWith('.mp4')||post.mediaUrl.endsWith('.mov')||post.mediaUrl.includes('video'));
-const isLiked=post.likes&&post.likes[currentUser.uid];
+const isLiked=currentUser&&post.likes&&post.likes[currentUser.uid];
 const likeCount=post.likes?Object.keys(post.likes).length:0;
 const commentCount=post.comments?Object.keys(post.comments).length:0;
-card.innerHTML=`<div class="video-card-header"><img class="avatar" src="${post.authorAvatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+post.authorId}" alt="" onclick="viewUserProfile('${post.authorId}')"><div class="video-card-info"><h3 onclick="viewUserProfile('${post.authorId}')">${post.authorName||'Unknown'}</h3><p>${timeAgo(post.timestamp)}</p></div>${post.authorId!==currentUser.uid?`<button class="follow-btn ${post.isFollowing?'following':''}" onclick="toggleFollow('${post.authorId}',this)">${post.isFollowing?'Following':'Follow'}</button>`:''}</div><div class="video-wrapper" onclick="toggleLike('${post.id}',this)">${isVideo?`<video class="feed-video" src="${post.mediaUrl}" loop muted playsinline preload="metadata"></video>`:`<img src="${post.mediaUrl}" alt="" loading="lazy">`}<div class="heart-overlay" id="heart-${post.id}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div></div><div class="video-actions"><div class="action-btn ${isLiked?'active':''}" onclick="likePost('${post.id}',this)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isLiked?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span id="likes-${post.id}">${likeCount}</span></div><div class="action-btn" onclick="openPostDetail('${post.id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg><span>${commentCount}</span></div><div class="action-btn" onclick="savePost('${post.id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><span>Save</span></div><div class="action-btn" onclick="resharePost('${post.id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg><span>Share</span></div></div>`;
-return card;
+
+card.innerHTML=`
+<div class="reels-video-wrapper" style="width:100%; height:100%; position:absolute; inset:0;">
+    ${isVideo?`<video class="feed-video reels-video" src="${post.mediaUrl}" loop muted playsinline preload="metadata"></video>`:`<img class="reels-video" src="${post.mediaUrl}" alt="" loading="lazy">`}
+    <div class="heart-overlay" id="heart-${post.id}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+</div>
+<div class="reels-overlay">
+    <div class="reels-left">
+        <div class="reels-author">
+            <img class="avatar" src="${post.authorAvatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+post.authorId}" alt="" onclick="viewUserProfile('${post.authorId}')">
+            <h3 onclick="viewUserProfile('${post.authorId}')">${post.authorName||'Unknown'}</h3>
+            ${(!currentUser || post.authorId!==currentUser.uid)?`<button class="reels-follow-btn" id="follow-${post.id}" onclick="toggleFollow('${post.authorId}',this)">Follow</button>`:''}
+        </div>
+        <p class="reels-caption">${post.caption||''}</p>
+    </div>
+    <div class="reels-right">
+        <div class="reels-action like-btn ${isLiked?'active':''}" onclick="likePost('${post.id}',this)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isLiked?'#ef4444':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span id="likes-${post.id}">${likeCount}</span>
+        </div>
+        <div class="reels-action" onclick="openPostDetail('${post.id}')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>${commentCount}</span>
+        </div>
+        <div class="reels-action" onclick="savePost('${post.id}')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            <span>Save</span>
+        </div>
+        <div class="reels-action" onclick="resharePost('${post.id}')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+            <span>Share</span>
+        </div>
+    </div>
+</div>`;
+
+// Double Tap Logic
+const wrapper = card.querySelector('.reels-video-wrapper');
+let lastTap = 0;
+wrapper.addEventListener('touchstart', (e) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < 300 && tapLength > 0) {
+        toggleLike(post.id, wrapper);
+        e.preventDefault();
+    }
+    lastTap = currentTime;
+});
+wrapper.addEventListener('dblclick', (e) => {
+    toggleLike(post.id, wrapper);
+});
+
+// Init Follow status
+if(currentUser && post.authorId !== currentUser.uid) {
+    db.ref('users/'+currentUser.uid+'/following/'+post.authorId).once('value').then(snap => {
+        if(snap.exists()) {
+            const btn = card.querySelector('#follow-'+post.id);
+            if(btn) {
+                btn.textContent = 'Unfollow';
+                btn.classList.add('following');
+            }
+        }
+    });
 }
 
-function handleScroll(){
-if(window.innerHeight+window.scrollY>=document.body.offsetHeight-500){
-const homePage=document.getElementById('homePage');
-if(homePage.classList.contains('active')){loadMoreFeed()}
-}
+return card;
 }
 
 function likePost(postId,btn){
 if(!currentUser)return;
 const likeRef=db.ref('posts/'+postId+'/likes/'+currentUser.uid);
 const isLiked=btn.classList.contains('active');
-if(isLiked){likeRef.remove();btn.classList.remove('active');btn.querySelector('svg').setAttribute('fill','none')}
-else{likeRef.set(true);btn.classList.add('active');btn.querySelector('svg').setAttribute('fill','currentColor');const heart=document.getElementById('heart-'+postId);if(heart){heart.classList.add('show');setTimeout(()=>heart.classList.remove('show'),600)}}
-db.ref('posts/'+postId+'/likes').once('value').then(snap=>{const count=snap.numChildren();const countEl=document.getElementById('likes-'+postId);if(countEl)countEl.textContent=count});
+if(isLiked){
+    likeRef.remove();
+    btn.classList.remove('active');
+    btn.querySelector('svg').setAttribute('fill','none');
+} else {
+    likeRef.set(true);
+    btn.classList.add('active');
+    btn.querySelector('svg').setAttribute('fill','#ef4444');
+    
+    const heart=document.getElementById('heart-'+postId);
+    if(heart){
+        heart.classList.add('show');
+        setTimeout(()=>heart.classList.remove('show'), 800);
+    }
+}
+db.ref('posts/'+postId+'/likes').once('value').then(snap=>{
+    const count=snap.numChildren();
+    const countEl=document.getElementById('likes-'+postId);
+    if(countEl)countEl.textContent=count;
+    const detailCountEl = document.getElementById('detail-likes-'+postId);
+    if(detailCountEl) detailCountEl.textContent=count;
+});
 }
 
 function toggleLike(postId,wrapper){
-const btn=wrapper.closest('.video-card').querySelector('.action-btn');
+const btn=wrapper.parentElement.querySelector('.like-btn');
 if(btn&&!btn.classList.contains('active')){likePost(postId,btn)}
 }
 
@@ -686,8 +775,18 @@ if(!currentUser||userId===currentUser.uid)return;
 const followRef=db.ref('users/'+currentUser.uid+'/following/'+userId);
 const followerRef=db.ref('users/'+userId+'/followers/'+currentUser.uid);
 followRef.once('value').then(snap=>{
-if(snap.exists()){followRef.remove();followerRef.remove();btn.textContent='Follow';btn.classList.remove('following')}
-else{followRef.set(true);followerRef.set(true);btn.textContent='Following';btn.classList.add('following')}
+if(snap.exists()){
+    followRef.remove();
+    followerRef.remove();
+    btn.textContent='Follow';
+    btn.classList.remove('following');
+}
+else{
+    followRef.set(true);
+    followerRef.set(true);
+    btn.textContent='Unfollow';
+    btn.classList.add('following');
+}
 });
 }
 
@@ -988,10 +1087,16 @@ db.ref('users/'+userId).once('value').then((snapshot)=>{
 const user=snapshot.val()||{};
 document.getElementById('userProfileTitle').textContent=user.name||'Profile';
 const header=document.getElementById('userProfileHeader');
-header.innerHTML=`<div class="profile-avatar-wrapper"><img class="avatar-lg" src="${user.avatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+userId}" alt=""></div><div class="profile-name">${user.name||'Unknown'}</div><div class="profile-handle">${user.username||'@user'}</div><div class="profile-stats"><div class="stat-item"><h4>${user.posts||0}</h4><p>Posts</p></div><div class="stat-item"><h4 id="userFollowers">0</h4><p>Followers</p></div><div class="stat-item"><h4 id="userFollowing">0</h4><p>Following</p></div></div><div class="profile-actions"><button class="profile-btn ${user.isFollowing?'following':''}" id="userFollowBtn" onclick="toggleUserFollow('${userId}')">${user.isFollowing?'Following':'Follow'}</button><button class="profile-btn primary" onclick="startChatWithUser('${userId}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Message</button></div>`;
-db.ref('users/'+userId+'/followers').once('value').then(s=>{document.getElementById('userFollowers').textContent=s.numChildren()});
-db.ref('users/'+userId+'/following').once('value').then(s=>{document.getElementById('userFollowing').textContent=s.numChildren()});
-loadUserProfileContent(userId);
+let isFollowing = false;
+
+db.ref('users/'+currentUser.uid+'/following/'+userId).once('value').then(snap=>{
+    isFollowing = snap.exists();
+    
+    header.innerHTML=`<div class="profile-avatar-wrapper"><img class="avatar-lg" src="${user.avatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+userId}" alt=""></div><div class="profile-name">${user.name||'Unknown'}</div><div class="profile-handle">${user.username||'@user'}</div><div class="profile-stats"><div class="stat-item"><h4>${user.posts||0}</h4><p>Posts</p></div><div class="stat-item"><h4 id="userFollowers">0</h4><p>Followers</p></div><div class="stat-item"><h4 id="userFollowing">0</h4><p>Following</p></div></div><div class="profile-actions"><button class="profile-btn ${isFollowing?'following':''}" id="userFollowBtn" onclick="toggleUserFollow('${userId}')">${isFollowing?'Unfollow':'Follow'}</button><button class="profile-btn primary" onclick="startChatWithUser('${userId}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Message</button></div>`;
+    db.ref('users/'+userId+'/followers').once('value').then(s=>{document.getElementById('userFollowers').textContent=s.numChildren()});
+    db.ref('users/'+userId+'/following').once('value').then(s=>{document.getElementById('userFollowing').textContent=s.numChildren()});
+    loadUserProfileContent(userId);
+});
 });
 }
 
@@ -1026,25 +1131,6 @@ let chatId=null;
 s.forEach((child)=>{if(child.val().participants[userId]){chatId=child.key}});
 openChat(chatId,userId,user);
 });
-});
-}
-
-function loadSuggestions(){
-if(!currentUser)return;
-db.ref('users').limitToFirst(10).once('value').then((snapshot)=>{
-const users=[];
-snapshot.forEach((child)=>{if(child.key!==currentUser.uid){users.push({id:child.key,...child.val()})}});
-if(users.length>0){
-document.getElementById('suggestionsSection').style.display='block';
-const scroll=document.getElementById('suggestionsScroll');
-scroll.innerHTML='';
-users.forEach((user)=>{
-const card=document.createElement('div');
-card.className='suggestion-card';
-card.innerHTML=`<img class="avatar" src="${user.avatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+user.id}" alt="" onclick="viewUserProfile('${user.id}')"><h4 onclick="viewUserProfile('${user.id}')">${user.name||'User'}</h4><p>${user.username||'@user'}</p><button class="follow-btn" onclick="toggleFollow('${user.id}',this);event.stopPropagation();">Follow</button>`;
-scroll.appendChild(card);
-});
-}
 });
 }
 
@@ -1089,7 +1175,7 @@ const likeCount=post.likes?Object.keys(post.likes).length:0;
 const commentCount=post.comments?Object.keys(post.comments).length:0;
 const isAuthor=currentUser&&post.authorId===currentUser.uid;
 
-document.getElementById('postDetailContent').innerHTML=`${isVideo?`<video src="${post.mediaUrl}" controls autoplay style="width:100%;max-height:50vh;object-fit:cover;display:block"></video>`:`<img src="${post.mediaUrl}" alt="" style="width:100%;max-height:50vh;object-fit:cover;display:block">`}<div class="post-detail-info"><div class="post-detail-user"><img class="avatar" src="${post.authorAvatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+post.authorId}" alt="" onclick="viewUserProfile('${post.authorId}')"><div><h3 style="font-size:16px;font-weight:700;cursor:pointer" onclick="viewUserProfile('${post.authorId}')">${post.authorName||'Unknown'}</h3><p style="font-size:13px;color:var(--text-secondary)">${timeAgo(post.timestamp)}</p></div></div><p class="post-detail-caption">${post.caption||''}</p><div class="post-detail-actions"><div class="action-btn ${isLiked?'active':''}" onclick="likePost('${postId}',this)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isLiked?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span id="detail-likes-${postId}">${likeCount}</span></div><div class="action-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg><span>${commentCount}</span></div><div class="action-btn" onclick="savePost('${postId}');closePostDetail()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><span>Save</span></div>${isAuthor?`<div class="action-btn delete-btn" onclick="deletePost('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg><span>Delete</span></div>`:''}</div></div><div class="comments-section"><h4>Comments</h4><div id="commentsList"></div><div class="comment-input-area"><input type="text" class="chat-input" id="commentInput" placeholder="Add a comment..." style="flex:1" onkeypress="if(event.key==='Enter')addComment('${postId}')"><button class="send-btn" onclick="addComment('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button></div></div>`;
+document.getElementById('postDetailContent').innerHTML=`${isVideo?`<video src="${post.mediaUrl}" controls autoplay style="width:100%;max-height:50vh;object-fit:cover;display:block"></video>`:`<img src="${post.mediaUrl}" alt="" style="width:100%;max-height:50vh;object-fit:cover;display:block">`}<div class="post-detail-info"><div class="post-detail-user"><img class="avatar" src="${post.authorAvatar||'https://api.dicebear.com/7.x/avataaars/svg?seed='+post.authorId}" alt="" onclick="viewUserProfile('${post.authorId}')"><div><h3 style="font-size:16px;font-weight:700;cursor:pointer" onclick="viewUserProfile('${post.authorId}')">${post.authorName||'Unknown'}</h3><p style="font-size:13px;color:var(--text-secondary)">${timeAgo(post.timestamp)}</p></div></div><p class="post-detail-caption">${post.caption||''}</p><div class="post-detail-actions"><div class="action-btn ${isLiked?'active':''}" onclick="likePost('${postId}',this)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${isLiked?'#ef4444':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span id="detail-likes-${postId}">${likeCount}</span></div><div class="action-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg><span>${commentCount}</span></div><div class="action-btn" onclick="savePost('${postId}');closePostDetail()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><span>Save</span></div>${isAuthor?`<div class="action-btn delete-btn" onclick="deletePost('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg><span>Delete</span></div>`:''}</div></div><div class="comments-section"><h4>Comments</h4><div id="commentsList"></div><div class="comment-input-area"><input type="text" class="chat-input" id="commentInput" placeholder="Add a comment..." style="flex:1" onkeypress="if(event.key==='Enter')addComment('${postId}')"><button class="send-btn" onclick="addComment('${postId}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button></div></div>`;
 loadComments(postId);
 document.getElementById('postDetailModal').classList.add('active');
 });
@@ -1157,12 +1243,12 @@ overlay.addEventListener('click',(e)=>{if(e.target===overlay){overlay.classList.
 
 let touchStartY=0,isPulling=false;
 document.getElementById('homePage').addEventListener('touchstart',(e)=>{
-if(window.scrollY===0){touchStartY=e.touches[0].clientY;isPulling=true}
+if(document.getElementById('feedContainer').scrollTop===0){touchStartY=e.touches[0].clientY;isPulling=true}
 });
 document.getElementById('homePage').addEventListener('touchmove',(e)=>{
 if(!isPulling)return;
 const diff=e.touches[0].clientY-touchStartY;
-if(diff>80&&window.scrollY===0){isPulling=false;refreshFeed()}
+if(diff>80&&document.getElementById('feedContainer').scrollTop===0){isPulling=false;refreshFeed()}
 });
 </script>
 </body>
