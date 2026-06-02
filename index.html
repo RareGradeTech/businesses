@@ -88,6 +88,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .reels-follow-btn { padding: 4px 14px; border-radius: 6px; border: 1.5px solid white; background: transparent; color: white; font-size: 13px; font-weight: 600; cursor: pointer; backdrop-filter: blur(4px); transition: var(--transition); }
 .reels-follow-btn.following { background: rgba(255,255,255,0.25); border-color: transparent; }
 
+/* Enhanced action button styles */
+.reels-action.saved svg { fill: #10B981; color: #10B981; }
+.reels-action.reshared svg { stroke: #10B981; color: #10B981; }
+
 .heart-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); color: var(--like-color); pointer-events: none; z-index: 10; opacity: 0; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s; }
 .heart-overlay.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 .heart-overlay svg { width: 120px; height: 120px; fill: var(--like-color); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
@@ -542,13 +546,14 @@ firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.database(),googleProvider=new firebase.auth.GoogleAuthProvider();
 let currentUser=null,isGuest=false,allPosts=[],currentFilter='all',currentProfileTab='posts',currentUserProfileTab='posts',selectedFile=null,currentChatId=null,currentChatUser=null,feedOffset=0,feedLimit=5,isLoadingFeed=false,viewedUserId=null,chatListeners=[];
 
-// Video Intersection Observer for Autoplay/Pause (Updated for Full Screen Reels)
+// Video Intersection Observer for Autoplay/Pause
 const videoObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
+    const video = entry.target;
     if(entry.isIntersecting) {
-      entry.target.play().catch(e => console.log("Autoplay prevented:", e));
+      video.play().catch(e => console.log("Autoplay prevented:", e));
     } else {
-      entry.target.pause();
+      video.pause();
     }
   });
 }, { threshold: 0.6 });
@@ -671,18 +676,102 @@ card.innerHTML=`
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
             <span>${commentCount}</span>
         </div>
-        <div class="reels-action" onclick="savePost('${post.id}')">
+        <div class="reels-action save-btn" onclick="savePost('${post.id}', this)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
             <span>Save</span>
         </div>
-        <div class="reels-action" onclick="resharePost('${post.id}')">
+        <div class="reels-action reshare-btn" onclick="resharePost('${post.id}', this)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+            <span>Reshare</span>
+        </div>
+        <div class="reels-action" onclick="sharePost('${post.id}')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="16"></line></svg>
             <span>Share</span>
         </div>
     </div>
 </div>`;
 
-// Double Tap Logic
+// Video interaction logic
+if (isVideo) {
+    const video = card.querySelector('.feed-video');
+    const wrapper = card.querySelector('.reels-video-wrapper');
+    
+    // Ensure video plays immediately when visible
+    video.addEventListener('loadedmetadata', () => {
+        if (wrapper.getBoundingClientRect().top < window.innerHeight) {
+            video.play().catch(() => {});
+        }
+    });
+
+    let isMuted = true;
+    let pressTimer;
+
+    // Tap to toggle mute
+    wrapper.addEventListener('click', (e) => {
+        // Ignore if it's a hold gesture
+        if (e.detail === 0 || pressTimer) return;
+        
+        isMuted = !isMuted;
+        video.muted = isMuted;
+        
+        if (!isMuted) {
+            showToast('🔊 Sound on');
+        } else {
+            showToast('🔇 Sound off');
+        }
+    });
+
+    // Hold to pause
+    wrapper.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        pressTimer = setTimeout(() => {
+            video.pause();
+            showToast('⏸️ Paused');
+        }, 400);
+    });
+
+    wrapper.addEventListener('mouseup', () => {
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+            if (!video.paused) video.play();
+        }
+    });
+
+    wrapper.addEventListener('mouseleave', () => {
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+    });
+
+    // Touch support
+    let touchStartTime = 0;
+    wrapper.addEventListener('touchstart', (e) => {
+        touchStartTime = Date.now();
+        pressTimer = setTimeout(() => {
+            video.pause();
+            showToast('⏸️ Paused');
+        }, 400);
+    });
+
+    wrapper.addEventListener('touchend', (e) => {
+        const touchDuration = Date.now() - touchStartTime;
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+        if (touchDuration < 400) {
+            // Short tap - toggle mute
+            isMuted = !isMuted;
+            video.muted = isMuted;
+            if (!isMuted) showToast('🔊 Sound on');
+            else showToast('🔇 Sound off');
+        }
+    });
+}
+
+// Double Tap Logic (Like)
 const wrapper = card.querySelector('.reels-video-wrapper');
 let lastTap = 0;
 wrapper.addEventListener('touchstart', (e) => {
@@ -707,6 +796,23 @@ if(currentUser && post.authorId !== currentUser.uid) {
                 btn.textContent = 'Unfollow';
                 btn.classList.add('following');
             }
+        }
+    });
+}
+
+// Check saved/reshared status
+if (currentUser) {
+    db.ref('users/'+currentUser.uid+'/saved/'+post.id).once('value').then(snap => {
+        if (snap.exists()) {
+            const saveBtn = card.querySelector('.save-btn');
+            if (saveBtn) saveBtn.classList.add('saved');
+        }
+    });
+    
+    db.ref('users/'+currentUser.uid+'/reshared/'+post.id).once('value').then(snap => {
+        if (snap.exists()) {
+            const reshareBtn = card.querySelector('.reshare-btn');
+            if (reshareBtn) reshareBtn.classList.add('reshared');
         }
     });
 }
@@ -747,14 +853,25 @@ const btn=wrapper.parentElement.querySelector('.like-btn');
 if(btn&&!btn.classList.contains('active')){likePost(postId,btn)}
 }
 
-function savePost(postId){
+function savePost(postId, btnElement){
 if(!currentUser)return;
-db.ref('users/'+currentUser.uid+'/saved/'+postId).set(true).then(()=>{showToast('Saved to collection')});
+db.ref('users/'+currentUser.uid+'/saved/'+postId).set(true).then(()=>{
+    showToast('Saved to collection');
+    if (btnElement) btnElement.classList.add('saved');
+});
 }
 
-function resharePost(postId){
+function resharePost(postId, btnElement){
 if(!currentUser)return;
-db.ref('users/'+currentUser.uid+'/reshared/'+postId).set(true).then(()=>{showToast('Reshared to your profile')});
+db.ref('users/'+currentUser.uid+'/reshared/'+postId).set(true).then(()=>{
+    showToast('Reshared to your profile');
+    if (btnElement) btnElement.classList.add('reshared');
+});
+}
+
+function sharePost(postId){
+showToast('Link copied to clipboard! 📋');
+navigator.clipboard.writeText(window.location.origin + '?post=' + postId);
 }
 
 function deletePost(postId) {
