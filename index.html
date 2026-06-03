@@ -555,6 +555,81 @@
         }
 .dialog-btn.danger-btn { color: var(--danger); }
 
+/* ── Custom Alert & Confirm Modal ── */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s;
+    padding: 24px;
+}
+.dialog-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.dialog-box {
+    background: var(--surface);
+    width: 100%;
+    max-width: 320px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    transform: scale(0.95);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.dialog-overlay.active .dialog-box {
+    transform: scale(1);
+}
+.dialog-content {
+    padding: 24px 20px 20px;
+    text-align: center;
+}
+.dialog-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+}
+.dialog-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+.dialog-actions {
+    display: flex;
+    border-top: 1px solid var(--border);
+}
+.dialog-btn {
+    flex: 1;
+    padding: 16px 0;
+    background: transparent;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    outline: none;
+    font-family: inherit;
+}
+.dialog-btn:active {
+    background: var(--surface2);
+}
+.dialog-btn#dialog-cancel-btn {
+    border-right: 1px solid var(--border);
+    color: var(--text-muted);
+}
+.dialog-btn.confirm-btn { color: var(--primary); }
+
 /* ═══════════════════════════════════════
    REELS – Full-screen TikTok-style feed
 ═══════════════════════════════════════ */
@@ -577,9 +652,6 @@
 body.reels-active {
     overflow: hidden !important;
     padding-bottom: 0 !important;
-}
-body.reels-active .bottom-nav-container {
-    display: none !important;
 }
 
 /* Reel feed – snapping vertical scroll */
@@ -708,7 +780,7 @@ body.reels-active .bottom-nav-container {
 .reel-actions {
     position: absolute;
     right: 14px;
-    bottom: calc(108px + env(safe-area-inset-bottom));
+    bottom: calc(104px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -795,7 +867,7 @@ body.reels-active .bottom-nav-container {
     bottom: 0;
     left: 0;
     right: 70px;
-    padding: 0 16px calc(112px + env(safe-area-inset-bottom)) 16px;
+    padding: 0 16px calc(108px + env(safe-area-inset-bottom)) 16px;
     z-index: 10;
 }
 .reel-username {
@@ -872,7 +944,7 @@ body.reels-active .bottom-nav-container {
 /* Progress bar */
 .reel-progress {
     position: absolute;
-    bottom: calc(96px + env(safe-area-inset-bottom));
+    bottom: calc(92px + env(safe-area-inset-bottom));
     left: 0;
     right: 0;
     height: 2px;
@@ -1305,28 +1377,6 @@ body.reels-active .bottom-nav-container {
     cursor: pointer;
     font-size: 16px;
 }
-
-/* Floating plus button — positioned above the progress bar */
-.reels-fab {
-    position: fixed;
-    bottom: calc(160px + env(safe-area-inset-bottom));
-    right: 14px;
-    z-index: 160;
-    width: 46px;
-    height: 46px;
-    background: var(--primary-gradient);
-    border: none;
-    border-radius: 50%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(108,99,255,0.5);
-    transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-    color: #fff;
-}
-.reels-fab.visible { display: flex; }
-.reels-fab:active { transform: scale(0.88); }
 
 /* Like heart pop animation */
 @keyframes heartPop {
@@ -3697,31 +3747,21 @@ function initNotifications() {
 
     window.showCustomConfirm = function(title, message, isDanger = false) {
     return new Promise((resolve) => {
-        const overlay = document.getElementById('custom-dialog-overlay');
-        const titleEl = document.getElementById('dialog-title');
-        const msgEl = document.getElementById('dialog-message');
-        const cancelBtn = document.getElementById('dialog-cancel-btn');
+        const overlay    = document.getElementById('custom-dialog-overlay');
+        const titleEl    = document.getElementById('dialog-title');
+        const msgEl      = document.getElementById('dialog-message');
+        const cancelBtn  = document.getElementById('dialog-cancel-btn');
         const confirmBtn = document.getElementById('dialog-confirm-btn');
 
-        titleEl.textContent = title;
-        msgEl.textContent = message;
-
-        // Styling based on danger status (red vs primary color)
+        titleEl.textContent  = title;
+        msgEl.textContent    = message;
         confirmBtn.className = 'dialog-btn ' + (isDanger ? 'danger-btn' : 'confirm-btn');
-        cancelBtn.style.display = 'block';
-        confirmBtn.textContent = 'Confirm';
+        confirmBtn.textContent = isDanger ? 'Delete' : 'Confirm';
+        cancelBtn.style.display = '';   // restore flex (set by parent display:flex)
+        cancelBtn.style.borderRight = '';
 
-        const cleanup = () => {
-            overlay.classList.remove('active');
-            cancelBtn.removeEventListener('click', onCancel);
-            confirmBtn.removeEventListener('click', onConfirm);
-        };
-
-        const onCancel = () => { cleanup(); resolve(false); };
-        const onConfirm = () => { cleanup(); resolve(true); };
-
-        cancelBtn.addEventListener('click', onCancel);
-        confirmBtn.addEventListener('click', onConfirm);
+        cancelBtn.addEventListener('click',  () => { overlay.classList.remove('active'); resolve(false); }, { once: true });
+        confirmBtn.addEventListener('click', () => { overlay.classList.remove('active'); resolve(true);  }, { once: true });
 
         overlay.classList.add('active');
     });
@@ -3729,27 +3769,24 @@ function initNotifications() {
 
 window.showCustomAlert = function(title, message) {
     return new Promise((resolve) => {
-        const overlay = document.getElementById('custom-dialog-overlay');
-        const titleEl = document.getElementById('dialog-title');
-        const msgEl = document.getElementById('dialog-message');
-        const cancelBtn = document.getElementById('dialog-cancel-btn');
+        const overlay    = document.getElementById('custom-dialog-overlay');
+        const titleEl    = document.getElementById('dialog-title');
+        const msgEl      = document.getElementById('dialog-message');
+        const cancelBtn  = document.getElementById('dialog-cancel-btn');
         const confirmBtn = document.getElementById('dialog-confirm-btn');
 
-        titleEl.textContent = title;
-        msgEl.textContent = message;
-
+        titleEl.textContent  = title;
+        msgEl.textContent    = message;
         confirmBtn.className = 'dialog-btn confirm-btn';
-        cancelBtn.style.display = 'none'; // Hide cancel button for simple alerts
         confirmBtn.textContent = 'OK';
+        // Hide cancel for simple alerts — use visibility so flex layout is unaffected
+        cancelBtn.style.display = 'none';
 
-        const cleanup = () => {
+        confirmBtn.addEventListener('click', () => {
             overlay.classList.remove('active');
-            confirmBtn.removeEventListener('click', onConfirm);
-        };
-
-        const onConfirm = () => { cleanup(); resolve(true); };
-
-        confirmBtn.addEventListener('click', onConfirm);
+            cancelBtn.style.display = '';  // restore for next confirm dialog
+            resolve(true);
+        }, { once: true });
 
         overlay.classList.add('active');
     });
@@ -3772,11 +3809,6 @@ document.body.classList.remove('reels-active');
 
 <!-- Reels feed container (populated by JS) -->
 <div class="reels-feed" id="reels-feed"></div>
-
-<!-- Floating plus / upload button -->
-<button class="reels-fab" id="reels-fab" title="Post a Reel">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-</button>
 
 <!-- Reels toast -->
 <div class="reels-toast" id="reels-toast"></div>
@@ -4198,6 +4230,12 @@ function buildReelCard(reel, idx) {
                 </div>
                 <span class="reel-action-count" id="save-count-${idx}">${fmtCount(reel.saves)}</span>
             </button>
+
+            <button class="reel-action-btn reel-add-btn" id="add-btn-${idx}" title="Post a Reel">
+                <div class="reel-action-icon" style="background:var(--primary-gradient,linear-gradient(135deg,#6C63FF,#9B59B6));">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+            </button>
         </div>
 
         <!-- bottom info -->
@@ -4227,11 +4265,13 @@ function buildReelCard(reel, idx) {
     const commentBtnEl = card.querySelector(`#comment-btn-${idx}`);
     const shareBtnEl   = card.querySelector(`#share-btn-${idx}`);
     const saveBtnEl    = card.querySelector(`#save-btn-${idx}`);
+    const addBtnEl     = card.querySelector(`#add-btn-${idx}`);
 
     likeBtnEl.addEventListener('click', e => { e.stopPropagation(); toggleLike(idx); });
     commentBtnEl.addEventListener('click', e => { e.stopPropagation(); openComments(idx); });
     shareBtnEl.addEventListener('click', e => { e.stopPropagation(); openShare(idx); });
     saveBtnEl.addEventListener('click', e => { e.stopPropagation(); toggleSave(idx); });
+    addBtnEl?.addEventListener('click', e => { e.stopPropagation(); haptic('light'); openUpload(); });
 
     const capEl = card.querySelector(`#caption-${idx}`);
     capEl.addEventListener('click', e => { e.stopPropagation(); capEl.classList.toggle('expanded'); });
@@ -4616,8 +4656,6 @@ async function updateShareCount(reelId) {
 // ─────────────────────────────────────────────
 // Upload  –  Cloudinary → Firebase
 // ─────────────────────────────────────────────
-document.getElementById('reels-fab').addEventListener('click', () => { haptic('light'); openUpload(); });
-
 function openUpload() {
     document.getElementById('reels-upload-overlay').classList.add('active');
 }
@@ -4777,12 +4815,10 @@ function showReelsToast(msg) {
 // ─────────────────────────────────────────────
 function onReelsTabActive(active) {
     const topbar = document.getElementById('reels-topbar');
-    const fab    = document.getElementById('reels-fab');
     const feed   = document.getElementById('reels-feed');
 
     if (active) {
         topbar.style.display = 'flex';
-        fab.classList.add('visible');
         feed.style.display = 'block';
         // Ensure feed and topbar are inside view-reels
         const viewReels = document.getElementById('view-reels');
@@ -4796,7 +4832,6 @@ function onReelsTabActive(active) {
         }
     } else {
         topbar.style.display = 'none';
-        fab.classList.remove('visible');
         stopAllVideos();
         if (reelObserver) { reelObserver.disconnect(); reelObserver = null; }
     }
