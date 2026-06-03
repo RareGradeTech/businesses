@@ -1600,7 +1600,7 @@ body.reels-active {
 
 <div class="app-container">
 
-    <div id="view-chats" class="view-container active">
+    <div id="view-chats" class="view-container">
         <header class="header">
             <h2>Messages</h2>
             <div style="display:flex;gap:8px;align-items:center;">
@@ -1642,7 +1642,7 @@ body.reels-active {
         <div id="discover-content"></div>
     </div>
 
-    <div id="view-reels" class="view-container"></div>
+    <div id="view-reels" class="view-container active"></div>
 
     <div id="view-profile" class="view-container">
         <header class="header">
@@ -1655,15 +1655,15 @@ body.reels-active {
 
 <div class="bottom-nav-container">
     <nav class="bottom-nav">
-        <button class="nav-item active" data-nav="chats" id="nav-chats">
-            <i data-feather="message-circle" style="width:22px;height:22px;"></i>
-            <span class="nav-badge" id="badge-messages"></span>
+        <button class="nav-item active" data-nav="reels" id="nav-reels">
+            <i data-feather="film" style="width:22px;height:22px;"></i>
         </button>
         <button class="nav-item" data-nav="discover" id="nav-discover">
             <i data-feather="compass" style="width:22px;height:22px;"></i>
         </button>
-        <button class="nav-item" data-nav="reels" id="nav-reels">
-            <i data-feather="film" style="width:22px;height:22px;"></i>
+        <button class="nav-item" data-nav="chats" id="nav-chats">
+            <i data-feather="message-circle" style="width:22px;height:22px;"></i>
+            <span class="nav-badge" id="badge-messages"></span>
         </button>
         <button class="nav-item" data-nav="profile" id="nav-profile">
             <div class="nav-avatar-wrapper">
@@ -2080,7 +2080,8 @@ const shimmerHTML = () => Array(5).fill(0).map(() => `
 
 // Set default avatars immediately
 document.getElementById('nav-profile-avatar').src = DEFAULT_AVATAR;
-document.getElementById('chats-list').innerHTML = shimmerHTML();
+// Reels is the default landing tab – activate body class so the full-screen view renders correctly
+document.body.classList.add('reels-active');
 
 feather.replace();
 document.addEventListener('contextmenu', e => {
@@ -2444,6 +2445,12 @@ async function uploadToCloudinary(file, folder = 'vynix') {
 
 // ── Load Chats ──
 async function loadChatsTab() {
+    // Show shimmer in chats list so it looks good when user navigates there
+    const chatsListEl = document.getElementById('chats-list');
+    if (chatsListEl && !chatsListEl.innerHTML.trim()) {
+        chatsListEl.innerHTML = shimmerHTML();
+        feather.replace();
+    }
     const usersSnap = await get(ref(db, 'users'));
     if (usersSnap.exists()) usersSnap.forEach(c => { allUsersCache[c.key] = c.val(); });
 
@@ -4033,19 +4040,32 @@ function loadReelsFromFirebase() {
     onValue(REELS_REF(), async (snap) => {
         const raw = snap.val() || {};
         const me  = getMe();
+
+        // Fetch all user profiles once so we can show current names/verified badges
+        let allUsers = {};
+        try {
+            const usersSnap = await get(ref(_db, 'users'));
+            if (usersSnap.exists()) usersSnap.forEach(c => { allUsers[c.key] = c.val(); });
+        } catch(e) {}
+
         // Build array sorted newest first — includes ALL users' reels
-        const arr = Object.entries(raw).map(([id, r]) => ({
-            ...r,
-            id,
-            // Ensure user object always has fallback values
-            user: {
-                uid:      r.user?.uid      || 'unknown',
-                username: r.user?.username || r.user?.name || '@user',
-                name:     r.user?.name     || r.user?.username || 'User',
-                verified: r.user?.verified || false,
-                avatar:   r.user?.avatar   || '',
-            },
-        }));
+        const arr = Object.entries(raw).map(([id, r]) => {
+            // Look up the live profile for this reel's author
+            const uid        = r.user?.uid || 'unknown';
+            const liveProfile = allUsers[uid] || {};
+            return {
+                ...r,
+                id,
+                // Always use live profile data for name + verified so it stays in sync
+                user: {
+                    uid,
+                    username: liveProfile.username || r.user?.username || r.user?.name || '@user',
+                    name:     liveProfile.name     || liveProfile.username || r.user?.name || 'User',
+                    verified: liveProfile.verified !== undefined ? liveProfile.verified : (r.user?.verified || false),
+                    avatar:   liveProfile.photoURL  || r.user?.avatar || '',
+                },
+            };
+        });
         arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         reelsData = arr;
 
@@ -4771,7 +4791,7 @@ document.getElementById('reels-post-btn').addEventListener('click', async () => 
                 uid:      me.uid,
                 username: me.username,
                 name:     me.name,
-                verified: false,
+                verified: window._vynixCurrentUserData?.verified || false,
                 avatar:   me.avatar,
             },
             caption,
@@ -4824,11 +4844,13 @@ function onReelsTabActive(active) {
         const viewReels = document.getElementById('view-reels');
         if (!viewReels.contains(feed))   viewReels.appendChild(feed);
         if (!viewReels.contains(topbar)) viewReels.appendChild(topbar);
-        renderReelsFeed();
         if (reelsData.length > 0) {
+            renderReelsFeed();
             setupReelObserver();
             // Auto-play the first reel after a short delay to let DOM settle
             setTimeout(() => { activateReel(0); }, 120);
+        } else {
+            renderReelsFeed(); // shows empty state
         }
     } else {
         topbar.style.display = 'none';
@@ -4853,16 +4875,22 @@ function hookSwitchTab() {
 }
 hookSwitchTab();
 
-// ─────────────────────────────────────────────
-// Also listen for currentUserData changes to update username
-// ─────────────────────────────────────────────
-const _origRenderProfile = window.renderProfileView;
-if (typeof _origRenderProfile === 'function') {
-    window.renderProfileView = function(...args) {
-        _origRenderProfile.apply(this, args);
-        // refresh reel username display if we posted any
-    };
-}
+// Reels is the default landing tab — initialise immediately once the engine is ready
+(function bootReels() {
+    if (reelsData.length > 0) {
+        onReelsTabActive(true);
+    } else {
+        // Wait for Firebase data then boot
+        const poll = setInterval(() => {
+            if (reelsData.length > 0) {
+                clearInterval(poll);
+                onReelsTabActive(true);
+            }
+        }, 100);
+        // Give up after 8 s (empty feed shows empty state already)
+        setTimeout(() => clearInterval(poll), 8000);
+    }
+})();
 
 // ─────────────────────────────────────────────
 // Boot: load reels from Firebase
