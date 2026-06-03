@@ -4458,6 +4458,9 @@ window.showCustomAlert = function(title, message) {
     });
 };
 
+switchTab('chats');
+</script>
+
 <!-- ═══════════ REELS SECTION ═══════════ -->
 
 <!-- Reels top bar (overlaid on feed) -->
@@ -5221,20 +5224,26 @@ function onReelsTabActive(active) {
     }
 }
 
-// Hook into existing switchTab
-const _origSwitchTab = window.switchTab;
-window.switchTab = (tabId) => {
-    _origSwitchTab(tabId);
-    onReelsTabActive(tabId === 'reels');
-    // When on reels, override body padding
-    if (tabId === 'reels') {
-        document.body.style.overflow = 'hidden';
-        document.body.style.paddingBottom = '0';
-    } else {
-        document.body.style.overflow = '';
-        document.body.style.paddingBottom = '';
+// Hook into existing switchTab - deferred so module script has time to define it
+function hookSwitchTab() {
+    if (typeof window.switchTab !== 'function') {
+        setTimeout(hookSwitchTab, 50);
+        return;
     }
-};
+    const _origSwitchTab = window.switchTab;
+    window.switchTab = (tabId) => {
+        _origSwitchTab(tabId);
+        onReelsTabActive(tabId === 'reels');
+        if (tabId === 'reels') {
+            document.body.style.overflow = 'hidden';
+            document.body.style.paddingBottom = '0';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.paddingBottom = '';
+        }
+    };
+}
+hookSwitchTab();
 
 })();
 </script>
