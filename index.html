@@ -1417,7 +1417,7 @@
     transform: translateX(-50%);
 }
 .reels-icon-btn {
-    background: rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.3);
     border: none;
     color: #fff;
     width: 36px;
@@ -1427,16 +1427,15 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    backdrop-filter: blur(8px);
     transition: background 0.15s;
 }
-.reels-icon-btn:active { background: rgba(255,255,255,0.22); }
+.reels-icon-btn:active { background: rgba(0,0,0,0.5); }
 
 /* Right action sidebar */
 .reel-actions {
     position: absolute;
     right: 14px;
-    bottom: 100px;
+    bottom: calc(148px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1456,8 +1455,9 @@
 .reel-action-icon {
     width: 46px;
     height: 46px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -2029,14 +2029,14 @@
     font-size: 16px;
 }
 
-/* Floating plus button */
+/* Floating plus button — positioned below the action sidebar */
 .reels-fab {
     position: fixed;
-    bottom: calc(160px + env(safe-area-inset-bottom));
-    right: 20px;
-    z-index: 150;
-    width: 52px;
-    height: 52px;
+    bottom: calc(86px + env(safe-area-inset-bottom));
+    right: 14px;
+    z-index: 160;
+    width: 46px;
+    height: 46px;
     background: var(--primary-gradient);
     border: none;
     border-radius: 50%;
@@ -2687,6 +2687,11 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getDatabase(app);
 
+// Expose to window so the reels module (separate script) can access
+window._vynixApp  = app;
+window._vynixAuth = auth;
+window._vynixDb   = db;
+
 const CLOUDINARY_CLOUD_NAME   = 'dqkujefxj';
 const CLOUDINARY_UPLOAD_PRESET = 'banter_box';
 
@@ -3072,6 +3077,9 @@ async function loadUserData() {
         currentUserData = { uid: currentUser.uid, email: currentUser.email, username: currentUser.email.split('@')[0], photoURL: '' };
         await set(ref(db, `users/${currentUser.uid}`), currentUserData);
     }
+    // Expose to window for reels module
+    window._vynixCurrentUser     = currentUser;
+    window._vynixCurrentUserData = currentUserData;
     const photoUrl = currentUserData.photoURL || DEFAULT_AVATAR;
     const navImg = document.getElementById('nav-profile-avatar');
     navImg.src = photoUrl;
@@ -4465,17 +4473,9 @@ switchTab('chats');
 
 <!-- Reels top bar (overlaid on feed) -->
 <div class="reels-topbar" id="reels-topbar" style="display:none;">
-    <div class="reels-topbar-tabs">
-        <button class="reels-tab-btn active" id="reels-tab-following" onclick="reelsSetFeedTab('following')">Following</button>
-        <button class="reels-tab-btn" id="reels-tab-foryou" onclick="reelsSetFeedTab('foryou')">For You</button>
-    </div>
+    <div class="reels-topbar-title">Reels</div>
     <div style="display:flex;gap:8px;">
-        <button class="reels-icon-btn" id="reels-search-btn" title="Search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </button>
-        <button class="reels-icon-btn" id="reels-mute-global-btn" title="Sound">
-            <svg id="reels-sound-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-        </button>
+        <!-- sound/search removed; topbar kept for title only -->
     </div>
 </div>
 
@@ -4602,10 +4602,37 @@ switchTab('chats');
     </div>
 </div>
 
-<script>
+<script type="module">
 /* ══════════════════════════════════════════════════════
-   REELS ENGINE  –  Cloudinary upload + real video play
+   REELS ENGINE  –  Firebase-persisted, full featured
 ══════════════════════════════════════════════════════ */
+import { getDatabase, ref, onValue, push, set, get, update, remove, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getApp }  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+// Wait for main module to expose the app (it initialises first)
+async function waitForApp(ms = 6000) {
+    const deadline = Date.now() + ms;
+    while (!window._vynixApp && Date.now() < deadline) {
+        await new Promise(r => setTimeout(r, 60));
+    }
+}
+await waitForApp();
+
+const _db = getDatabase(window._vynixApp);
+
+// Grab current user / profile data from window (set by main module)
+function getMe() {
+    const u = window._vynixCurrentUser;
+    const d = window._vynixCurrentUserData;
+    return {
+        uid:      u?.uid || 'anon',
+        username: d?.username || (u?.email?.split('@')[0]) || '@you',
+        name:     d?.name || d?.username || 'You',
+        avatar:   d?.photoURL || '',
+    };
+}
+
 (function() {
 
 const CLOUDINARY_CLOUD_NAME    = 'dqkujefxj';
@@ -4620,29 +4647,148 @@ const REEL_COLORS = [
     'linear-gradient(135deg,#12001f 0%,#27003e 50%,#3d0066 100%)',
 ];
 
+// ── State ──
 let reelsData       = [];
-let reelsFeedTab    = 'foryou';
 let reelsMuted      = false;
 let activeReelIndex = -1;
 let followState     = {};
 let likeState       = {};
+let saveState       = {};
 let shareReelId     = null;
 let commentReelId   = null;
 let uploadAudience  = 'everyone';
 let selectedVideoFile = null;
 let doubleTapTimer  = null;
-let progressRAFs    = {};  // requestAnimationFrame handles keyed by idx
+let progressRAFs    = {};
 let pausedReels     = {};
+let holdTimers      = {};   // for hold-to-pause
+let reelObserver    = null;
+let tapCount        = {};
 
 // ─────────────────────────────────────────────
-// helpers
+// Haptic Feedback
+// ─────────────────────────────────────────────
+function haptic(style = 'light') {
+    if (navigator.vibrate) {
+        const patterns = { light: [10], medium: [20], heavy: [40], double: [10, 50, 10] };
+        navigator.vibrate(patterns[style] || [10]);
+    }
+    if (window.webkit?.messageHandlers?.haptic) {
+        window.webkit.messageHandlers.haptic.postMessage(style);
+    }
+}
+
+// ─────────────────────────────────────────────
+// Helpers
 // ─────────────────────────────────────────────
 function extractTags(cap) { return (cap.match(/#\w+/g) || []); }
-function escapeHtmlReels(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function getVideoEl(idx) {
-    return document.getElementById('reel-video-' + idx);
+function getVideoEl(idx) { return document.getElementById('reel-video-' + idx); }
+function fmtCount(n) {
+    n = parseInt(n) || 0;
+    if (n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M';
+    if (n >= 1000)    return (n/1000).toFixed(1).replace(/\.0$/,'') + 'K';
+    return String(n);
+}
+
+// ─────────────────────────────────────────────
+// Firebase – Reels CRUD
+// ─────────────────────────────────────────────
+const REELS_REF     = () => ref(_db, 'reels');
+const REEL_REF      = (id) => ref(_db, 'reels/' + id);
+const REEL_LIKES    = (id) => ref(_db, 'reelInteractions/' + id + '/likes');
+const REEL_LIKE_UID = (id, uid) => ref(_db, 'reelInteractions/' + id + '/likes/' + uid);
+const REEL_SAVES    = (id) => ref(_db, 'reelInteractions/' + id + '/saves');
+const REEL_SAVE_UID = (id, uid) => ref(_db, 'reelInteractions/' + id + '/saves/' + uid);
+const REEL_SHARES   = (id) => ref(_db, 'reelInteractions/' + id + '/shareCount');
+const REEL_COMMENTS = (id) => ref(_db, 'reelComments/' + id);
+
+// Load reels from Firebase and set up live listener
+function loadReelsFromFirebase() {
+    onValue(REELS_REF(), async (snap) => {
+        const raw = snap.val() || {};
+        const me  = getMe();
+        // Build array sorted newest first
+        const arr = Object.entries(raw).map(([id, r]) => ({ ...r, id }));
+        arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        reelsData = arr;
+
+        // Load user's like/save state
+        if (me.uid && me.uid !== 'anon') {
+            for (const r of reelsData) {
+                const lSnap = await get(REEL_LIKE_UID(r.id, me.uid)).catch(() => null);
+                likeState[r.id] = !!lSnap?.val();
+                const sSnap = await get(REEL_SAVE_UID(r.id, me.uid)).catch(() => null);
+                saveState[r.id] = !!sSnap?.val();
+            }
+        }
+        renderReelsFeed();
+        if (reelsData.length > 0) setupReelObserver();
+    });
+}
+
+// Save a new reel object to Firebase
+async function saveReelToFirebase(reelObj) {
+    const newRef = push(REELS_REF());
+    reelObj.id = newRef.key;
+    await set(newRef, reelObj);
+    return reelObj;
+}
+
+// Persist like count + user state
+async function persistLike(reelId, liked) {
+    const me = getMe();
+    if (!me.uid || me.uid === 'anon') return;
+    if (liked) {
+        await set(REEL_LIKE_UID(reelId, me.uid), true).catch(() => {});
+    } else {
+        await remove(REEL_LIKE_UID(reelId, me.uid)).catch(() => {});
+    }
+    // Update aggregate count on the reel node
+    const snap = await get(REEL_LIKES(reelId)).catch(() => null);
+    const count = snap ? Object.keys(snap.val() || {}).length : 0;
+    await update(REEL_REF(reelId), { likes: count }).catch(() => {});
+}
+
+// Persist save state
+async function persistSave(reelId, saved) {
+    const me = getMe();
+    if (!me.uid || me.uid === 'anon') return;
+    if (saved) {
+        await set(REEL_SAVE_UID(reelId, me.uid), true).catch(() => {});
+    } else {
+        await remove(REEL_SAVE_UID(reelId, me.uid)).catch(() => {});
+    }
+    const snap = await get(REEL_SAVES(reelId)).catch(() => null);
+    const count = snap ? Object.keys(snap.val() || {}).length : 0;
+    await update(REEL_REF(reelId), { saves: count }).catch(() => {});
+}
+
+// Persist share count
+async function persistShare(reelId) {
+    const snap  = await get(REEL_SHARES(reelId)).catch(() => null);
+    const count = (snap?.val() || 0) + 1;
+    await set(REEL_SHARES(reelId), count).catch(() => {});
+    await update(REEL_REF(reelId), { shares: count }).catch(() => {});
+}
+
+// Persist a comment
+async function persistComment(reelId, text) {
+    const me  = getMe();
+    const cRef = push(REEL_COMMENTS(reelId));
+    await set(cRef, {
+        uid:      me.uid,
+        username: me.username,
+        avatar:   me.avatar,
+        text,
+        ts: serverTimestamp(),
+    }).catch(() => {});
+    // Increment comment count
+    const snap  = await get(REEL_COMMENTS(reelId)).catch(() => null);
+    const count = snap ? Object.keys(snap.val() || {}).length : 1;
+    await update(REEL_REF(reelId), { comments: count }).catch(() => {});
 }
 
 // ─────────────────────────────────────────────
@@ -4650,7 +4796,6 @@ function getVideoEl(idx) {
 // ─────────────────────────────────────────────
 function renderReelsFeed() {
     const feed = document.getElementById('reels-feed');
-    // pause & clean up any active video before nuking the DOM
     stopAllVideos();
     feed.innerHTML = '';
 
@@ -4666,14 +4811,14 @@ function renderReelsFeed() {
             <button class="reels-empty-cta" id="reels-empty-upload-btn">+ Post a Reel</button>
         `;
         feed.appendChild(empty);
-        document.getElementById('reels-empty-upload-btn').addEventListener('click', openUpload);
+        document.getElementById('reels-empty-upload-btn')?.addEventListener('click', openUpload);
         return;
     }
     reelsData.forEach((reel, i) => feed.appendChild(buildReelCard(reel, i)));
 }
 
 // ─────────────────────────────────────────────
-// Build one reel card  (with a real <video>)
+// Build one reel card
 // ─────────────────────────────────────────────
 function buildReelCard(reel, idx) {
     const card = document.createElement('div');
@@ -4681,120 +4826,177 @@ function buildReelCard(reel, idx) {
     card.dataset.idx = idx;
     card.dataset.id  = reel.id;
 
-    const isFollowing = followState[reel.user.uid];
-    const isLiked     = likeState[reel.id];
+    const isLiked = likeState[reel.id] || false;
+    const isSaved = saveState[reel.id] || false;
 
     card.innerHTML = `
-        <!-- actual video -->
         <video
             id="reel-video-${idx}"
             class="reel-video"
-            src="${escapeHtmlReels(reel.videoUrl)}"
+            src="${escHtml(reel.videoUrl)}"
             loop
             playsinline
             preload="metadata"
             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"
         ></video>
-
-        <!-- colour fallback shown while video loads -->
         <div class="reel-bg-gradient" id="reel-bg-${idx}" style="position:absolute;inset:0;background:${reel.color};display:flex;align-items:center;justify-content:center;z-index:0;">
             <span style="font-size:100px;opacity:0.18;filter:blur(2px);">${reel.emoji || '🎬'}</span>
         </div>
-
         <div class="reel-overlay" style="z-index:2;pointer-events:none;"></div>
-
-        <!-- tap area -->
-        <div class="reel-tap-area" style="position:absolute;inset:0;z-index:5;" data-idx="${idx}"></div>
-
+        <!-- tap capture layer — NO pointer-events on action buttons so they work through it -->
+        <div class="reel-tap-area" id="tap-area-${idx}" style="position:absolute;inset:0;z-index:5;" data-idx="${idx}"></div>
         <!-- progress bar -->
         <div class="reel-progress" style="z-index:10;">
             <div class="reel-progress-fill" id="progress-${idx}"></div>
         </div>
-
         <!-- pause indicator -->
         <div class="reel-pause-indicator" id="pause-ind-${idx}" style="z-index:15;">
             <div class="reel-pause-circle">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </div>
         </div>
-
-        <!-- right actions -->
+        <!-- right actions — no profile button at top, no button below save, FAB is separate element -->
         <div class="reel-actions" style="z-index:10;">
-            <div class="reel-avatar-wrap">
-                <img class="reel-avatar" src="${escapeHtmlReels(reel.user.avatar||'')}" onerror="this.src=''" alt="${escapeHtmlReels(reel.user.username)}">
-                <button class="reel-follow-btn ${isFollowing?'following':''}" data-uid="${escapeHtmlReels(reel.user.uid)}" data-idx="${idx}" id="follow-btn-${idx}">
-                    ${isFollowing
-                        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`
-                        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`}
-                </button>
-            </div>
-
-            <button class="reel-action-btn ${isLiked?'liked':''}" id="like-btn-${idx}">
-                <div class="reel-action-icon">
+            <button class="reel-action-btn ${isLiked?'liked':''}" id="like-btn-${idx}" style="backdrop-filter:none;-webkit-backdrop-filter:none;">
+                <div class="reel-action-icon" style="background:${isLiked?'rgba(255,59,92,0.25)':'rgba(0,0,0,0.35)'};backdrop-filter:none;-webkit-backdrop-filter:none;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="${isLiked?'#FF3B5C':'none'}" stroke="${isLiked?'#FF3B5C':'white'}" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 </div>
-                <span class="reel-action-count" id="like-count-${idx}">${reel.likes}</span>
+                <span class="reel-action-count" id="like-count-${idx}">${fmtCount(reel.likes)}</span>
             </button>
 
-            <button class="reel-action-btn" id="comment-btn-${idx}">
-                <div class="reel-action-icon">
+            <button class="reel-action-btn" id="comment-btn-${idx}" style="backdrop-filter:none;-webkit-backdrop-filter:none;">
+                <div class="reel-action-icon" style="background:rgba(0,0,0,0.35);backdrop-filter:none;-webkit-backdrop-filter:none;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </div>
-                <span class="reel-action-count">${reel.comments}</span>
+                <span class="reel-action-count" id="comment-count-${idx}">${fmtCount(reel.comments)}</span>
             </button>
 
-            <button class="reel-action-btn" id="share-btn-${idx}">
-                <div class="reel-action-icon">
+            <button class="reel-action-btn" id="share-btn-${idx}" style="backdrop-filter:none;-webkit-backdrop-filter:none;">
+                <div class="reel-action-icon" style="background:rgba(0,0,0,0.35);backdrop-filter:none;-webkit-backdrop-filter:none;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                 </div>
-                <span class="reel-action-count">${reel.shares}</span>
+                <span class="reel-action-count" id="share-count-${idx}">${fmtCount(reel.shares)}</span>
             </button>
 
-            <button class="reel-action-btn" id="save-btn-${idx}">
-                <div class="reel-action-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <button class="reel-action-btn ${isSaved?'saved':''}" id="save-btn-${idx}" style="backdrop-filter:none;-webkit-backdrop-filter:none;">
+                <div class="reel-action-icon" style="background:${isSaved?'rgba(108,99,255,0.35)':'rgba(0,0,0,0.35)'};backdrop-filter:none;-webkit-backdrop-filter:none;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="${isSaved?'white':'none'}" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                 </div>
-                <span class="reel-action-count">${reel.saves}</span>
+                <span class="reel-action-count" id="save-count-${idx}">${fmtCount(reel.saves)}</span>
             </button>
-
-            <div class="reel-sound-icon" style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.5);border-radius:50%;overflow:hidden;">
-                <img src="${escapeHtmlReels(reel.user.avatar||'')}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
-            </div>
         </div>
 
         <!-- bottom info -->
         <div class="reel-info" style="z-index:10;">
             <div class="reel-username">
-                ${escapeHtmlReels(reel.user.username)}
+                ${escHtml(reel.user.username)}
                 ${reel.user.verified ? `<span class="reel-verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
             </div>
-            <div class="reel-caption" id="caption-${idx}">${escapeHtmlReels((reel.caption||'').replace(/#\w+/g,''))}</div>
+            <div class="reel-caption" id="caption-${idx}">${escHtml((reel.caption||'').replace(/#\w+/g,''))}</div>
             <div class="reel-hashtags">
-                ${(reel.hashtags||[]).map(t=>`<span class="reel-hashtag">${escapeHtmlReels(t)}</span>`).join('')}
+                ${(reel.hashtags||[]).map(t=>`<span class="reel-hashtag">${escHtml(t)}</span>`).join('')}
             </div>
             <div class="reel-sound-bar">
                 <div class="reel-sound-icon">🎵</div>
-                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlReels(reel.sound||'Original audio')}</span>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(reel.sound||'Original audio')}</span>
             </div>
         </div>
     `;
 
-    // hide gradient once video has data
+    // hide fallback bg once video loads
     const vid = card.querySelector(`#reel-video-${idx}`);
     const bg  = card.querySelector(`#reel-bg-${idx}`);
     vid.addEventListener('loadeddata', () => { bg.style.opacity = '0'; }, { once: true });
 
-    // wire events
-    card.querySelector('.reel-tap-area').addEventListener('click', e => handleReelTap(e, idx));
-    card.querySelector(`#like-btn-${idx}`).addEventListener('click',    e => { e.stopPropagation(); toggleLike(idx); });
-    card.querySelector(`#comment-btn-${idx}`).addEventListener('click', e => { e.stopPropagation(); openComments(idx); });
-    card.querySelector(`#share-btn-${idx}`).addEventListener('click',   e => { e.stopPropagation(); openShare(idx); });
-    card.querySelector(`#save-btn-${idx}`).addEventListener('click',    e => { e.stopPropagation(); toggleSave(idx); });
-    card.querySelector('.reel-follow-btn').addEventListener('click',    e => { e.stopPropagation(); toggleFollow(reel.user.uid, idx); });
+    // ── Action button listeners (stop propagation so tap area doesn't fire) ──
+    const likeBtnEl    = card.querySelector(`#like-btn-${idx}`);
+    const commentBtnEl = card.querySelector(`#comment-btn-${idx}`);
+    const shareBtnEl   = card.querySelector(`#share-btn-${idx}`);
+    const saveBtnEl    = card.querySelector(`#save-btn-${idx}`);
+
+    likeBtnEl.addEventListener('click', e => { e.stopPropagation(); toggleLike(idx); });
+    commentBtnEl.addEventListener('click', e => { e.stopPropagation(); openComments(idx); });
+    shareBtnEl.addEventListener('click', e => { e.stopPropagation(); openShare(idx); });
+    saveBtnEl.addEventListener('click', e => { e.stopPropagation(); toggleSave(idx); });
+
     const capEl = card.querySelector(`#caption-${idx}`);
     capEl.addEventListener('click', e => { e.stopPropagation(); capEl.classList.toggle('expanded'); });
 
+    // ── Tap area: single tap = toggle mute, hold = pause, release = resume ──
+    const tapArea = card.querySelector(`#tap-area-${idx}`);
+
+    // Single tap = mute/unmute
+    tapArea.addEventListener('click', e => {
+        e.stopPropagation();
+        handleSingleTap(idx);
+    });
+
+    // Hold to pause
+    tapArea.addEventListener('pointerdown', e => {
+        holdTimers[idx] = setTimeout(() => {
+            holdTimers[idx] = null;
+            pauseForHold(idx);
+        }, 180);
+    }, { passive: true });
+
+    tapArea.addEventListener('pointerup', () => {
+        if (holdTimers[idx]) {
+            clearTimeout(holdTimers[idx]);
+            holdTimers[idx] = null;
+            // short press — handled by click
+        } else {
+            // long press ended — resume
+            resumeFromHold(idx);
+        }
+    });
+
+    tapArea.addEventListener('pointercancel', () => {
+        if (holdTimers[idx]) { clearTimeout(holdTimers[idx]); holdTimers[idx] = null; }
+        resumeFromHold(idx);
+    });
+
     return card;
+}
+
+// ─────────────────────────────────────────────
+// Single-tap = mute/unmute (no toast shown)
+// ─────────────────────────────────────────────
+function handleSingleTap(idx) {
+    reelsMuted = !reelsMuted;
+    const vid = getVideoEl(idx);
+    if (vid) vid.muted = reelsMuted;
+    haptic('light');
+    // update all currently-rendered videos
+    document.querySelectorAll('.reel-card video').forEach(v => { v.muted = reelsMuted; });
+}
+
+// ─────────────────────────────────────────────
+// Hold to pause / release to resume
+// ─────────────────────────────────────────────
+function pauseForHold(idx) {
+    if (pausedReels[idx] === 'hold') return;
+    const vid = getVideoEl(idx);
+    if (!vid) return;
+    pausedReels[idx] = 'hold';
+    vid.pause();
+    cancelAnimationFrame(progressRAFs[idx]);
+    delete progressRAFs[idx];
+    const ind = document.getElementById('pause-ind-' + idx);
+    if (ind) ind.classList.add('show');
+    haptic('medium');
+}
+
+function resumeFromHold(idx) {
+    if (pausedReels[idx] !== 'hold') return;
+    pausedReels[idx] = false;
+    const vid = getVideoEl(idx);
+    if (!vid) return;
+    vid.play().catch(() => {});
+    tickProgress(idx);
+    const ind = document.getElementById('pause-ind-' + idx);
+    if (ind) {
+        setTimeout(() => ind.classList.remove('show'), 300);
+    }
 }
 
 // ─────────────────────────────────────────────
@@ -4809,8 +5011,6 @@ function stopAllVideos() {
 
 function activateReel(idx) {
     if (activeReelIndex === idx) return;
-
-    // pause & reset previous
     if (activeReelIndex >= 0) {
         const prev = getVideoEl(activeReelIndex);
         if (prev) { try { prev.pause(); } catch(e){} }
@@ -4819,25 +5019,14 @@ function activateReel(idx) {
         const prevFill = document.getElementById('progress-' + activeReelIndex);
         if (prevFill) prevFill.style.width = '0%';
     }
-
     activeReelIndex = idx;
     pausedReels[idx] = false;
-
     const vid = getVideoEl(idx);
     if (!vid) return;
-
     vid.muted = reelsMuted;
     vid.currentTime = 0;
-
-    const playPromise = vid.play();
-    if (playPromise !== undefined) {
-        playPromise.catch(() => {
-            // Autoplay blocked – play muted as fallback
-            vid.muted = true;
-            vid.play().catch(() => {});
-        });
-    }
-
+    const pp = vid.play();
+    if (pp) pp.catch(() => { vid.muted = true; vid.play().catch(() => {}); });
     tickProgress(idx);
 }
 
@@ -4846,31 +5035,22 @@ function tickProgress(idx) {
     const vid  = getVideoEl(idx);
     const fill = document.getElementById('progress-' + idx);
     if (!vid || !fill) return;
-
     function frame() {
-        if (pausedReels[idx]) return; // paused – don't update
+        if (pausedReels[idx]) return;
         const dur = vid.duration;
-        if (dur && isFinite(dur)) {
-            fill.style.width = ((vid.currentTime / dur) * 100) + '%';
-        }
+        if (dur && isFinite(dur)) fill.style.width = ((vid.currentTime / dur) * 100) + '%';
         progressRAFs[idx] = requestAnimationFrame(frame);
     }
     progressRAFs[idx] = requestAnimationFrame(frame);
-
-    // auto-advance when video ends (loop=false for advance, but we set loop on element so handle via timeupdate)
     vid.onended = () => scrollToNextReel(idx);
 }
 
 function scrollToNextReel(idx) {
     const feed  = document.getElementById('reels-feed');
     const cards = feed.querySelectorAll('.reel-card');
-    if (idx + 1 < cards.length) {
-        cards[idx + 1].scrollIntoView({ behavior: 'smooth' });
-    }
+    if (idx + 1 < cards.length) cards[idx + 1].scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── Intersection Observer ──
-let reelObserver = null;
 function setupReelObserver() {
     if (reelObserver) reelObserver.disconnect();
     reelObserver = new IntersectionObserver((entries) => {
@@ -4889,110 +5069,112 @@ function setupReelObserver() {
     document.querySelectorAll('.reel-card').forEach(c => reelObserver.observe(c));
 }
 
-// ── Tap (single = pause/play, double = like) ──
-let tapCount = {};
-function handleReelTap(e, idx) {
-    e.stopPropagation();
-    tapCount[idx] = (tapCount[idx] || 0) + 1;
-    if (tapCount[idx] === 1) {
-        doubleTapTimer = setTimeout(() => {
-            tapCount[idx] = 0;
-            togglePause(idx);
-        }, 230);
-    } else if (tapCount[idx] === 2) {
-        clearTimeout(doubleTapTimer);
-        tapCount[idx] = 0;
-        triggerLikeAnimation(idx, e);
-        if (!likeState[reelsData[idx].id]) toggleLike(idx);
-        showTapRipple(e.clientX, e.clientY);
-    }
-}
+// ─────────────────────────────────────────────
+// Interactions with Firebase persistence
+// ─────────────────────────────────────────────
+async function toggleLike(idx) {
+    const reel = reelsData[idx];
+    likeState[reel.id] = !likeState[reel.id];
+    haptic('medium');
 
-function togglePause(idx) {
-    const vid = getVideoEl(idx);
-    if (!vid) return;
-    pausedReels[idx] = !pausedReels[idx];
-    const ind = document.getElementById('pause-ind-' + idx);
-    if (pausedReels[idx]) {
-        vid.pause();
-        cancelAnimationFrame(progressRAFs[idx]);
-        delete progressRAFs[idx];
-        if (ind) ind.classList.add('show');
+    const btn   = document.getElementById('like-btn-' + idx);
+    const ic    = btn?.querySelector('.reel-action-icon');
+    const svg   = btn?.querySelector('svg');
+    const count = document.getElementById('like-count-' + idx);
+    if (!btn) return;
+
+    btn.classList.toggle('liked', likeState[reel.id]);
+    svg.setAttribute('fill',   likeState[reel.id] ? '#FF3B5C' : 'none');
+    svg.setAttribute('stroke', likeState[reel.id] ? '#FF3B5C' : 'white');
+    ic.style.background = likeState[reel.id] ? 'rgba(255,59,92,0.25)' : 'rgba(0,0,0,0.35)';
+    ic.style.transform = 'scale(1.3)';
+    setTimeout(() => { ic.style.transform = ''; }, 200);
+
+    if (likeState[reel.id]) {
+        // Optimistic count
+        reel.likes = (parseInt(reel.likes) || 0) + 1;
+        if (count) count.textContent = fmtCount(reel.likes);
+        // Burst animation
+        triggerLikeAnimation(idx);
     } else {
-        vid.play().catch(() => {});
-        tickProgress(idx);
-        if (ind) {
-            ind.classList.add('show');
-            setTimeout(() => ind.classList.remove('show'), 600);
-        }
+        reel.likes = Math.max(0, (parseInt(reel.likes) || 1) - 1);
+        if (count) count.textContent = fmtCount(reel.likes);
     }
+    await persistLike(reel.id, likeState[reel.id]);
 }
 
-function showTapRipple(x, y) {
-    const el = document.createElement('div');
-    el.className = 'tap-ripple';
-    el.style.left = x + 'px';
-    el.style.top  = y + 'px';
-    document.body.appendChild(el);
-    el.addEventListener('animationend', () => el.remove());
+async function toggleSave(idx) {
+    const reel = reelsData[idx];
+    saveState[reel.id] = !saveState[reel.id];
+    haptic('medium');
+
+    const btn  = document.getElementById('save-btn-' + idx);
+    const ic   = btn?.querySelector('.reel-action-icon');
+    const svg  = btn?.querySelector('svg');
+    const cnt  = document.getElementById('save-count-' + idx);
+    if (!btn) return;
+
+    btn.classList.toggle('saved', saveState[reel.id]);
+    svg.setAttribute('fill', saveState[reel.id] ? 'white' : 'none');
+    ic.style.background = saveState[reel.id] ? 'rgba(108,99,255,0.35)' : 'rgba(0,0,0,0.35)';
+    ic.style.transform = 'scale(1.3)';
+    setTimeout(() => { ic.style.transform = ''; }, 200);
+
+    if (saveState[reel.id]) {
+        reel.saves = (parseInt(reel.saves) || 0) + 1;
+    } else {
+        reel.saves = Math.max(0, (parseInt(reel.saves) || 1) - 1);
+    }
+    if (cnt) cnt.textContent = fmtCount(reel.saves);
+    showReelsToast(saveState[reel.id] ? '🔖 Saved!' : 'Removed from saved');
+    await persistSave(reel.id, saveState[reel.id]);
 }
 
-function triggerLikeAnimation(idx, e) {
+function triggerLikeAnimation(idx) {
+    const card = document.querySelector(`.reel-card[data-idx="${idx}"]`);
+    if (!card) return;
     const heart = document.createElement('div');
     heart.className = 'heart-pop';
     heart.textContent = '❤️';
-    heart.style.left = (e.clientX - 40) + 'px';
-    heart.style.top  = (e.clientY - 40) + 'px';
+    const r = card.getBoundingClientRect();
+    heart.style.left = (r.left + r.width / 2 - 40) + 'px';
+    heart.style.top  = (r.top  + r.height / 2 - 40) + 'px';
     document.body.appendChild(heart);
     heart.addEventListener('animationend', () => heart.remove());
 }
 
-// ── Like ──
-function toggleLike(idx) {
-    const reel = reelsData[idx];
-    likeState[reel.id] = !likeState[reel.id];
-    const btn = document.getElementById('like-btn-' + idx);
-    if (!btn) return;
-    btn.classList.toggle('liked', likeState[reel.id]);
-    const icon = btn.querySelector('svg');
-    icon.setAttribute('fill',   likeState[reel.id] ? '#FF3B5C' : 'none');
-    icon.setAttribute('stroke', likeState[reel.id] ? '#FF3B5C' : 'white');
-    const ic = btn.querySelector('.reel-action-icon');
-    ic.style.transform = 'scale(1.3)';
-    setTimeout(() => { ic.style.transform = ''; }, 200);
-    if (likeState[reel.id]) showReelsToast('❤️ Liked!');
-}
-
-// ── Save ──
-function toggleSave(idx) {
-    const btn = document.getElementById('save-btn-' + idx);
-    const svg = btn.querySelector('svg');
-    const saved = svg.getAttribute('fill') === 'white';
-    svg.setAttribute('fill', saved ? 'none' : 'white');
-    showReelsToast(saved ? 'Removed from saved' : '🔖 Saved to collection!');
-    const ic = btn.querySelector('.reel-action-icon');
-    ic.style.transform = 'scale(1.3)';
-    setTimeout(() => { ic.style.transform = ''; }, 200);
-}
-
-// ── Follow ──
-function toggleFollow(uid, idx) {
-    followState[uid] = !followState[uid];
-    const btn = document.getElementById('follow-btn-' + idx);
-    if (!btn) return;
-    btn.classList.toggle('following', followState[uid]);
-    btn.innerHTML = followState[uid]
-        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`
-        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
-    showReelsToast(followState[uid] ? '✅ Following!' : 'Unfollowed');
-}
-
-// ── Comments ──
+// ─────────────────────────────────────────────
+// Comments
+// ─────────────────────────────────────────────
 function openComments(idx) {
+    haptic('light');
     commentReelId = reelsData[idx].id;
-    document.getElementById('comments-count').textContent = `(${reelsData[idx].comments})`;
-    document.getElementById('reels-comments-list').innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No comments yet — be the first!</div>';
+    const cnt = reelsData[idx].comments;
+    document.getElementById('comments-count').textContent = cnt ? `(${fmtCount(cnt)})` : '';
+    const list = document.getElementById('reels-comments-list');
+    list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">Loading…</div>';
     document.getElementById('reels-comments-overlay').classList.add('active');
+
+    // Load comments from Firebase
+    get(REEL_COMMENTS(commentReelId)).then(snap => {
+        const raw = snap.val() || {};
+        const comments = Object.values(raw).sort((a,b) => (b.ts||0) - (a.ts||0));
+        if (comments.length === 0) {
+            list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No comments yet — be the first!</div>';
+        } else {
+            list.innerHTML = comments.map(c => `
+                <div class="reel-comment">
+                    <img class="reel-comment-avatar" src="${escHtml(c.avatar||'')}" onerror="this.style.background='var(--surface3)'">
+                    <div class="reel-comment-body">
+                        <div class="reel-comment-user">${escHtml(c.username||'@user')}</div>
+                        <div class="reel-comment-text">${escHtml(c.text)}</div>
+                        <div class="reel-comment-time">${c.ts ? new Date(c.ts).toLocaleDateString() : 'Just now'}</div>
+                    </div>
+                </div>`).join('');
+        }
+    }).catch(() => {
+        list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No comments yet!</div>';
+    });
 }
 
 document.getElementById('reels-close-comments').addEventListener('click', () => {
@@ -5006,34 +5188,47 @@ document.getElementById('reels-comment-send').addEventListener('click', postComm
 document.getElementById('reels-comment-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); postComment(); }
 });
-function postComment() {
+
+async function postComment() {
     const inp = document.getElementById('reels-comment-input');
     const val = inp.value.trim();
-    if (!val) return;
+    if (!val || !commentReelId) return;
+    haptic('medium');
+    const me   = getMe();
     const list = document.getElementById('reels-comments-list');
-    // Clear placeholder if present
-    if (list.querySelector('div[style]')) list.innerHTML = '';
+    const placeholder = list.querySelector('div');
+    if (placeholder) list.innerHTML = '';
+
     const el = document.createElement('div');
     el.className = 'reel-comment';
     el.innerHTML = `
-        <img class="reel-comment-avatar" src="" style="background:var(--surface3);">
+        <img class="reel-comment-avatar" src="${escHtml(me.avatar)}" onerror="this.style.background='var(--surface3)'">
         <div class="reel-comment-body">
-            <div class="reel-comment-user">@you</div>
-            <div class="reel-comment-text">${escapeHtmlReels(val)}</div>
-            <div class="reel-comment-time">Just now · Reply</div>
-        </div>
-        <button class="reel-comment-like">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            0
-        </button>
-    `;
+            <div class="reel-comment-user">${escHtml(me.username)}</div>
+            <div class="reel-comment-text">${escHtml(val)}</div>
+            <div class="reel-comment-time">Just now</div>
+        </div>`;
     list.insertBefore(el, list.firstChild);
     inp.value = '';
     showReelsToast('💬 Comment posted!');
+
+    // Persist and update count
+    await persistComment(commentReelId, val);
+    // Update the counter in the active reel if visible
+    const reelIdx = reelsData.findIndex(r => r.id === commentReelId);
+    if (reelIdx >= 0) {
+        reelsData[reelIdx].comments = (parseInt(reelsData[reelIdx].comments) || 0) + 1;
+        const cntEl = document.getElementById('comment-count-' + reelIdx);
+        if (cntEl) cntEl.textContent = fmtCount(reelsData[reelIdx].comments);
+        document.getElementById('comments-count').textContent = `(${fmtCount(reelsData[reelIdx].comments)})`;
+    }
 }
 
-// ── Share ──
+// ─────────────────────────────────────────────
+// Share
+// ─────────────────────────────────────────────
 function openShare(idx) {
+    haptic('light');
     shareReelId = reelsData[idx].id;
     document.getElementById('reels-share-people').innerHTML = '';
     document.getElementById('reels-share-sheet').classList.add('active');
@@ -5045,40 +5240,35 @@ document.getElementById('reels-close-share').addEventListener('click', closeShar
 document.getElementById('reels-share-sheet').addEventListener('click', e => {
     if (e.target === document.getElementById('reels-share-sheet')) closeShare();
 });
-document.getElementById('reels-share-copy').addEventListener('click', () => { showReelsToast('🔗 Link copied!'); closeShare(); });
-document.getElementById('reels-share-dm').addEventListener('click',   () => { showReelsToast('✈️ Sent in chat!'); closeShare(); });
-document.getElementById('reels-share-download').addEventListener('click', () => { showReelsToast('⬇️ Saved to device!'); closeShare(); });
-document.getElementById('reels-share-report').addEventListener('click',   () => { showReelsToast('🚩 Reported'); closeShare(); });
-
-// ── Mute global ──
-document.getElementById('reels-mute-global-btn').addEventListener('click', () => {
-    reelsMuted = !reelsMuted;
-    const icon = document.getElementById('reels-sound-icon');
-    if (reelsMuted) {
-        icon.innerHTML = `<line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>`;
-    } else {
-        icon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>`;
-    }
-    // Apply mute to currently playing video
-    const vid = getVideoEl(activeReelIndex);
-    if (vid) vid.muted = reelsMuted;
-    showReelsToast(reelsMuted ? '🔇 Muted' : '🔊 Sound on');
+document.getElementById('reels-share-copy').addEventListener('click', async () => {
+    haptic('medium');
+    showReelsToast('🔗 Link copied!');
+    closeShare();
+    if (shareReelId) await persistShare(shareReelId);
+    updateShareCount(shareReelId);
 });
+document.getElementById('reels-share-dm').addEventListener('click', async () => {
+    haptic('medium');
+    showReelsToast('✈️ Sent in chat!');
+    closeShare();
+    if (shareReelId) await persistShare(shareReelId);
+    updateShareCount(shareReelId);
+});
+document.getElementById('reels-share-download').addEventListener('click', () => { haptic('light'); showReelsToast('⬇️ Saved to device!'); closeShare(); });
+document.getElementById('reels-share-report').addEventListener('click',   () => { haptic('light'); showReelsToast('🚩 Reported'); closeShare(); });
 
-// ── Feed tab ──
-window.reelsSetFeedTab = (tab) => {
-    reelsFeedTab = tab;
-    document.getElementById('reels-tab-following').classList.toggle('active', tab === 'following');
-    document.getElementById('reels-tab-foryou').classList.toggle('active',   tab === 'foryou');
-    renderReelsFeed();
-    if (reelsData.length > 0) setupReelObserver();
-    document.getElementById('reels-feed').scrollTop = 0;
-};
+async function updateShareCount(reelId) {
+    const reelIdx = reelsData.findIndex(r => r.id === reelId);
+    if (reelIdx < 0) return;
+    reelsData[reelIdx].shares = (parseInt(reelsData[reelIdx].shares) || 0) + 1;
+    const cntEl = document.getElementById('share-count-' + reelIdx);
+    if (cntEl) cntEl.textContent = fmtCount(reelsData[reelIdx].shares);
+}
 
 // ─────────────────────────────────────────────
-// Upload  –  Cloudinary
+// Upload  –  Cloudinary → Firebase
 // ─────────────────────────────────────────────
-document.getElementById('reels-fab').addEventListener('click', openUpload);
+document.getElementById('reels-fab').addEventListener('click', () => { haptic('light'); openUpload(); });
 
 function openUpload() {
     document.getElementById('reels-upload-overlay').classList.add('active');
@@ -5100,18 +5290,15 @@ function resetUpload() {
     document.getElementById('reel-caption-count').textContent      = '0';
     document.getElementById('reels-post-btn').disabled             = true;
     document.getElementById('reels-post-btn').textContent          = 'Post Reel';
-    // hide progress bar
     const pb = document.getElementById('reels-upload-progress-bar');
     if (pb) { pb.style.display = 'none'; pb.querySelector('.reel-upload-progress-fill').style.width = '0%'; }
 }
 
-// Caption counter
 document.getElementById('reels-upload-caption').addEventListener('input', function() {
     document.getElementById('reel-caption-count').textContent = this.value.length;
     document.getElementById('reels-post-btn').disabled = !selectedVideoFile;
 });
 
-// Tag insertion
 window.reelsAddTag = (tag) => {
     const inp = document.getElementById('reels-upload-caption');
     inp.value = (inp.value + ' ' + tag).trim() + ' ';
@@ -5119,14 +5306,12 @@ window.reelsAddTag = (tag) => {
     inp.focus();
 };
 
-// Audience selection
 window.reelsSelectAudience = (val) => {
     uploadAudience = val;
     document.getElementById('opt-everyone').classList.toggle('selected',  val === 'everyone');
     document.getElementById('opt-followers').classList.toggle('selected', val === 'followers');
 };
 
-// File pick – show local preview immediately
 function handleVideoFile(file) {
     if (!file || !file.type.startsWith('video/')) return;
     selectedVideoFile = file;
@@ -5155,23 +5340,21 @@ document.getElementById('reels-remove-video').addEventListener('click', () => {
     document.getElementById('reels-file-input').value            = '';
 });
 
-// Drag & drop
 const dropEl = document.getElementById('reels-upload-drop');
 ['dragenter','dragover'].forEach(ev => dropEl.addEventListener(ev, e => { e.preventDefault(); dropEl.classList.add('drag-over'); }));
 ['dragleave','drop'].forEach(ev => dropEl.addEventListener(ev, e => { e.preventDefault(); dropEl.classList.remove('drag-over'); }));
 dropEl.addEventListener('drop', e => { handleVideoFile(e.dataTransfer.files[0]); });
 
-// ── Upload to Cloudinary then add to feed ──
 document.getElementById('reels-post-btn').addEventListener('click', async () => {
     if (!selectedVideoFile) return;
     const caption = document.getElementById('reels-upload-caption').value.trim();
     const btn     = document.getElementById('reels-post-btn');
     btn.textContent = 'Uploading…';
     btn.disabled    = true;
+    haptic('light');
 
-    // Show progress bar
     const progressBar  = document.getElementById('reels-upload-progress-bar');
-    const progressFill = progressBar ? progressBar.querySelector('.reel-upload-progress-fill') : null;
+    const progressFill = progressBar?.querySelector('.reel-upload-progress-fill');
     if (progressBar) progressBar.style.display = 'block';
 
     try {
@@ -5182,65 +5365,47 @@ document.getElementById('reels-post-btn').addEventListener('click', async () => 
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`, true);
-
-        // track progress
         xhr.upload.addEventListener('progress', e => {
-            if (e.lengthComputable && progressFill) {
+            if (e.lengthComputable && progressFill)
                 progressFill.style.width = Math.round((e.loaded / e.total) * 90) + '%';
-            }
         });
 
         const result = await new Promise((resolve, reject) => {
-            xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    resolve(JSON.parse(xhr.responseText));
-                } else {
-                    reject(new Error('Upload failed: ' + xhr.status));
-                }
-            };
+            xhr.onload = () => xhr.status >= 200 && xhr.status < 300 ? resolve(JSON.parse(xhr.responseText)) : reject(new Error('Upload failed: ' + xhr.status));
             xhr.onerror = () => reject(new Error('Network error'));
             xhr.send(formData);
         });
 
         if (progressFill) progressFill.style.width = '100%';
 
-        // get current user info if available
-        const myUid      = (typeof currentUser !== 'undefined' && currentUser) ? currentUser.uid : 'me';
-        const myName     = (typeof currentUserData !== 'undefined' && currentUserData) ? (currentUserData.name || 'You') : 'You';
-        const myUsername = (typeof currentUserData !== 'undefined' && currentUserData) ? (currentUserData.username || '@you') : '@you';
-        const myAvatar   = (typeof currentUserData !== 'undefined' && currentUserData) ? (currentUserData.photoURL || '') : '';
-
+        const me = getMe();
         const newReel = {
-            id:       'reel_' + Date.now(),
-            videoUrl: result.secure_url,
+            videoUrl:  result.secure_url,
             user: {
-                uid:      myUid,
-                username: myUsername,
-                name:     myName,
+                uid:      me.uid,
+                username: me.username,
+                name:     me.name,
                 verified: false,
-                followers:'0',
-                avatar:   myAvatar,
+                avatar:   me.avatar,
             },
-            caption:  caption,
+            caption,
             hashtags: extractTags(caption),
-            likes:    '0',
+            likes:    0,
             comments: 0,
             shares:   0,
             saves:    0,
-            sound:    'Original audio · ' + myUsername,
-            color:    REEL_COLORS[reelsData.length % REEL_COLORS.length],
+            sound:    'Original audio · ' + me.username,
+            color:    REEL_COLORS[Math.floor(Math.random() * REEL_COLORS.length)],
             emoji:    '🎬',
             timestamp: Date.now(),
         };
 
-        reelsData.unshift(newReel);
-        renderReelsFeed();
-        setupReelObserver();
+        await saveReelToFirebase(newReel);
         closeUpload();
+        haptic('double');
         showReelsToast('🎉 Reel posted!');
-
     } catch (err) {
-        console.error('Cloudinary upload error:', err);
+        console.error('Upload error:', err);
         showReelsToast('⚠️ Upload failed – please try again');
         btn.textContent = 'Post Reel';
         btn.disabled    = false;
@@ -5256,11 +5421,11 @@ function showReelsToast(msg) {
     el.textContent = msg;
     el.classList.add('show');
     clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), 2000);
+    el._t = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
 // ─────────────────────────────────────────────
-// Show/hide reels UI when tab changes
+// Show/hide when tab changes
 // ─────────────────────────────────────────────
 function onReelsTabActive(active) {
     const topbar = document.getElementById('reels-topbar');
@@ -5272,9 +5437,8 @@ function onReelsTabActive(active) {
         fab.classList.add('visible');
         feed.style.display = 'block';
         const viewReels = document.getElementById('view-reels');
-        if (!viewReels.contains(feed))    viewReels.appendChild(feed);
-        if (!viewReels.contains(topbar))  viewReels.appendChild(topbar);
-
+        if (!viewReels.contains(feed))   viewReels.appendChild(feed);
+        if (!viewReels.contains(topbar)) viewReels.appendChild(topbar);
         renderReelsFeed();
         if (reelsData.length > 0) setupReelObserver();
     } else {
@@ -5302,8 +5466,25 @@ function hookSwitchTab() {
 }
 hookSwitchTab();
 
+// ─────────────────────────────────────────────
+// Also listen for currentUserData changes to update username
+// ─────────────────────────────────────────────
+const _origRenderProfile = window.renderProfileView;
+if (typeof _origRenderProfile === 'function') {
+    window.renderProfileView = function(...args) {
+        _origRenderProfile.apply(this, args);
+        // refresh reel username display if we posted any
+    };
+}
+
+// ─────────────────────────────────────────────
+// Boot: load reels from Firebase
+// ─────────────────────────────────────────────
+loadReelsFromFirebase();
+
 })();
 </script>
+
 
 </body>
 </html>
