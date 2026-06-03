@@ -2032,7 +2032,7 @@
 /* Floating plus button */
 .reels-fab {
     position: fixed;
-    bottom: calc(100px + env(safe-area-inset-bottom));
+    bottom: calc(160px + env(safe-area-inset-bottom));
     right: 20px;
     z-index: 150;
     width: 52px;
@@ -4691,6 +4691,22 @@ function randomCount() {
 function renderReelsFeed() {
     const feed = document.getElementById('reels-feed');
     feed.innerHTML = '';
+    if (reelsData.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'reels-empty-state';
+        empty.innerHTML = `
+            <div class="reels-empty-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(108,99,255,0.9)" stroke-width="2" stroke-linecap="round"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.876v6.248a1 1 0 0 1-1.447.894L15 14"/><rect x="1" y="6" width="14" height="12" rx="2"/></svg>
+            </div>
+            <h3>No Reels Yet</h3>
+            <p>Be the first to post a clip and start the feed!</p>
+            <button class="reels-empty-cta" id="reels-empty-upload-btn">+ Post a Reel</button>
+        `;
+        feed.appendChild(empty);
+        // Wire the CTA button
+        document.getElementById('reels-empty-upload-btn').addEventListener('click', openUpload);
+        return;
+    }
     reelsData.forEach((reel, i) => {
         feed.appendChild(buildReelCard(reel, i));
     });
@@ -5073,11 +5089,10 @@ window.reelsSetFeedTab = (tab) => {
     reelsFeedTab = tab;
     document.getElementById('reels-tab-following').classList.toggle('active', tab === 'following');
     document.getElementById('reels-tab-foryou').classList.toggle('active', tab === 'foryou');
-    reelsData = generateMockReels(tab === 'foryou' ? 12 : 6);
+    // No mock data — keep existing real data only
     renderReelsFeed();
-    setupReelObserver();
+    if (reelsData.length > 0) setupReelObserver();
     document.getElementById('reels-feed').scrollTop = 0;
-    showReelsToast(tab === 'foryou' ? '⚡ For You feed' : '👥 Following feed');
 };
 
 // ── Upload ──
@@ -5169,11 +5184,11 @@ document.getElementById('reels-post-btn').addEventListener('click', () => {
     btn.textContent = 'Posting…';
     btn.disabled = true;
     setTimeout(() => {
-        // Add a new mock reel at top of feed
+        // Add a new reel at top of feed from the uploaded file
         const newReel = {
             id: 'reel_new_' + Date.now(),
             user: { uid:'me', username:'@you', name:'You', verified:false, followers:'0', avatar:'' },
-            caption: caption || 'Check out my new reel! 🔥 #vynix',
+            caption: caption || '',
             hashtags: extractTags(caption),
             likes: '0', comments: 0, shares: 0, saves: 0,
             sound: 'Original audio - @you',
@@ -5211,9 +5226,10 @@ function onReelsTabActive(active) {
         const viewReels = document.getElementById('view-reels');
         if (!viewReels.contains(feed)) viewReels.appendChild(feed);
         if (!viewReels.contains(document.getElementById('reels-topbar'))) viewReels.appendChild(document.getElementById('reels-topbar'));
-        // Init feed if empty
+        // Init feed if empty - show empty state, no mock data
         if (reelsData.length === 0) {
-            reelsData = generateMockReels(12);
+            renderReelsFeed();
+        } else {
             renderReelsFeed();
             setupReelObserver();
         }
