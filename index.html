@@ -1693,7 +1693,7 @@ body.reels-active {
 
         <!-- Profile avatar -->
         <button class="dsk-rail-btn" id="dsk-rail-profile" title="Profile" onclick="dskSwitchSection('profile')">
-            <img src="" id="dsk-rail-avatar" class="dsk-rail-avatar" alt="Me">
+            <img src="" id="dsk-rail-avatar" class="dsk-rail-avatar" alt="Me" style="display:none;">
         </button>
     </nav>
 
@@ -1905,7 +1905,7 @@ body.reels-active {
         </button>
         <button class="nav-item" data-nav="profile" id="nav-profile">
             <div class="nav-avatar-wrapper">
-                <img src="" id="nav-profile-avatar" class="nav-avatar-img" alt="Me">
+                <img src="" id="nav-profile-avatar" class="nav-avatar-img" alt="Me" style="display:none;">
             </div>
         </button>
     </nav>
@@ -2316,8 +2316,7 @@ const shimmerHTML = () => Array(5).fill(0).map(() => `
         </div>
     </div>`).join('');
 
-// Set default avatars immediately
-document.getElementById('nav-profile-avatar').src = DEFAULT_AVATAR;
+// Set default avatars immediately — REMOVED so placeholder doesn't flash
 // Reels is the default landing tab – activate body class so the full-screen view renders correctly
 document.body.classList.add('reels-active');
 
@@ -2710,7 +2709,6 @@ window.resizeDskTextarea = (el) => {
 };
 
 // Desktop discover (compact card view in sidebar)
-let dskDiscoverQueue = [], dskDiscoverIndex = 0;
 async function renderDskDiscover() {
     const container = document.getElementById('dsk-discover-content');
     if (!Object.keys(allUsersCache).length) {
@@ -2818,6 +2816,14 @@ async function loadUserData() {
     const navImg = document.getElementById('nav-profile-avatar');
     navImg.src = photoUrl;
     navImg.onerror = () => { navImg.src = DEFAULT_AVATAR; };
+    navImg.style.display = ''; // reveal only now
+    // Sync desktop rail avatar
+    const dskRailAvatar = document.getElementById('dsk-rail-avatar');
+    if (dskRailAvatar) {
+        dskRailAvatar.src = photoUrl;
+        dskRailAvatar.onerror = () => { dskRailAvatar.src = DEFAULT_AVATAR; };
+        dskRailAvatar.style.display = ''; // reveal only now
+    }
     // Sync desktop sidebar profile bar
     const dskAvatar = document.getElementById('desktop-profile-avatar');
     const dskName   = document.getElementById('desktop-profile-name');
