@@ -1295,23 +1295,19 @@
    REELS – Full-screen TikTok-style feed
 ═══════════════════════════════════════ */
 #view-reels {
-    /* Override .view-container display:block — reels is a fixed overlay */
-    position: fixed !important;
-    inset: 0 !important;
-    background: #000 !important;
-    z-index: 50 !important;
-    overflow: hidden !important;
-    display: none !important;
-    flex-direction: column !important;
-    padding: 0 !important;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 50;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
 }
-#view-reels.reels-active {
-    display: flex !important;
+#view-reels.active {
+    display: flex;
 }
-/* When reels is NOT active, view-container.active should not show view-reels */
-#view-reels.view-container.active:not(.reels-active) {
-    display: none !important;
-}
+/* Hide normal body padding when reels active */
+#view-reels.active ~ * {}
 
 /* Reel feed – snapping vertical scroll */
 .reels-feed {
@@ -1435,60 +1431,51 @@
 }
 .reels-icon-btn:active { background: rgba(0,0,0,0.5); }
 
-/* Right action buttons — each floats independently, position:fixed */
+/* Right action sidebar */
 .reel-actions {
-    position: fixed;
+    position: absolute;
     right: 14px;
-    bottom: calc(130px + env(safe-area-inset-bottom));
+    bottom: calc(148px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 18px;
-    z-index: 100;
-    pointer-events: auto;
+    gap: 20px;
+    z-index: 10;
 }
-/* Hide action buttons when reels not active */
-body:not(.reels-open) .reel-actions { display: none !important; }
 .reel-action-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     background: none;
     border: none;
     cursor: pointer;
     color: #fff;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
 }
 .reel-action-icon {
     width: 46px;
     height: 46px;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.35);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
 }
 .reel-action-btn:active .reel-action-icon {
     transform: scale(0.88);
 }
 .reel-action-btn.liked .reel-action-icon {
-    background: rgba(255,59,92,0.3);
-}
-.reel-action-btn.saved .reel-action-icon {
-    background: rgba(108,99,255,0.3);
+    background: rgba(255,59,92,0.25);
 }
 .reel-action-btn.liked svg { color: #FF3B5C; }
 .reel-action-count {
     font-size: 12px;
     font-weight: 700;
     color: #fff;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
-    line-height: 1;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 
 /* Author avatar with follow ring */
@@ -2328,7 +2315,7 @@ body:not(.reels-open) .reel-actions { display: none !important; }
         <div id="discover-content"></div>
     </div>
 
-    <div id="view-reels" class="view-container" style="display:none;padding:0;"></div>
+    <div id="view-reels" class="view-container"></div>
 
     <div id="view-profile" class="view-container">
         <header class="header">
