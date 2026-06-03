@@ -181,7 +181,7 @@
 
         /* ── Bottom Nav ── */
         .bottom-nav-container{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;z-index:100;padding:0 24px;}
-        .bottom-nav{background:var(--surface);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);padding:8px 24px;display:flex;justify-content:space-between;align-items:center;border-radius:28px;width:100%;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+        .bottom-nav{background:var(--surface);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);padding:8px 16px;display:flex;justify-content:space-between;align-items:center;border-radius:28px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
         .nav-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:48px;height:48px;background:none;border:none;cursor:pointer;color:var(--text-muted);transition:all 0.22s cubic-bezier(0.4,0,0.2,1);border-radius:14px;}
         .nav-item.active{color:var(--primary);background:var(--accent-glow);}
         .nav-avatar-wrapper{width:28px;height:28px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:2px solid transparent;transition:all 0.2s;}
@@ -1457,6 +1457,19 @@
         <div id="discover-content"></div>
     </div>
 
+    <div id="view-reels" class="view-container">
+        <header class="header">
+            <h2>Reels</h2>
+        </header>
+        <div id="reels-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px;color:var(--text-muted);">
+            <div style="width:72px;height:72px;border-radius:22px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;">
+                <i data-feather="film" style="width:32px;height:32px;color:var(--primary);"></i>
+            </div>
+            <div style="font-size:18px;font-weight:700;color:var(--text-primary);">Reels</div>
+            <div style="font-size:13px;text-align:center;line-height:1.6;max-width:260px;">Short videos from people you follow will appear here.</div>
+        </div>
+    </div>
+
     <div id="view-profile" class="view-container">
         <header class="header">
             <h2>Profile</h2>
@@ -1474,6 +1487,9 @@
         </button>
         <button class="nav-item" data-nav="discover" id="nav-discover">
             <i data-feather="compass" style="width:22px;height:22px;"></i>
+        </button>
+        <button class="nav-item" data-nav="reels" id="nav-reels">
+            <i data-feather="film" style="width:22px;height:22px;"></i>
         </button>
         <button class="nav-item" data-nav="profile" id="nav-profile">
             <div class="nav-avatar-wrapper">
@@ -1895,6 +1911,7 @@ document.addEventListener('contextmenu', e => {
 // ── Wire up all static buttons ──
 document.getElementById('nav-chats').addEventListener('click', () => switchTab('chats'));
 document.getElementById('nav-discover').addEventListener('click', () => switchTab('discover'));
+document.getElementById('nav-reels').addEventListener('click', () => switchTab('reels'));
 document.getElementById('nav-profile').addEventListener('click', () => switchTab('profile'));
 document.getElementById('new-chat-btn').addEventListener('click', openNewChatSheet);
 document.getElementById('chat-back-btn').addEventListener('click', () => closeChat(false));
@@ -2185,8 +2202,8 @@ window.dskSwipe = (dir) => {
 window.switchTab = (tabId) => {
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const viewMap = { chats:'view-chats', discover:'view-discover', profile:'view-profile' };
-    const navMap  = { chats:'nav-chats', discover:'nav-discover', profile:'nav-profile' };
+    const viewMap = { chats:'view-chats', discover:'view-discover', reels:'view-reels', profile:'view-profile' };
+    const navMap  = { chats:'nav-chats', discover:'nav-discover', reels:'nav-reels', profile:'nav-profile' };
     document.getElementById(viewMap[tabId])?.classList.add('active');
     document.getElementById(navMap[tabId])?.classList.add('active');
     if (tabId === 'discover') renderDiscover();
