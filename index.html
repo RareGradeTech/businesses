@@ -1290,6 +1290,864 @@
 }
 .dialog-btn.confirm-btn { color: var(--primary); }
 .dialog-btn.danger-btn { color: var(--danger); }
+
+/* ═══════════════════════════════════════
+   REELS – Full-screen TikTok-style feed
+═══════════════════════════════════════ */
+#view-reels {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 50;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+}
+#view-reels.active {
+    display: flex;
+}
+/* Hide normal body padding when reels active */
+#view-reels.active ~ * {}
+
+/* Reel feed – snapping vertical scroll */
+.reels-feed {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.reels-feed::-webkit-scrollbar { display: none; }
+
+/* Individual reel card */
+.reel-card {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Video / placeholder background */
+.reel-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+.reel-bg-gradient {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+}
+.reel-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.72) 0%,
+        rgba(0,0,0,0.10) 40%,
+        rgba(0,0,0,0.0) 60%,
+        rgba(0,0,0,0.30) 100%
+    );
+    pointer-events: none;
+}
+
+/* Top bar (back + title + search) */
+.reels-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%);
+    pointer-events: none;
+}
+.reels-topbar > * { pointer-events: auto; }
+.reels-topbar-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.3px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+.reels-topbar-tabs {
+    display: flex;
+    gap: 20px;
+}
+.reels-tab-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    position: relative;
+    padding-bottom: 3px;
+}
+.reels-tab-btn.active {
+    color: #fff;
+}
+.reels-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%; right: 50%;
+    width: 20px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transform: translateX(-50%);
+}
+.reels-icon-btn {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.15s;
+}
+.reels-icon-btn:active { background: rgba(255,255,255,0.22); }
+
+/* Right action sidebar */
+.reel-actions {
+    position: absolute;
+    right: 14px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+}
+.reel-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+}
+.reel-action-icon {
+    width: 46px;
+    height: 46px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+.reel-action-btn:active .reel-action-icon {
+    transform: scale(0.88);
+}
+.reel-action-btn.liked .reel-action-icon {
+    background: rgba(255,59,92,0.25);
+}
+.reel-action-btn.liked svg { color: #FF3B5C; }
+.reel-action-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* Author avatar with follow ring */
+.reel-avatar-wrap {
+    position: relative;
+    margin-bottom: 4px;
+}
+.reel-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    display: block;
+}
+.reel-follow-btn {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #FF3B5C;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.reel-follow-btn.following {
+    background: var(--primary);
+}
+.reel-follow-btn svg { width: 10px; height: 10px; color: #fff; }
+
+/* Bottom info bar */
+.reel-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 70px;
+    padding: 0 16px calc(100px + env(safe-area-inset-bottom)) 16px;
+    z-index: 10;
+}
+.reel-username {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.reel-verified {
+    width: 16px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.reel-caption {
+    font-size: 13px;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    cursor: pointer;
+}
+.reel-caption.expanded {
+    -webkit-line-clamp: unset;
+    display: block;
+}
+.reel-hashtags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.reel-hashtag {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.reel-sound-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+}
+.reel-sound-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spinDisc 4s linear infinite;
+    flex-shrink: 0;
+}
+@keyframes spinDisc {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Progress bar */
+.reel-progress {
+    position: absolute;
+    bottom: calc(88px + env(safe-area-inset-bottom));
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255,255,255,0.25);
+    z-index: 10;
+}
+.reel-progress-fill {
+    height: 100%;
+    background: #fff;
+    width: 0%;
+    transition: width 0.1s linear;
+    border-radius: 2px;
+}
+
+/* Pause indicator */
+.reel-pause-indicator {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 15;
+}
+.reel-pause-indicator.show { opacity: 1; }
+.reel-pause-circle {
+    width: 72px;
+    height: 72px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+
+/* Sound mute button (top right of card) */
+.reel-mute-btn {
+    position: absolute;
+    top: 80px;
+    right: 14px;
+    z-index: 20;
+    background: rgba(0,0,0,0.4);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.15s;
+}
+
+/* Comments sheet */
+.reels-comments-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+}
+.reels-comments-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.reels-comments-sheet {
+    width: 100%;
+    max-width: 500px;
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(0.16,1,0.3,1);
+    border-top: 1px solid var(--border);
+}
+.reels-comments-overlay.active .reels-comments-sheet {
+    transform: translateY(0);
+}
+.reels-comments-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.reels-comments-header h3 { font-size: 16px; font-weight: 800; }
+.reels-comments-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.reel-comment {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.reel-comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--surface2);
+    flex-shrink: 0;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+.reel-comment-body { flex: 1; min-width: 0; }
+.reel-comment-user { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.reel-comment-text { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+.reel-comment-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.reel-comment-like {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.reels-comment-input-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px calc(20px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.reels-comment-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    font-family: inherit;
+}
+.reels-comment-input::placeholder { color: var(--text-muted); }
+.reels-comment-send {
+    background: var(--primary);
+    border: none;
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+.reels-comment-send:active { transform: scale(0.9); }
+
+/* Share sheet */
+.reels-share-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+}
+.reels-share-sheet.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.reels-share-inner {
+    width: 100%;
+    max-width: 500px;
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px calc(24px + env(safe-area-inset-bottom));
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(0.16,1,0.3,1);
+    border-top: 1px solid var(--border);
+}
+.reels-share-sheet.active .reels-share-inner { transform: translateY(0); }
+.reels-share-title { font-size: 16px; font-weight: 800; margin-bottom: 18px; text-align: center; }
+.reels-share-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    margin-bottom: 16px;
+}
+.reels-share-row::-webkit-scrollbar { display: none; }
+.reels-share-person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+    min-width: 60px;
+}
+.reels-share-person img {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+}
+.reels-share-person span { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-align: center; }
+.reels-share-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.reels-share-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    transition: background 0.15s;
+}
+.reels-share-action:active { background: var(--surface3); }
+.reels-share-action-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Upload modal */
+.reels-upload-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+}
+.reels-upload-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.reels-upload-sheet {
+    width: 100%;
+    max-width: 500px;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px calc(28px + env(safe-area-inset-bottom));
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(0.16,1,0.3,1);
+    border-top: 1px solid var(--border);
+}
+.reels-upload-overlay.active .reels-upload-sheet { transform: translateY(0); }
+.reels-upload-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.reels-upload-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+.reels-upload-drop {
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+    margin-bottom: 16px;
+}
+.reels-upload-drop:hover, .reels-upload-drop.drag-over {
+    border-color: var(--primary);
+    background: var(--accent-glow);
+}
+.reels-upload-drop-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--primary-gradient);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+}
+.reels-upload-drop h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.reels-upload-drop p { font-size: 12px; color: var(--text-muted); }
+.reels-upload-caption {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    font-family: inherit;
+    resize: none;
+    margin-bottom: 12px;
+    min-height: 80px;
+}
+.reels-upload-caption::placeholder { color: var(--text-muted); }
+.reels-upload-caption:focus { border-color: rgba(var(--primary-rgb),0.4); }
+.reels-upload-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.reels-upload-tag {
+    background: var(--accent-glow);
+    color: var(--primary);
+    border: 1px solid rgba(var(--primary-rgb),0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.reels-upload-tag:active { background: rgba(var(--primary-rgb),0.2); }
+.reels-upload-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.reels-upload-option {
+    flex: 1;
+    padding: 11px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+}
+.reels-upload-option.selected {
+    background: var(--accent-glow);
+    border-color: rgba(var(--primary-rgb),0.3);
+    color: var(--primary);
+}
+.reels-upload-post-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary-gradient);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    letter-spacing: 0.2px;
+}
+.reels-upload-post-btn:active { transform: scale(0.98); opacity: 0.9; }
+.reels-upload-post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Preview strip */
+.reels-preview-strip {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    background: #000;
+    aspect-ratio: 9/16;
+    max-height: 180px;
+}
+.reels-preview-strip video, .reels-preview-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.reels-preview-remove {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: rgba(0,0,0,0.6);
+    border: none;
+    color: #fff;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Floating plus button */
+.reels-fab {
+    position: fixed;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    right: 20px;
+    z-index: 150;
+    width: 52px;
+    height: 52px;
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.5);
+    transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    color: #fff;
+}
+.reels-fab.visible { display: flex; }
+.reels-fab:active { transform: scale(0.88); }
+
+/* Like heart pop animation */
+@keyframes heartPop {
+    0%   { transform: scale(0); opacity: 1; }
+    50%  { transform: scale(1.4); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
+}
+.heart-pop {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 80px;
+    animation: heartPop 0.65s ease-out forwards;
+    transform-origin: center;
+}
+
+/* Empty reels state */
+.reels-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100dvh;
+    gap: 16px;
+    color: rgba(255,255,255,0.7);
+    background: #0a0a0f;
+}
+.reels-empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 24px;
+    background: rgba(108,99,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+.reels-empty-state h3 { font-size: 20px; font-weight: 800; color: #fff; }
+.reels-empty-state p  { font-size: 14px; text-align: center; line-height: 1.6; max-width: 240px; }
+.reels-empty-cta {
+    margin-top: 8px;
+    padding: 14px 28px;
+    background: var(--primary-gradient);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.45);
+    transition: all 0.2s;
+}
+.reels-empty-cta:active { transform: scale(0.95); }
+
+/* Toast for reels */
+.reels-toast {
+    position: fixed;
+    top: calc(70px + env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(16px);
+    color: #fff;
+    padding: 9px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s;
+    z-index: 9999;
+    white-space: nowrap;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+.reels-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Double-tap ripple */
+@keyframes tapRipple {
+    from { transform: scale(0.5); opacity: 0.6; }
+    to   { transform: scale(2.5); opacity: 0; }
+}
+.tap-ripple {
+    position: fixed;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    pointer-events: none;
+    z-index: 9999;
+    animation: tapRipple 0.5s ease-out forwards;
+    transform-origin: center;
+    margin-left: -40px;
+    margin-top: -40px;
+}
+
     </style>
 </head>
 <body>
@@ -1457,18 +2315,7 @@
         <div id="discover-content"></div>
     </div>
 
-    <div id="view-reels" class="view-container">
-        <header class="header">
-            <h2>Reels</h2>
-        </header>
-        <div id="reels-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px;color:var(--text-muted);">
-            <div style="width:72px;height:72px;border-radius:22px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;">
-                <i data-feather="film" style="width:32px;height:32px;color:var(--primary);"></i>
-            </div>
-            <div style="font-size:18px;font-weight:700;color:var(--text-primary);">Reels</div>
-            <div style="font-size:13px;text-align:center;line-height:1.6;max-width:260px;">Short videos from people you follow will appear here.</div>
-        </div>
-    </div>
+    <div id="view-reels" class="view-container"></div>
 
     <div id="view-profile" class="view-container">
         <header class="header">
@@ -3611,7 +4458,786 @@ window.showCustomAlert = function(title, message) {
     });
 };
 
-switchTab('chats');
+<!-- ═══════════ REELS SECTION ═══════════ -->
+
+<!-- Reels top bar (overlaid on feed) -->
+<div class="reels-topbar" id="reels-topbar" style="display:none;">
+    <div class="reels-topbar-tabs">
+        <button class="reels-tab-btn active" id="reels-tab-following" onclick="reelsSetFeedTab('following')">Following</button>
+        <button class="reels-tab-btn" id="reels-tab-foryou" onclick="reelsSetFeedTab('foryou')">For You</button>
+    </div>
+    <div style="display:flex;gap:8px;">
+        <button class="reels-icon-btn" id="reels-search-btn" title="Search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="reels-icon-btn" id="reels-mute-global-btn" title="Sound">
+            <svg id="reels-sound-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+    </div>
+</div>
+
+<!-- Reels feed container (populated by JS) -->
+<div class="reels-feed" id="reels-feed"></div>
+
+<!-- Floating plus / upload button -->
+<button class="reels-fab" id="reels-fab" title="Post a Reel">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
+<!-- Reels toast -->
+<div class="reels-toast" id="reels-toast"></div>
+
+<!-- ── Comments Sheet ── -->
+<div class="reels-comments-overlay" id="reels-comments-overlay">
+    <div class="reels-comments-sheet">
+        <div class="reels-comments-header">
+            <h3>Comments <span id="comments-count" style="color:var(--text-muted);font-weight:600;font-size:14px;"></span></h3>
+            <button class="reels-icon-btn" style="background:var(--surface2);color:var(--text-secondary);" id="reels-close-comments">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="reels-comments-list" id="reels-comments-list"></div>
+        <div class="reels-comment-input-bar">
+            <input class="reels-comment-input" id="reels-comment-input" placeholder="Add a comment…" maxlength="200">
+            <button class="reels-comment-send" id="reels-comment-send">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Share Sheet ── -->
+<div class="reels-share-sheet" id="reels-share-sheet">
+    <div class="reels-share-inner">
+        <div class="reels-share-title">Share Reel</div>
+        <div class="reels-share-row" id="reels-share-people"></div>
+        <div class="reels-share-actions">
+            <div class="reels-share-action" id="reels-share-copy">
+                <div class="reels-share-action-icon" style="background:linear-gradient(135deg,#6C63FF,#9B59B6);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </div>
+                Copy Link
+            </div>
+            <div class="reels-share-action" id="reels-share-dm">
+                <div class="reels-share-action-icon" style="background:linear-gradient(135deg,#3B82F6,#06B6D4);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                Send in Chat
+            </div>
+            <div class="reels-share-action" id="reels-share-download">
+                <div class="reels-share-action-icon" style="background:linear-gradient(135deg,#10B981,#3B82F6);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </div>
+                Save Video
+            </div>
+            <div class="reels-share-action" id="reels-share-report">
+                <div class="reels-share-action-icon" style="background:linear-gradient(135deg,#EF4444,#F59E0B);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                </div>
+                Report
+            </div>
+        </div>
+        <button class="sheet-btn transparent" style="margin-top:14px;" id="reels-close-share">Cancel</button>
+    </div>
+</div>
+
+<!-- ── Upload Sheet ── -->
+<div class="reels-upload-overlay" id="reels-upload-overlay">
+    <div class="reels-upload-sheet">
+        <div class="reels-upload-title">
+            New Reel
+            <button class="reels-icon-btn" style="background:var(--surface2);color:var(--text-secondary);" id="reels-close-upload">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="reels-upload-subtitle">Share a short video with your followers</div>
+
+        <div id="reels-preview-strip" style="display:none;" class="reels-preview-strip">
+            <video id="reels-preview-video" autoplay muted loop playsinline></video>
+            <button class="reels-preview-remove" id="reels-remove-video">✕</button>
+        </div>
+
+        <div class="reels-upload-drop" id="reels-upload-drop">
+            <div class="reels-upload-drop-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <h4>Tap to select a video</h4>
+            <p>MP4, MOV up to 60 seconds</p>
+        </div>
+        <input type="file" id="reels-file-input" accept="video/*" style="display:none;">
+
+        <textarea class="reels-upload-caption" id="reels-upload-caption" placeholder="Write a caption, add hashtags…" maxlength="300"></textarea>
+
+        <div style="font-size:11px;color:var(--text-muted);text-align:right;margin:-8px 4px 12px;"><span id="reel-caption-count">0</span>/300</div>
+
+        <div class="reels-upload-tags">
+            <span style="font-size:12px;font-weight:700;color:var(--text-muted);align-self:center;">Trending:</span>
+            <span class="reels-upload-tag" onclick="reelsAddTag('#vynix')">#vynix</span>
+            <span class="reels-upload-tag" onclick="reelsAddTag('#viral')">#viral</span>
+            <span class="reels-upload-tag" onclick="reelsAddTag('#fyp')">#fyp</span>
+            <span class="reels-upload-tag" onclick="reelsAddTag('#mzansi')">#mzansi</span>
+            <span class="reels-upload-tag" onclick="reelsAddTag('#trending')">#trending</span>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">Audience</div>
+        <div class="reels-upload-options">
+            <div class="reels-upload-option selected" id="opt-everyone" onclick="reelsSelectAudience('everyone')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Everyone
+            </div>
+            <div class="reels-upload-option" id="opt-followers" onclick="reelsSelectAudience('followers')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Followers Only
+            </div>
+        </div>
+
+        <button class="reels-upload-post-btn" id="reels-post-btn" disabled>Post Reel</button>
+    </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   REELS ENGINE
+══════════════════════════════════════════════════════ */
+(function() {
+
+const REEL_COLORS = [
+    'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+    'linear-gradient(135deg,#0d0d0d 0%,#1a0533 50%,#2d0b5a 100%)',
+    'linear-gradient(135deg,#0a1628 0%,#162447 50%,#1f4068 100%)',
+    'linear-gradient(135deg,#1b1b2f 0%,#2c2c54 50%,#474787 100%)',
+    'linear-gradient(135deg,#0d0d13 0%,#1a1a2e 50%,#252550 100%)',
+    'linear-gradient(135deg,#12001f 0%,#27003e 50%,#3d0066 100%)',
+];
+const EMOJIS = ['🔥','✨','💜','🎵','🌟','💫','🎬','🎭','🎶','💥'];
+
+const MOCK_USERS = [
+    { uid:'u1', username:'@lerato_sa',    name:'Lerato Mokoena',  verified:true,  followers:'124K', avatar:'https://i.pravatar.cc/150?img=1'  },
+    { uid:'u2', username:'@thabo.vibes',  name:'Thabo Dlamini',   verified:false, followers:'38K',  avatar:'https://i.pravatar.cc/150?img=3'  },
+    { uid:'u3', username:'@naledi_films', name:'Naledi Khumalo',  verified:true,  followers:'892K', avatar:'https://i.pravatar.cc/150?img=5'  },
+    { uid:'u4', username:'@sipho.music',  name:'Sipho Nkosi',     verified:false, followers:'21K',  avatar:'https://i.pravatar.cc/150?img=8'  },
+    { uid:'u5', username:'@zanele.art',   name:'Zanele Sithole',  verified:true,  followers:'56K',  avatar:'https://i.pravatar.cc/150?img=10' },
+    { uid:'u6', username:'@bongani_sa',   name:'Bongani Zulu',    verified:false, followers:'14K',  avatar:'https://i.pravatar.cc/150?img=12' },
+];
+const CAPTIONS = [
+    'When the beat drops just right 🎵 #vynix #music #fyp',
+    'Mzansi sunsets are unmatched fr fr 🌅 #southafrica #sunset #beautiful',
+    'POV: you finally figured it out 😤💪 #motivation #growth #viral',
+    'This trend is taking over and I\'m here for it 🔥 #trending #fyp #vynix',
+    'Not me doing this at 2am again 😭 #relatable #nightowl #funny',
+    'The way this came together 🤌✨ #creative #art #satisfying',
+    'Main character energy only 💫 #confidence #vibes #mzansi',
+    'Bro said what?? 💀 #comedy #reaction #fyp',
+];
+const MOCK_COMMENTS = [
+    { user:'@kgomotso_',  text:'This is so fire 🔥🔥', time:'2m', likes:42,  avatar:'https://i.pravatar.cc/150?img=20' },
+    { user:'@thembi.joy',  text:'Lol I feel this on a spiritual level 😂', time:'5m', likes:18,  avatar:'https://i.pravatar.cc/150?img=22' },
+    { user:'@prince_sa',  text:'Yo the editing is insane!', time:'8m', likes:97,  avatar:'https://i.pravatar.cc/150?img=25' },
+    { user:'@noma_vibes', text:'Straight to the fyp 💯', time:'12m', likes:7,   avatar:'https://i.pravatar.cc/150?img=27' },
+    { user:'@relo_boy',   text:'Bro this made my day fr 🙌', time:'15m', likes:33,  avatar:'https://i.pravatar.cc/150?img=30' },
+    { user:'@anele.gif',  text:'Okay but the way this was shot?? 😮‍💨', time:'22m', likes:156, avatar:'https://i.pravatar.cc/150?img=32' },
+    { user:'@k_money_za', text:'Don\'t stop posting!!', time:'1h', likes:4,   avatar:'https://i.pravatar.cc/150?img=35' },
+];
+
+let reelsData = [];
+let reelsFeedTab = 'foryou';
+let reelsMuted = false;
+let activeReelIndex = -1;
+let progressTimers = {};
+let followState = {};
+let likeState = {};
+let shareReelId = null;
+let commentReelId = null;
+let uploadAudience = 'everyone';
+let selectedVideoFile = null;
+let doubleTapTimer = null;
+
+// ── Generate mock reels ──
+function generateMockReels(count) {
+    const data = [];
+    for (let i = 0; i < count; i++) {
+        const user = MOCK_USERS[i % MOCK_USERS.length];
+        data.push({
+            id: 'reel_' + i,
+            user,
+            caption: CAPTIONS[i % CAPTIONS.length],
+            hashtags: extractTags(CAPTIONS[i % CAPTIONS.length]),
+            likes: randomCount(),
+            comments: Math.floor(Math.random()*300)+5,
+            shares: Math.floor(Math.random()*150)+1,
+            saves: Math.floor(Math.random()*80)+1,
+            sound: 'Original audio - ' + user.username,
+            color: REEL_COLORS[i % REEL_COLORS.length],
+            emoji: EMOJIS[i % EMOJIS.length],
+            timestamp: Date.now() - i * 3600000,
+        });
+    }
+    return data;
+}
+function extractTags(cap) {
+    return (cap.match(/#\w+/g) || []);
+}
+function randomCount() {
+    const n = Math.random();
+    if (n < 0.5) return (Math.floor(Math.random()*900)+100).toLocaleString();
+    if (n < 0.8) return (Math.floor(Math.random()*90)+10) + 'K';
+    return (Math.floor(Math.random()*9)+1) + '.' + Math.floor(Math.random()*9) + 'M';
+}
+
+// ── Render feed ──
+function renderReelsFeed() {
+    const feed = document.getElementById('reels-feed');
+    feed.innerHTML = '';
+    reelsData.forEach((reel, i) => {
+        feed.appendChild(buildReelCard(reel, i));
+    });
+}
+
+function buildReelCard(reel, idx) {
+    const card = document.createElement('div');
+    card.className = 'reel-card';
+    card.dataset.idx = idx;
+    card.dataset.id = reel.id;
+
+    const isFollowing = followState[reel.user.uid];
+    const isLiked = likeState[reel.id];
+
+    card.innerHTML = `
+        <div class="reel-bg-gradient" style="background:${reel.color};">
+            <span style="font-size:100px;opacity:0.18;filter:blur(2px);">${reel.emoji}</span>
+        </div>
+        <div class="reel-overlay"></div>
+
+        <!-- Double-tap to like area -->
+        <div class="reel-tap-area" style="position:absolute;inset:0;z-index:5;" data-idx="${idx}"></div>
+
+        <!-- Progress bar -->
+        <div class="reel-progress">
+            <div class="reel-progress-fill" id="progress-${idx}"></div>
+        </div>
+
+        <!-- Pause indicator -->
+        <div class="reel-pause-indicator" id="pause-ind-${idx}">
+            <div class="reel-pause-circle">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </div>
+        </div>
+
+        <!-- Right actions -->
+        <div class="reel-actions">
+            <div class="reel-avatar-wrap">
+                <img class="reel-avatar" src="${reel.user.avatar}" onerror="this.src=''" alt="${reel.user.username}">
+                <button class="reel-follow-btn ${isFollowing?'following':''}" data-uid="${reel.user.uid}" data-idx="${idx}" id="follow-btn-${idx}">
+                    ${isFollowing
+                        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`
+                        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`}
+                </button>
+            </div>
+
+            <button class="reel-action-btn ${isLiked?'liked':''}" id="like-btn-${idx}" data-idx="${idx}">
+                <div class="reel-action-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="${isLiked?'#FF3B5C':'none'}" stroke="${isLiked?'#FF3B5C':'white'}" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
+                <span class="reel-action-count" id="like-count-${idx}">${reel.likes}</span>
+            </button>
+
+            <button class="reel-action-btn" id="comment-btn-${idx}" data-idx="${idx}">
+                <div class="reel-action-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <span class="reel-action-count">${reel.comments}</span>
+            </button>
+
+            <button class="reel-action-btn" id="share-btn-${idx}" data-idx="${idx}">
+                <div class="reel-action-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                </div>
+                <span class="reel-action-count">${reel.shares}</span>
+            </button>
+
+            <button class="reel-action-btn" id="save-btn-${idx}" data-idx="${idx}">
+                <div class="reel-action-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <span class="reel-action-count">${reel.saves}</span>
+            </button>
+
+            <!-- Spinning disc -->
+            <div class="reel-sound-icon" style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.5);border-radius:50%;overflow:hidden;">
+                <img src="${reel.user.avatar}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+            </div>
+        </div>
+
+        <!-- Bottom info -->
+        <div class="reel-info">
+            <div class="reel-username">
+                ${reel.user.username}
+                ${reel.user.verified ? `<span class="reel-verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+            </div>
+            <div class="reel-caption" id="caption-${idx}" data-idx="${idx}">${escapeHtmlReels(reel.caption.replace(/#\w+/g,''))}</div>
+            <div class="reel-hashtags">
+                ${reel.hashtags.map(t=>`<span class="reel-hashtag">${escapeHtmlReels(t)}</span>`).join('')}
+            </div>
+            <div class="reel-sound-bar">
+                <div class="reel-sound-icon">🎵</div>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlReels(reel.sound)}</span>
+            </div>
+        </div>
+    `;
+
+    // Wire events
+    card.querySelector('.reel-tap-area').addEventListener('click', e => handleReelTap(e, idx));
+    card.querySelector(`#like-btn-${idx}`).addEventListener('click', e => { e.stopPropagation(); toggleLike(idx); });
+    card.querySelector(`#comment-btn-${idx}`).addEventListener('click', e => { e.stopPropagation(); openComments(idx); });
+    card.querySelector(`#share-btn-${idx}`).addEventListener('click', e => { e.stopPropagation(); openShare(idx); });
+    card.querySelector(`#save-btn-${idx}`).addEventListener('click', e => { e.stopPropagation(); toggleSave(idx, e); });
+    card.querySelector(`.reel-follow-btn`).addEventListener('click', e => { e.stopPropagation(); toggleFollow(reel.user.uid, idx); });
+    const capEl = card.querySelector(`#caption-${idx}`);
+    capEl.addEventListener('click', e => { e.stopPropagation(); capEl.classList.toggle('expanded'); });
+
+    return card;
+}
+
+function escapeHtmlReels(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Intersection Observer for autoplay simulation ──
+let reelObserver = null;
+function setupReelObserver() {
+    if (reelObserver) reelObserver.disconnect();
+    reelObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const idx = parseInt(entry.target.dataset.idx);
+            if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+                activateReel(idx);
+            }
+        });
+    }, { root: document.getElementById('reels-feed'), threshold: 0.6 });
+    document.querySelectorAll('.reel-card').forEach(c => reelObserver.observe(c));
+}
+
+function activateReel(idx) {
+    if (activeReelIndex === idx) return;
+    // Stop previous
+    if (activeReelIndex >= 0) {
+        clearProgressTimer(activeReelIndex);
+    }
+    activeReelIndex = idx;
+    startProgress(idx);
+}
+
+let progressIntervals = {};
+let pausedReels = {};
+
+function startProgress(idx) {
+    clearProgressTimer(idx);
+    if (pausedReels[idx]) return;
+    const fill = document.getElementById('progress-' + idx);
+    if (!fill) return;
+    let pct = 0;
+    progressIntervals[idx] = setInterval(() => {
+        if (pausedReels[idx]) return;
+        pct += 100 / (15 * 10); // 15s reel
+        if (pct >= 100) {
+            pct = 0;
+            // Auto-advance
+            scrollToNextReel(idx);
+        }
+        fill.style.width = pct + '%';
+    }, 100);
+}
+function clearProgressTimer(idx) {
+    if (progressIntervals[idx]) {
+        clearInterval(progressIntervals[idx]);
+        delete progressIntervals[idx];
+    }
+}
+function scrollToNextReel(idx) {
+    const feed = document.getElementById('reels-feed');
+    const cards = feed.querySelectorAll('.reel-card');
+    if (idx + 1 < cards.length) {
+        cards[idx + 1].scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// ── Tap to pause/play ──
+let tapCount = {};
+function handleReelTap(e, idx) {
+    e.stopPropagation();
+    tapCount[idx] = (tapCount[idx] || 0) + 1;
+    if (tapCount[idx] === 1) {
+        doubleTapTimer = setTimeout(() => {
+            tapCount[idx] = 0;
+            togglePause(idx);
+        }, 230);
+    } else if (tapCount[idx] === 2) {
+        clearTimeout(doubleTapTimer);
+        tapCount[idx] = 0;
+        // Double-tap = like
+        triggerLikeAnimation(idx, e);
+        if (!likeState[reelsData[idx].id]) toggleLike(idx);
+        showTapRipple(e.clientX, e.clientY);
+    }
+}
+
+function togglePause(idx) {
+    pausedReels[idx] = !pausedReels[idx];
+    const ind = document.getElementById('pause-ind-' + idx);
+    if (pausedReels[idx]) {
+        if (ind) ind.classList.add('show');
+        clearProgressTimer(idx);
+    } else {
+        if (ind) {
+            ind.classList.add('show');
+            setTimeout(() => ind.classList.remove('show'), 600);
+        }
+        startProgress(idx);
+    }
+}
+
+function showTapRipple(x, y) {
+    const el = document.createElement('div');
+    el.className = 'tap-ripple';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+}
+
+function triggerLikeAnimation(idx, e) {
+    const heart = document.createElement('div');
+    heart.className = 'heart-pop';
+    heart.textContent = '❤️';
+    heart.style.left = (e.clientX - 40) + 'px';
+    heart.style.top  = (e.clientY - 40) + 'px';
+    document.body.appendChild(heart);
+    heart.addEventListener('animationend', () => heart.remove());
+}
+
+// ── Like ──
+function toggleLike(idx) {
+    const reel = reelsData[idx];
+    likeState[reel.id] = !likeState[reel.id];
+    const btn = document.getElementById('like-btn-' + idx);
+    if (!btn) return;
+    btn.classList.toggle('liked', likeState[reel.id]);
+    const icon = btn.querySelector('svg');
+    icon.setAttribute('fill', likeState[reel.id] ? '#FF3B5C' : 'none');
+    icon.setAttribute('stroke', likeState[reel.id] ? '#FF3B5C' : 'white');
+    // Bounce
+    const ic = btn.querySelector('.reel-action-icon');
+    ic.style.transform = 'scale(1.3)';
+    setTimeout(() => { ic.style.transform = ''; }, 200);
+    if (likeState[reel.id]) showReelsToast('❤️ Liked!');
+}
+
+// ── Save ──
+function toggleSave(idx, e) {
+    const btn = document.getElementById('save-btn-' + idx);
+    const svg = btn.querySelector('svg');
+    const saved = svg.getAttribute('fill') === 'white';
+    svg.setAttribute('fill', saved ? 'none' : 'white');
+    showReelsToast(saved ? 'Removed from saved' : '🔖 Saved to collection!');
+    const ic = btn.querySelector('.reel-action-icon');
+    ic.style.transform = 'scale(1.3)';
+    setTimeout(() => { ic.style.transform = ''; }, 200);
+}
+
+// ── Follow ──
+function toggleFollow(uid, idx) {
+    followState[uid] = !followState[uid];
+    const btn = document.getElementById('follow-btn-' + idx);
+    if (!btn) return;
+    btn.classList.toggle('following', followState[uid]);
+    btn.innerHTML = followState[uid]
+        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`
+        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+    showReelsToast(followState[uid] ? '✅ Following!' : 'Unfollowed');
+}
+
+// ── Comments ──
+function openComments(idx) {
+    commentReelId = reelsData[idx].id;
+    const reel = reelsData[idx];
+    document.getElementById('comments-count').textContent = `(${reel.comments})`;
+    renderComments();
+    document.getElementById('reels-comments-overlay').classList.add('active');
+}
+function renderComments() {
+    const list = document.getElementById('reels-comments-list');
+    list.innerHTML = MOCK_COMMENTS.map(c => `
+        <div class="reel-comment">
+            <img class="reel-comment-avatar" src="${c.avatar}" onerror="this.src=''">
+            <div class="reel-comment-body">
+                <div class="reel-comment-user">${escapeHtmlReels(c.user)}</div>
+                <div class="reel-comment-text">${escapeHtmlReels(c.text)}</div>
+                <div class="reel-comment-time">${escapeHtmlReels(c.time)} ago · Reply</div>
+            </div>
+            <button class="reel-comment-like">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                ${c.likes}
+            </button>
+        </div>
+    `).join('');
+    // Like a comment
+    list.querySelectorAll('.reel-comment-like').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const svg = btn.querySelector('svg');
+            svg.setAttribute('fill', svg.getAttribute('fill') === 'none' ? '#FF3B5C' : 'none');
+            svg.setAttribute('stroke', svg.getAttribute('fill') === '#FF3B5C' ? '#FF3B5C' : 'currentColor');
+        });
+    });
+}
+
+document.getElementById('reels-close-comments').addEventListener('click', () => {
+    document.getElementById('reels-comments-overlay').classList.remove('active');
+});
+document.getElementById('reels-comments-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('reels-comments-overlay'))
+        document.getElementById('reels-comments-overlay').classList.remove('active');
+});
+document.getElementById('reels-comment-send').addEventListener('click', postComment);
+document.getElementById('reels-comment-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); postComment(); }
+});
+function postComment() {
+    const inp = document.getElementById('reels-comment-input');
+    const val = inp.value.trim();
+    if (!val) return;
+    const list = document.getElementById('reels-comments-list');
+    const el = document.createElement('div');
+    el.className = 'reel-comment';
+    el.innerHTML = `
+        <img class="reel-comment-avatar" src="" style="background:var(--surface3);">
+        <div class="reel-comment-body">
+            <div class="reel-comment-user">@you</div>
+            <div class="reel-comment-text">${escapeHtmlReels(val)}</div>
+            <div class="reel-comment-time">Just now · Reply</div>
+        </div>
+        <button class="reel-comment-like">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            0
+        </button>
+    `;
+    list.insertBefore(el, list.firstChild);
+    inp.value = '';
+    showReelsToast('💬 Comment posted!');
+}
+
+// ── Share ──
+function openShare(idx) {
+    shareReelId = reelsData[idx].id;
+    // Populate people row from mock users
+    const row = document.getElementById('reels-share-people');
+    row.innerHTML = MOCK_USERS.map(u => `
+        <div class="reels-share-person" data-uid="${u.uid}">
+            <img src="${u.avatar}" onerror="this.src=''" alt="${u.name}">
+            <span>${escapeHtmlReels(u.name.split(' ')[0])}</span>
+        </div>
+    `).join('');
+    row.querySelectorAll('.reels-share-person').forEach(el => {
+        el.addEventListener('click', () => { showReelsToast('✈️ Sent!'); closeShare(); });
+    });
+    document.getElementById('reels-share-sheet').classList.add('active');
+}
+function closeShare() {
+    document.getElementById('reels-share-sheet').classList.remove('active');
+}
+document.getElementById('reels-close-share').addEventListener('click', closeShare);
+document.getElementById('reels-share-sheet').addEventListener('click', e => {
+    if (e.target === document.getElementById('reels-share-sheet')) closeShare();
+});
+document.getElementById('reels-share-copy').addEventListener('click', () => { showReelsToast('🔗 Link copied!'); closeShare(); });
+document.getElementById('reels-share-dm').addEventListener('click', () => { showReelsToast('✈️ Sent in chat!'); closeShare(); });
+document.getElementById('reels-share-download').addEventListener('click', () => { showReelsToast('⬇️ Saved to device!'); closeShare(); });
+document.getElementById('reels-share-report').addEventListener('click', () => { showReelsToast('🚩 Reported'); closeShare(); });
+
+// ── Mute global ──
+document.getElementById('reels-mute-global-btn').addEventListener('click', () => {
+    reelsMuted = !reelsMuted;
+    const icon = document.getElementById('reels-sound-icon');
+    if (reelsMuted) {
+        icon.innerHTML = `<line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>`;
+    } else {
+        icon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>`;
+    }
+    showReelsToast(reelsMuted ? '🔇 Muted' : '🔊 Sound on');
+});
+
+// ── Feed tab ──
+window.reelsSetFeedTab = (tab) => {
+    reelsFeedTab = tab;
+    document.getElementById('reels-tab-following').classList.toggle('active', tab === 'following');
+    document.getElementById('reels-tab-foryou').classList.toggle('active', tab === 'foryou');
+    reelsData = generateMockReels(tab === 'foryou' ? 12 : 6);
+    renderReelsFeed();
+    setupReelObserver();
+    document.getElementById('reels-feed').scrollTop = 0;
+    showReelsToast(tab === 'foryou' ? '⚡ For You feed' : '👥 Following feed');
+};
+
+// ── Upload ──
+document.getElementById('reels-fab').addEventListener('click', openUpload);
+function openUpload() {
+    document.getElementById('reels-upload-overlay').classList.add('active');
+}
+document.getElementById('reels-close-upload').addEventListener('click', closeUpload);
+document.getElementById('reels-upload-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('reels-upload-overlay')) closeUpload();
+});
+function closeUpload() {
+    document.getElementById('reels-upload-overlay').classList.remove('active');
+    resetUpload();
+}
+function resetUpload() {
+    selectedVideoFile = null;
+    document.getElementById('reels-file-input').value = '';
+    document.getElementById('reels-preview-strip').style.display = 'none';
+    document.getElementById('reels-upload-drop').style.display = 'block';
+    document.getElementById('reels-upload-caption').value = '';
+    document.getElementById('reel-caption-count').textContent = '0';
+    document.getElementById('reels-post-btn').disabled = true;
+}
+
+// Caption counter
+document.getElementById('reels-upload-caption').addEventListener('input', function() {
+    document.getElementById('reel-caption-count').textContent = this.value.length;
+    document.getElementById('reels-post-btn').disabled = !selectedVideoFile;
+});
+
+// Tag insertion
+window.reelsAddTag = (tag) => {
+    const inp = document.getElementById('reels-upload-caption');
+    inp.value = (inp.value + ' ' + tag).trim() + ' ';
+    inp.dispatchEvent(new Event('input'));
+    inp.focus();
+};
+
+// Audience selection
+window.reelsSelectAudience = (val) => {
+    uploadAudience = val;
+    document.getElementById('opt-everyone').classList.toggle('selected', val === 'everyone');
+    document.getElementById('opt-followers').classList.toggle('selected', val === 'followers');
+};
+
+// File pick
+document.getElementById('reels-upload-drop').addEventListener('click', () => {
+    document.getElementById('reels-file-input').click();
+});
+document.getElementById('reels-file-input').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    selectedVideoFile = file;
+    const url = URL.createObjectURL(file);
+    document.getElementById('reels-preview-video').src = url;
+    document.getElementById('reels-preview-strip').style.display = 'block';
+    document.getElementById('reels-upload-drop').style.display = 'none';
+    document.getElementById('reels-post-btn').disabled = false;
+});
+document.getElementById('reels-remove-video').addEventListener('click', () => {
+    selectedVideoFile = null;
+    document.getElementById('reels-preview-video').src = '';
+    document.getElementById('reels-preview-strip').style.display = 'none';
+    document.getElementById('reels-upload-drop').style.display = 'block';
+    document.getElementById('reels-post-btn').disabled = true;
+});
+
+// Drag & drop
+const dropEl = document.getElementById('reels-upload-drop');
+['dragenter','dragover'].forEach(ev => dropEl.addEventListener(ev, e => { e.preventDefault(); dropEl.classList.add('drag-over'); }));
+['dragleave','drop'].forEach(ev => dropEl.addEventListener(ev, e => { e.preventDefault(); dropEl.classList.remove('drag-over'); }));
+dropEl.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('video/')) {
+        selectedVideoFile = file;
+        const url = URL.createObjectURL(file);
+        document.getElementById('reels-preview-video').src = url;
+        document.getElementById('reels-preview-strip').style.display = 'block';
+        document.getElementById('reels-upload-drop').style.display = 'none';
+        document.getElementById('reels-post-btn').disabled = false;
+    }
+});
+
+// Post reel
+document.getElementById('reels-post-btn').addEventListener('click', () => {
+    const caption = document.getElementById('reels-upload-caption').value.trim();
+    const btn = document.getElementById('reels-post-btn');
+    btn.textContent = 'Posting…';
+    btn.disabled = true;
+    setTimeout(() => {
+        // Add a new mock reel at top of feed
+        const newReel = {
+            id: 'reel_new_' + Date.now(),
+            user: { uid:'me', username:'@you', name:'You', verified:false, followers:'0', avatar:'' },
+            caption: caption || 'Check out my new reel! 🔥 #vynix',
+            hashtags: extractTags(caption),
+            likes: '0', comments: 0, shares: 0, saves: 0,
+            sound: 'Original audio - @you',
+            color: REEL_COLORS[0],
+            emoji: '🎬',
+            timestamp: Date.now(),
+        };
+        reelsData.unshift(newReel);
+        renderReelsFeed();
+        setupReelObserver();
+        closeUpload();
+        showReelsToast('🎉 Reel posted!');
+    }, 1800);
+});
+
+// ── Toast ──
+function showReelsToast(msg) {
+    const el = document.getElementById('reels-toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ── Show/hide reels UI when tab changes ──
+function onReelsTabActive(active) {
+    const topbar = document.getElementById('reels-topbar');
+    const fab = document.getElementById('reels-fab');
+    const feed = document.getElementById('reels-feed');
+    if (active) {
+        topbar.style.display = 'flex';
+        fab.classList.add('visible');
+        feed.style.display = 'block';
+        // Move feed into view-reels
+        const viewReels = document.getElementById('view-reels');
+        if (!viewReels.contains(feed)) viewReels.appendChild(feed);
+        if (!viewReels.contains(document.getElementById('reels-topbar'))) viewReels.appendChild(document.getElementById('reels-topbar'));
+        // Init feed if empty
+        if (reelsData.length === 0) {
+            reelsData = generateMockReels(12);
+            renderReelsFeed();
+            setupReelObserver();
+        }
+    } else {
+        topbar.style.display = 'none';
+        fab.classList.remove('visible');
+        clearInterval(progressIntervals[activeReelIndex]);
+    }
+}
+
+// Hook into existing switchTab
+const _origSwitchTab = window.switchTab;
+window.switchTab = (tabId) => {
+    _origSwitchTab(tabId);
+    onReelsTabActive(tabId === 'reels');
+    // When on reels, override body padding
+    if (tabId === 'reels') {
+        document.body.style.overflow = 'hidden';
+        document.body.style.paddingBottom = '0';
+    } else {
+        document.body.style.overflow = '';
+        document.body.style.paddingBottom = '';
+    }
+};
+
+})();
 </script>
+
 </body>
 </html>
