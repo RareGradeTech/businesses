@@ -99,57 +99,143 @@
         .app-container{max-width:100%;margin:0 auto;padding:16px;}
         @media(min-width:768px){.app-container{max-width:480px;margin:0 auto;min-height:100vh;padding:24px 0;}}
 
-        /* ── Desktop two-panel layout ── */
+        /* ══════════════════════════════════════
+           DESKTOP LAYOUT  ≥ 900 px
+        ══════════════════════════════════════ */
         @media(min-width:900px){
             body{padding-bottom:0;overflow:hidden;height:100vh;}
+
+            /* Hide the mobile-only pieces */
+            .bottom-nav-container{display:none!important;}
+            .app-container{display:none!important;}
+
+            /* Root shell */
             .desktop-layout{display:flex;height:100vh;overflow:hidden;}
 
-            /* Sidebar */
-            .sidebar{width:340px;min-width:300px;max-width:380px;flex-shrink:0;display:flex;flex-direction:column;background:var(--surface);height:100vh;overflow:hidden;border-right:1px solid var(--border);}
-            .sidebar-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 8px;}
-            .sidebar-tab{flex:1;padding:16px 0 14px;border:none;background:transparent;color:var(--text-muted);font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all 0.2s;border-bottom:2px solid transparent;position:relative;}
-            .sidebar-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
-            .sidebar-tab .nav-badge{position:absolute;top:10px;right:calc(50% - 20px);background:var(--danger);color:white;font-size:9px;font-weight:800;border-radius:10px;min-width:17px;height:17px;display:none;align-items:center;justify-content:center;padding:0 4px;}
-            .sidebar-tab .nav-badge.show{display:flex;}
-            .sidebar-header{padding:14px 16px 12px;background:var(--surface);border-bottom:1px solid var(--border);}
-            .sidebar-header h2{font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
-            .sidebar-content{flex:1;overflow-y:auto;padding:8px 12px;}
+            /* ── Left nav rail ── */
+            .dsk-rail{
+                width:68px;flex-shrink:0;
+                display:flex;flex-direction:column;align-items:center;
+                background:var(--surface);border-right:1px solid var(--border);
+                padding:12px 0;gap:4px;
+                height:100vh;overflow:hidden;
+            }
+            .dsk-rail-logo{
+                width:38px;height:38px;border-radius:12px;
+                background:var(--primary-gradient);
+                display:flex;align-items:center;justify-content:center;
+                margin-bottom:10px;flex-shrink:0;
+            }
+            .dsk-rail-btn{
+                width:44px;height:44px;border-radius:14px;
+                background:transparent;border:none;
+                color:var(--text-muted);
+                display:flex;align-items:center;justify-content:center;
+                cursor:pointer;position:relative;
+                transition:all 0.18s;flex-shrink:0;
+            }
+            .dsk-rail-btn:hover{background:var(--surface2);color:var(--text-primary);}
+            .dsk-rail-btn.active{background:var(--accent-glow);color:var(--primary);}
+            .dsk-rail-btn .rail-badge{
+                position:absolute;top:6px;right:6px;
+                background:var(--danger);color:#fff;
+                font-size:9px;font-weight:800;
+                border-radius:8px;min-width:16px;height:16px;
+                display:none;align-items:center;justify-content:center;
+                padding:0 3px;border:2px solid var(--surface);
+            }
+            .dsk-rail-btn .rail-badge.show{display:flex;}
+            .dsk-rail-spacer{flex:1;}
+            .dsk-rail-avatar{
+                width:38px;height:38px;border-radius:50%;
+                object-fit:cover;cursor:pointer;
+                border:2px solid transparent;transition:border-color 0.2s;
+                flex-shrink:0;
+            }
+            .dsk-rail-btn.active .dsk-rail-avatar{border-color:var(--primary);}
+
+            /* ── Sidebar panel ── */
+            .sidebar{
+                width:300px;min-width:260px;max-width:340px;
+                flex-shrink:0;display:flex;flex-direction:column;
+                background:var(--surface);height:100vh;overflow:hidden;
+                border-right:1px solid var(--border);
+            }
+            .sidebar-header{
+                padding:16px 16px 12px;background:var(--surface);
+                border-bottom:1px solid var(--border);flex-shrink:0;
+            }
+            .sidebar-header h2{
+                font-size:20px;font-weight:800;letter-spacing:-0.5px;
+                display:flex;align-items:center;justify-content:space-between;margin:0;
+            }
             .sidebar-scroll{flex:1;overflow-y:auto;}
+            .sidebar-icon-btn{
+                background:var(--surface2);border:none;color:var(--text-secondary);
+                width:34px;height:34px;border-radius:10px;
+                display:flex;align-items:center;justify-content:center;
+                cursor:pointer;flex-shrink:0;transition:all 0.18s;
+            }
+            .sidebar-icon-btn:hover{background:var(--surface3);color:var(--primary);}
 
-            /* Main panel */
-            .main-panel{flex:1;display:flex;flex-direction:column;background:var(--background);height:100vh;overflow:hidden;position:relative;}
+            /* ── Main content panel ── */
+            .main-panel{
+                flex:1;display:flex;flex-direction:column;
+                background:var(--background);height:100vh;overflow:hidden;position:relative;
+            }
 
-            /* Chat list item on desktop */
+            /* Chat list item */
             .chat-list-item{border-radius:12px;}
 
-            /* Chat window desktop */
-            .chat-window{position:static!important;transform:none!important;visibility:visible!important;flex:1;display:flex;flex-direction:column;height:100%;box-shadow:none!important;transition:none!important;}
+            /* Chat window inside desktop */
+            .chat-window{
+                position:static!important;transform:none!important;
+                visibility:visible!important;flex:1;
+                display:flex;flex-direction:column;height:100%;
+                box-shadow:none!important;transition:none!important;
+            }
             .chat-window.desktop-hidden{display:none;}
 
-            /* Hide mobile nav */
-            .bottom-nav-container{display:none;}
-            .app-container{display:none;}
-
-            /* Bottom sheets centered */
-            .bottom-sheet-overlay{padding:20px;}
+            /* Bottom sheets → centered modal */
+            .bottom-sheet-overlay{padding:20px;align-items:center;}
             .bottom-sheet-overlay .bottom-sheet{max-width:460px;border-radius:24px;}
             .bottom-sheet-overlay.active .bottom-sheet{transform:none;}
 
-            /* Sidebar profile section */
-            .sidebar-profile{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);}
-            .sidebar-profile-avatar{width:40px;height:40px;border-radius:12px;object-fit:cover;background:var(--surface2);cursor:pointer;flex-shrink:0;}
-            .sidebar-profile-name{font-size:14px;font-weight:700;color:var(--text-primary);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-            .sidebar-icon-btn{background:var(--surface2);border:none;color:var(--text-secondary);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.18s;}
-            .sidebar-icon-btn:hover{background:var(--surface3);color:var(--primary);}
-
-            /* Empty main panel */
-            .desktop-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;color:var(--text-muted);}
-            .desktop-empty-icon{width:80px;height:80px;border-radius:24px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;}
+            /* Empty state */
+            .desktop-empty{
+                display:flex;flex-direction:column;align-items:center;
+                justify-content:center;height:100%;gap:16px;color:var(--text-muted);
+            }
+            .desktop-empty-icon{
+                width:80px;height:80px;border-radius:24px;
+                background:var(--accent-glow);
+                display:flex;align-items:center;justify-content:center;
+            }
             .desktop-empty h3{font-size:18px;font-weight:700;color:var(--text-primary);}
             .desktop-empty p{font-size:13px;max-width:260px;text-align:center;line-height:1.6;}
+
+            /* ── Desktop Reels panel (contained, not full-screen fixed) ── */
+            #dsk-reels-panel{
+                flex:1;display:none;height:100%;
+                background:#000;overflow:hidden;position:relative;
+            }
+            #dsk-reels-panel.active{display:flex;}
+            /* Override the mobile full-screen fixed behaviour inside desktop */
+            #dsk-reels-panel .reels-feed{
+                width:100%;height:100%;
+                overflow-y:scroll;
+                scroll-snap-type:y mandatory;
+                scrollbar-width:none;
+            }
+            #dsk-reels-panel .reels-feed::-webkit-scrollbar{display:none;}
+            #dsk-reels-panel .reel-card{height:100%;}
+            /* Reels topbar inside desktop panel */
+            #dsk-reels-panel .reels-topbar{position:absolute;}
+            /* Progress bar and action offsets already relative to card */
         }
         @media(max-width:899px){
-            .desktop-layout,.sidebar,.main-panel{display:contents;}
+            .desktop-layout,.sidebar,.main-panel,.dsk-rail{display:contents;}
+            #dsk-reels-panel{display:none!important;}
         }
 
         .view-container{display:none;width:100%;animation:fadeSlide 0.28s cubic-bezier(0.16,1,0.3,1);}
@@ -1568,69 +1654,148 @@ body.reels-active {
 </div>
 
 <div class="desktop-layout" id="desktop-layout" style="display:none;">
+
+    <!-- ── Left icon rail ── -->
+    <nav class="dsk-rail" id="dsk-rail">
+        <!-- Logo -->
+        <div class="dsk-rail-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.876v6.248a1 1 0 0 1-1.447.894L15 14"/><rect x="1" y="6" width="14" height="12" rx="2"/></svg>
+        </div>
+
+        <!-- Reels -->
+        <button class="dsk-rail-btn active" id="dsk-rail-reels" title="Reels" onclick="dskSwitchSection('reels')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.876v6.248a1 1 0 0 1-1.447.894L15 14"/><rect x="1" y="6" width="14" height="12" rx="2"/></svg>
+        </button>
+
+        <!-- Messages -->
+        <button class="dsk-rail-btn" id="dsk-rail-chats" title="Messages" onclick="dskSwitchSection('chats')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="rail-badge" id="dsk-rail-badge-messages"></span>
+        </button>
+
+        <!-- Discover -->
+        <button class="dsk-rail-btn" id="dsk-rail-discover" title="Discover" onclick="dskSwitchSection('discover')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </button>
+
+        <!-- Notifications -->
+        <button class="dsk-rail-btn" id="dsk-rail-notif" title="Notifications" onclick="toggleNotificationDropdown()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="rail-badge" id="dsk-notif-badge"></span>
+        </button>
+
+        <div class="dsk-rail-spacer"></div>
+
+        <!-- New reel / post -->
+        <button class="dsk-rail-btn" id="dsk-rail-post" title="Post a Reel" onclick="dskOpenUpload()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+
+        <!-- Profile avatar -->
+        <button class="dsk-rail-btn" id="dsk-rail-profile" title="Profile" onclick="dskSwitchSection('profile')">
+            <img src="" id="dsk-rail-avatar" class="dsk-rail-avatar" alt="Me">
+        </button>
+    </nav>
+
+    <!-- ── Sidebar (context-sensitive) ── -->
     <div class="sidebar" id="desktop-sidebar">
-        <div class="sidebar-profile">
-            <img src="" id="desktop-profile-avatar" class="sidebar-profile-avatar" alt="Me" onclick="desktopSwitchPanel('profile')">
-            <span class="sidebar-profile-name" id="desktop-profile-name">Loading…</span>
-            <button class="sidebar-icon-btn" id="desktop-new-chat-btn" title="New message">
-                <i data-feather="edit" style="width:16px;height:16px;"></i>
-            </button>
-            <button class="sidebar-icon-btn" id="desktop-notif-btn" title="Notifications" style="position:relative;">
-                <i data-feather="bell" style="width:16px;height:16px;"></i>
-                <span class="notification-badge" id="dsk-notif-badge"></span>
-            </button>
-            <button class="sidebar-icon-btn" id="desktop-settings-btn" title="Settings" onclick="desktopSwitchPanel('profile')">
-                <i data-feather="settings" style="width:16px;height:16px;"></i>
-            </button>
-        </div>
 
-        <div class="sidebar-tabs">
-            <button class="sidebar-tab active" id="dsk-tab-chats" onclick="desktopNavTab('chats')">
-                <i data-feather="message-circle" style="width:18px;height:18px;"></i>
-                <span>Chats</span>
-                <span class="nav-badge" id="dsk-badge-messages"></span>
-            </button>
-            <button class="sidebar-tab" id="dsk-tab-discover" onclick="desktopNavTab('discover')">
-                <i data-feather="compass" style="width:18px;height:18px;"></i>
-                <span>Discover</span>
-            </button>
-        </div>
-
-        <div id="dsk-panel-chats" class="sidebar-scroll">
+        <!-- CHATS PANEL -->
+        <div id="dsk-panel-chats" style="display:flex;flex-direction:column;height:100%;">
             <div class="sidebar-header">
-                <div class="search-box" style="margin:0;">
-                    <i data-feather="search" style="width:16px;height:16px;"></i>
-                    <input type="text" id="dsk-chat-search" placeholder="Search conversations…" oninput="filterChats(this.value)" style="font-size:14px;">
+                <h2>Messages
+                    <button class="sidebar-icon-btn" id="desktop-new-chat-btn" title="New message">
+                        <i data-feather="edit" style="width:15px;height:15px;"></i>
+                    </button>
+                </h2>
+                <div class="search-box" style="margin:8px 0 0;">
+                    <i data-feather="search" style="width:15px;height:15px;"></i>
+                    <input type="text" id="dsk-chat-search" placeholder="Search conversations…" oninput="filterChats(this.value)" style="font-size:13px;">
                 </div>
-            </div>
-            <div style="padding:8px 12px;">
-                <div class="tab-switcher" style="margin-bottom:0;">
+                <div class="tab-switcher" style="margin:10px 0 0;">
                     <button class="tab-pill active" id="dsk-tab-all" onclick="switchChatTab('all');document.getElementById('dsk-tab-all').classList.add('active');document.getElementById('dsk-tab-unread').classList.remove('active');">All</button>
                     <button class="tab-pill" id="dsk-tab-unread" onclick="switchChatTab('unread');document.getElementById('dsk-tab-unread').classList.add('active');document.getElementById('dsk-tab-all').classList.remove('active');">
                         Unread <span class="pill-badge hidden" id="dsk-unread-count">0</span>
                     </button>
                 </div>
             </div>
-            <div id="dsk-chats-list" class="chats-holder" style="padding:4px 12px 12px;gap:4px;"></div>
+            <div id="dsk-chats-list" class="chats-holder sidebar-scroll" style="padding:6px 10px 12px;gap:2px;"></div>
         </div>
 
-        <div id="dsk-panel-discover" class="sidebar-scroll" style="display:none;">
+        <!-- DISCOVER PANEL -->
+        <div id="dsk-panel-discover" style="display:none;flex-direction:column;height:100%;">
             <div class="sidebar-header">
-                <h2 style="margin-bottom:0;font-size:18px;">Discover <span style="font-size:12px;font-weight:600;color:var(--text-muted);" id="dsk-discover-counter"></span></h2>
+                <h2>Discover <span style="font-size:12px;font-weight:600;color:var(--text-muted);" id="dsk-discover-counter"></span></h2>
             </div>
-            <div id="dsk-discover-content" style="padding:8px 12px;"></div>
+            <div id="dsk-discover-content" class="sidebar-scroll" style="padding:12px;"></div>
         </div>
+
+        <!-- PROFILE PANEL -->
+        <div id="dsk-panel-profile" style="display:none;flex-direction:column;height:100%;">
+            <div class="sidebar-header">
+                <h2>Profile</h2>
+            </div>
+            <div id="dsk-profile-content" class="sidebar-scroll" style="padding:12px;"></div>
+        </div>
+
+        <!-- REELS sidebar: upload + quick stats -->
+        <div id="dsk-panel-reels" style="display:flex;flex-direction:column;height:100%;">
+            <div class="sidebar-header">
+                <h2>Reels
+                    <button class="sidebar-icon-btn" id="dsk-upload-btn" title="Post a Reel" onclick="dskOpenUpload()">
+                        <i data-feather="plus" style="width:15px;height:15px;"></i>
+                    </button>
+                </h2>
+            </div>
+            <div class="sidebar-scroll" style="padding:12px;display:flex;flex-direction:column;gap:10px;">
+                <!-- Mini stats card -->
+                <div style="background:var(--surface2);border-radius:16px;padding:16px;border:1px solid var(--border);">
+                    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;">Your Stats</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div style="text-align:center;background:var(--surface);border-radius:12px;padding:10px;border:1px solid var(--border);">
+                            <div style="font-size:20px;font-weight:800;color:var(--text-primary);" id="dsk-stat-reels">—</div>
+                            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Reels</div>
+                        </div>
+                        <div style="text-align:center;background:var(--surface);border-radius:12px;padding:10px;border:1px solid var(--border);">
+                            <div style="font-size:20px;font-weight:800;color:var(--text-primary);" id="dsk-stat-likes">—</div>
+                            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Likes</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Upload CTA -->
+                <button onclick="dskOpenUpload()" style="width:100%;padding:13px;background:var(--primary-gradient);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity 0.18s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Post a Reel
+                </button>
+                <!-- Tip -->
+                <div style="background:rgba(var(--primary-rgb),0.07);border:1px solid rgba(var(--primary-rgb),0.15);border-radius:14px;padding:14px;">
+                    <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px;">💡 Tips</div>
+                    <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">Scroll the feed on the right. Click a reel to play/pause. Use the action buttons to like, comment, share and save.</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
+    <!-- ── Main content area ── -->
     <div class="main-panel" id="desktop-main-panel">
-        <div class="desktop-empty" id="desktop-empty-state">
-            <div class="desktop-empty-icon">
-                <i data-feather="message-circle" style="width:36px;height:36px;color:var(--primary);"></i>
-            </div>
-            <h3>Vynix Messages</h3>
-            <p>Select a conversation from the sidebar or start a new one to begin chatting.</p>
+
+        <!-- REELS full-height panel (default) -->
+        <div id="dsk-reels-panel" class="active" style="position:relative;flex:1;display:flex;background:#000;overflow:hidden;">
+            <!-- Feed and topbar injected by reels engine -->
         </div>
 
+        <!-- CHAT empty state -->
+        <div class="desktop-empty" id="desktop-empty-state" style="display:none;">
+            <div class="desktop-empty-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3>Your Messages</h3>
+            <p>Select a conversation from the sidebar or start a new one.</p>
+            <button onclick="openNewChatSheet()" style="margin-top:8px;padding:11px 24px;background:var(--primary-gradient);color:#fff;border:none;border-radius:30px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">New Message</button>
+        </div>
+
+        <!-- CHAT window -->
         <div class="chat-window desktop-hidden" id="desktop-chat-window" style="position:relative;transform:none;visibility:visible;flex:1;">
             <div class="chat-topbar">
                 <img src="" id="dsk-chat-header-avatar" class="avatar" style="width:42px;height:42px;border-radius:14px;background:var(--surface2);">
@@ -1638,6 +1803,9 @@ body.reels-active {
                     <div style="font-weight:700;font-size:16px;letter-spacing:-0.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="dsk-chat-header-name">User</div>
                     <div style="font-size:12px;color:var(--text-muted);margin-top:1px;" id="dsk-chat-header-status"></div>
                 </div>
+                <button class="sidebar-icon-btn" onclick="desktopSwitchPanel('empty')" title="Close chat">
+                    <i data-feather="x" style="width:15px;height:15px;"></i>
+                </button>
             </div>
             <div class="messages-area" id="dsk-messages-area"></div>
             <div class="emoji-picker-container" id="dsk-emoji-picker"></div>
@@ -1655,9 +1823,16 @@ body.reels-active {
             </div>
         </div>
 
-        <div id="desktop-profile-panel" style="display:none;height:100%;overflow-y:auto;padding:24px;max-width:520px;margin:0 auto;width:100%;">
-            <div id="dsk-profile-content"></div>
+        <!-- DISCOVER main panel (mobile view reused) -->
+        <div id="desktop-discover-panel" style="display:none;flex:1;overflow-y:auto;padding:24px;max-width:560px;margin:0 auto;width:100%;">
+            <div id="dsk-discover-main-content"></div>
         </div>
+
+        <!-- PROFILE main panel -->
+        <div id="desktop-profile-panel" style="display:none;flex:1;overflow-y:auto;padding:24px;max-width:520px;margin:0 auto;width:100%;">
+            <div id="dsk-profile-content-main"></div>
+        </div>
+
     </div>
 </div>
 
@@ -2246,7 +2421,13 @@ function initDesktopLayout() {
     const layout = document.getElementById('desktop-layout');
     if (isDesktop()) {
         layout.style.display = 'flex';
-        document.getElementById('desktop-new-chat-btn').addEventListener('click', openNewChatSheet);
+        document.getElementById('desktop-new-chat-btn')?.addEventListener('click', openNewChatSheet);
+        // Expose upload function for desktop + button
+        window.dskOpenUpload = () => {
+            if (typeof openUpload === 'function') openUpload();
+            // openUpload is defined in the reels module script
+            else document.dispatchEvent(new CustomEvent('dsk-open-upload'));
+        };
     } else {
         layout.style.display = 'none';
     }
@@ -2254,41 +2435,190 @@ function initDesktopLayout() {
 
 window.addEventListener('resize', () => {
     const layout = document.getElementById('desktop-layout');
-    if (isDesktop()) {
-        layout.style.display = 'flex';
-    } else {
-        layout.style.display = 'none';
-    }
+    layout.style.display = isDesktop() ? 'flex' : 'none';
 });
 
-// Desktop nav tab switching
-window.desktopNavTab = (tab) => {
-    document.getElementById('dsk-panel-chats').style.display  = tab === 'chats'    ? 'flex' : 'none';
-    document.getElementById('dsk-panel-discover').style.display = tab === 'discover' ? 'flex' : 'none';
-    document.getElementById('dsk-tab-chats').classList.toggle('active',   tab === 'chats');
-    document.getElementById('dsk-tab-discover').classList.toggle('active', tab === 'discover');
-    if (tab === 'discover') renderDskDiscover();
-};
-document.getElementById('dsk-panel-chats').style.display = 'flex';
-document.getElementById('dsk-panel-chats').style.flexDirection = 'column';
+// ── Desktop section switching (rail nav) ──
+window.dskSwitchSection = function(section) {
+    if (!isDesktop()) return;
 
-// Desktop panel switching (empty state / chat / profile)
-window.desktopSwitchPanel = (panel) => {
-    document.getElementById('desktop-empty-state').style.display      = panel === 'empty'   ? 'flex'   : 'none';
-    document.getElementById('desktop-chat-window').classList.toggle('desktop-hidden', panel !== 'chat');
-    document.getElementById('desktop-profile-panel').style.display    = panel === 'profile' ? 'block'  : 'none';
-    if (panel === 'profile') {
-        document.getElementById('dsk-profile-content').innerHTML = document.getElementById('profile-content').innerHTML;
-        feather.replace();
-        rewireProfileButtons('dsk-profile-content');
+    // Rail buttons
+    ['reels','chats','discover','profile'].forEach(s => {
+        document.getElementById('dsk-rail-' + s)?.classList.toggle('active', s === section);
+    });
+
+    // Sidebar panels
+    const panels = { reels:'dsk-panel-reels', chats:'dsk-panel-chats', discover:'dsk-panel-discover', profile:'dsk-panel-profile' };
+    Object.entries(panels).forEach(([s, id]) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = s === section ? 'flex' : 'none';
+    });
+
+    // Main panels
+    const dskReels   = document.getElementById('dsk-reels-panel');
+    const dskEmpty   = document.getElementById('desktop-empty-state');
+    const dskChat    = document.getElementById('desktop-chat-window');
+    const dskDisc    = document.getElementById('desktop-discover-panel');
+    const dskProf    = document.getElementById('desktop-profile-panel');
+
+    // Hide all first
+    [dskReels, dskEmpty, dskChat, dskDisc, dskProf].forEach(el => { if(el) el.style.display = 'none'; });
+    dskChat?.classList.add('desktop-hidden');
+
+    if (section === 'reels') {
+        dskReels.style.display = 'flex';
+        // Kick the reels engine into the desktop panel
+        dskInitReels();
+    } else if (section === 'chats') {
+        dskEmpty.style.display = 'flex';
+    } else if (section === 'discover') {
+        dskDisc.style.display = 'flex';
+        renderDskDiscoverMain();
+    } else if (section === 'profile') {
+        dskProf.style.display = 'flex';
+        renderDskProfile();
     }
 };
+
+// ── Desktop panel switching (for chat open/close) ──
+window.desktopSwitchPanel = (panel) => {
+    const dskEmpty = document.getElementById('desktop-empty-state');
+    const dskChat  = document.getElementById('desktop-chat-window');
+    const dskReels = document.getElementById('dsk-reels-panel');
+    const dskDisc  = document.getElementById('desktop-discover-panel');
+    const dskProf  = document.getElementById('desktop-profile-panel');
+
+    [dskEmpty, dskReels, dskDisc, dskProf].forEach(el => { if(el) el.style.display = 'none'; });
+    dskChat?.classList.add('desktop-hidden');
+
+    if (panel === 'chat') {
+        dskChat?.classList.remove('desktop-hidden');
+    } else if (panel === 'empty') {
+        // Return to last section's empty state
+        dskEmpty.style.display = 'flex';
+    }
+};
+
+// Kept for legacy calls inside renderProfile etc:
+window.desktopNavTab = (tab) => { dskSwitchSection(tab); };
+
+// ── Desktop Reels: move feed + topbar into the desktop panel ──
+function dskInitReels() {
+    const panel   = document.getElementById('dsk-reels-panel');
+    const feed    = document.getElementById('reels-feed');
+    const topbar  = document.getElementById('reels-topbar');
+    if (!panel || !feed) return;
+
+    // Move elements into the desktop reels panel if not already there
+    if (!panel.contains(feed))   panel.appendChild(feed);
+    if (topbar && !panel.contains(topbar)) panel.appendChild(topbar);
+
+    feed.style.display   = 'block';
+    if (topbar) topbar.style.display = 'flex';
+
+    // Make the body NOT use reels-active (that was for mobile full-screen fixed)
+    // The desktop panel is already full-height in the flex layout
+    document.body.classList.remove('reels-active');
+
+    // Trigger the reels engine to render + play
+    if (typeof window._dskReelsReady === 'function') window._dskReelsReady();
+    else {
+        // poll until engine ready
+        const t = setInterval(() => {
+            if (typeof window._dskReelsReady === 'function') {
+                clearInterval(t);
+                window._dskReelsReady();
+            }
+        }, 80);
+        setTimeout(() => clearInterval(t), 8000);
+    }
+}
+
+// ── Desktop Discover (full-page card in main panel) ──
+async function renderDskDiscoverMain() {
+    const cont = document.getElementById('dsk-discover-main-content');
+    if (!Object.keys(allUsersCache).length) {
+        try {
+            const snap = await get(ref(db, 'users'));
+            if (snap.exists()) snap.forEach(c => { allUsersCache[c.key] = c.val(); });
+        } catch { return; }
+    }
+    // Re-use the mobile discover render in the main content area
+    const users = Object.keys(allUsersCache).filter(uid => uid !== currentUser.uid).map(uid => ({ uid, ...allUsersCache[uid] }));
+    for (let i = users.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [users[i],users[j]]=[users[j],users[i]]; }
+    dskDiscoverQueue = users; dskDiscoverIndex = 0;
+    showDskDiscoverCardMain();
+}
+
+function showDskDiscoverCardMain() {
+    const container = document.getElementById('dsk-discover-main-content');
+    const counter   = document.getElementById('dsk-discover-counter');
+    if (!dskDiscoverQueue.length || dskDiscoverIndex >= dskDiscoverQueue.length) {
+        container.innerHTML = `<div style="text-align:center;padding:80px 24px;color:var(--text-muted);font-size:14px;">${!dskDiscoverQueue.length ? 'No one here yet' : "You've seen everyone!"}</div>`;
+        if(counter) counter.textContent = '';
+        feather.replace(); return;
+    }
+    const u = dskDiscoverQueue[dskDiscoverIndex];
+    if(counter) counter.textContent = `${dskDiscoverQueue.length - dskDiscoverIndex} left`;
+    container.innerHTML = `
+        <div style="max-width:340px;margin:0 auto;">
+            <div style="border-radius:24px;overflow:hidden;position:relative;aspect-ratio:3/4;box-shadow:0 12px 40px rgba(0,0,0,0.2);cursor:grab;" id="dsk-disc-card-main">
+                <img src="${u.photoURL || DEFAULT_AVATAR}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='${DEFAULT_AVATAR.replace(/'/g,"\\'")}'" draggable="false">
+                <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,transparent 55%);"></div>
+                <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
+                    <div style="font-size:22px;font-weight:800;color:white;letter-spacing:-0.3px;">${escapeHtml(u.username||'User')}${u.age?`<span style="font-size:18px;font-weight:600;opacity:0.8;margin-left:8px;">${u.age}</span>`:''}</div>
+                    ${u.bio ? `<div style="font-size:13px;color:rgba(255,255,255,0.78);margin-top:4px;line-height:1.4;">${escapeHtml(u.bio)}</div>` : ''}
+                    ${u.online ? `<div style="display:flex;align-items:center;gap:6px;margin-top:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#2ECC71;"></div><span style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:600;">Online now</span></div>` : ''}
+                </div>
+            </div>
+            <div style="display:flex;justify-content:center;gap:16px;margin-top:20px;">
+                <button onclick="dskSwipeMain('left')" style="width:54px;height:54px;border-radius:50%;border:none;background:var(--surface);color:#EF4444;box-shadow:0 4px 16px rgba(239,68,68,0.2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">
+                    <i data-feather="x" style="width:24px;height:24px;"></i>
+                </button>
+                <button onclick="dskSwipeMain('msg')" style="width:44px;height:44px;border-radius:50%;border:none;background:var(--surface);color:var(--primary);box-shadow:0 4px 12px rgba(var(--primary-rgb),0.2);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                    <i data-feather="message-circle" style="width:20px;height:20px;"></i>
+                </button>
+                <button onclick="dskSwipeMain('right')" style="width:54px;height:54px;border-radius:50%;border:none;background:var(--surface);color:#22C55E;box-shadow:0 4px 16px rgba(34,197,94,0.2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">
+                    <i data-feather="heart" style="width:24px;height:24px;"></i>
+                </button>
+            </div>
+        </div>`;
+    feather.replace();
+}
+
+window.dskSwipeMain = (dir) => {
+    const u = dskDiscoverQueue[dskDiscoverIndex];
+    if (!u) return;
+    if (dir === 'right') {
+        showToast(`Connected with ${u.username||'User'}! 🎉`);
+        const now = Date.now();
+        update(ref(db, `connections/${currentUser.uid}/friends`), { [u.uid]: now }).catch(() => {});
+        update(ref(db, `connections/${u.uid}/friends`), { [currentUser.uid]: now }).catch(() => {});
+    }
+    if (dir === 'msg') { openDskChat(u.uid); dskSwitchSection('chats'); return; }
+    dskDiscoverIndex++;
+    showDskDiscoverCardMain();
+};
+
+// ── Desktop Profile render ──
+function renderDskProfile() {
+    const cont = document.getElementById('dsk-profile-content-main');
+    if (!cont) return;
+    // Clone the mobile profile HTML into desktop panel
+    const mobileProfile = document.getElementById('profile-content');
+    if (mobileProfile) {
+        cont.innerHTML = mobileProfile.innerHTML;
+        feather.replace();
+        rewireProfileButtons('dsk-profile-content-main');
+    }
+}
 
 function rewireProfileButtons(containerId) {
     const c = document.getElementById(containerId);
     if (!c) return;
     c.querySelector('#edit-name-btn-inline')?.addEventListener('click', openEditNameSheet);
-    c.querySelector('#edit-bio-btn-inline')?.addEventListener('click', openEditBioSheet);
+    c.querySelector('[id$="edit-bio-btn-inline"]')?.addEventListener('click', openEditBioSheet);
+    c.querySelector('#edit-profile-x-btn')?.addEventListener('click', openEditBioSheet);
     c.querySelector('#logout-btn')?.addEventListener('click', handleLogout);
     const darkItem = c.querySelector('#dark-mode-item');
     if (darkItem) darkItem.addEventListener('click', () => {
@@ -2296,20 +2626,20 @@ function rewireProfileButtons(containerId) {
         document.documentElement.setAttribute('data-theme', isDk ? 'dark' : 'light');
         localStorage.setItem('vynix-theme', isDk ? 'dark' : 'light');
     });
-    c.querySelector('#privacy-item')?.addEventListener('click', () => openSheet('privacy-sheet-overlay'));
-    c.querySelector('#storage-item')?.addEventListener('click', () => openSheet('storage-sheet-overlay'));
-    c.querySelector('#help-item')?.addEventListener('click',    () => openSheet('help-sheet-overlay'));
-    c.querySelector('#about-item')?.addEventListener('click',   () => openSheet('about-sheet-overlay'));
-    c.querySelector('#blocked-item')?.addEventListener('click', () => {
-        openSheet('blocked-users-sheet-overlay');
-        loadBlockedUsers();
-    });
+    c.querySelector('#privacy-item')?.addEventListener('click',  () => openSheet('privacy-sheet-overlay'));
+    c.querySelector('#storage-item')?.addEventListener('click',  () => openSheet('storage-sheet-overlay'));
+    c.querySelector('#help-item')?.addEventListener('click',     () => openSheet('help-sheet-overlay'));
+    c.querySelector('#about-item')?.addEventListener('click',    () => openSheet('about-sheet-overlay'));
+    c.querySelector('#blocked-item')?.addEventListener('click',  () => { openSheet('blocked-users-sheet-overlay'); loadBlockedUsers(); });
+    c.querySelector('#avatar-click')?.addEventListener('click',  () => document.getElementById('profile-upload')?.click());
+    c.querySelector('#banner-click')?.addEventListener('click',  () => document.getElementById('banner-upload')?.click());
 }
 
 // Desktop chat state
 let dskActiveChatUid    = null;
 let dskActiveChatConvId = null;
 let dskActiveChatListener = null;
+let dskDiscoverQueue = [], dskDiscoverIndex = 0;
 
 function openDskChat(targetUid) {
     const otherUser = allUsersCache[targetUid] || { username:'User', photoURL:'' };
