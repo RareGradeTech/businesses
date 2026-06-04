@@ -100,7 +100,7 @@
         @media(min-width:768px){.app-container{max-width:480px;margin:0 auto;min-height:100vh;padding:24px 0;}}
 
         /* ══════════════════════════════════════
-           DESKTOP LAYOUT  ≥ 900 px
+           DESKTOP LAYOUT  ≥ 900 px  —  TikTok style
         ══════════════════════════════════════ */
         @media(min-width:900px){
             body{padding-bottom:0;overflow:hidden;height:100vh;}
@@ -109,78 +109,133 @@
             .bottom-nav-container{display:none!important;}
             .app-container{display:none!important;}
 
-            /* Root shell */
-            .desktop-layout{display:flex;height:100vh;overflow:hidden;}
+            /* ── Root shell: left nav | center feed | right actions ── */
+            .desktop-layout{
+                display:grid;
+                grid-template-columns:230px 1fr;
+                height:100vh;overflow:hidden;
+                background:var(--background);
+            }
 
-            /* ── Left nav rail ── */
+            /* ══════════════════════
+               LEFT NAV  (TikTok sidebar)
+            ══════════════════════ */
             .dsk-rail{
-                width:68px;flex-shrink:0;
-                display:flex;flex-direction:column;align-items:center;
+                grid-column:1;
+                width:230px;flex-shrink:0;
+                display:flex;flex-direction:column;align-items:flex-start;
                 background:var(--surface);border-right:1px solid var(--border);
-                padding:12px 0;gap:4px;
+                padding:16px 0 24px;
                 height:100vh;overflow:hidden;
             }
+            /* Logo row */
             .dsk-rail-logo{
-                width:38px;height:38px;border-radius:12px;
-                background:var(--primary-gradient);
-                display:flex;align-items:center;justify-content:center;
-                margin-bottom:10px;flex-shrink:0;
+                display:flex;align-items:center;gap:10px;
+                padding:4px 20px 20px;
+                cursor:pointer;flex-shrink:0;
+                width:100%;
             }
+            .dsk-rail-logo-icon{
+                width:36px;height:36px;border-radius:10px;
+                background:var(--primary-gradient);
+                display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            }
+            .dsk-rail-logo-text{
+                font-size:20px;font-weight:800;letter-spacing:-0.5px;
+                color:var(--text-primary);
+            }
+            /* Nav items with icon + label */
             .dsk-rail-btn{
-                width:44px;height:44px;border-radius:14px;
+                width:100%;height:50px;border-radius:0;
                 background:transparent;border:none;
-                color:var(--text-muted);
-                display:flex;align-items:center;justify-content:center;
+                color:var(--text-secondary);
+                display:flex;align-items:center;gap:14px;
+                padding:0 20px;
                 cursor:pointer;position:relative;
-                transition:all 0.18s;flex-shrink:0;
+                transition:all 0.15s;flex-shrink:0;
+                font-family:inherit;
+                font-size:16px;font-weight:600;
+                text-align:left;
             }
             .dsk-rail-btn:hover{background:var(--surface2);color:var(--text-primary);}
-            .dsk-rail-btn.active{background:var(--accent-glow);color:var(--primary);}
+            .dsk-rail-btn.active{color:var(--text-primary);font-weight:800;}
+            .dsk-rail-btn svg{flex-shrink:0;width:26px;height:26px;}
+            .dsk-rail-btn .rail-label{flex:1;}
             .dsk-rail-btn .rail-badge{
-                position:absolute;top:6px;right:6px;
                 background:var(--danger);color:#fff;
-                font-size:9px;font-weight:800;
-                border-radius:8px;min-width:16px;height:16px;
+                font-size:10px;font-weight:800;
+                border-radius:8px;min-width:18px;height:18px;
                 display:none;align-items:center;justify-content:center;
-                padding:0 3px;border:2px solid var(--surface);
+                padding:0 4px;
             }
             .dsk-rail-btn .rail-badge.show{display:flex;}
+
+            /* Upload / Post button */
+            .dsk-rail-upload-btn{
+                width:calc(100% - 40px);
+                margin:12px 20px 0;
+                padding:12px 0;
+                background:transparent;
+                border:1.5px solid var(--border);
+                border-radius:6px;
+                color:var(--text-primary);
+                font-size:15px;font-weight:700;
+                font-family:inherit;
+                display:flex;align-items:center;justify-content:center;gap:8px;
+                cursor:pointer;
+                transition:all 0.15s;
+                flex-shrink:0;
+            }
+            .dsk-rail-upload-btn:hover{background:var(--surface2);}
+
+            /* Log-in button at bottom of rail */
+            .dsk-rail-login-btn{
+                width:calc(100% - 40px);
+                margin:16px 20px 0;
+                padding:12px 0;
+                background:var(--primary-gradient);
+                border:none;border-radius:6px;
+                color:#fff;
+                font-size:15px;font-weight:700;
+                font-family:inherit;
+                cursor:pointer;
+                transition:opacity 0.15s;
+                flex-shrink:0;
+            }
+            .dsk-rail-login-btn:hover{opacity:0.9;}
+
             .dsk-rail-spacer{flex:1;}
+
+            /* Avatar at rail bottom */
             .dsk-rail-avatar{
-                width:38px;height:38px;border-radius:50%;
+                width:32px;height:32px;border-radius:50%;
                 object-fit:cover;cursor:pointer;
                 border:2px solid transparent;transition:border-color 0.2s;
                 flex-shrink:0;
             }
             .dsk-rail-btn.active .dsk-rail-avatar{border-color:var(--primary);}
 
-            /* ── Sidebar panel ── */
-            .sidebar{
-                width:300px;min-width:260px;max-width:340px;
-                flex-shrink:0;display:flex;flex-direction:column;
-                background:var(--surface);height:100vh;overflow:hidden;
-                border-right:1px solid var(--border);
+            /* Footer links */
+            .dsk-rail-footer{
+                padding:16px 20px 0;
+                font-size:11px;color:var(--text-muted);
+                line-height:1.7;
             }
-            .sidebar-header{
-                padding:16px 16px 12px;background:var(--surface);
-                border-bottom:1px solid var(--border);flex-shrink:0;
-            }
-            .sidebar-header h2{
-                font-size:20px;font-weight:800;letter-spacing:-0.5px;
-                display:flex;align-items:center;justify-content:space-between;margin:0;
-            }
-            .sidebar-scroll{flex:1;overflow-y:auto;}
-            .sidebar-icon-btn{
-                background:var(--surface2);border:none;color:var(--text-secondary);
-                width:34px;height:34px;border-radius:10px;
-                display:flex;align-items:center;justify-content:center;
-                cursor:pointer;flex-shrink:0;transition:all 0.18s;
-            }
-            .sidebar-icon-btn:hover{background:var(--surface3);color:var(--primary);}
 
-            /* ── Main content panel ── */
+            /* ══════════════════════
+               SIDEBAR (hidden when reels active — no chats sidebar shown in TikTok mode)
+            ══════════════════════ */
+            .sidebar{
+                display:none!important; /* hidden in TikTok mode; chat uses its own overlay */
+            }
+
+            /* ══════════════════════
+               MAIN PANEL: 3-column TikTok layout
+               [spacer] [narrow-feed] [right-actions]
+            ══════════════════════ */
             .main-panel{
-                flex:1;display:flex;flex-direction:column;
+                grid-column:2;
+                display:flex;align-items:center;justify-content:center;
                 background:var(--background);height:100vh;overflow:hidden;position:relative;
             }
 
@@ -205,6 +260,7 @@
             .desktop-empty{
                 display:flex;flex-direction:column;align-items:center;
                 justify-content:center;height:100%;gap:16px;color:var(--text-muted);
+                flex:1;
             }
             .desktop-empty-icon{
                 width:80px;height:80px;border-radius:24px;
@@ -214,24 +270,163 @@
             .desktop-empty h3{font-size:18px;font-weight:700;color:var(--text-primary);}
             .desktop-empty p{font-size:13px;max-width:260px;text-align:center;line-height:1.6;}
 
-            /* ── Desktop Reels panel (contained, not full-screen fixed) ── */
+            /* ══════════════════════
+               DESKTOP REELS — TikTok layout
+               centre column: portrait feed  |  right column: action buttons
+            ══════════════════════ */
             #dsk-reels-panel{
-                flex:1;display:none;height:100%;
-                background:#000;overflow:hidden;position:relative;
+                display:none;
+                width:100%;height:100%;
+                background:var(--background);
+                align-items:center;
+                justify-content:center;
+                gap:0;
+                position:relative;
             }
             #dsk-reels-panel.active{display:flex;}
-            /* Override the mobile full-screen fixed behaviour inside desktop */
+
+            /* The narrow portrait video feed column */
             #dsk-reels-panel .reels-feed{
-                width:100%;height:100%;
+                width:clamp(320px, 36vh, 420px);
+                height:calc(100vh - 0px);
                 overflow-y:scroll;
                 scroll-snap-type:y mandatory;
                 scrollbar-width:none;
+                flex-shrink:0;
+                border-radius:0;
+                position:relative;
             }
             #dsk-reels-panel .reels-feed::-webkit-scrollbar{display:none;}
-            #dsk-reels-panel .reel-card{height:100%;}
-            /* Reels topbar inside desktop panel */
-            #dsk-reels-panel .reels-topbar{position:absolute;}
-            /* Progress bar and action offsets already relative to card */
+
+            /* Each reel card: portrait height, not full-screen */
+            #dsk-reels-panel .reel-card{
+                height:100vh;
+                width:100%;
+            }
+
+            /* Video fills the card portait */
+            #dsk-reels-panel .reel-video{
+                object-fit:cover;
+            }
+
+            /* Reels topbar sits at top of feed panel */
+            #dsk-reels-panel .reels-topbar{
+                position:absolute;
+                top:0;left:0;right:0;
+                pointer-events:none;
+            }
+            #dsk-reels-panel .reels-topbar > *{pointer-events:auto;}
+
+            /* Action column: sits to the RIGHT of the feed — TikTok style */
+            #dsk-reels-panel .reel-actions{
+                position:static;
+                /* Override the mobile absolute positioning */
+                bottom:auto;right:auto;
+                /* Layout as a vertical column beside the feed */
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                gap:22px;
+                padding:0 24px;
+                flex-shrink:0;
+                /* Vertically centre the actions */
+                align-self:center;
+                margin-top:40px; /* offset to align with lower part of card like TikTok */
+            }
+
+            /* Action icons: slightly larger on desktop */
+            #dsk-reels-panel .reel-action-icon{
+                width:52px;height:52px;
+                background:var(--surface2);
+                border-radius:50%;
+            }
+            #dsk-reels-panel .reel-action-count{
+                font-size:13px;
+                color:var(--text-primary);
+                text-shadow:none;
+                font-weight:700;
+            }
+            #dsk-reels-panel .reel-action-btn{
+                color:var(--text-primary);
+            }
+            #dsk-reels-panel .reel-action-btn svg{
+                color:var(--text-primary);
+            }
+            #dsk-reels-panel .reel-action-btn.liked .reel-action-icon{
+                background:rgba(255,59,92,0.12);
+            }
+            #dsk-reels-panel .reel-action-btn.liked svg{color:#FF3B5C;}
+
+            /* Avatar action in actions column */
+            #dsk-reels-panel .reel-avatar{
+                width:52px;height:52px;
+                border:2px solid var(--border);
+            }
+            #dsk-reels-panel .reel-follow-btn{
+                background:var(--primary);
+                border-color:var(--background);
+            }
+
+            /* Desktop up/down navigation arrows (added by JS) */
+            .dsk-reel-nav{
+                display:flex;flex-direction:column;gap:8px;align-self:center;
+                margin-top:40px;padding:0 8px;
+            }
+            .dsk-reel-nav-btn{
+                width:36px;height:36px;border-radius:50%;
+                background:var(--surface2);border:1px solid var(--border);
+                color:var(--text-primary);
+                display:flex;align-items:center;justify-content:center;
+                cursor:pointer;transition:all 0.18s;
+            }
+            .dsk-reel-nav-btn:hover{background:var(--surface3);}
+
+            /* Mute btn repositioned for desktop */
+            #dsk-reels-panel .reel-mute-btn{
+                top:14px;right:14px;
+                background:rgba(0,0,0,0.35);
+            }
+
+            /* Bottom info: keep inside the feed card, move progress bar up */
+            #dsk-reels-panel .reel-info{
+                padding-bottom:80px;
+            }
+            #dsk-reels-panel .reel-progress{
+                bottom:64px;
+            }
+            #dsk-reels-panel .reel-actions{
+                bottom:80px;
+            }
+
+            /* Discover / Profile / Chat panels fill the main area */
+            #desktop-discover-panel,
+            #desktop-profile-panel{
+                flex:1;height:100%;overflow-y:auto;
+                padding:24px;
+                max-width:600px;margin:0 auto;width:100%;
+            }
+
+            /* Inline chat full-panel */
+            #desktop-chat-window:not(.desktop-hidden){
+                flex:1;
+            }
+
+            .sidebar-icon-btn{
+                background:var(--surface2);border:none;color:var(--text-secondary);
+                width:34px;height:34px;border-radius:10px;
+                display:flex;align-items:center;justify-content:center;
+                cursor:pointer;flex-shrink:0;transition:all 0.18s;
+            }
+            .sidebar-icon-btn:hover{background:var(--surface3);color:var(--primary);}
+            .sidebar-scroll{flex:1;overflow-y:auto;}
+            .sidebar-header{
+                padding:16px 16px 12px;background:var(--surface);
+                border-bottom:1px solid var(--border);flex-shrink:0;
+            }
+            .sidebar-header h2{
+                font-size:20px;font-weight:800;letter-spacing:-0.5px;
+                display:flex;align-items:center;justify-content:space-between;margin:0;
+            }
         }
         @media(max-width:899px){
             .desktop-layout,.sidebar,.main-panel,.dsk-rail{display:contents;}
