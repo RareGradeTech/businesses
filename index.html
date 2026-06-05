@@ -1157,6 +1157,11 @@ body.reels-active {
 .reel-comment-user { font-size: 13px; font-weight: 700; margin-bottom: 3px; display:flex; align-items:center; gap:4px; }
 .reel-comment-text { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
 .reel-comment-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.reel-comment-verified {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--primary-gradient); flex-shrink: 0;
+}
 .reel-comment-actions {
     display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap;
 }
@@ -5240,17 +5245,18 @@ function openComments(idx) {
         const comments = Object.values(raw).sort((a,b) => (b.ts||0) - (a.ts||0));
         if (comments.length === 0) {
             list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No comments yet — be the first!</div>';
-        } else {
-            list.innerHTML = comments.map(c => `
+        } else list.innerHTML = comments.map(c => `
                 <div class="reel-comment">
                     <img class="reel-comment-avatar" src="${escHtml(c.avatar||'')}" onerror="this.style.background='var(--surface3)'">
                     <div class="reel-comment-body">
-                        <div class="reel-comment-user">${escHtml(c.username||'@user')}</div>
+                        <div class="reel-comment-user">
+                            ${escHtml(c.username||'@user')}
+                            ${c.verified ? `<span class="reel-comment-verified"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                        </div>
                         <div class="reel-comment-text">${escHtml(c.text)}</div>
-                        <div class="reel-comment-time">${c.ts ? new Date(c.ts).toLocaleDateString() : 'Just now'}</div>
+                        <div class="reel-comment-time">${c.ts ? fmtTimeAgo(c.ts) : 'Just now'}</div>
                     </div>
                 </div>`).join('');
-        }
     }).catch(() => {
         list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No comments yet!</div>';
     });
@@ -5280,13 +5286,19 @@ async function postComment() {
 
     const el = document.createElement('div');
     el.className = 'reel-comment';
+    
+const meVerified = window._vynixCurrentUserData?.verified || false;
     el.innerHTML = `
         <img class="reel-comment-avatar" src="${escHtml(me.avatar)}" onerror="this.style.background='var(--surface3)'">
         <div class="reel-comment-body">
-            <div class="reel-comment-user">${escHtml(me.username)}</div>
+            <div class="reel-comment-user">
+                ${escHtml(me.username)}
+                ${meVerified ? `<span class="reel-comment-verified"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+            </div>
             <div class="reel-comment-text">${escHtml(val)}</div>
             <div class="reel-comment-time">Just now</div>
         </div>`;
+    
     list.insertBefore(el, list.firstChild);
     inp.value = '';
     showReelsToast('💬 Comment posted!');
