@@ -967,7 +967,13 @@ body.reels-active {
     gap: 6px;
 }
         
-.reel-verified { /* alias */ }
+.reel-verified {
+    width: 16px; height: 16px;
+    background: #1D9BF0;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
         
 .reel-caption {
     font-size: 13px;
@@ -1150,7 +1156,11 @@ body.reels-active {
 .reel-comment-user { font-size: 13px; font-weight: 700; margin-bottom: 3px; display:flex; align-items:center; gap:4px; }
 .reel-comment-text { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
 .reel-comment-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-.reel-comment-verified { /* alias */ }
+.reel-comment-verified {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--primary-gradient); flex-shrink: 0;
+}
 .reel-comment-actions {
     display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap;
 }
@@ -1218,27 +1228,22 @@ body.reels-active {
 }
 /* Verified badge inline */
         
-/* ── Canonical verified badge — starburst seal ── */
-.vx-badge,
-.verified-badge,
-.reel-verified,
-.reel-comment-verified,
-.profile-x-verified {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-shrink: 0;
-    vertical-align: middle;
-    /* No background or border-radius — the SVG draws its own starburst shape */
-    background: none !important;
-    border-radius: 0 !important;
+.verified-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; background: #1D9BF0; border-radius: 50%;
+    flex-shrink: 0; vertical-align: middle;
+}
+        
+.verified-badge svg { display: block; }
+
+/* ── Canonical verified badge — used everywhere ── */
+.vx-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #1D9BF0;  /* Twitter/verified blue */
+    border-radius: 50%; flex-shrink: 0; vertical-align: middle;
     line-height: 1;
 }
-.vx-badge svg,
-.verified-badge svg,
-.reel-verified svg,
-.reel-comment-verified svg,
-.profile-x-verified svg { display: block; }
+.vx-badge svg { display: block; }
 
         
 /* In-app notification toast */
@@ -2745,7 +2750,7 @@ function openDskChat(targetUid) {
     const dskHdrNameEl = document.getElementById('dsk-chat-header-name');
     dskHdrNameEl.style.cssText = 'font-weight:700;font-size:16px;letter-spacing:-0.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;';
     dskHdrNameEl.innerHTML = escapeHtml(otherUser.username || 'User')
-       + (otherUser.verified ? ` <span class="vx-badge" style="width:16px;height:16px;" title="Verified"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/><polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : '');
+        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : '');
     document.getElementById('dsk-chat-header-status').textContent = '';
     document.getElementById('dsk-messages-area').innerHTML = '';
     document.getElementById('dsk-chat-input').value = '';
@@ -3039,7 +3044,7 @@ function renderConversations(convList) {
                     <div class="chat-header">
                     <span class="chat-name" style="display:inline-flex;align-items:center;gap:4px;">
                         ${escapeHtml(c.other.username||'User')}
-                       ${c.other.verified ? `<span class="vx-badge" style="width:14px;height:14px;" title="Verified"><svg width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/><polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : ''}
+                        ${c.other.verified ? `<span class="vx-badge" style="width:13px;height:13px;flex-shrink:0;" title="Verified"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
                     </span>
                     <span class="chat-time">${formatChatTime(c.lastTimestamp)}</span>
                 </div>
@@ -3244,7 +3249,7 @@ async function openChat(targetUid) {
     const mobHdrNameEl = document.getElementById('chat-header-name');
     mobHdrNameEl.style.cssText = 'font-weight:700;font-size:16px;letter-spacing:-0.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;';
     mobHdrNameEl.innerHTML = escapeHtml(otherUser.username || 'User')
-       + (otherUser.verified ? ` <span class="vx-badge" style="width:16px;height:16px;" title="Verified"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/><polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : '');
+        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : '');
     document.getElementById('chat-header-status').textContent = '';
     document.getElementById('messages-area').innerHTML = '';
     document.getElementById('chat-input').value = '';
@@ -3375,10 +3380,9 @@ function renderProfile() {
 
         <div class="profile-x-name">
           ${escapeHtml(currentUserData.username||'User')}
-            <span class="vx-badge" style="width:18px;height:18px;" title="Verified">
-            <svg width="18" height="18" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/>
-              <polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <span class="profile-x-verified" title="Vynix user">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M8.5 3L4 7.5 1.5 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
         </div>
@@ -4578,14 +4582,9 @@ function fmtTimeAgo(ts) {
 }
 
 // Verified badge SVG (inline, small)
-    
 function verifiedBadgeHtml(size = 14) {
-    return `<span class="vx-badge" style="width:${size}px;height:${size}px;" title="Verified">
-        <svg width="${size}" height="${size}" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/>
-            <polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </span>`;
+    const inner = size - 4;
+    return `<span class="verified-badge vx-badge" style="width:${size}px;height:${size}px;" title="Verified"><svg width="${inner}" height="${inner}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`;
 }
 
 // In-app notification toast (non-blocking, top of screen)
@@ -4962,9 +4961,7 @@ function buildReelCard(reel, idx) {
         <div class="reel-info" style="z-index:10;">
             <div class="reel-username">
                 ${escHtml(reel.user.username)}
-                
-                ${reel.user.verified ? `<span class="vx-badge" style="width:16px;height:16px;" title="Verified"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/><polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : ''}
-           
+                ${reel.user.verified ? `<span class="reel-verified vx-badge" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
             </div>
             <div class="reel-caption" id="caption-${idx}">${escHtml((reel.caption||'').replace(/#\w+/g,''))}</div>
             <div class="reel-hashtags">
@@ -5278,9 +5275,7 @@ function openComments(idx) {
                     <div class="reel-comment-body">
                         <div class="reel-comment-user">
                             ${escHtml(c.username||'@user')}
-                            
-                            ${c.verified ? `<span class="vx-badge" style="width:14px;height:14px;" title="Verified"><svg width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/><polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : ''}
-                       
+                            ${c.verified ? `<span class="reel-comment-verified"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
                         </div>
                         <div class="reel-comment-text">${escHtml(c.text)}</div>
                         <div class="reel-comment-time">${c.ts ? fmtTimeAgo(c.ts) : 'Just now'}</div>
@@ -5322,9 +5317,7 @@ const meVerified = window._vynixCurrentUserData?.verified || false;
         <div class="reel-comment-body">
             <div class="reel-comment-user">
                 ${escHtml(me.username)}
-                
-                ${meVerified ? `<span class="vx-badge" style="width:14px;height:14px;" title="Verified"><svg width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.8l1.47 2.03 2.42-.75-.45 2.49 2.28 1.12-1.8 1.77.75 2.44-2.49-.45-1.22 2.2-1.22-2.2-2.49.45.75-2.44-1.8-1.77 2.28-1.12-.45-2.49 2.42.75Z" fill="#1D9BF0"/><polyline points="5.2,8.2 7.0,10.0 10.8,6.2" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : ''}
-           
+                ${meVerified ? `<span class="reel-comment-verified"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
             </div>
             <div class="reel-comment-text">${escHtml(val)}</div>
             <div class="reel-comment-time">Just now</div>
