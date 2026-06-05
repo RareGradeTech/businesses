@@ -4783,12 +4783,13 @@ async function persistComment(reelId, text) {
 // ─────────────────────────────────────────────
 function renderReelsFeed() {
     const feed = document.getElementById('reels-feed');
-    // Stop all playback before clearing DOM
     stopAllVideos();
     if (reelObserver) { reelObserver.disconnect(); reelObserver = null; }
     feed.innerHTML = '';
+    reelsRendered = 0;
+    reelsLoadingMore = false;
 
-    if (reelsData.length === 0) {
+    if (reelsShuffled.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'reels-empty-state';
         empty.innerHTML = `
@@ -4803,7 +4804,53 @@ function renderReelsFeed() {
         document.getElementById('reels-empty-upload-btn')?.addEventListener('click', openUpload);
         return;
     }
-    reelsData.forEach((reel, i) => feed.appendChild(buildReelCard(reel, i)));
+
+    appendReelsPage();
+}
+
+function appendReelsPage() {
+    const feed  = document.getElementById('reels-feed');
+    if (!feed || reelsLoadingMore) return;
+
+    // Remove old sentinel before appending new cards
+    const oldSentinel = document.getElementById('reels-sentinel');
+    if (oldSentinel) oldSentinel.remove();
+
+    const start = reelsRendered;
+    const end   = Math.min(start + reelsPageSize, reelsShuffled.length);
+
+    for (let i = start; i < end; i++) {
+        feed.appendChild(buildReelCard(reelsShuffled[i], i));
+    }
+    reelsRendered = end;
+
+    // If there are more reels to load, add a sentinel div at the bottom
+    if (reelsRendered < reelsShuffled.length) {
+        const sentinel = document.createElement('div');
+        sentinel.id = 'reels-sentinel';
+        sentinel.style.cssText = 'height:1px;width:100%;flex-shrink:0;';
+        feed.appendChild(sentinel);
+        observeSentinel(sentinel);
+    }
+}
+
+function observeSentinel(sentinel) {
+    const sentinelObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !reelsLoadingMore) {
+            reelsLoadingMore = true;
+            sentinelObserver.disconnect();
+            // Small delay so the user doesn't feel a stutter
+            setTimeout(() => {
+                appendReelsPage();
+                setupReelObserver(); // re-observe all cards including new ones
+                reelsLoadingMore = false;
+            }, 180);
+        }
+    }, {
+        root: document.getElementById('reels-feed'),
+        threshold: 0.1,
+    });
+    sentinelObserver.observe(sentinel);
 }
 
 // ─────────────────────────────────────────────
