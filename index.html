@@ -5151,7 +5151,7 @@ function setupReelObserver() {
 // Interactions with Firebase persistence
 // ─────────────────────────────────────────────
 async function toggleLike(idx) {
-    const reel = reelsData[idx];
+    const reel = reelsShuffled[idx] || reelsData[idx];
     likeState[reel.id] = !likeState[reel.id];
     haptic('medium');
 
@@ -5182,7 +5182,7 @@ async function toggleLike(idx) {
 }
 
 async function toggleSave(idx) {
-    const reel = reelsData[idx];
+    const reel = reelsShuffled[idx] || reelsData[idx];
     saveState[reel.id] = !saveState[reel.id];
     haptic('medium');
 
@@ -5226,8 +5226,9 @@ function triggerLikeAnimation(idx) {
 // ─────────────────────────────────────────────
 function openComments(idx) {
     haptic('light');
-    commentReelId = reelsData[idx].id;
-    const cnt = reelsData[idx].comments;
+    const reel = reelsShuffled[idx] || reelsData[idx];
+    commentReelId = reel.id;
+    const cnt = reel.comments;
     document.getElementById('comments-count').textContent = cnt ? `(${fmtCount(cnt)})` : '';
     const list = document.getElementById('reels-comments-list');
     list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">Loading…</div>';
@@ -5307,7 +5308,7 @@ async function postComment() {
 // ─────────────────────────────────────────────
 function openShare(idx) {
     haptic('light');
-    shareReelId = reelsData[idx].id;
+    shareReelId = reelsShuffled[idx] || reelsData[idx];
     document.getElementById('reels-share-people').innerHTML = '';
     document.getElementById('reels-share-sheet').classList.add('active');
 }
@@ -5752,20 +5753,24 @@ function onReelsTabActive(active) {
     const topbar = document.getElementById('reels-topbar');
     const feed   = document.getElementById('reels-feed');
 
-    if (active) {
+if (active) {
         topbar.style.display = 'flex';
         feed.style.display = 'block';
-        // Ensure feed and topbar are inside view-reels
         const viewReels = document.getElementById('view-reels');
         if (!viewReels.contains(feed))   viewReels.appendChild(feed);
         if (!viewReels.contains(topbar)) viewReels.appendChild(topbar);
         if (reelsData.length > 0) {
+            // Re-shuffle every time the tab becomes active (fresh random order)
+            reelsShuffled = [...reelsData];
+            for (let i = reelsShuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [reelsShuffled[i], reelsShuffled[j]] = [reelsShuffled[j], reelsShuffled[i]];
+            }
             renderReelsFeed();
             setupReelObserver();
-            // Auto-play the first reel after a short delay to let DOM settle
             setTimeout(() => { activateReel(0); }, 120);
         } else {
-            renderReelsFeed(); // shows empty state
+            renderReelsFeed();
         }
     } else {
         topbar.style.display = 'none';
