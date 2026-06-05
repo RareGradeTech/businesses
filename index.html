@@ -374,7 +374,7 @@
         .profile-x-stat{display:flex;flex-direction:column;align-items:center;gap:2px;}
         .profile-x-stat-val{font-size:18px;font-weight:800;color:var(--text-primary);}
         .profile-x-stat-lbl{font-size:12px;color:var(--text-muted);}
-        .profile-x-verified{width:18px;height:18px;background:var(--primary);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .profile-x-verified{width:18px;height:18px;background:#1D9BF0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
         .settings-list{margin-top:16px;}
 
         /* ── Profile Bio/Age fields ── */
@@ -507,7 +507,7 @@
         .profile-x-stat{display:flex;flex-direction:column;align-items:center;gap:2px;}
         .profile-x-stat-val{font-size:16px;font-weight:800;color:var(--text-primary);}
         .profile-x-stat-lbl{font-size:11px;color:var(--text-muted);}
-        .profile-x-verified{width:16px;height:16px;background:var(--primary);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .profile-x-verified{width:16px;height:16px;background:#1D9BF0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
         .settings-list{margin-top:14px;}
 
         /* ── Profile Bio/Age fields ── */
@@ -966,16 +966,15 @@ body.reels-active {
     align-items: center;
     gap: 6px;
 }
+        
 .reel-verified {
-    width: 16px;
-    height: 16px;
-    background: var(--primary);
+    width: 16px; height: 16px;
+    background: #1D9BF0;
     border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 }
+        
 .reel-caption {
     font-size: 13px;
     color: rgba(255,255,255,0.92);
@@ -1228,12 +1227,25 @@ body.reels-active {
     padding: 2px 8px; font-size: 11px; font-weight: 700; backdrop-filter: blur(4px);
 }
 /* Verified badge inline */
+        
 .verified-badge {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 14px; height: 14px; background: var(--primary); border-radius: 50%;
+    width: 14px; height: 14px; background: #1D9BF0; border-radius: 50%;
     flex-shrink: 0; vertical-align: middle;
 }
+        
 .verified-badge svg { display: block; }
+
+/* ── Canonical verified badge — used everywhere ── */
+.vx-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #1D9BF0;  /* Twitter/verified blue */
+    border-radius: 50%; flex-shrink: 0; vertical-align: middle;
+    line-height: 1;
+}
+.vx-badge svg { display: block; }
+
+        
 /* In-app notification toast */
 .reel-notif-toast {
     position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px);
@@ -2735,7 +2747,10 @@ function openDskChat(targetUid) {
     const hdrAvatar = document.getElementById('dsk-chat-header-avatar');
     hdrAvatar.src = otherUser.photoURL || DEFAULT_AVATAR;
     hdrAvatar.onerror = () => { hdrAvatar.src = DEFAULT_AVATAR; };
-    document.getElementById('dsk-chat-header-name').textContent   = otherUser.username || 'User';
+    const dskHdrNameEl = document.getElementById('dsk-chat-header-name');
+    dskHdrNameEl.style.cssText = 'font-weight:700;font-size:16px;letter-spacing:-0.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;';
+    dskHdrNameEl.innerHTML = escapeHtml(otherUser.username || 'User')
+        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : '');
     document.getElementById('dsk-chat-header-status').textContent = '';
     document.getElementById('dsk-messages-area').innerHTML = '';
     document.getElementById('dsk-chat-input').value = '';
@@ -3025,10 +3040,15 @@ function renderConversations(convList) {
                  onerror="this.src='${DEFAULT_AVATAR.replace(/'/g,"\\'")}'"
                  style="background:var(--surface2);">
             <div class="chat-info">
-                <div class="chat-header">
-                    <span class="chat-name">${escapeHtml(c.other.username||'User')}</span>
+            
+                    <div class="chat-header">
+                    <span class="chat-name" style="display:inline-flex;align-items:center;gap:4px;">
+                        ${escapeHtml(c.other.username||'User')}
+                        ${c.other.verified ? `<span class="vx-badge" style="width:13px;height:13px;flex-shrink:0;" title="Verified"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                    </span>
                     <span class="chat-time">${formatChatTime(c.lastTimestamp)}</span>
                 </div>
+                
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
                     <span class="chat-preview${c.unread>0?' unread':''}">${escapeHtml(c.lastMessage)}</span>
                     ${c.unread > 0 ? `<span class="unread-badge">${c.unread > 99 ? '99+' : c.unread}</span>` : ''}
@@ -3226,7 +3246,10 @@ async function openChat(targetUid) {
     const headerAvatar = document.getElementById('chat-header-avatar');
     headerAvatar.src = otherUser.photoURL || DEFAULT_AVATAR;
     headerAvatar.onerror = () => { headerAvatar.src = DEFAULT_AVATAR; };
-    document.getElementById('chat-header-name').textContent = otherUser.username || 'User';
+    const mobHdrNameEl = document.getElementById('chat-header-name');
+    mobHdrNameEl.style.cssText = 'font-weight:700;font-size:16px;letter-spacing:-0.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;';
+    mobHdrNameEl.innerHTML = escapeHtml(otherUser.username || 'User')
+        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : '');
     document.getElementById('chat-header-status').textContent = '';
     document.getElementById('messages-area').innerHTML = '';
     document.getElementById('chat-input').value = '';
@@ -4560,7 +4583,8 @@ function fmtTimeAgo(ts) {
 
 // Verified badge SVG (inline, small)
 function verifiedBadgeHtml(size = 14) {
-    return `<span class="verified-badge" style="width:${size}px;height:${size}px;"><svg width="${size-4}" height="${size-4}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`;
+    const inner = size - 4;
+    return `<span class="verified-badge vx-badge" style="width:${size}px;height:${size}px;" title="Verified"><svg width="${inner}" height="${inner}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`;
 }
 
 // In-app notification toast (non-blocking, top of screen)
@@ -4937,7 +4961,7 @@ function buildReelCard(reel, idx) {
         <div class="reel-info" style="z-index:10;">
             <div class="reel-username">
                 ${escHtml(reel.user.username)}
-                ${reel.user.verified ? `<span class="reel-verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                ${reel.user.verified ? `<span class="reel-verified vx-badge" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
             </div>
             <div class="reel-caption" id="caption-${idx}">${escHtml((reel.caption||'').replace(/#\w+/g,''))}</div>
             <div class="reel-hashtags">
