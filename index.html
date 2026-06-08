@@ -5199,14 +5199,22 @@ function setupReelObserver() {
         root: document.getElementById('reels-feed'),
         threshold: [0.7],
     });
-    document.querySelectorAll('.reel-card').forEach(c => reelObserver.observe(c));
+  document.querySelectorAll('#reels-feed .reel-card').forEach(c => reelObserver.observe(c));
 }
 
 // ─────────────────────────────────────────────
 // Interactions with Firebase persistence
 // ─────────────────────────────────────────────
+// Resolves a reel from a card's idx — safe after infinite scroll loops
+function getReelByIdx(idx) {
+    const card = document.querySelector(`.reel-card[data-idx="${idx}"]`);
+    const id   = card?.dataset?.id;
+    return (id && reelsData.find(r => r.id === id)) || reelsShuffled[idx] || reelsData[idx] || null;
+}
+
+    
 async function toggleLike(idx) {
-    const reel = reelsShuffled[idx] || reelsData[idx];
+       const reel = getReelByIdx(idx);
     likeState[reel.id] = !likeState[reel.id];
     haptic('medium');
 
@@ -5237,7 +5245,7 @@ async function toggleLike(idx) {
 }
 
 async function toggleSave(idx) {
-    const reel = reelsShuffled[idx] || reelsData[idx];
+       const reel = getReelByIdx(idx);
     saveState[reel.id] = !saveState[reel.id];
     haptic('medium');
 
@@ -5281,7 +5289,7 @@ function triggerLikeAnimation(idx) {
 // ─────────────────────────────────────────────
 function openComments(idx) {
     haptic('light');
-    const reel = reelsShuffled[idx] || reelsData[idx];
+      const reel = getReelByIdx(idx);
     commentReelId = reel.id;
     const cnt = reel.comments;
     document.getElementById('comments-count').textContent = cnt ? `(${fmtCount(cnt)})` : '';
@@ -5370,7 +5378,7 @@ const meVerified = window._vynixCurrentUserData?.verified || false;
 // ─────────────────────────────────────────────
 function openShare(idx) {
     haptic('light');
-    shareReelId = reelsShuffled[idx] || reelsData[idx];
+   shareReelId = getReelByIdx(idx);
     document.getElementById('reels-share-people').innerHTML = '';
     document.getElementById('reels-share-sheet').classList.add('active');
 }
