@@ -4629,9 +4629,10 @@ const REEL_SAVE_UID = (id, uid) => ref(_db, 'reelInteractions/' + id + '/saves/'
 const REEL_SHARES   = (id) => ref(_db, 'reelInteractions/' + id + '/shareCount');
 const REEL_COMMENTS = (id) => ref(_db, 'reelComments/' + id);
 
-// Load reels from Firebase and set up live listener
 function loadReelsFromFirebase() {
-    onValue(REELS_REF(), async (snap) => {
+    // Use a one-time get() so Firebase never auto-refreshes the feed mid-session.
+    // The feed only resets when the user does a full page reload.
+    get(REELS_REF()).then(async (snap) => {
         const raw = snap.val() || {};
         const me  = getMe();
 
@@ -4644,13 +4645,11 @@ function loadReelsFromFirebase() {
 
         // Build array sorted newest first — includes ALL users' reels
         const arr = Object.entries(raw).map(([id, r]) => {
-            // Look up the live profile for this reel's author
-            const uid        = r.user?.uid || 'unknown';
+            const uid         = r.user?.uid || 'unknown';
             const liveProfile = allUsers[uid] || {};
             return {
                 ...r,
                 id,
-                // Always use live profile data for name + verified so it stays in sync
                 user: {
                     uid,
                     username: liveProfile.username || r.user?.username || r.user?.name || '@user',
@@ -4663,13 +4662,13 @@ function loadReelsFromFirebase() {
         arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         reelsData = arr;
 
-        // Smart shuffle: Fisher-Yates on every load/refresh so order is random
+        // Shuffle once on load — order is preserved for the whole session
         reelsShuffled = [...reelsData];
         for (let i = reelsShuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [reelsShuffled[i], reelsShuffled[j]] = [reelsShuffled[j], reelsShuffled[i]];
         }
-        reelsRendered = 0; // reset rendered count so feed re-builds on each refresh
+        reelsRendered = 0;
 
         // Load user's like/save state
         if (me.uid && me.uid !== 'anon') {
@@ -4681,7 +4680,6 @@ function loadReelsFromFirebase() {
             }
         }
 
-        // Only re-render if reels tab is currently active
         if (document.body.classList.contains('reels-active')) {
             renderReelsFeed();
             if (reelsData.length > 0) {
@@ -4689,11 +4687,9 @@ function loadReelsFromFirebase() {
                 setTimeout(() => { activateReel(0); }, 120);
             }
         } else {
-            // Pre-render silently for when user switches to reels tab
             renderReelsFeed();
         }
-    });
-
+    }).catch(e => { console.error('Failed to load reels:', e); });
     // Real-time notifications listener for current user
     if (window._vynixCurrentUser?.uid) {
         setupNotificationsListener(window._vynixCurrentUser.uid);
@@ -5829,16 +5825,15 @@ if (active) {
         const viewReels = document.getElementById('view-reels');
         if (!viewReels.contains(feed))   viewReels.appendChild(feed);
         if (!viewReels.contains(topbar)) viewReels.appendChild(topbar);
-        if (reelsData.length > 0) {
-            // Re-shuffle every time the tab becomes active (fresh random order)
-            reelsShuffled = [...reelsData];
-            for (let i = reelsShuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [reelsShuffled[i], reelsShuffled[j]] = [reelsShuffled[j], reelsShuffled[i]];
-            }
-            renderReelsFeed();
+if (reelsData.length > 0) {
+            // Don't re-shuffle or re-render — preserve scroll position and history.
+            // Only set up the observer and resume the active reel.
             setupReelObserver();
-            setTimeout(() => { activateReel(0); }, 120);
+            if (activeReelIndex >= 0) {
+                setTimeout(() => { activateReel(activeReelIndex); }, 120);
+            } else {
+                setTimeout(() => { activateReel(0); }, 120);
+            }
         } else {
             renderReelsFeed();
         }
