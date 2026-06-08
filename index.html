@@ -4761,8 +4761,10 @@ function loadReelsFromFirebase() {
         if (document.body.classList.contains('reels-active')) {
             renderReelsFeed();
             if (reelsData.length > 0) {
-                setupReelObserver();
-                setTimeout(() => { activateReel(0); }, 120);
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    setupReelObserver();
+                    activateReel(0);
+                }));
             }
         } else {
             // Pre-render silently for when user switches to reels tab
@@ -5298,16 +5300,17 @@ function stopAllVideos() {
 }
 
 function activateReel(idx) {
-    if (activeReelIndex === idx) return;
+    // Allow reactivation even if same idx (happens after stopAllVideos resets activeReelIndex)
+    const sameIdx = (activeReelIndex === idx);
 
-    // ── Fully stop the previous reel ──
-    if (activeReelIndex >= 0) {
+    // ── Fully stop the previous reel (only if it's a different one) ──
+    if (!sameIdx && activeReelIndex >= 0) {
         const prev = getVideoEl(activeReelIndex);
         if (prev) {
             try {
                 prev.pause();
                 prev.currentTime = 0;
-                prev.src = prev.src; // force browser to release media buffer lock
+                // DO NOT reset prev.src — that forces a full reload and breaks playback
             } catch(e) {}
         }
         cancelAnimationFrame(progressRAFs[activeReelIndex]);
@@ -5318,7 +5321,7 @@ function activateReel(idx) {
     }
 
     // ── Stop ALL other videos as a safety net ──
-    document.querySelectorAll('.reel-card video').forEach((v, i) => {
+    document.querySelectorAll('.reel-card video').forEach(v => {
         const vIdx = parseInt(v.id.replace('reel-video-', ''));
         if (vIdx !== idx) {
             try { v.pause(); } catch(e) {}
@@ -5332,7 +5335,7 @@ function activateReel(idx) {
     const vid = getVideoEl(idx);
     if (!vid) return;
     vid.muted = reelsMuted;
-    vid.currentTime = 0;
+    if (!sameIdx) vid.currentTime = 0;
     const pp = vid.play();
     if (pp) pp.catch(() => { vid.muted = true; vid.play().catch(() => {}); });
     tickProgress(idx);
@@ -5998,7 +6001,7 @@ function onReelsTabActive(active) {
     const topbar = document.getElementById('reels-topbar');
     const feed   = document.getElementById('reels-feed');
 
-if (active) {
+    if (active) {
         topbar.style.display = 'flex';
         feed.style.display = 'block';
         const viewReels = document.getElementById('view-reels');
@@ -6012,8 +6015,11 @@ if (active) {
                 [reelsShuffled[i], reelsShuffled[j]] = [reelsShuffled[j], reelsShuffled[i]];
             }
             renderReelsFeed();
-            setupReelObserver();
-            setTimeout(() => { activateReel(0); }, 120);
+            // Wait two frames so cards are painted before observing / playing
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                setupReelObserver();
+                activateReel(0);
+            }));
         } else {
             renderReelsFeed();
         }
