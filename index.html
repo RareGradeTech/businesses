@@ -4837,29 +4837,37 @@ function renderReelsFeed() {
 }
 
 function appendReelsPage() {
-    const feed  = document.getElementById('reels-feed');
+    const feed = document.getElementById('reels-feed');
     if (!feed || reelsLoadingMore) return;
 
-    // Remove old sentinel before appending new cards
     const oldSentinel = document.getElementById('reels-sentinel');
     if (oldSentinel) oldSentinel.remove();
 
+    // When all clips have been shown, re-shuffle and loop from the top
+    if (reelsRendered >= reelsShuffled.length && reelsShuffled.length > 0) {
+        reelsShuffled = [...reelsData];
+        for (let i = reelsShuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [reelsShuffled[i], reelsShuffled[j]] = [reelsShuffled[j], reelsShuffled[i]];
+        }
+        reelsRendered = 0;
+    }
+
+    const totalInDom = feed.querySelectorAll('.reel-card').length; // global idx offset
     const start = reelsRendered;
     const end   = Math.min(start + reelsPageSize, reelsShuffled.length);
 
     for (let i = start; i < end; i++) {
-        feed.appendChild(buildReelCard(reelsShuffled[i], i));
+        feed.appendChild(buildReelCard(reelsShuffled[i], totalInDom + (i - start)));
     }
     reelsRendered = end;
 
-    // If there are more reels to load, add a sentinel div at the bottom
-    if (reelsRendered < reelsShuffled.length) {
-        const sentinel = document.createElement('div');
-        sentinel.id = 'reels-sentinel';
-        sentinel.style.cssText = 'height:1px;width:100%;flex-shrink:0;';
-        feed.appendChild(sentinel);
-        observeSentinel(sentinel);
-    }
+    // Always add a sentinel — there are always more clips to loop into
+    const sentinel = document.createElement('div');
+    sentinel.id = 'reels-sentinel';
+    sentinel.style.cssText = 'height:1px;width:100%;flex-shrink:0;';
+    feed.appendChild(sentinel);
+    observeSentinel(sentinel);
 }
 
 function observeSentinel(sentinel) {
