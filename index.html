@@ -4564,18 +4564,6 @@ function fmtCount(n) {
     return String(n);
 }
 
-// Generate a deterministic VNX number from a uid string (e.g. "vnx00142")
-function vnxNumber(uid) {
-    if (!uid || uid === 'anon') return 'vnx00001';
-    let hash = 0;
-    for (let i = 0; i < uid.length; i++) {
-        hash = ((hash << 5) - hash) + uid.charCodeAt(i);
-        hash |= 0;
-    }
-    const n = Math.abs(hash) % 99999;
-    return 'vnx' + String(n).padStart(5, '0');
-}
-
 // Format a timestamp as relative time string (e.g. "2m", "1h", "just now")
 function fmtTimeAgo(ts) {
     if (!ts) return 'just now';
@@ -4856,37 +4844,22 @@ function appendReelsPage() {
     const oldSentinel = document.getElementById('reels-sentinel');
     if (oldSentinel) oldSentinel.remove();
 
-    // If we've rendered all available clips, re-shuffle and loop
-    if (reelsRendered >= reelsShuffled.length && reelsShuffled.length > 0) {
-        // Re-shuffle for variety on the next loop
-        reelsShuffled = [...reelsData];
-        for (let i = reelsShuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [reelsShuffled[i], reelsShuffled[j]] = [reelsShuffled[j], reelsShuffled[i]];
-        }
-        reelsRendered = 0;
-        // Show a subtle "looping" loader card before continuing
-        const loopNotice = document.createElement('div');
-        loopNotice.style.cssText = 'height:40px;display:flex;align-items:center;justify-content:center;background:#000;flex-shrink:0;';
-        loopNotice.innerHTML = '<span style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:600;letter-spacing:0.5px;">Showing more clips…</span>';
-        feed.appendChild(loopNotice);
-        setTimeout(() => { loopNotice.remove(); }, 800);
-    }
-
     const start = reelsRendered;
     const end   = Math.min(start + reelsPageSize, reelsShuffled.length);
 
     for (let i = start; i < end; i++) {
-        feed.appendChild(buildReelCard(reelsShuffled[i], feed.querySelectorAll('.reel-card').length));
+        feed.appendChild(buildReelCard(reelsShuffled[i], i));
     }
     reelsRendered = end;
 
-    // Always add a sentinel — we loop infinitely so there's always more to load
-    const sentinel = document.createElement('div');
-    sentinel.id = 'reels-sentinel';
-    sentinel.style.cssText = 'height:1px;width:100%;flex-shrink:0;';
-    feed.appendChild(sentinel);
-    observeSentinel(sentinel);
+    // If there are more reels to load, add a sentinel div at the bottom
+    if (reelsRendered < reelsShuffled.length) {
+        const sentinel = document.createElement('div');
+        sentinel.id = 'reels-sentinel';
+        sentinel.style.cssText = 'height:1px;width:100%;flex-shrink:0;';
+        feed.appendChild(sentinel);
+        observeSentinel(sentinel);
+    }
 }
 
 function observeSentinel(sentinel) {
@@ -4985,13 +4958,9 @@ function buildReelCard(reel, idx) {
 
         <!-- bottom info -->
         <div class="reel-info" style="z-index:10;">
-            <div class="reel-username" id="reel-username-${idx}">
-                <span style="display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;">
-                    <span style="font-weight:800;">@${escHtml(reel.user.username || vnxFallback(reel.user.uid))}</span>
-                    ${reel.user.verified ? `<span class="reel-verified vx-badge" style="width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;" title="Verified"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="16" height="16" style="display:block;"><path d="M 20.0000 0.5000 C 21.6081 0.5000 21.7702 4.5485 23.0239 4.7978 C 24.2776 5.0472 25.9766 1.3690 27.4623 1.9843 C 28.9480 2.5997 27.5485 6.4021 28.6113 7.1122 C 29.6742 7.8224 32.6515 5.0743 33.7886 6.2114 C 34.9257 7.3485 32.1776 10.3258 32.8878 11.3887 C 33.5979 12.4515 37.4003 11.0520 38.0157 12.5377 C 38.6310 14.0234 34.9528 15.7224 35.2022 16.9761 C 35.4515 18.2298 39.5000 18.3919 39.5000 20.0000 C 39.5000 21.6081 35.4515 21.7702 35.2022 23.0239 C 34.9528 24.2776 38.6310 25.9766 38.0157 27.4623 C 37.4003 28.9480 33.5979 27.5485 32.8878 28.6113 C 32.1776 29.6742 34.9257 32.6515 33.7886 33.7886 C 32.6515 34.9257 29.6742 32.1776 28.6113 32.8878 C 27.5485 33.5979 28.9480 37.4003 27.4623 38.0157 C 25.9766 38.6310 24.2776 34.9528 23.0239 35.2022 C 21.7702 35.4515 21.6081 39.5000 20.0000 39.5000 C 18.3919 39.5000 18.2298 35.4515 16.9761 35.2022 C 15.7224 34.9528 14.0234 38.6310 12.5377 38.0157 C 11.0520 37.4003 12.4515 33.5979 11.3887 32.8878 C 10.3258 32.1776 7.3485 34.9257 6.2114 33.7886 C 5.0743 32.6515 7.8224 29.6742 7.1122 28.6113 C 6.4021 27.5485 2.5997 28.9480 1.9843 27.4623 C 1.3690 25.9766 5.0472 24.2776 4.7978 23.0239 C 4.5485 21.7702 0.5000 21.6081 0.5000 20.0000 C 0.5000 18.3919 4.5485 18.2298 4.7978 16.9761 C 5.0472 15.7224 1.3690 14.0234 1.9843 12.5377 C 2.5997 11.0520 6.4021 12.4515 7.1122 11.3887 C 7.8224 10.3258 5.0743 7.3485 6.2114 6.2114 C 7.3485 5.0743 10.3258 7.8224 11.3887 7.1122 C 12.4515 6.4021 11.0520 2.5997 12.5377 1.9843 C 14.0234 1.3690 15.7224 5.0472 16.9761 4.7978 C 18.2298 4.5485 18.3919 0.5000 20.0000 0.5000 Z" fill="#0095F6"/><path d="M11 20.5 L17.5 27 L30 14" stroke="white" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>` : ''}
-                    <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.55);letter-spacing:0.3px;">${escHtml(vnxNumber(reel.user.uid))}</span>
-                    <span class="reel-online-dot" id="reel-online-dot-${idx}" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.75);"></span>
-                </span>
+            <div class="reel-username">
+                ${escHtml(reel.user.username || vnxFallback(reel.user.uid))}
+                ${reel.user.verified ? `<span class="reel-verified vx-badge" style="width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;" title="Verified"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="16" height="16" style="display:block;"><path d="M 20.0000 0.5000 C 21.6081 0.5000 21.7702 4.5485 23.0239 4.7978 C 24.2776 5.0472 25.9766 1.3690 27.4623 1.9843 C 28.9480 2.5997 27.5485 6.4021 28.6113 7.1122 C 29.6742 7.8224 32.6515 5.0743 33.7886 6.2114 C 34.9257 7.3485 32.1776 10.3258 32.8878 11.3887 C 33.5979 12.4515 37.4003 11.0520 38.0157 12.5377 C 38.6310 14.0234 34.9528 15.7224 35.2022 16.9761 C 35.4515 18.2298 39.5000 18.3919 39.5000 20.0000 C 39.5000 21.6081 35.4515 21.7702 35.2022 23.0239 C 34.9528 24.2776 38.6310 25.9766 38.0157 27.4623 C 37.4003 28.9480 33.5979 27.5485 32.8878 28.6113 C 32.1776 29.6742 34.9257 32.6515 33.7886 33.7886 C 32.6515 34.9257 29.6742 32.1776 28.6113 32.8878 C 27.5485 33.5979 28.9480 37.4003 27.4623 38.0157 C 25.9766 38.6310 24.2776 34.9528 23.0239 35.2022 C 21.7702 35.4515 21.6081 39.5000 20.0000 39.5000 C 18.3919 39.5000 18.2298 35.4515 16.9761 35.2022 C 15.7224 34.9528 14.0234 38.6310 12.5377 38.0157 C 11.0520 37.4003 12.4515 33.5979 11.3887 32.8878 C 10.3258 32.1776 7.3485 34.9257 6.2114 33.7886 C 5.0743 32.6515 7.8224 29.6742 7.1122 28.6113 C 6.4021 27.5485 2.5997 28.9480 1.9843 27.4623 C 1.3690 25.9766 5.0472 24.2776 4.7978 23.0239 C 4.5485 21.7702 0.5000 21.6081 0.5000 20.0000 C 0.5000 18.3919 4.5485 18.2298 4.7978 16.9761 C 5.0472 15.7224 1.3690 14.0234 1.9843 12.5377 C 2.5997 11.0520 6.4021 12.4515 7.1122 11.3887 C 7.8224 10.3258 5.0743 7.3485 6.2114 6.2114 C 7.3485 5.0743 10.3258 7.8224 11.3887 7.1122 C 12.4515 6.4021 11.0520 2.5997 12.5377 1.9843 C 14.0234 1.3690 15.7224 5.0472 16.9761 4.7978 C 18.2298 4.5485 18.3919 0.5000 20.0000 0.5000 Z" fill="#0095F6"/><path d="M11 20.5 L17.5 27 L30 14" stroke="white" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>` : ''}
             </div>
             <div class="reel-caption" id="caption-${idx}">${escHtml((reel.caption||'').replace(/#\w+/g,''))}</div>
             <div class="reel-hashtags">
@@ -5009,23 +4978,6 @@ function buildReelCard(reel, idx) {
     const bg  = card.querySelector(`#reel-bg-${idx}`);
     vid.addEventListener('loadeddata', () => { bg.style.opacity = '0'; }, { once: true });
 
-    // ── Subscribe to live online presence for this reel's author ──
-    const authorUid = reel.user?.uid;
-    if (authorUid && authorUid !== 'anon' && window._vynixApp) {
-        try {
-            const { getDatabase, ref: fbRef, onValue: fbOnValue } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js');
-            const presDb = getDatabase(window._vynixApp);
-            const dotEl  = card.querySelector(`#reel-online-dot-${idx}`);
-            fbOnValue(fbRef(presDb, `users/${authorUid}/online`), snap => {
-                if (!dotEl) return;
-                const isOnline = snap.val() === true;
-                dotEl.innerHTML = isOnline
-                    ? `<span style="width:7px;height:7px;border-radius:50%;background:#2ECC71;display:inline-block;box-shadow:0 0 5px rgba(46,204,113,0.7);"></span> Active`
-                    : `<span style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.25);display:inline-block;"></span> Offline`;
-            });
-        } catch(e) { /* presence not critical */ }
-    }
-
     // ── Action button listeners (stop propagation so tap area doesn't fire) ──
     const likeBtnEl    = card.querySelector(`#like-btn-${idx}`);
     const commentBtnEl = card.querySelector(`#comment-btn-${idx}`);
@@ -5042,39 +4994,13 @@ function buildReelCard(reel, idx) {
     const capEl = card.querySelector(`#caption-${idx}`);
     capEl.addEventListener('click', e => { e.stopPropagation(); capEl.classList.toggle('expanded'); });
 
-    // ── Tap area: double-tap = like, single tap = mute, hold = pause ──
+    // ── Tap area: single tap = toggle mute, hold = pause, release = resume ──
     const tapArea = card.querySelector(`#tap-area-${idx}`);
 
-    // Double-tap detection state for this card
-    let _lastTap = 0;
-    let _tapTimer = null;
-
+    // Single tap = mute/unmute
     tapArea.addEventListener('click', e => {
         e.stopPropagation();
-        const now = Date.now();
-        const delta = now - _lastTap;
-        _lastTap = now;
-
-        if (delta < 300 && delta > 0) {
-            // Double-tap detected — like the reel
-            clearTimeout(_tapTimer);
-            _tapTimer = null;
-
-            // Only trigger like burst if not already liked
-            const reel = reelsShuffled[idx] || reelsData[idx];
-            if (!likeState[reel.id]) {
-                toggleLike(idx);
-            }
-            // Always show heart burst on double-tap
-            triggerDoubleTapLikeAnim(idx, e);
-        } else {
-            // Potential single tap — wait to confirm it's not a double
-            clearTimeout(_tapTimer);
-            _tapTimer = setTimeout(() => {
-                _tapTimer = null;
-                handleSingleTap(idx);
-            }, 300);
-        }
+        handleSingleTap(idx);
     });
 
     // Hold to pause
@@ -5246,27 +5172,14 @@ function setupReelObserver() {
         root: document.getElementById('reels-feed'),
         threshold: [0.7],
     });
-    // Observe ALL reel cards currently in the DOM (includes newly appended ones)
-    document.querySelectorAll('#reels-feed .reel-card').forEach(c => reelObserver.observe(c));
+    document.querySelectorAll('.reel-card').forEach(c => reelObserver.observe(c));
 }
 
 // ─────────────────────────────────────────────
 // Interactions with Firebase persistence
 // ─────────────────────────────────────────────
-// Look up a reel from its DOM card idx — works even after infinite scroll loop
-function getReelByCardIdx(idx) {
-    const card = document.querySelector(`.reel-card[data-idx="${idx}"]`);
-    const reelId = card?.dataset?.id;
-    if (reelId) {
-        const found = reelsData.find(r => r.id === reelId);
-        if (found) return found;
-    }
-    // Fallback to shuffled array (works for first cycle)
-    return reelsShuffled[idx] || reelsData[idx] || null;
-}
-
 async function toggleLike(idx) {
-    const reel = getReelByCardIdx(idx);
+    const reel = reelsShuffled[idx] || reelsData[idx];
     likeState[reel.id] = !likeState[reel.id];
     haptic('medium');
 
@@ -5297,7 +5210,7 @@ async function toggleLike(idx) {
 }
 
 async function toggleSave(idx) {
-    const reel = getReelByCardIdx(idx);
+    const reel = reelsShuffled[idx] || reelsData[idx];
     saveState[reel.id] = !saveState[reel.id];
     haptic('medium');
 
@@ -5336,29 +5249,12 @@ function triggerLikeAnimation(idx) {
     heart.addEventListener('animationend', () => heart.remove());
 }
 
-// Double-tap heart burst — appears at tap coordinates
-function triggerDoubleTapLikeAnim(idx, e) {
-    const card = document.querySelector(`.reel-card[data-idx="${idx}"]`);
-    if (!card) return;
-    const heart = document.createElement('div');
-    heart.className = 'heart-pop';
-    heart.textContent = '❤️';
-    // Centre the heart on the tap point
-    const x = (e.clientX || e.touches?.[0]?.clientX || (window.innerWidth / 2));
-    const y = (e.clientY || e.touches?.[0]?.clientY || (window.innerHeight / 2));
-    heart.style.left = (x - 40) + 'px';
-    heart.style.top  = (y - 40) + 'px';
-    heart.style.fontSize = '88px';
-    document.body.appendChild(heart);
-    heart.addEventListener('animationend', () => heart.remove());
-}
-
 // ─────────────────────────────────────────────
 // Comments
 // ─────────────────────────────────────────────
 function openComments(idx) {
     haptic('light');
-    const reel = getReelByCardIdx(idx);
+    const reel = reelsShuffled[idx] || reelsData[idx];
     commentReelId = reel.id;
     const cnt = reel.comments;
     document.getElementById('comments-count').textContent = cnt ? `(${fmtCount(cnt)})` : '';
@@ -5447,7 +5343,7 @@ const meVerified = window._vynixCurrentUserData?.verified || false;
 // ─────────────────────────────────────────────
 function openShare(idx) {
     haptic('light');
-    shareReelId = getReelByCardIdx(idx);
+    shareReelId = reelsShuffled[idx] || reelsData[idx];
     document.getElementById('reels-share-people').innerHTML = '';
     document.getElementById('reels-share-sheet').classList.add('active');
 }
