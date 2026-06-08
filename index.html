@@ -1997,7 +1997,7 @@ body.reels-active {
         </button>
         <button class="nav-item" data-nav="profile" id="nav-profile">
             <div class="nav-avatar-wrapper">
-                <img src="" id="nav-profile-avatar" class="nav-avatar-img" alt="Me" style="display:none;">
+                <img src="" id="nav-profile-avatar" class="nav-avatar-img" alt="Me">
             </div>
         </button>
     </nav>
@@ -2354,7 +2354,7 @@ const CLOUDINARY_UPLOAD_PRESET = 'banter_box';
 
 // Inline default avatar – shown immediately before any data loads
 const DEFAULT_AVATAR = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><rect width="52" height="52" rx="14" fill="#E4E4E7"/><circle cx="26" cy="20" r="9" fill="#A1A1AA"/><path d="M8 46c0-9.941 8.059-18 18-18s18 8.059 18 18" fill="#A1A1AA"/></svg>`)}`;
-
+document.getElementById('nav-profile-avatar').src = DEFAULT_AVATAR;
 let currentUser     = null;
 let currentUserData = null;
 let allUsersCache   = {};
