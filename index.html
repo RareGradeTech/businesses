@@ -4884,8 +4884,8 @@ function appendReelsPage() {
 }
 
 function observeSentinel(sentinel) {
-    const sentinelObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && !reelsLoadingMore) reelsLoadingMore = true;
+    const sentinelObserver = new IntersectionObserver((entries) => if (entries[0].isIntersecting && !reelsLoadingMore) {
+            reelsLoadingMore = true;
             sentinelObserver.disconnect();
             document.getElementById('reels-end-indicator')?.remove();
             // Small delay so the user doesn't feel a stutter
@@ -4894,7 +4894,7 @@ function observeSentinel(sentinel) {
                 setupReelObserver(); // re-observe all cards including new ones
                 reelsLoadingMore = false;
             }, 180);
-    }, {
+        }
         root: document.getElementById('reels-feed'),
         threshold: 0.1,
     });
