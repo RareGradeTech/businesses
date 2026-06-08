@@ -1716,6 +1716,59 @@ body.reels-active {
     margin-top: -40px;
 }
 
+/* ── Online / Offline presence pill on reels ── */
+.reel-presence-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.92);
+    background: rgba(0,0,0,0.35);
+    border-radius: 20px;
+    padding: 3px 9px;
+    margin-left: 6px;
+    vertical-align: middle;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+}
+.reel-presence-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+}
+.reel-presence-dot.online  { background: #2ECC71; box-shadow: 0 0 5px rgba(46,204,113,0.8); }
+.reel-presence-dot.offline { background: rgba(255,255,255,0.4); }
+
+/* ── vnx number sub-label under username ── */
+.reel-vnx-number {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.3px;
+    margin-top: -3px;
+    margin-bottom: 5px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* ── Double-tap like heart burst ── */
+@keyframes dtLikeHeart {
+    0%   { transform: scale(0) rotate(-15deg); opacity: 1; }
+    40%  { transform: scale(1.5) rotate(5deg);  opacity: 1; }
+    70%  { transform: scale(1.2) rotate(-3deg); opacity: 1; }
+    100% { transform: scale(0)   rotate(0deg);  opacity: 0; }
+}
+.dt-like-heart {
+    position: fixed;
+    font-size: 90px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: dtLikeHeart 0.75s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    transform-origin: center;
+    filter: drop-shadow(0 4px 16px rgba(255,59,92,0.6));
+}
+
     </style>
 </head>
 <body>
@@ -3572,9 +3625,32 @@ function handleLogout() {
 
 function setupPresence() {
     if (!currentUser) return;
-    const r = ref(db, `users/${currentUser.uid}`);
-    update(r, { online:true, lastSeen:serverTimestamp() }).catch(() => {});
-    window.addEventListener('beforeunload', () => update(r, { online:false, lastSeen:Date.now() }).catch(() => {}));
+    const userRef  = ref(db, `users/${currentUser.uid}`);
+
+    // Set online immediately
+    update(userRef, { online: true, lastSeen: serverTimestamp() }).catch(() => {});
+
+    // Heartbeat every 30 s to keep online flag fresh
+    const heartbeat = setInterval(() => {
+        if (document.visibilityState !== 'hidden') {
+            update(userRef, { online: true, lastSeen: Date.now() }).catch(() => {});
+        }
+    }, 30000);
+
+    // Go offline on page close
+    window.addEventListener('beforeunload', () => {
+        update(userRef, { online: false, lastSeen: Date.now() }).catch(() => {});
+        clearInterval(heartbeat);
+    });
+
+    // Go offline when tab is hidden, back online when visible again
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            update(userRef, { online: false, lastSeen: Date.now() }).catch(() => {});
+        } else {
+            update(userRef, { online: true,  lastSeen: Date.now() }).catch(() => {});
+        }
+    });
 }
 
 // ──────────────────────────────────────────────
@@ -4817,6 +4893,12 @@ function renderReelsFeed() {
     reelsRendered = 0;
     reelsLoadingMore = false;
 
+    // Clean up old presence listeners so we don't accumulate them
+    Object.values(_presenceListeners).forEach(entry => {
+        if (typeof entry.unsubscribe === 'function') entry.unsubscribe();
+    });
+    Object.keys(_presenceListeners).forEach(k => delete _presenceListeners[k]);
+
     if (reelsShuffled.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'reels-empty-state';
@@ -4844,22 +4926,34 @@ function appendReelsPage() {
     const oldSentinel = document.getElementById('reels-sentinel');
     if (oldSentinel) oldSentinel.remove();
 
+    // If we have rendered everything, loop: re-shuffle and keep going
+    if (reelsRendered >= reelsShuffled.length && reelsShuffled.length > 0) {
+        // Re-shuffle for a fresh random order so the loop feels natural
+        const reshuffled = [...reelsData];
+        for (let i = reshuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [reshuffled[i], reshuffled[j]] = [reshuffled[j], reshuffled[i]];
+        }
+        // Append the new shuffled batch to the existing array so idx stays monotonic
+        reelsShuffled = reelsShuffled.concat(reshuffled);
+    }
+
     const start = reelsRendered;
     const end   = Math.min(start + reelsPageSize, reelsShuffled.length);
 
     for (let i = start; i < end; i++) {
         feed.appendChild(buildReelCard(reelsShuffled[i], i));
+        // Observe presence for this reel's author
+        observeReelPresence(i, reelsShuffled[i].user?.uid);
     }
     reelsRendered = end;
 
-    // If there are more reels to load, add a sentinel div at the bottom
-    if (reelsRendered < reelsShuffled.length) {
-        const sentinel = document.createElement('div');
-        sentinel.id = 'reels-sentinel';
-        sentinel.style.cssText = 'height:1px;width:100%;flex-shrink:0;';
-        feed.appendChild(sentinel);
-        observeSentinel(sentinel);
-    }
+    // Always add a sentinel so we can keep loading more
+    const sentinel = document.createElement('div');
+    sentinel.id = 'reels-sentinel';
+    sentinel.style.cssText = 'height:1px;width:100%;flex-shrink:0;';
+    feed.appendChild(sentinel);
+    observeSentinel(sentinel);
 }
 
 function observeSentinel(sentinel) {
@@ -4869,10 +4963,10 @@ function observeSentinel(sentinel) {
             sentinelObserver.disconnect();
             // Small delay so the user doesn't feel a stutter
             setTimeout(() => {
+                reelsLoadingMore = false;
                 appendReelsPage();
                 setupReelObserver(); // re-observe all cards including new ones
-                reelsLoadingMore = false;
-            }, 180);
+            }, 220);
         }
     }, {
         root: document.getElementById('reels-feed'),
@@ -4892,6 +4986,13 @@ function buildReelCard(reel, idx) {
 
     const isLiked = likeState[reel.id] || false;
     const isSaved = saveState[reel.id] || false;
+
+    // Compute the vnx fallback number for display
+    const reelUid    = reel.user?.uid || '';
+    const vnxNum     = vnxFallback(reelUid);   // e.g. "vnx042"
+    const rawHandle  = reel.user.username || vnxNum;
+    // Display as "@username" with the vnx number shown underneath
+    const handleDisplay = rawHandle.startsWith('@') ? rawHandle : '@' + rawHandle;
 
     card.innerHTML = `
         <video
@@ -4958,10 +5059,15 @@ function buildReelCard(reel, idx) {
 
         <!-- bottom info -->
         <div class="reel-info" style="z-index:10;">
-            <div class="reel-username">
-                ${escHtml(reel.user.username || vnxFallback(reel.user.uid))}
+            <div class="reel-username" id="reel-username-row-${idx}">
+                ${escHtml(handleDisplay)}
                 ${reel.user.verified ? `<span class="reel-verified vx-badge" style="width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;" title="Verified"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="16" height="16" style="display:block;"><path d="M 20.0000 0.5000 C 21.6081 0.5000 21.7702 4.5485 23.0239 4.7978 C 24.2776 5.0472 25.9766 1.3690 27.4623 1.9843 C 28.9480 2.5997 27.5485 6.4021 28.6113 7.1122 C 29.6742 7.8224 32.6515 5.0743 33.7886 6.2114 C 34.9257 7.3485 32.1776 10.3258 32.8878 11.3887 C 33.5979 12.4515 37.4003 11.0520 38.0157 12.5377 C 38.6310 14.0234 34.9528 15.7224 35.2022 16.9761 C 35.4515 18.2298 39.5000 18.3919 39.5000 20.0000 C 39.5000 21.6081 35.4515 21.7702 35.2022 23.0239 C 34.9528 24.2776 38.6310 25.9766 38.0157 27.4623 C 37.4003 28.9480 33.5979 27.5485 32.8878 28.6113 C 32.1776 29.6742 34.9257 32.6515 33.7886 33.7886 C 32.6515 34.9257 29.6742 32.1776 28.6113 32.8878 C 27.5485 33.5979 28.9480 37.4003 27.4623 38.0157 C 25.9766 38.6310 24.2776 34.9528 23.0239 35.2022 C 21.7702 35.4515 21.6081 39.5000 20.0000 39.5000 C 18.3919 39.5000 18.2298 35.4515 16.9761 35.2022 C 15.7224 34.9528 14.0234 38.6310 12.5377 38.0157 C 11.0520 37.4003 12.4515 33.5979 11.3887 32.8878 C 10.3258 32.1776 7.3485 34.9257 6.2114 33.7886 C 5.0743 32.6515 7.8224 29.6742 7.1122 28.6113 C 6.4021 27.5485 2.5997 28.9480 1.9843 27.4623 C 1.3690 25.9766 5.0472 24.2776 4.7978 23.0239 C 4.5485 21.7702 0.5000 21.6081 0.5000 20.0000 C 0.5000 18.3919 4.5485 18.2298 4.7978 16.9761 C 5.0472 15.7224 1.3690 14.0234 1.9843 12.5377 C 2.5997 11.0520 6.4021 12.4515 7.1122 11.3887 C 7.8224 10.3258 5.0743 7.3485 6.2114 6.2114 C 7.3485 5.0743 10.3258 7.8224 11.3887 7.1122 C 12.4515 6.4021 11.0520 2.5997 12.5377 1.9843 C 14.0234 1.3690 15.7224 5.0472 16.9761 4.7978 C 18.2298 4.5485 18.3919 0.5000 20.0000 0.5000 Z" fill="#0095F6"/><path d="M11 20.5 L17.5 27 L30 14" stroke="white" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>` : ''}
+                <span class="reel-presence-pill" id="presence-pill-${idx}">
+                    <span class="reel-presence-dot offline" id="presence-dot-${idx}"></span>
+                    <span id="presence-label-${idx}">Offline</span>
+                </span>
             </div>
+            <div class="reel-vnx-number" id="reel-vnx-${idx}">${escHtml(vnxNum)}</div>
             <div class="reel-caption" id="caption-${idx}">${escHtml((reel.caption||'').replace(/#\w+/g,''))}</div>
             <div class="reel-hashtags">
                 ${(reel.hashtags||[]).map(t=>`<span class="reel-hashtag">${escHtml(t)}</span>`).join('')}
@@ -4994,13 +5100,32 @@ function buildReelCard(reel, idx) {
     const capEl = card.querySelector(`#caption-${idx}`);
     capEl.addEventListener('click', e => { e.stopPropagation(); capEl.classList.toggle('expanded'); });
 
-    // ── Tap area: single tap = toggle mute, hold = pause, release = resume ──
+    // ── Tap area: single tap = toggle mute, double-tap = like, hold = pause ──
     const tapArea = card.querySelector(`#tap-area-${idx}`);
 
-    // Single tap = mute/unmute
+    // Double-tap detection
+    let dtTimer = null;
+    let dtLastTap = 0;
+
     tapArea.addEventListener('click', e => {
         e.stopPropagation();
-        handleSingleTap(idx);
+        const now = Date.now();
+        const gap  = now - dtLastTap;
+        dtLastTap  = now;
+
+        if (gap < 320 && gap > 0) {
+            // Double-tap — like the reel
+            clearTimeout(dtTimer);
+            dtTimer = null;
+            handleDoubleTap(idx, e);
+        } else {
+            // Possible single tap — wait briefly to confirm no second tap
+            clearTimeout(dtTimer);
+            dtTimer = setTimeout(() => {
+                dtTimer = null;
+                handleSingleTap(idx);
+            }, 320);
+        }
     });
 
     // Hold to pause
@@ -5040,6 +5165,91 @@ function handleSingleTap(idx) {
     haptic('light');
     // update all currently-rendered videos
     document.querySelectorAll('.reel-card video').forEach(v => { v.muted = reelsMuted; });
+}
+
+// ─────────────────────────────────────────────
+// Double-tap = like the reel with heart burst
+// ─────────────────────────────────────────────
+function handleDoubleTap(idx, e) {
+    haptic('medium');
+    const reel = reelsShuffled[idx] || reelsData[idx];
+    if (!reel) return;
+
+    // Only trigger the like animation + state if not already liked
+    const wasLiked = likeState[reel.id];
+
+    if (!wasLiked) {
+        // Like it
+        likeState[reel.id] = true;
+        const btn   = document.getElementById('like-btn-' + idx);
+        const ic    = btn?.querySelector('.reel-action-icon');
+        const svg   = btn?.querySelector('svg');
+        const count = document.getElementById('like-count-' + idx);
+        if (btn) {
+            btn.classList.add('liked');
+            svg?.setAttribute('fill',   '#FF3B5C');
+            svg?.setAttribute('stroke', '#FF3B5C');
+            if (ic) { ic.style.background = 'rgba(255,59,92,0.25)'; ic.style.transform = 'scale(1.3)'; setTimeout(() => { ic.style.transform = ''; }, 200); }
+            reel.likes = (parseInt(reel.likes) || 0) + 1;
+            if (count) count.textContent = fmtCount(reel.likes);
+        }
+        persistLike(reel.id, true);
+    }
+
+    // Always show the big heart burst on double-tap regardless of prior state
+    const heart = document.createElement('div');
+    heart.className = 'dt-like-heart';
+    heart.textContent = '❤️';
+    // Position at tap location
+    const x = (e?.clientX || window.innerWidth  / 2) - 45;
+    const y = (e?.clientY || window.innerHeight / 2) - 45;
+    heart.style.left = x + 'px';
+    heart.style.top  = y + 'px';
+    document.body.appendChild(heart);
+    heart.addEventListener('animationend', () => heart.remove(), { once: true });
+}
+
+// ─────────────────────────────────────────────
+// Presence: observe online/offline for a reel card
+// Keeps a map of uid → list of card indices so one
+// Firebase listener covers all cards for the same user.
+// ─────────────────────────────────────────────
+const _presenceListeners = {}; // uid → unsubscribe function
+const _presenceState     = {}; // uid → boolean (online)
+
+function observeReelPresence(idx, uid) {
+    if (!uid || uid === 'anon' || uid === 'unknown') return;
+
+    // Apply current known state immediately
+    if (uid in _presenceState) {
+        _applyPresence(idx, _presenceState[uid]);
+    }
+
+    // Register idx for future updates
+    if (!_presenceListeners[uid]) {
+        _presenceListeners[uid] = { indices: new Set(), unsubscribe: null };
+    }
+    _presenceListeners[uid].indices.add(idx);
+
+    // Only set up one Firebase listener per uid
+    if (_presenceListeners[uid].unsubscribe) return;
+
+    const presRef = ref(_db, `users/${uid}/online`);
+    const unsub = onValue(presRef, snap => {
+        const isOnline = snap.val() === true;
+        _presenceState[uid] = isOnline;
+        // Update all card indices for this user
+        _presenceListeners[uid]?.indices.forEach(i => _applyPresence(i, isOnline));
+    });
+    _presenceListeners[uid].unsubscribe = unsub;
+}
+
+function _applyPresence(idx, isOnline) {
+    const dot   = document.getElementById('presence-dot-'   + idx);
+    const label = document.getElementById('presence-label-' + idx);
+    if (!dot || !label) return;
+    dot.className   = 'reel-presence-dot ' + (isOnline ? 'online' : 'offline');
+    label.textContent = isOnline ? 'Active' : 'Offline';
 }
 
 // ─────────────────────────────────────────────
