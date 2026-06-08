@@ -374,7 +374,7 @@
         .profile-x-stat{display:flex;flex-direction:column;align-items:center;gap:2px;}
         .profile-x-stat-val{font-size:18px;font-weight:800;color:var(--text-primary);}
         .profile-x-stat-lbl{font-size:12px;color:var(--text-muted);}
-        .profile-x-verified{width:18px;height:18px;background:#1D9BF0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .profile-x-verified{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
         .settings-list{margin-top:16px;}
 
         /* ── Profile Bio/Age fields ── */
@@ -507,7 +507,7 @@
         .profile-x-stat{display:flex;flex-direction:column;align-items:center;gap:2px;}
         .profile-x-stat-val{font-size:16px;font-weight:800;color:var(--text-primary);}
         .profile-x-stat-lbl{font-size:11px;color:var(--text-muted);}
-        .profile-x-verified{width:16px;height:16px;background:#1D9BF0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .profile-x-verified{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
         .settings-list{margin-top:14px;}
 
         /* ── Profile Bio/Age fields ── */
@@ -969,8 +969,6 @@ body.reels-active {
         
 .reel-verified {
     width: 16px; height: 16px;
-    background: #1D9BF0;
-    border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 }
@@ -1158,8 +1156,7 @@ body.reels-active {
 .reel-comment-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 .reel-comment-verified {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 14px; height: 14px; border-radius: 50%;
-    background: var(--primary-gradient); flex-shrink: 0;
+    width: 14px; height: 14px; flex-shrink: 0;
 }
 .reel-comment-actions {
     display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap;
@@ -1230,20 +1227,16 @@ body.reels-active {
         
 .verified-badge {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 14px; height: 14px; background: #1D9BF0; border-radius: 50%;
     flex-shrink: 0; vertical-align: middle;
 }
-        
-.verified-badge svg { display: block; }
 
 /* ── Canonical verified badge — used everywhere ── */
 .vx-badge {
     display: inline-flex; align-items: center; justify-content: center;
-    background: #1D9BF0;  /* Twitter/verified blue */
-    border-radius: 50%; flex-shrink: 0; vertical-align: middle;
+    flex-shrink: 0; vertical-align: middle;
     line-height: 1;
 }
-.vx-badge svg { display: block; }
+.vx-badge img { display: block; object-fit: contain; }
 
         
 /* In-app notification toast */
@@ -2740,7 +2733,7 @@ let dskActiveChatListener = null;
 let dskDiscoverQueue = [], dskDiscoverIndex = 0;
 
 function openDskChat(targetUid) {
-    const otherUser = allUsersCache[targetUid] || { username:'User', photoURL:'' };
+    const otherUser = allUsersCache[targetUid] || { username: vnxFallback(targetUid), photoURL:'' };
     dskActiveChatUid    = targetUid;
     dskActiveChatConvId = [currentUser.uid, targetUid].sort().join('_');
 
@@ -2749,8 +2742,8 @@ function openDskChat(targetUid) {
     hdrAvatar.onerror = () => { hdrAvatar.src = DEFAULT_AVATAR; };
     const dskHdrNameEl = document.getElementById('dsk-chat-header-name');
     dskHdrNameEl.style.cssText = 'font-weight:700;font-size:16px;letter-spacing:-0.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;';
-    dskHdrNameEl.innerHTML = escapeHtml(otherUser.username || 'User')
-        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : '');
+    dskHdrNameEl.innerHTML = escapeHtml(otherUser.username || vnxFallback(targetUid))
+        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><img src="${VNX_BADGE_URL}" width="15" height="15" alt="verified" style="display:block;object-fit:contain;width:15px;height:15px;"></span>` : '');
     document.getElementById('dsk-chat-header-status').textContent = '';
     document.getElementById('dsk-messages-area').innerHTML = '';
     document.getElementById('dsk-chat-input').value = '';
@@ -2971,7 +2964,7 @@ async function loadChatsTab() {
                 if (!members.includes(currentUser.uid)) return;
                 const otherId = members.find(m => m !== currentUser.uid);
                 if (!otherId) return;
-                const other  = allUsersCache[otherId] || { username: 'User', photoURL: '' };
+                const other  = allUsersCache[otherId] || { username: vnxFallback(otherId), photoURL: '' };
                 const unread = conv.unread?.[currentUser.uid] || 0;
 
                 const prevUnread = prevUnreadState[child.key] || 0;
@@ -3035,7 +3028,7 @@ function renderConversations(convList) {
         <div class="chat-list-item"
              data-conv-id="${c.id}"
              data-other-id="${c.otherId}"
-             data-other-name="${escapeAttr(c.other.username||'User')}">
+             data-other-name="${escapeAttr(c.other.username || vnxFallback(c.otherId))}">
             <img src="${photo}" class="avatar" loading="lazy"
                  onerror="this.src='${DEFAULT_AVATAR.replace(/'/g,"\\'")}'"
                  style="background:var(--surface2);">
@@ -3043,8 +3036,8 @@ function renderConversations(convList) {
             
                     <div class="chat-header">
                     <span class="chat-name" style="display:inline-flex;align-items:center;gap:4px;">
-                        ${escapeHtml(c.other.username||'User')}
-                        ${c.other.verified ? `<span class="vx-badge" style="width:13px;height:13px;flex-shrink:0;" title="Verified"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                        ${escapeHtml(c.other.username || vnxFallback(c.otherId))}
+                        ${c.other.verified ? `<span class="vx-badge" style="width:13px;height:13px;flex-shrink:0;" title="Verified"><img src="${VNX_BADGE_URL}" width="13" height="13" alt="verified" style="display:block;object-fit:contain;width:13px;height:13px;"></span>` : ''}
                     </span>
                     <span class="chat-time">${formatChatTime(c.lastTimestamp)}</span>
                 </div>
@@ -3155,7 +3148,7 @@ async function openNewChatSheet() {
             <div class="user-row" data-uid="${u.uid}">
                 <img src="${u.photoURL || DEFAULT_AVATAR}" class="avatar" style="width:44px;height:44px;border-radius:14px;background:var(--surface2);" onerror="this.src='${DEFAULT_AVATAR.replace(/'/g,"\\'")}'" loading="lazy">
                 <div style="flex:1;min-width:0;">
-                    <div class="chat-name">${escapeHtml(u.username||'User')}</div>
+                    <div class="chat-name">${escapeHtml(u.username || vnxFallback(u.uid))}</div>
                     <div style="font-size:12px;color:var(--text-muted);">${escapeHtml(u.email||'')}</div>
                 </div>
                 <div style="width:8px;height:8px;border-radius:50%;background:${u.online ? '#22C55E' : 'var(--border)'};flex-shrink:0;"></div>
@@ -3237,7 +3230,7 @@ window.unblockUser = async function(uid) {
 
 // ── Chat Window ──
 async function openChat(targetUid) {
-    const otherUser = allUsersCache[targetUid] || { username:'User', photoURL:'' };
+    const otherUser = allUsersCache[targetUid] || { username: vnxFallback(targetUid), photoURL:'' };
     activeChatUid   = targetUid;
     activeChatConvId = [currentUser.uid, targetUid].sort().join('_');
 
@@ -3248,8 +3241,8 @@ async function openChat(targetUid) {
     headerAvatar.onerror = () => { headerAvatar.src = DEFAULT_AVATAR; };
     const mobHdrNameEl = document.getElementById('chat-header-name');
     mobHdrNameEl.style.cssText = 'font-weight:700;font-size:16px;letter-spacing:-0.2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;';
-    mobHdrNameEl.innerHTML = escapeHtml(otherUser.username || 'User')
-        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : '');
+    mobHdrNameEl.innerHTML = escapeHtml(otherUser.username || vnxFallback(targetUid))
+        + (otherUser.verified ? ` <span class="vx-badge" style="width:15px;height:15px;flex-shrink:0;" title="Verified"><img src="${VNX_BADGE_URL}" width="15" height="15" alt="verified" style="display:block;object-fit:contain;width:15px;height:15px;"></span>` : '');
     document.getElementById('chat-header-status').textContent = '';
     document.getElementById('messages-area').innerHTML = '';
     document.getElementById('chat-input').value = '';
@@ -3381,9 +3374,7 @@ function renderProfile() {
         <div class="profile-x-name">
           ${escapeHtml(currentUserData.username||'User')}
           <span class="profile-x-verified" title="Vynix user">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M8.5 3L4 7.5 1.5 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="YOUR_BADGE_IMAGE_URL" width="18" height="18" alt="verified" style="display:block;object-fit:contain;width:18px;height:18px;">
           </span>
         </div>
         <div class="profile-x-handle">@${escapeHtml((currentUserData.username||'user').toLowerCase().replace(/\s+/g,'_'))}</div>
@@ -3795,6 +3786,14 @@ function getDayLabel(ts) {
     return d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
 }
 function escapeHtml(t) { const d = document.createElement('div'); d.textContent = String(t||''); return d.innerHTML; }
+
+// Generate vnx000-style fallback username from uid
+function vnxFallback(uid) {
+    if (!uid) return 'vnx001';
+    let hash = 0;
+    for (let i = 0; i < uid.length; i++) hash = (hash * 31 + uid.charCodeAt(i)) >>> 0;
+    return 'vnx' + String((hash % 999) + 1).padStart(3, '0');
+}
 function escapeAttr(t) { return String(t||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 // ── Banner Upload ──
@@ -4581,10 +4580,10 @@ function fmtTimeAgo(ts) {
     return w + 'w';
 }
 
-// Verified badge SVG (inline, small)
+// Verified badge image (inline, small)
+const VNX_BADGE_URL = 'YOUR_BADGE_IMAGE_URL';
 function verifiedBadgeHtml(size = 14) {
-    const inner = size - 4;
-    return `<span class="verified-badge vx-badge" style="width:${size}px;height:${size}px;" title="Verified"><svg width="${inner}" height="${inner}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`;
+    return `<span class="verified-badge vx-badge" style="width:${size}px;height:${size}px;" title="Verified"><img src="${VNX_BADGE_URL}" width="${size}" height="${size}" alt="verified" style="display:block;object-fit:contain;width:${size}px;height:${size}px;"></span>`;
 }
 
 // In-app notification toast (non-blocking, top of screen)
@@ -4961,7 +4960,7 @@ function buildReelCard(reel, idx) {
         <div class="reel-info" style="z-index:10;">
             <div class="reel-username">
                 ${escHtml(reel.user.username)}
-                ${reel.user.verified ? `<span class="reel-verified vx-badge" title="Verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                ${reel.user.verified ? `<span class="reel-verified vx-badge" style="width:16px;height:16px;" title="Verified"><img src="${VNX_BADGE_URL}" width="16" height="16" alt="verified" style="display:block;object-fit:contain;width:16px;height:16px;"></span>` : ''}
             </div>
             <div class="reel-caption" id="caption-${idx}">${escHtml((reel.caption||'').replace(/#\w+/g,''))}</div>
             <div class="reel-hashtags">
@@ -5275,7 +5274,7 @@ function openComments(idx) {
                     <div class="reel-comment-body">
                         <div class="reel-comment-user">
                             ${escHtml(c.username||'@user')}
-                            ${c.verified ? `<span class="reel-comment-verified"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                            ${c.verified ? `<span class="reel-comment-verified" style="width:14px;height:14px;"><img src="${VNX_BADGE_URL}" width="14" height="14" alt="verified" style="display:block;object-fit:contain;width:14px;height:14px;"></span>` : ''}
                         </div>
                         <div class="reel-comment-text">${escHtml(c.text)}</div>
                         <div class="reel-comment-time">${c.ts ? fmtTimeAgo(c.ts) : 'Just now'}</div>
@@ -5317,7 +5316,7 @@ const meVerified = window._vynixCurrentUserData?.verified || false;
         <div class="reel-comment-body">
             <div class="reel-comment-user">
                 ${escHtml(me.username)}
-                ${meVerified ? `<span class="reel-comment-verified"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ''}
+                ${meVerified ? `<span class="reel-comment-verified" style="width:14px;height:14px;"><img src="${VNX_BADGE_URL}" width="14" height="14" alt="verified" style="display:block;object-fit:contain;width:14px;height:14px;"></span>` : ''}
             </div>
             <div class="reel-comment-text">${escHtml(val)}</div>
             <div class="reel-comment-time">Just now</div>
